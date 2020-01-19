@@ -1,0 +1,198 @@
+,iso3,country,continent,population_2019
+0,AFG,Afghanistan,Asia,38042000
+1,ALB,Albania,Europe,2881000
+2,DZA,Algeria,Africa,43053000
+3,AND,Andorra,Europe,77000
+4,AGO,Angola,Africa,31825000
+5,ATG,Antigua and Barbuda,North America,97000
+6,ARG,Argentina,South America,44781000
+7,ARM,Armenia,Asia,2958000
+8,AUS,Australia,Oceanie,25203000
+9,AUT,Austria,Europe,8955000
+10,AZE,Azerbaijan,Asia,10048000
+11,BHS,Bahamas,North America,389000
+12,BHR,Bahrain,Asia,1641000
+13,BGD,Bangladesh,Asia,163046000
+14,BRB,Barbados,North America,287000
+15,BLR,Belarus,Europe,9452000
+16,BEL,Belgium,Europe,11539000
+17,BLZ,Belize,North America,390000
+18,BEN,Benin,Africa,11801000
+19,BTN,Bhutan,Asia,763000
+20,BOL,Bolivia,South America,11513000
+21,BIH,Bosnia and Herzegovina,Europe,3301000
+22,BWA,Botswana,Africa,2304000
+23,BRA,Brazil,South America,211050000
+24,BRN,Brunei,Asia,433000
+25,BGR,Bulgaria,Europe,7000000
+26,BFA,Burkina Faso,Africa,20321000
+27,BDI,Burundi,Africa,11531000
+28,CPV,Cabo Verde,Africa,550000
+29,KHM,Cambodia,Asia,16487000
+30,CMR,Cameroon,Africa,25876000
+31,CAN,Canada,North America,37411000
+32,CAF,Central African Republic,Africa,4745000
+33,TCD,Chad,Africa,15947000
+34,CHL,Chile,South America,18952000
+35,CHN,China,Asia,1433784000
+36,COL,Colombia,South America,50339000
+37,COM,Comoros,Africa,851000
+38,COG,Congo,Africa,5381000
+39,COK,Cook Islands,Oceanie,18000
+40,CRI,Costa Rica,North America,5048000
+41,CIV,Cote d'Ivoire,Africa,25717000
+42,HRV,Croatia,Europe,4130000
+43,CUB,Cuba,North America,11333000
+44,CYP,Cyprus,Asia,1199000
+45,CZE,Czechia,Europe,10689000
+46,PRK,North Korea,Asia,25666000
+47,COD,DR Congo,Africa,86791000
+48,DNK,Denmark,Europe,5772000
+49,DJI,Djibouti,Africa,974000
+50,DMA,Dominica,North America,72000
+51,DOM,Dominican Republic,North America,10739000
+52,ECU,Ecuador,South America,17374000
+53,EGY,Egypt,Africa,100388000
+54,SLV,El Salvador,North America,6454000
+55,GNQ,Equatorial Guinea,Africa,1356000
+56,ERI,Eritrea,Africa,3497000
+57,EST,Estonia,Europe,1326000
+58,SWZ,Eswatini,Africa,1148000
+59,ETH,Ethiopia,Africa,112079000
+60,FJI,Fiji,Oceanie,890000
+61,FIN,Finland,Europe,5532000
+62,FRA,France,Europe,65130000
+63,GAB,Gabon,Africa,2173000
+64,GMB,Gambia,Africa,2348000
+65,GEO,Georgia,Asia,3997000
+66,DEU,Germany,Europe,83517000
+67,GHA,Ghana,Africa,30418000
+68,GRC,Greece,Europe,10473000
+69,GRD,Grenada,North America,112000
+70,GTM,Guatemala,North America,17581000
+71,GIN,Guinea,Africa,12771000
+72,GNB,Guinea-Bissau,Africa,1921000
+73,GUY,Guyana,South America,783000
+74,HTI,Haiti,North America,11263000
+75,VAT,Holy See,Europe,1000
+76,HND,Honduras,North America,9746000
+77,HUN,Hungary,Europe,9685000
+78,ISL,Iceland,Europe,339000
+79,IND,India,Asia,1366418000
+80,IDN,Indonesia,Asia,270626000
+81,IRN,Iran,Asia,82914000
+82,IRQ,Iraq,Asia,39310000
+83,IRL,Ireland,Europe,4882000
+84,ISR,Israel,Asia,8519000
+85,ITA,Italy,Europe,60550000
+86,JAM,Jamaica,North America,2948000
+87,JPN,Japan,Asia,126860000
+88,JOR,Jordan,Asia,10102000
+89,KAZ,Kazakhstan,Asia,18551000
+90,KEN,Kenya,Africa,52574000
+91,KIR,Kiribati,Oceanie,118000
+92,KWT,Kuwait,Asia,4207000
+93,KGZ,Kyrgyzstan,Asia,6416000
+94,LAO,Laos,Asia,7169000
+95,LVA,Latvia,Europe,1907000
+96,LBN,Lebanon,Asia,6856000
+97,LSO,Lesotho,Africa,2125000
+98,LBR,Liberia,Africa,4937000
+99,LBY,Libya,Africa,6777000
+100,LIE,Liechtenstein,Europe,38000
+101,LTU,Lithuania,Europe,2760000
+102,LUX,Luxembourg,Europe,616000
+103,MDG,Madagascar,Africa,26969000
+104,MWI,Malawi,Africa,18629000
+105,MYS,Malaysia,Asia,31950000
+106,MDV,Maldives,Asia,531000
+107,MLI,Mali,Africa,19658000
+108,MLT,Malta,Europe,440000
+109,MHL,Marshall Islands,Oceanie,59000
+110,MRT,Mauritania,Africa,4526000
+111,MUS,Mauritius,Africa,1270000
+112,MEX,Mexico,North America,127576000
+113,FSM,Micronesia (Fed. States of),Oceanie,114000
+114,MCO,Monaco,Europe,39000
+115,MNG,Mongolia,Asia,3225000
+116,MNE,Montenegro,Europe,628000
+117,MAR,Morocco,Africa,36472000
+118,MOZ,Mozambique,Africa,30366000
+119,MMR,Myanmar,Asia,54045000
+120,NAM,Namibia,Africa,2495000
+121,NRU,Nauru,Oceanie,11000
+122,NPL,Nepal,Asia,28609000
+123,NLD,Netherlands,Europe,17097000
+124,NZL,New Zealand,Oceanie,4783000
+125,NIC,Nicaragua,North America,6546000
+126,NER,Niger,Africa,23311000
+127,NGA,Nigeria,Africa,200964000
+128,NIU,Niue,Oceanie,2000
+129,MKD,North Macedonia,Europe,2083000
+130,NOR,Norway,Europe,5379000
+131,OMN,Oman,Asia,4975000
+132,PAK,Pakistan,Asia,216565000
+133,PLW,Palau,Oceanie,18000
+134,PAN,Panama,North America,4246000
+135,PNG,Papua New Guinea,Oceanie,8776000
+136,PRY,Paraguay,South America,7045000
+137,PER,Peru,South America,32510000
+138,PHL,Philippines,Asia,108117000
+139,POL,Poland,Europe,37888000
+140,PRT,Portugal,Europe,10226000
+141,QAT,Qatar,Asia,2832000
+142,KOR,South Korea,Asia,51225000
+143,MDA,Republic of Moldova,Europe,4043000
+144,ROU,Romania,Europe,19365000
+145,RUS,Russian Federation,Europe,145872000
+146,RWA,Rwanda,Africa,12627000
+147,KNA,Saint Kitts and Nevis,North America,53000
+148,LCA,Saint Lucia,North America,183000
+149,VCT,Saint Vincent and the Grenadines,North America,111000
+150,WSM,Samoa,Oceanie,197000
+151,SMR,San Marino,Europe,34000
+152,STP,Sao Tome and Principe,Africa,215000
+153,SAU,Saudi Arabia,Asia,34269000
+154,SEN,Senegal,Africa,16296000
+155,SRB,Serbia,Europe,8772000
+156,SYC,Seychelles,Africa,98000
+157,SLE,Sierra Leone,Africa,7813000
+158,SGP,Singapore,Asia,5804000
+159,SVK,Slovakia,Europe,5457000
+160,SVN,Slovenia,Europe,2079000
+161,SLB,Solomon Islands,Oceanie,670000
+162,SOM,Somalia,Africa,15443000
+163,ZAF,South Africa,Africa,58558000
+164,SSD,South Sudan,Africa,11062000
+165,ESP,Spain,Europe,46737000
+166,LKA,Sri Lanka,Asia,21324000
+167,PSE,Palestine,Asia,4981000
+168,SDN,Sudan,Africa,42813000
+169,SUR,Suriname,South America,581000
+170,SWE,Sweden,Europe,10036000
+171,CHE,Switzerland,Europe,8591000
+172,SYR,Syria,Asia,17070000
+173,TJK,Tajikistan,Asia,9321000
+174,THA,Thailand,Asia,69626000
+175,TLS,Timor-Leste,Asia,1293000
+176,TGO,Togo,Africa,8082000
+177,TON,Tonga,Oceanie,104000
+178,TTO,Trinidad and Tobago,North America,1395000
+179,TUN,Tunisia,Africa,11695000
+180,TUR,Turkey,Asia,83430000
+181,TKM,Turkmenistan,Asia,5942000
+182,TUV,Tuvalu,Oceanie,12000
+183,UGA,Uganda,Africa,44270000
+184,UKR,Ukraine,Europe,43994000
+185,ARE,United Arab Emirates,Asia,9771000
+186,GBR,United Kindom,Europe,67530000
+187,TZA,Tanzania,Africa,58005000
+188,USA,United States of America,North America,329065000
+189,URY,Uruguay,South America,3462000
+190,UZB,Uzbekistan,Asia,32982000
+191,VUT,Vanuatu,Oceanie,300000
+192,VEN,Venezuela,South America,28516000
+193,VNM,Viet Nam,Asia,96462000
+194,YEM,Yemen,Asia,29162000
+195,ZMB,Zambia,Africa,17861000
+196,ZIM,Zimbabwe,Africa,14645000

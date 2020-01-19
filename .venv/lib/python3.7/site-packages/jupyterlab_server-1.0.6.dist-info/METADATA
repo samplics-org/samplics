@@ -1,0 +1,54 @@
+Metadata-Version: 2.1
+Name: jupyterlab-server
+Version: 1.0.6
+Summary: JupyterLab Server
+Home-page: https://jupyter.org
+Author: Jupyter Development Team
+Author-email: jupyter@googlegroups.com
+License: BSD
+Keywords: Jupyter,JupyterLab
+Platform: Linux
+Platform: Mac OS X
+Platform: Windows
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: System Administrators
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Requires-Python: >=3.5
+Description-Content-Type: text/markdown
+Requires-Dist: json5
+Requires-Dist: jsonschema (>=3.0.1)
+Requires-Dist: notebook (>=4.2.0)
+Requires-Dist: jinja2 (>=2.10)
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+Requires-Dist: requests ; extra == 'test'
+
+# jupyterlab server
+
+https://github.com/jupyterlab/jupyterlab_server
+
+## Install
+
+`pip install jupyterlab_server`
+
+## Usage
+The application author creates a JupyterLab build on their machine
+using the core JupyterLab application.  They can then serve their
+files by subclassing the `LabServerApp` with the appropriate
+configuration and creating a Python entry point that launches the app.
+
+
+## Development Install
+
+```
+git clone https://github.com/jupyterlab/jupyterlab_server.git
+cd jupyterlab_server
+pip install -e .
+```
+
+

@@ -1,0 +1,504 @@
+install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'pbdZMQ', 'devtools', 'uuid', 'digest'))
+devtools::install_github('IRkernel/IRkernel')
+IRkernel::installspec()
+IRkernel::installspec(user = FALSE)
+install.packages('devtools')#
+#
+devtools::install_github('IRkernel/IRkernel')#
+#
+IRkernel::installspec()
+devtools::install_github('IRkernel/IRkernel')
+IRkernel::installspec(user = FALSE)
+load("/Users/msdiallo/UNICEF/Data/20171027Pelotas_imm.rds")
+readRDS("/Users/msdiallo/UNICEF/Data/20171027Pelotas_imm.rds")
+pelotas <- readRDS("/Users/msdiallo/UNICEF/Data/20171027Pelotas_imm.rds")
+ls(pelotas)
+table(pelotas$country)
+devtools::install_github("davidgohel/officer")#
+install.packages("officer")#
+#
+library(tidyverse)#
+#
+# These three packages bring extra functionalities to officer#
+# devtools::install_github("davidgohel/flextable")#
+# devtools::install_github("davidgohel/rvg")#
+# devtools::install_github("ardata-fr/mschart")#
+#
+rm(list=ls())#
+#
+theme_set(theme_bw())#
+#
+# The palette with grey:#
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")#
+#
+surveydata <- readRDS("~/UNICEF/Data/20171027Pelotas_imm.rds")#
+#
+wealtheqCA1 <- surveydata %>%#
+  filter(indic_code=="dptv" & strat=="wiqarea") %>%#
+  filter(strat_level %in% c("Q1 - 1 urban", "Q1 - 2 rural", "Q5 - 1 urban", "Q5 - 2 rural")) %>%#
+  filter(iso %in% c("AGO","CAF","COD","COG","CMR","GAB","GNQ","STP","TCD")) %>%#
+  filter((year >= 2012) | (iso=="CAF" & year==2010) | (iso=="COG" & year==2011)) %>%#
+  mutate(Residence = ifelse(strat_level %in% c("Q1 - 1 urban", "Q5 - 1 urban"), "Urban", "Rural")) %>%#
+  mutate(Wealth = ifelse(strat_level %in% c("Q1 - 1 urban", "Q1 - 2 rural"), "Poorest (Q1)", "Richest (Q5"))#
+#
+# # CAR#
+# wealthPlotCAF1 <- wealtheqCA1 %>%#
+#   filter(iso == "CAF") %>%#
+#   ggplot(aes(x=Residence, y=100*value, fill=Wealth)) + #
+#   geom_bar(position="dodge", stat="identity", width=0.6) +#
+#   geom_text(aes(x=Residence, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+#   labs(title="CAR - Multiple Cluster Indicator Survey (MICS) 2010", y="Percentage", x="")  #
+# #
+# wealthPlotCAF1#
+#
+wealtheqCA2 <- surveydata %>%#
+  filter(indic_code=="dptv" & strat=="wiqarea") %>%#
+  filter(iso %in% c("AGO","CAF","COD","COG","CMR","GAB","GNQ","STP","TCD")) %>%#
+  filter((year >= 2012) | (iso=="CAF" & year==2010) | (iso=="COG" & year==2011)) %>%#
+  mutate(Residence = ifelse(strat_level %in% c("Q1 - 1 urban", "Q2 - 1 urban", "Q3 - 1 urban", "Q4 - 1 urban", #
+                                               "Q5 - 1 urban"), "Urban", "Rural")) %>%#
+  mutate(Wealth=ifelse(strat_level %in% c("Q1 - 1 urban","Q1 - 2 rural"), "Poorest (Q1)",#
+                       ifelse(strat_level %in% c("Q2 - 1 urban","Q2 - 2 rural"), "Poor (Q2)",#
+                              ifelse(strat_level %in% c("Q3 - 1 urban","Q3 - 2 rural"), "Middle (Q3)",#
+                                     ifelse(strat_level %in% c("Q4 - 1 urban","Q4 - 2 rural"), "Wealthy (Q4)",#
+                                            "Wealthiest (Q5)")))))#
+#
+wealtheqCA2$Wealth2 <- factor(wealtheqCA2$Wealth, #
+                              levels = c("Poorest (Q1)","Poor (Q2)","Middle (Q3)","Wealthy (Q4)","Wealthiest (Q5)"), #
+                              labels = c("Poorest (Q1)","Poor (Q2)","Middle (Q3)","Wealthy (Q4)","Wealthiest (Q5)"))#
+#
+# AGO#
+wealthPlotAGO <- wealtheqCA2 %>%#
+  filter(iso == "AGO") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="Angola - Demographic and Health Survey (DHS) 2015", y="Percentage", x="")  #
+#
+wealthPlotAGO#
+#
+# CAR#
+wealthPlotCAF2 <- wealtheqCA2 %>%#
+  filter(iso == "CAF") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="CAR - Multiple Cluster Indicator Survey (MICS) 2010", y="Percentage", x="")  #
+#
+wealthPlotCAF2#
+#
+# CMR#
+wealthPlotCMR <- wealtheqCA2 %>%#
+  filter(iso == "CMR") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="Cameroon - Multiple Cluster Indicator Survey (MICS) 2014", y="Percentage", x="")  #
+#
+wealthPlotCMR#
+#
+# DRC#
+wealthPlotDRC <- wealtheqCA2 %>%#
+  filter(iso == "COD") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="DRC - Demographic and Health Survey (DHS) 2013", y="Percentage", x="")  #
+#
+wealthPlotDRC#
+#
+# Congo Brazaville#
+wealthPlotCOG <- wealtheqCA2 %>%#
+  filter(iso == "COG") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="Congo - Demographic and Health Survey (DHS) 2011", y="Percentage", x="")  #
+#
+wealthPlotCOG#
+#
+# Gabon#
+wealthPlotGAB <- wealtheqCA2 %>%#
+  filter(iso == "GAB") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="Congo - Demographic and Health Survey (DHS) 2012", y="Percentage", x="")  #
+#
+wealthPlotGAB#
+#
+# Sao Tome and Principe#
+wealthPlotSTP <- wealtheqCA2 %>%#
+  filter(iso == "STP") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="Sao Tome and Principe - Multiple Cluster Indicator Survey (MICS) 2014", y="Percentage", x="")  #
+#
+wealthPlotSTP#
+#
+# TCD#
+wealthPlotTCD <- wealtheqCA2 %>%#
+  filter(iso == "TCD") %>%#
+  ggplot(aes(x=Wealth2, y=100*value, fill=Residence)) + #
+  geom_bar(position="dodge", stat="identity", width=0.6) +#
+  geom_text(aes(x=Wealth2, y=100*value/2, label=round(100*value,1)), position=position_dodge(0.6)) +#
+  labs(title="Chad - Demographic and Health Survey (DHS) 2014", y="Percentage", x="")  #
+#
+wealthPlotTCD#
+par(mfrow=c(2,2))#
+wealthPlotAGO#
+wealthPlotCAF2#
+wealthPlotTCD#
+wealthPlotDRC
+# installing/loading the package:#
+if(!require(installr)) { install.packages("installr"); require(installr)} #load / install+load installr#
+# Installing pandoc#
+install.pandoc()''
+# installing/loading the package:#
+if(!require(installr)) { install.packages("installr"); require(installr)} #load / install+load installr#
+# Installing pandoc#
+install.pandoc()
+install.package("installr")
+if (!require('devtools')) install.packages('devtools'); # make sure you have Rtools installed first! if not, then run:#
+#install.packages('installr')#
+#install.Rtools()#
+devtools::install_github('talgalili/installr')
+library(installr)
+install.pandoc()
+library(plyr)
+require(plyr)#
+dataframe$newdate <- mapvalues(dataframe$date, #
+          from=c("19921231","19931231","19941231"), #
+          to=c("1992","1993","1994"))
+install.package("plyr")
+install.packages("plyr")
+clear
+require(plyr)#
+dataframe$newdate <- mapvalues(dataframe$date, #
+          from=c("19921231","19931231","19941231"), #
+          to=c("1992","1993","1994"))
+date<-c("19921231","19931231","19941231","19941231","19931231","19941231")#
+variable<-c("a","a","a","b","b","b")#
+value<-c(1:6)#
+dataframe <- data.frame(date,variable,value)
+require(plyr)#
+dataframe$newdate <- mapvalues(dataframe$date, #
+          from=c("19921231","19931231","19941231"), #
+          to=c("1992","1993","1994"))
+dataframe
+date<-c("19921231","19931231","19941231","19941231","19931231","19941231")#
+variable<-c("a","a","a","b","b","b")#
+value<-c(1:6)#
+dataframe <- data.frame(date,variable,value)
+dataframe
+require(plyr)#
+dataframe$newdate <- mapvalues(dataframe$date, #
+          from=c("19921231","19931231","19941231"), #
+          to=c("1992","1993","1994"))
+dataframe
+install.packages("json")
+install.packages("rjson")
+install.packages("jsonlite")
+library(jsonlite)#
+all.equal(mtcars, fromJSON(toJSON(mtcars)))
+json <- '["Mario", "Peach", null, "Bowser"]'#
+#
+# Simplifies into an atomic vector#
+fromJSON(json)
+json <-#
+'[#
+  {"Name" : "Mario", "Age" : 32, "Occupation" : "Plumber"}, #
+  {"Name" : "Peach", "Age" : 21, "Occupation" : "Princess"},#
+  {},#
+  {"Name" : "Bowser", "Occupation" : "Koopa"}#
+]'#
+mydf <- fromJSON(json)#
+mydf
+json <- ["Mario", "Peach", null, "Bowser"]
+json <- '["Mario", "Peach", null, "Bowser"]'
+json <- '["Mario", "Peach", null, "Bowser"]'#
+#
+# Simplifies into an atomic vector#
+fromJSON(json)
+json <- '["Mario", "Peach", null, "Bowser"], ["Hello", "Yes"]'
+json <- '["Mario", "Peach", null, "Bowser"]'#
+#
+# Simplifies into an atomic vector#
+fromJSON(json)
+json <- '[]["Mario", "Peach", null, "Bowser"], ["Hello", "Yes"]]'
+json <- '["Mario", "Peach", null, "Bowser"]'#
+#
+# Simplifies into an atomic vector#
+fromJSON(json)
+json <- '[]["Mario", "Peach", null, "Bowser"], ["Hello", "Yes"]'
+json2 <- '[]'
+library(jsonlite)#
+#
+json22 <- '[#
+    [#
+        {"name": "jean11", "Age": 11},#
+        {"name": "jean12", "Age": 12}#
+    ],#
+    [#
+        {"name": "jean21", "Age": 21},#
+        {"name": "jean22", "Age": 22}#
+    ],#
+]'#
+#
+fromJSON(json22)
+x = list(x=1:3, y = 4, z = "foo", k = NULL)#
+toJSON(x)
+library(jsonlite)#
+#
+json22 <- '[#
+    "survey11": [#
+        {"name": "jean11", "Age": 11},#
+        {"name": "jean12", "Age": 12}#
+    ],#
+    "survey22": [#
+        {"name": "jean21", "Age": 21},#
+        {"name": "jean22", "Age": 22}#
+    ],#
+]'#
+#
+fromJSON(json22)
+json22 <- '[#
+    "survey11": [#
+        {"name": "jean11", "Age": 11},#
+        {"name": "jean12", "Age": 12}#
+    ],#
+    "survey22": [#
+        {"name": "jean21", "Age": 21},#
+        {"name": "jean22", "Age": 22}#
+    ]  #
+]'#
+#
+fromJSON(json22)
+json22 <- {#
+    "survey11": [#
+        {"name": "jean11", "Age": 11},#
+        {"name": "jean12", "Age": 12}#
+    ],#
+    "survey22": [#
+        {"name": "jean21", "Age": 21},#
+        {"name": "jean22", "Age": 22}#
+    ]  #
+}#
+#
+fromJSON(json22)
+json22 <- '{#
+    "survey11": [#
+        {"name": "jean11", "Age": 11},#
+        {"name": "jean12", "Age": 12}#
+    ],#
+    "survey22": [#
+        {"name": "jean21", "Age": 21},#
+        {"name": "jean22", "Age": 22}#
+    ]  #
+}'#
+#
+fromJSON(json22)
+json22 <- '{#
+    "survey11": [#
+        {"old": "jean11", "new": 11},#
+        {"old": "jean12", "new": 12}#
+    ],#
+    "survey22": [#
+        {"old": "jean21", "new": 21},#
+        {"old": "jean22", "new": 22}#
+    ]  #
+}'#
+#
+fromJSON(json22)
+library(dplyr)
+?rename
+?setnames
+devtools::install_github("r-lib/testthat")
+clear
+dataF <- data.frame(diag(3))
+dataF
+names(dataF)
+"Vdd" %in5 names(dataF)
+"Vdd" %in% names(dataF)
+dataF$MN2C <- NA
+if
+sf
+library("survey")
+library("ChildrenData")
+?read_mics5_child
+?read_mics5
+library(jsonlite)
+datajson <- fromJSON("~/Dev/ChildrenData/Data/nga_mics_2017/nga_mics_2017.json")
+datajson
+datajson <- fromJSON("~/Dev/ChildrenData/Data/nga_mics_2017/nga_mics_2017.json")
+datajson
+datajson <- fromJSON("~/Dev/ChildrenData/Data/nga_mics_2017/nga_mics_2017.json")
+datajson
+datajson <- fromJSON("~/Dev/ChildrenData/Data/nga_mics_2017/nga_mics_2017.json")
+datajson
+datajson <- fromJSON("~/Dev/ChildrenData/Data/nga_mics_2017/nga_mics_2017.json")
+datajson
+datajson <- fromJSON("~/Dev/ChildrenData/Data/nga_mics_2017/nga_mics_2017.json")
+datajson
+devtools::install_github("jalvesaq/colorout")
+dd <- data.frame(diag(7))
+dd
+dd[,X1]
+dd[,"X1"]
+dd$X1
+dd$X1 > 2
+dd$X1 > 0
+dd$X1 > 0 & dd$X2 < 1
+100*1.18
+85*1.18
+1/1.15
+1/.85
+100/85
+install.packages(mcn)
+install.packages("mcn")
+install.packages("ncm")
+library(devtools)
+library("devtools")
+install.packages(devtools)
+install.packages("devtools")
+library("devtools")
+?run_examples
+clear()
+import(survey)
+(survey)library
+library(survey)
+## one-stage cluster sample#
+  dclus1<-svydesign(id=~dnum, weights=~pw, data=apiclus1, fpc=~fpc)
+data(api)
+## one-stage cluster sample#
+  dclus1<-svydesign(id=~dnum, weights=~pw, data=apiclus1, fpc=~fpc)
+coef(svytotal(~enroll,dstrat))#
+  vcov(svymean(~api00+api99,jkstrat))#
+  SE(svymean(~enroll, dstrat))#
+  confint(svymean(~api00+api00, dclus1))
+library(mgcv)
+install.packages("nlme")
+clear
+?plot
+install.packages("spdep")
+vaccinated <- 116245259
+target <- 136157879.9
+vacinated / target
+vaccinated / target
+re <- "NA"
+re
+re <- c(1,"NA")
+re
+re <- c(1,nan)
+re <- c(1,NaN)
+re
+re <- c(1,"NaN")
+re
+re <- c(1,.)
+rer <- null
+mappingfile <- paste("./inst/extdata/jsonfiles/", surveylabel, ".json", sep = "")#
+  mappingdata <- jsonlite::fromJSON(mappingfile)
+mappingfile <- paste("~/dev/UNICEF/Children_Data_R/ChildrenData/inst/extdata/jsonfiles/", surveylabel, ".json", sep = "")#
+  mappingdata <- jsonlite::fromJSON(mappingfile)
+load("/Users/msdiallo/Downloads/sae/data/milk.rda")
+load("/Users/msdiallo/Downloads/sae/data/milk.rda")
+head(milk.rda)
+ls()
+ls(milk)
+head(milk)
+dim(milk)
+?write.csv
+write.csv(milk, file="~/dev/survey-methods/survmeth/surmeth/datasets/milk.csv")
+setwd("~/dev/survey-methods/survmeth/surmeth/datasets")
+setwd("~/dev/survey-methods/survmeth/survmeth/datasets")
+write.csv(milk, file="milk.csv")
+load("/Users/msdiallo/Downloads/sae/data/incomedata.rda")
+write.csv(milk, file="incomedata.csv")
+ls()
+write.csv(incomedata, file="incomedata.csv")
+load("/Users/msdiallo/Downloads/sae/data/cornsoybean.rda")
+write.csv(cornsoybean, file="sae/cornsoybean.csv")
+load("/Users/msdiallo/Downloads/sae/data/cornsoybeanmeans.rda")
+write.csv(cornsoybeanmeans, file="sae/cornsoybeanmeans.csv")
+ls()
+load("/Users/msdiallo/Downloads/sae/data/grapes.rda")
+write.csv(grapes, file="sae/grapes.csv")
+load("/Users/msdiallo/Downloads/sae/data/grapesprox.rda")
+write.csv(grapesprox, file="sae/grapesprox.csv")
+load("/Users/msdiallo/Downloads/sae/data/sizeprov.rda")
+write.csv(sizeprov, file="sae/sizeprov.csv")
+load("/Users/msdiallo/Downloads/sae/data/sizeprovage.rda")
+write.csv(sizeprovage, file="sae/sizeprovage.csv")
+load("/Users/msdiallo/Downloads/sae/data/sizeprovedu.rda")
+write.csv(sizeprovedu, file="sae/sizeprovedu.csv")
+load("/Users/msdiallo/Downloads/sae/data/sizeprovlab.rda")
+write.csv(sizeprovlab, file="sae/sizeprovlab.csv")
+load("/Users/msdiallo/Downloads/sae/data/sizeprovnat.rda")
+write.csv(sizeprovnat, file="sae/sizeprovnat.csv")
+load("/Users/msdiallo/Downloads/sae/data/spacetime.rda")
+write.csv(spacetime, file="sae/spacetime.csv")
+load("/Users/msdiallo/Downloads/sae/data/spacetimeprox.rda")
+write.csv(spacetimeprox, file="sae/spacetimeprox.csv")
+load("/Users/msdiallo/Downloads/sae/data/Xoutsamp.rda")
+write.csv(Xoutsamp, file="sae/Xoutsamp.csv")
+library(sae)
+?eblupFH
+data(milk)   #
+attach(milk)
+# Fit FH model using REML method with indicators of 4 Major Areas as #
+# explanatory variables.#
+resultREML <- eblupFH(yi ~ as.factor(MajorArea), SD^2)#
+resultREML
+as.factor(milk$MajorArea)
+yi ~ as.factor(MajorArea)
+?as.factor
+?eblupFH
+# Fit FH model using REML method with indicators of 4 Major Areas as #
+# explanatory variables.#
+resultREML <- eblupFH(yi ~ as.factor(MajorArea), SD^2, method="ML")#
+resultREML
+# Fit FH model using REML method with indicators of 4 Major Areas as #
+# explanatory variables.#
+resultREML <- eblupFH(yi ~ as.factor(MajorArea), SD^2)#
+resultREML
+# Fit FH model using REML method with indicators of 4 Major Areas as #
+# explanatory variables.#
+resultREML <- eblupFH(yi ~ as.factor(MajorArea), SD^2, method="ML")#
+resultREML
+sigma?eblupMSE
+?eblup
+?eblupMSE
+?eblupmse
+?eblupFHMSE
+?mseFH
+# Fit FH model using REML method with indicators of 4 Major Areas as #
+# explanatory variables.#
+mseREML <- mseFH(yi ~ as.factor(MajorArea), SD^2)#
+mseREML
+# Fit FH model using REML method with indicators of 4 Major Areas as #
+# explanatory variables.#
+mseML <- mseFH(yi ~ as.factor(MajorArea), SD^2, method="ML")#
+mseML
+# Fit FH model using REML method with indicators of 4 Major Areas as #
+# explanatory variables.#
+mseFH <- mseFH(yi ~ as.factor(MajorArea), SD^2, method="FH")#
+mseFH
+?eblupBHF
+# Load data set for segments (units within domains)#
+data(cornsoybean)#
+#
+# Load data set for counties#
+data(cornsoybeanmeans)#
+attach(cornsoybeanmeans)
+Xmean <- data.frame(CountyIndex, MeanCornPixPerSeg, MeanSoyBeansPixPerSeg)#
+Popn  <- data.frame(CountyIndex, PopnSegments)
+resultCorn <- eblupBHF(CornHec ~ CornPix + SoyBeansPix, dom=County, #
+                       meanxpop=Xmean, popnsize=Popn, data=cornsoybean)#
+resultCorn$eblup
+ls(resultCorn)
+resultCorn <- eblupBHF(CornHec ~ CornPix + SoyBeansPix, dom=County, #
+                       meanxpop=Xmean, popnsize=Popn, data=cornsoybean)#
+resultCorn$fit
+?ebBHF
+?eblupSFH

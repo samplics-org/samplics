@@ -1,0 +1,7 @@
+ipython
+
+[:python_version < "3.6"]
+yapf>='0.28'
+
+[:python_version >= "3.6"]
+black>='19.3'

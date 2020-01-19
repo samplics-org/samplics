@@ -1,0 +1,89 @@
+Metadata-Version: 2.1
+Name: samplics
+Version: 0.0.1
+Summary: Select, weight and analyze complex sample data
+Home-page: https://github.com/MamadouSDiallo/samplics
+Author: Mamadou S Diallo
+Author-email: msdiallo@QuantifyAfrica.org
+License: MIT
+Description: 
+        ==========
+        *SAMPLICS*
+        ==========
+        
+        *samplics*, for sample analytics, is a python package for selecting, weighting
+        and analyzing sample obtained from complex sampling design.
+        
+        Sample Analytics
+        ----------------
+        
+        
+        Selection
+        ================
+        
+        Weighting
+        ================
+        
+        Estimation
+        =================
+        
+        
+        Installation
+        ------------
+        ``pip install samplics``
+        
+        if both Python 2.x and python 3.x is installed in your environment,
+        you may have to use: ``pip3 install samplics``
+        
+        Dependencies
+        ------------
+        Python versions 3.6.x or newer and the following packages:
+        
+        * `numpy <https://numpy.org/>`_
+        * `pandas <https://pandas.pydata.org/>`_
+        * `scpy <https://www.scipy.org/>`_
+        * `statsmodels <https://www.statsmodels.org/stable/index.html>`_
+        
+        Usage
+        ------
+        .. code:: python
+        
+            import samplics
+            from samplics.sampling import Sample
+        
+            Sample.select()
+        
+        Contributing
+        ------------
+        TBD
+        
+        License
+        -------
+        `MIT <https://github.com/survey-methods/samplics/blob/master/license.txt>`_
+        
+        Project status
+        --------------
+        This is an alpha version. At this stage, this project is not recommended to be
+        used for production or any project that the user depend on.
+        
+        
+        
+        
+        
+        
+        
+Keywords: sampling,sample,weighting,estimation,survey
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Development Status :: 3 - Alpha
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Survey Analysts
+Classifier: Intended Audience :: Statisticians
+Classifier: Intended Audience :: Data Scientists
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineeing :: Statistics
+Requires-Python: >=3.6
+Provides-Extra: dev
