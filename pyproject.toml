@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "samplics"
-version = "0.0.1"
+version = "0.0.2"
 description = "Select, weight and analyze complex sample data"
 authors = ["Mamadou S Diallo <msdiallo@quantifyafrica.org>"]
 license = "MIT"
@@ -20,11 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Development Status :: 3 - Alpha",
     "Operating System :: OS Independent",
-    "Intended Audience :: Survey Analysts",
-    "Intended Audience :: Statisticians",
-    "Intended Audience :: Data Scientists",
     "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineeing :: Statistics",
 ]
 
 packages = [
