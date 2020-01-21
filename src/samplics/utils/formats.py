@@ -33,15 +33,16 @@ def array_to_dict(arr: np.ndarray, domain: np.array = None) -> Dict:
 
     if domain is None:
         keys, counts = np.unique(numpy_array(arr), return_counts=True)
-        out_dict dict(zip(keys, counts))
+        out_dict = dict(zip(keys, counts))
     else:
         out_dict = {}
         for d in np.unique(domain):
-            arr_d = arr[domain==d]
+            arr_d = arr[domain == d]
             keys_d, counts_d = np.unique(numpy_array(arr_d), return_counts=True)
             out_dict[d] = dict(zip(keys_d, counts_d))
 
-    return out_dict 
+    return out_dict
+
 
 def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 

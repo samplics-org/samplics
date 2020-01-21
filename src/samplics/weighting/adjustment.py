@@ -103,7 +103,7 @@ class SampleWeight:
     def _response(resp_status: np.ndarray, resp_dict: np.ndarray) -> np.ndarray:
 
         resp_status = formats.numpy_array(resp_status)
-        checks.check_resp_status(resp_status, resp_dict)
+        checks.check_response_status(resp_status, resp_dict)
 
         if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any():
             resp_code = np.repeat("  ", resp_status.size).astype(str)
@@ -206,7 +206,7 @@ class SampleWeight:
 
     @staticmethod
     def _core_matrix(
-        samp_weight_d: np.ndarray,
+        samp_weight: np.ndarray,
         x: np.ndarray,
         x_weighted_total: np.ndarray,
         control: np.ndarray,
@@ -370,10 +370,10 @@ class SampleWeight:
                 x_array = x_array.append(x_array_d)
                 x_dict[d] = x_dict_d
 
-        return x.to_numpy(), x_dict
+        return x_array.to_numpy(), x_dict
 
     def _calib_wgt(
-        self, samp_weight: np.ndarray, x: np.ndarray, core_factor: np.ndarray
+        self, samp_weight: np.ndarray, x: np.ndarray, core_factor: np.ndarray, scale: np.ndarray
     ) -> np.ndarray:
 
         adjust_factor = np.apply_along_axis(
@@ -408,7 +408,7 @@ class SampleWeight:
         if domain is None:
             adjust_factor = self._calib_wgt(samp_weight, x, core_factor, scale)
         else:
-            adjusted_factor = []
+            adjust_factor = []
             for d in np.unique(domain):
                 x_d = x[domain == d]
                 samp_weight_d = samp_weight[domain == d]
@@ -419,7 +419,7 @@ class SampleWeight:
                     core_factor = self._core_matrix(
                         samp_weight=samp_weight_d,
                         x=x[domain == d],
-                        x_weighted_total_d=x_weighted_total_d,
+                        x_weighted_total=x_weighted_total_d,
                         control=np.array(list(control_d.values())),
                         scale=scale_d,
                     )
@@ -427,14 +427,14 @@ class SampleWeight:
                     core_factor = self._core_matrix(
                         samp_weight=samp_weight,
                         x=x,
-                        x_weighted_total_d=x_weighted_total_d,
+                        x_weighted_total=x_weighted_total_d,
                         control=np.array(list(control_d.values())),
                         scale=scale,
                     )
                 adjust_factor_d = self._calib_wgt(samp_weight_d, x_d, core_factor, scale_d)
-                adjusted_factor = np.append(adjusted_factor, adjusted_factor_d)
+                adjust_factor = np.append(adjust_factor, adjust_factor_d)
 
-        return samp_weight * adjusted_factor  # , adjusted_factor
+        return samp_weight * adjust_factor  # , adjusted_factor
 
     def trim(
         self,
