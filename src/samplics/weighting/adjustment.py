@@ -205,23 +205,23 @@ class SampleWeight:
         return adjusted_weight
 
     @staticmethod
-    def _core_matrix_d(
+    def _core_matrix(
         samp_weight_d: np.ndarray,
-        x_d: np.ndarray,
-        x_weighted_total_d: np.ndarray,
-        control_d: np.ndarray,
-        scale_d: np.ndarray,
+        x: np.ndarray,
+        x_weighted_total: np.ndarray,
+        control: np.ndarray,
+        scale: np.ndarray,
     ):
 
-        v_inv = np.diag(1 / scale_d)
-        core_matrix = np.transpose(x_d) * np.diag(samp_weight_d) * v_inv * X_d
+        v_inv = np.diag(1 / scale)
+        core_matrix = np.transpose(x) * np.diag(samp_weight) * v_inv * x
         core_matrix_inv = np.linalg.inv(core_matrix)
-        core_factor = np.transpose(control_d - x_weighted_total_d) * core_matrix_inv
+        core_factor = np.transpose(control - x_weighted_total) * core_matrix_inv
 
         return core_factor
 
     @staticmethod
-    def _core_vector_d(x_i, core_factor):
+    def _core_vector(x_i, core_factor):
 
         return np.dot(core_factor, x_i)
 
@@ -324,78 +324,70 @@ class SampleWeight:
         pass
 
     @staticmethod
-    def calib_covariates(
-        x_cat: List[str], x_cont: List[str], data: pd.DataFrame
-    ) -> Tuple[np.ndarray, Dict[str, int]]:
+    def _calib_covariates(
+        data: pd.DataFrame, x_cat: List[str] = None, x_cont: List[str] = None
+    ) -> Tuple[pd.DataFrame, Dict[str, int]]:
 
-        if not isinstance(data, pd.DataFrame):
+        if not isinstance(data, pd.DataFrame) or data is None:
             raise ValueError("data must be a pandas dataframe.")
+        if x_cat is None and x_cont is None:
+            raise AssertionError("x_cat and/or x_cont must be specified.")
 
-        x_concat = formats.dataframe_to_array(data[x_cat])
-        x_dummies = pd.get_dummies(x_concat)
-        x_dict = formats.array_to_dict(x_concat)
-        x_dummies.insert(0, "intercept", 1)
+        if x_cat is not None:
+            x_concat = formats.dataframe_to_array(data[x_cat])
+            x_dummies = pd.get_dummies(x_concat)
+            x_dict = formats.array_to_dict(x_concat)
+            x_dummies.insert(0, "intercept", 1)
         if x_cont is None:
-            x = x_dummies.astype("int")
+            x_array = x_dummies.astype("int")
         else:
-            x = pd.concat([x_dummies, data[x_cont]], axis=1).astype("int")
+            x_array = pd.concat([x_dummies, data[x_cont]], axis=1).astype("int")
             x_cont_dict = {}
             nb_obs = data[x_cont].shape[0]
             for var in x_cont:
                 x_cont_dict[var] = nb_obs
                 x_dict.update(x_cont_dict)
 
+        return x_array, x_dict
+
+    def calib_covariates(
+        self,
+        data: pd.DataFrame,
+        x_cat: List[str] = None,
+        x_cont: List[str] = None,
+        domain: List[str] = None,
+    ) -> Tuple[np.ndarray, Dict[str, int]]:
+
+        if domain is None:
+            x_array, x_dict = self._calib_covariates(data, x_cat, x_cont)
+        else:
+            x_array = pd.DataFrame()
+            x_dict = {}
+            for k, d in enumerate(np.unique(data[domain])):
+                x_array_d, x_dict_d = self._calib_covariates(
+                    data[data[domain] == d], x_cat, x_cont
+                )
+                x_array = x_array.append(x_array_d)
+                x_dict[d] = x_dict_d
+
         return x.to_numpy(), x_dict
 
-    def _calibrated_wgt(
-        self,
-        samp_weight: np.ndarray,
-        x: np.ndarray,
-        control: Dict[Any, float],
-        domain: np.ndarray,
-        scale: np.ndarray,
+    def _calib_wgt(
+        self, samp_weight: np.ndarray, x: np.ndarray, core_factor: np.ndarray
     ) -> np.ndarray:
-        x_weighted_total = np.sum(np.transpose(x) * samp_weight[:], axis=1)
-        if domain is None:
-            core_factor = self._core_matrix_d(
-                samp_weight_d=samp_weight,
-                x_d=x,
-                x_weighted_total_d=x_weighted_total,
-                control_d=control,
-                scale_d=scale,
-            )
-            adjust_factor = np.apply_along_axis(
-                self._core_vector_d, axis=0, core_factor=core_factor
-            )
-            adjusted_factor = 1 + adjust_factor / scale
-        else:
-            adjusted_factor = []
-            for d in np.unique(domain):
-                x_d = x[domain == d]
-                samp_weight_d = samp_weight[domain == d]
-                x_weighted_total_d = np.sum(np.transpose(x_d) * samp_weight_d[:], axis=1)
-                control_d = control[domain == d]
-                scale_d = scale[domain == d]
-                core_factor_d = self._core_matrix_d(
-                    samp_weight_d=samp_weight_d,
-                    x_d=x_d,
-                    x_weighted_total_d=X_weighted_total_d,
-                    control_d=control_d,
-                    scale_d=scale_d,
-                )
-                adjust_factor_d = np.apply_along_axis(
-                    self._core_vector_d, axis=0, arr=X, core_factor=core_factor_d
-                )
-                adjusted_factor_d = 1 + adjust_factor_d / scale_d
-                adjusted_factor = np.append(adjusted_factor, adjusted_factor_d)
 
-        return adjusted_factor * samp_weight, adjust_factor
+        adjust_factor = np.apply_along_axis(
+            self._core_vector, axis=0, arr=x, core_factor=core_factor
+        )
+        adjusted_factor = 1 + adjust_factor / scale
+
+        return adjusted_factor
 
     def calibrate(
         self,
         samp_weight: np.ndarray,
         x: np.ndarray,
-        control: Union[float, Dict[float, float]] = None,
+        control: Dict[Any, Any] = None,
         domain: np.ndarray = None,
         scale: Union[np.ndarray, float] = 1,
         bounded: bool = False,
@@ -405,9 +397,44 @@ class SampleWeight:
         if isinstance(scale, (float, int)):
             scale = scale * np.ones(np.size(samp_weight))
 
-        calib_weight, _ = self._calibrated_wgt(samp_weight, x, control, domain, scale)
+        x_weighted_total = np.sum(np.transpose(x) * samp_weight[:], axis=1)
+        core_factor = self._core_matrix(
+            samp_weight=samp_weight,
+            x=x,
+            x_weighted_total=x_weighted_total,
+            control=np.array(list(control.values())),
+            scale=scale,
+        )
+        if domain is None:
+            adjust_factor = self._calib_wgt(samp_weight, x, core_factor, scale)
+        else:
+            adjusted_factor = []
+            for d in np.unique(domain):
+                x_d = x[domain == d]
+                samp_weight_d = samp_weight[domain == d]
+                x_weighted_total_d = np.sum(np.transpose(x_d) * samp_weight_d[:], axis=1)
+                control_d = control[d]
+                scale_d = scale[domain == d]
+                if modified:
+                    core_factor = self._core_matrix(
+                        samp_weight=samp_weight_d,
+                        x=x[domain == d],
+                        x_weighted_total_d=x_weighted_total_d,
+                        control=np.array(list(control_d.values())),
+                        scale=scale_d,
+                    )
+                else:
+                    core_factor = self._core_matrix(
+                        samp_weight=samp_weight,
+                        x=x,
+                        x_weighted_total_d=x_weighted_total_d,
+                        control=np.array(list(control_d.values())),
+                        scale=scale,
+                    )
+                adjust_factor_d = self._calib_wgt(samp_weight_d, x_d, core_factor, scale_d)
+                adjusted_factor = np.append(adjusted_factor, adjusted_factor_d)
 
-        return calib_weight
+        return samp_weight * adjusted_factor  # , adjusted_factor
 
     def trim(
         self,
