@@ -34,3 +34,16 @@ def array_to_dict(arr: np.ndarray) -> Dict:
     keys, counts = np.unique(numpy_array(arr), return_counts=True)
 
     return dict(zip(keys, counts))
+
+
+def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
+
+    nb_vars = df.shape[1]
+    varlist = df.columns
+    x_concat = df[varlist[0]]
+    if nb_vars > 1:
+        for k in range(1, nb_vars):
+            x_concat = x_concat.astype(str) + "_&_" + df[varlist[k]].astype(str)
+    x_concat.rename(columns="_array", inplace=True)
+
+    return x_concat
