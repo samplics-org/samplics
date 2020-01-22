@@ -213,11 +213,11 @@ class SampleWeight:
         scale: np.ndarray,
     ):
 
-        v_inv = np.diag(1 / scale)
-        core_matrix = np.transpose(x) * np.diag(samp_weight) * v_inv * x
-        core_matrix_inv = np.linalg.inv(core_matrix)
-        core_factor = np.transpose(control - x_weighted_total) * core_matrix_inv
+        v_inv_d = np.diag(samp_weight / scale)
+        core_matrix = np.matmul(np.matmul(np.transpose(x), v_inv_d), x)
 
+        core_matrix_inv = np.linalg.inv(core_matrix)
+        core_factor = np.matmul(np.transpose(control - x_weighted_total), core_matrix_inv)
         return core_factor
 
     @staticmethod
@@ -337,7 +337,7 @@ class SampleWeight:
             x_concat = formats.dataframe_to_array(data[x_cat])
             x_dummies = pd.get_dummies(x_concat)
             x_dict = formats.array_to_dict(x_concat)
-            x_dummies.insert(0, "intercept", 1)
+            # x_dummies.insert(0, "intercept", 1)
         if x_cont is None:
             x_array = x_dummies.astype("int")
         else:
@@ -377,7 +377,7 @@ class SampleWeight:
     ) -> np.ndarray:
 
         adjust_factor = np.apply_along_axis(
-            self._core_vector, axis=0, arr=x, core_factor=core_factor
+            self._core_vector, axis=1, arr=x, core_factor=core_factor
         )
         adjusted_factor = 1 + adjust_factor / scale
 
@@ -394,6 +394,10 @@ class SampleWeight:
         modified: bool = False,
     ) -> np.ndarray:
 
+        if not isinstance(samp_weight, np.ndarray):
+            samp_weight = formats.numpy_array(samp_weight)
+        if not isinstance(x, np.ndarray):
+            x = formats.numpy_array(x)
         if isinstance(scale, (float, int)):
             scale = scale * np.ones(np.size(samp_weight))
 
@@ -434,7 +438,7 @@ class SampleWeight:
                 adjust_factor_d = self._calib_wgt(samp_weight_d, x_d, core_factor, scale_d)
                 adjust_factor = np.append(adjust_factor, adjust_factor_d)
 
-        return samp_weight * adjust_factor  # , adjusted_factor
+        return samp_weight * adjust_factor
 
     def trim(
         self,
