@@ -80,14 +80,6 @@ class SampleWeight:
 
         return deff_w
 
-    def extreme(self):
-
-        pass
-
-    def plot(self):
-
-        pass
-
     @staticmethod
     def _norm_adjustment(
         samp_weight: np.ndarray, control: Union[float, Dict]
@@ -184,10 +176,11 @@ class SampleWeight:
 
         resp_code = self._response(resp_status, resp_dict)
         samp_weight = formats.numpy_array(samp_weight)
-        adjust_class = formats.non_missing_array(adjust_class)
+        if adjust_class is not None:
+            adjust_class = formats.non_missing_array(adjust_class)
         adjusted_weight = np.ones(samp_weight.size) * np.nan
 
-        if adjust_class.size <= 1:
+        if adjust_class is None or adjust_class.size <= 1:
             adjust_factor, self.adjust_factor["__none__"] = self._adjust_factor(
                 samp_weight, resp_code
             )
@@ -292,11 +285,11 @@ class SampleWeight:
             raise AssertionError("control or factor must be specified.")
 
         if isinstance(control, dict):
-            if np.unique(domain) != np.unique(list(control.keys())):
+            if (np.unique(domain) != np.unique(list(control.keys()))).any():
                 raise ValueError("control dictionary keys do not much domain values.")
 
-        if control is None:
-            if np.unique(domain) != np.unique(list(factor.keys())):
+        if control is None and domain is not None:
+            if (np.unique(domain) != np.unique(list(factor.keys()))).any():
                 raise ValueError("factor dictionary keys do not much domain values.")
 
             sum_weight = np.sum(samp_weight)
@@ -443,9 +436,9 @@ class SampleWeight:
     def trim(
         self,
         samp_weight: np.ndarray,
-        trim_method: str,
-        trim_class: np.ndarray,
-        trim_level: Union[float, Dict[float, float]],
+        method: str,
+        threshold: Union[float, Dict[float, float]],
+        domain: np.ndarray = None,
     ) -> np.ndarray:
         """
         trim sample weight to reduce the influence of extreme weights. 
@@ -454,16 +447,16 @@ class SampleWeight:
             samp_weight (array) : Array of the pre-adjsutment sample 
             weight. This vector should contains numeric values.   
 
-            trim_method (string) : Name of the trimming method. 
+            method (string) : Name of the trimming method. 
             Possible values are: "threshold", "interquartile", and "?"
 
-            trim_class (array) : Array indicating the trimming class 
-            for each sample unit.
-
-            trim_level (int, float, dictionary) : A number defining 
+            threshold (int, float, dictionary) : A number defining 
             the threshold or a dictionnary mapping triming classes 
             to trimming thresholds. Depending on the trimming method, 
             this parameter may provide the 
+
+            domain (array) : Array indicating the trimming class 
+            for each sample unit.
 
         
         Returns:

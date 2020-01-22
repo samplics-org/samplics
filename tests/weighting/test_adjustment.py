@@ -26,7 +26,7 @@ response_map = dict({"in": 0, "rr": 1, "nr": 2, "uk": 3})
 design_wgt = income_sample["design_wgt"]
 
 
-"""Non-response adjustment WITHOUT adjustment classes"""
+# """Non-response adjustment WITHOUT adjustment classes"""
 sample_wgt_nr_without = SampleWeight()
 
 nr_wgt_without_adj_class = sample_wgt_nr_without.adjust(
@@ -143,3 +143,46 @@ def test_norm_wgt_with_class2():
         norm_wgt_wih_class_r = norm_wgt_wih_class2[region_id == region]
         response_code_r = response_code[region_id == region]
         assert np.isclose(np.sum(norm_wgt_wih_class_r), response_code_r.size)
+
+
+"""Postratification adjustment WITHOUT normalization class"""
+control_without = 50000
+sample_wgt_ps_without = SampleWeight()
+
+ps_wgt_wihout_class = sample_wgt_ps_without.poststratify(nr_wgt_without_adj_class, control_without)
+
+
+def test_poststratification_wgt_without_class():
+    assert np.isclose(np.sum(ps_wgt_wihout_class), control_without)
+
+
+"""Poststratification adjustment WITH normalization class"""
+region_ids = np.unique(region_id)
+control_with = dict(zip(region_ids, np.repeat(5000, region_ids.size)))
+sample_wgt_ps_with = SampleWeight()
+
+ps_wgt_wih_class = sample_wgt_ps_with.poststratify(
+    nr_wgt_without_adj_class, control_with, domain=region_id
+)
+
+
+def test_ps_wgt_with_class():
+    for region in region_ids:
+        ps_wgt_wih_class_r = ps_wgt_wih_class[region_id == region]
+        response_code_r = response_code[region_id == region]
+        respondents_r = response_code_r == np.ones(response_code_r.size)
+        assert np.isclose(np.sum(ps_wgt_wih_class_r), control_with[region])
+
+
+"""Trim - TODO """
+threshold_without = 50000
+sample_wgt_trim_without = SampleWeight()
+
+trim_wgt_wih_class = sample_wgt_trim_without.trim(
+    nr_wgt_without_adj_class, "median", threshold_without
+)
+
+
+# def test_trim_todo():
+#     assert trim_wgt_wih_class
+
