@@ -402,14 +402,14 @@ class SampleWeight:
             scale = scale * np.ones(np.size(samp_weight))
 
         x_weighted_total = np.sum(np.transpose(x) * samp_weight[:], axis=1)
-        core_factor = self._core_matrix(
-            samp_weight=samp_weight,
-            x=x,
-            x_weighted_total=x_weighted_total,
-            control=np.array(list(control.values())),
-            scale=scale,
-        )
         if domain is None:
+            core_factor = self._core_matrix(
+                samp_weight=samp_weight,
+                x=x,
+                x_weighted_total=x_weighted_total,
+                control=np.array(list(control.values())),
+                scale=scale,
+            )
             adjust_factor = self._calib_wgt(samp_weight, x, core_factor, scale)
         else:
             adjust_factor = []

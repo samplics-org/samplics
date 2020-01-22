@@ -70,45 +70,84 @@ def test_calibration_cat():
     ).all()
 
 
-aux_array, aux_dict = SampleWeight().calib_covariates(sample_cat, ["A", "B"], domain="Domain")
-print(aux_array)
+sample_cat_d = sample_cat.copy()
+aux_array_d, aux_dict_d = SampleWeight().calib_covariates(
+    sample_cat_d, ["A", "B"], domain="Domain"
+)
+# print(aux_array_d)
 
-aux_dict["D1"]["A1_&_B1"] = 20
-aux_dict["D1"]["A1_&_B2"] = 20
-aux_dict["D1"]["A1_&_B3"] = 27.5
-aux_dict["D1"]["A2_&_B1"] = 30
-aux_dict["D1"]["A2_&_B2"] = 75
-aux_dict["D1"]["A2_&_B3"] = 170
-aux_dict["D1"]["A3_&_B1"] = 85
-aux_dict["D1"]["A3_&_B2"] = 30
-aux_dict["D1"]["A3_&_B3"] = 100
-aux_dict["D1"]["A4_&_B1"] = 27.5
-aux_dict["D1"]["A4_&_B2"] = 82.5
-aux_dict["D1"]["A4_&_B3"] = 62.5
+aux_dict_d["D1"]["A1_&_B1"] = 20
+aux_dict_d["D1"]["A1_&_B2"] = 20
+aux_dict_d["D1"]["A1_&_B3"] = 27.5
+aux_dict_d["D1"]["A2_&_B1"] = 30
+aux_dict_d["D1"]["A2_&_B2"] = 75
+aux_dict_d["D1"]["A2_&_B3"] = 170
+aux_dict_d["D1"]["A3_&_B1"] = 85
+aux_dict_d["D1"]["A3_&_B2"] = 30
+aux_dict_d["D1"]["A3_&_B3"] = 100
+aux_dict_d["D1"]["A4_&_B1"] = 27.5
+aux_dict_d["D1"]["A4_&_B2"] = 82.5
+aux_dict_d["D1"]["A4_&_B3"] = 62.5
 
-aux_dict["D2"]["A1_&_B1"] = 40
-aux_dict["D2"]["A1_&_B2"] = 20
-aux_dict["D2"]["A1_&_B3"] = 27.5
-aux_dict["D2"]["A2_&_B1"] = 30
-aux_dict["D2"]["A2_&_B2"] = 75
-aux_dict["D2"]["A2_&_B3"] = 170
-aux_dict["D2"]["A3_&_B1"] = 85
-aux_dict["D2"]["A3_&_B2"] = 30
-aux_dict["D2"]["A3_&_B3"] = 100
-aux_dict["D2"]["A4_&_B1"] = 27.5
-aux_dict["D2"]["A4_&_B2"] = 82.5
-aux_dict["D2"]["A4_&_B3"] = 62.5
+aux_dict_d["D2"]["A1_&_B1"] = 40
+aux_dict_d["D2"]["A1_&_B2"] = 20
+aux_dict_d["D2"]["A1_&_B3"] = 27.5
+aux_dict_d["D2"]["A2_&_B1"] = 30
+aux_dict_d["D2"]["A2_&_B2"] = 75
+aux_dict_d["D2"]["A2_&_B3"] = 170
+aux_dict_d["D2"]["A3_&_B1"] = 85
+aux_dict_d["D2"]["A3_&_B2"] = 30
+aux_dict_d["D2"]["A3_&_B3"] = 100
+aux_dict_d["D2"]["A4_&_B1"] = 27.5
+aux_dict_d["D2"]["A4_&_B2"] = 82.5
+aux_dict_d["D2"]["A4_&_B3"] = 62.5
 
-# print(aux_dict)
+# print(aux_dict_d)
 # print(sample_cat.groupby(["Domain", "A", "B"]).sum())
 
-sample_cat["_calib_wgt"] = SampleWeight().calibrate(
-    sample_cat["wgt"], aux_array, control=aux_dict, domain="Domain"
+sample_cat_d["_calib_wgt"] = SampleWeight().calibrate(
+    sample_cat_d["wgt"], aux_array_d, control=aux_dict_d, domain=sample_cat_d["Domain"]
 )
-sample_cat["_calib_adjust_fct"] = sample_cat["_calib_wgt"] / sample_cat["wgt"]
-print(sample_cat.drop_duplicates())
+sample_cat_d["_calib_adjust_fct"] = sample_cat_d["_calib_wgt"] / sample_cat_d["wgt"]
+sample_cat_d.sort_values(by=["Domain", "A", "B"], inplace=True)
+# print(sample_cat_d.drop_duplicates(["Domain", "A", "B"]).head(25))
 
-exit()
+
+def test_calibration_cat_domain():
+    sample_cat_d.drop_duplicates(["Domain", "A", "B"], inplace=True)
+    sample_cat_d.sort_values(by=["Domain", "A", "B"], inplace=True)
+    assert np.isclose(
+        sample_cat_d["_calib_adjust_fct"].values,
+        np.array(
+            [
+                0.733333,
+                2.066667,
+                1.233333,
+                0.733333,
+                2.066667,
+                1.233333,
+                1.266667,
+                2.266667,
+                1.433333,
+                1.266667,
+                2.266667,
+                1.433333,
+                0.733333,
+                2.066667,
+                1.233333,
+                0.733333,
+                2.066667,
+                1.233333,
+                1.266667,
+                2.266667,
+                1.433333,
+                1.266667,
+                2.266667,
+                1.433333,
+            ]
+        ),
+    ).all()
+
 
 # All non-categorical
 sample_num = pd.DataFrame(
@@ -170,6 +209,63 @@ def test_calibration_num():
                 1.881192,
                 1.849638,
                 1.818084,
+            ]
+        ),
+    ).all()
+
+
+sample_num_d = sample_num.copy()
+# sample_num_d["A_wgt"] = sample_num_d["A"] * sample_num_d["benchmark"]
+# sample_num_d["B_wgt"] = sample_num_d["B"] * sample_num_d["benchmark"]
+# print(sample_num_d.groupby("Domain").sum())
+
+sample_num_d = sample_num.copy()
+aux_dict_d = {}
+aux_dict_d["D1"] = {"A": 1972.5, "B": 1677.5}
+aux_dict_d["D2"] = {"A": 1972.5, "B": 1677.5}
+# print(aux_dict_d)
+
+aux_array_num = sample_num[["A", "B"]]
+# print(aux_array_num.shape)
+
+sample_num_d["_calib_wgt"] = SampleWeight().calibrate(
+    sample_num_d["wgt"], aux_array_num, control=aux_dict_d, domain=sample_num_d["Domain"]
+)
+sample_num_d["_calib_adjust_fct"] = sample_num_d["_calib_wgt"] / sample_num_d["wgt"]
+# print(sample_num_d.drop_duplicates(["Domain", "A", "B"]))
+
+
+def test_calibration_num_domain():
+    sample_num_d.drop_duplicates(["Domain", "A", "B"], inplace=True)
+    sample_num_d.sort_values(by=["Domain", "A", "B"], inplace=True)
+    assert np.isclose(
+        sample_num_d["_calib_adjust_fct"].values,
+        np.array(
+            [
+                1.098316,
+                1.066762,
+                1.196633,
+                1.326503,
+                1.294949,
+                1.424819,
+                1.098316,
+                1.066762,
+                1.196633,
+                1.326503,
+                1.294949,
+                1.424819,
+                1.098316,
+                1.066762,
+                1.196633,
+                1.326503,
+                1.294949,
+                1.424819,
+                1.098316,
+                1.066762,
+                1.196633,
+                1.326503,
+                1.294949,
+                1.424819,
             ]
         ),
     ).all()
