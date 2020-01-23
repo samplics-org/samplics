@@ -97,9 +97,7 @@ class ReplicateWeight:
             psu_replicates[:, rep][psu_ids] = psus_counts
 
         ratio_sqrt = np.sqrt((1 - samp_rate) * sample_size / (number_psus - 1))
-        boot_coefs = (
-            1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
-        )
+        boot_coefs = 1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
 
         return boot_coefs
 
@@ -132,14 +130,10 @@ class ReplicateWeight:
             self.number_psus = np.unique(psu).size
             self.number_strata = self.number_psus // 2 + self.number_psus % 2
         else:
-            self.number_psus = np.unique(
-                np.array(list(zip(stratum, psu))), axis=0
-            ).shape[0]
+            self.number_psus = np.unique(np.array(list(zip(stratum, psu))), axis=0).shape[0]
             self.number_strata = np.unique(stratum).size
             if 2 * self.number_strata != self.number_psus:
-                raise AssertionError(
-                    "Number of psus must be twice the number of strata!"
-                )
+                raise AssertionError("Number of psus must be twice the number of strata!")
 
         if self.number_reps < self.number_strata:
             self.number_reps = self.number_strata
@@ -159,14 +153,11 @@ class ReplicateWeight:
         """Creates the brr replicate structure """
 
         if not (0 <= self.fay_coef < 1):
-            raise ValueError(
-                "The Fay coefficient must be greater or equal to 0 and lower than 1."
-            )
+            raise ValueError("The Fay coefficient must be greater or equal to 0 and lower than 1.")
         self._brr_number_reps(psu, stratum)
 
         self.rep_coefs = list(
-            (1 / (self.number_reps * pow(1 - self.fay_coef, 2)))
-            * np.ones(self.number_reps)
+            (1 / (self.number_reps * pow(1 - self.fay_coef, 2))) * np.ones(self.number_reps)
         )
 
         brr_coefs = hdd.hadamard(self.number_reps).astype(float)
@@ -196,9 +187,7 @@ class ReplicateWeight:
 
     def _jkn_replicates(self, psu, stratum):
 
-        self.rep_coefs = ((self.number_reps - 1) / self.number_reps) * np.ones(
-            self.number_reps
-        )
+        self.rep_coefs = ((self.number_reps - 1) / self.number_reps) * np.ones(self.number_reps)
 
         if stratum is None:
             psu_ids = np.unique(psu)
@@ -211,9 +200,7 @@ class ReplicateWeight:
                 psu_ids_s = np.unique(psu[stratum == s])
                 number_psus_s = psu_ids_s.size
                 end = start + number_psus_s
-                jk_coefs[start:end, start:end] = self._jkn_psus_replicates(
-                    number_psus_s
-                )
+                jk_coefs[start:end, start:end] = self._jkn_psus_replicates(number_psus_s)
                 self.rep_coefs[start:end] = (number_psus_s - 1) / number_psus_s
                 start = end
 
@@ -260,9 +247,7 @@ class ReplicateWeight:
             strata = np.repeat(range(1, psus.size // 2 + 1), 2)
             stratum_psu = pd.DataFrame({str_varname: strata, psu_varname: psus})
             psu_pd = pd.DataFrame({psu_varname: psu})
-            stratum_psu = pd.merge(
-                psu_pd, stratum_psu, on=psu_varname, how="left", sort=False
-            )
+            stratum_psu = pd.merge(psu_pd, stratum_psu, on=psu_varname, how="left", sort=False)
             stratum_psu = stratum_psu[[str_varname, psu_varname]]
             key = [str_varname, psu_varname]
         else:
@@ -279,8 +264,7 @@ class ReplicateWeight:
         elif self.method == "brr":
             _rep_data = self._brr_replicates(psu, stratum)
             self.rep_coefs = list(
-                (1 / self.number_reps * pow(1 - self.fay_coef, 2))
-                * np.ones(self.number_reps)
+                (1 / self.number_reps * pow(1 - self.fay_coef, 2)) * np.ones(self.number_reps)
             )
         else:
             raise AssertionError(
@@ -298,9 +282,7 @@ class ReplicateWeight:
 
         if not rep_coefs:
             rep_cols = [col for col in full_sample if col.startswith(rep_prefix)]
-            full_sample[rep_cols] = full_sample[rep_cols].mul(
-                sample_weight.values, axis=0
-            )
+            full_sample[rep_cols] = full_sample[rep_cols].mul(sample_weight.values, axis=0)
 
         return full_sample
 
