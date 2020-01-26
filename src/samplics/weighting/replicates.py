@@ -3,7 +3,7 @@ from typing import Optional, Any, Union, Dict, Tuple
 import numpy as np
 import pandas as pd
 
-import mathgit a
+import math
 
 from samplics.utils import checks, formats, hadamard as hdd
 
@@ -140,7 +140,7 @@ class ReplicateWeight:
             self.number_reps = self.number_strata
 
         if self.number_reps <= 28:
-            if self.number_reps // 4 != 0:
+            if self.number_reps % 4 != 0:
                 self.number_reps = 4 * (self.number_reps // 4 + 1)
         else:
             nb_reps_log2 = int(math.log(self.number_reps, 2))

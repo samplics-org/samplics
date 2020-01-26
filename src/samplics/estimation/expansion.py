@@ -48,11 +48,15 @@ class _SurveyEstimator:
         self.rep_coefs = None
 
     def __str__(self):
+        print(f"SAMPLICS - Estimation of {self.parameter.title()}\n")
+        print(f"Number of strata: {self.number_strata}")
+        print(f"Number of psus: {self.number_psus}")
+        print(f"Degree of freedom: {self.degree_of_freedom}\n")
         parameter = self.parameter.upper()
         estimation = pd.DataFrame()
         estimation["DOMAINS"] = self.domains
         estimation[parameter] = self.point_est.values()
-        estimation["SE"] = math.pow(self.variance.values(), 0.5)
+        estimation["SE"] = self.stderror.values()
         estimation["LCI"] = self.lower_ci.values()
         estimation["UCI"] = self.upper_ci.values()
         estimation["CV"] = self.coef_var.values()
@@ -63,18 +67,10 @@ class _SurveyEstimator:
         return self.__str__()
 
     def _exclude_nans(
-        self,
-        excluded_units,
-        y,
-        sample_weight,
-        x=None,
-        stratum=None,
-        domain=None,
-        psu=None,
-        ssu=None,
+        self, excluded_units, y, samp_weight, x=None, stratum=None, domain=None, psu=None, ssu=None
     ):
         y = formats.numpy_array(y)
-        sample_weight = formats.numpy_array(sample_weight)
+        samp_weight = formats.numpy_array(samp_weight)
         if x is not None:
             x = formats.numpy_array(x)
             x = x[~excluded_units]
@@ -91,46 +87,42 @@ class _SurveyEstimator:
             ssu = formats.numpy_array(ssu)
             ssu = ssu[~excluded_units]
 
-        return (
-            y[~excluded_units],
-            sample_weight[~excluded_units],
-            x,
-            stratum,
-            domain,
-            psu,
-            ssu,
-        )
+        return (y[~excluded_units], samp_weight[~excluded_units], x, stratum, domain, psu, ssu)
 
-    def _degree_of_freedom(self, sample_weight, stratum=None, psu=None):
+    def _degree_of_freedom(self, samp_weight, stratum=None, psu=None):
 
         stratum = formats.numpy_array(stratum)
         psu = formats.numpy_array(psu)
 
         if stratum.size <= 1:
-            self.degree_of_freedom = np.unique(psu).size - 1
+            self.number_psus = np.unique(psu).size
+            self.number_strata = 1
         elif psu.size > 1:
-            self.degree_of_freedom = np.unique(psu).size - np.unique(stratum).size
+            self.number_psus = np.unique([stratum, psu], axis=1).shape[1]
+            self.number_strata = np.unique(stratum).size
         else:
-            sample_weight = formats.numpy_array(sample_weight)
-            self.degree_of_freedom = sample_weight.size
+            samp_weight = formats.numpy_array(samp_weight)
+            self.degree_of_freedom = samp_weight.size
 
-    def _get_point(self, y, sample_weight, x=None):
+        self.degree_of_freedom = self.number_psus - self.number_strata
+
+    def _get_point(self, y, samp_weight, x=None):
 
         if self.parameter in ("proportion", "mean"):
-            return np.sum(sample_weight * y) / np.sum(sample_weight)
+            return np.sum(samp_weight * y) / np.sum(samp_weight)
         elif self.parameter == "total":
-            return np.sum(sample_weight * y)
+            return np.sum(samp_weight * y)
         elif self.parameter == "ratio":
-            return np.sum(sample_weight * y) / np.sum(sample_weight * x)
+            return np.sum(samp_weight * y) / np.sum(samp_weight * x)
 
-    def get_point(self, y, sample_weight, x=None, domain=None, exclude_nan=False):
+    def get_point(self, y, samp_weight, x=None, domain=None, exclude_nan=False):
         """Computes the parameter point estimates
 
         Args:
 
         y:
 
-        sample_weight:
+        samp_weight:
 
         domain:
 
@@ -147,8 +139,8 @@ class _SurveyEstimator:
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, sample_weight, x, _, domain, _, _ = self._exclude_nans(
-                excluded_units, y, sample_weight, x, domain=domain
+            y, samp_weight, x, _, domain, _, _ = self._exclude_nans(
+                excluded_units, y, samp_weight, x, domain=domain
             )
 
         if self.parameter == "proportion":
@@ -162,15 +154,15 @@ class _SurveyEstimator:
                 cat_dict = dict()
                 for k in range(categories.size):
                     y_k = y_dummies[:, k]
-                    cat_dict_k = dict({categories[k]: self._get_point(y_k, sample_weight)})
+                    cat_dict_k = dict({categories[k]: self._get_point(y_k, samp_weight)})
                     cat_dict.update(cat_dict_k)
                 estimate["__none__"] = cat_dict
             else:
-                estimate["__none__"] = self._get_point(y, sample_weight, x)
+                estimate["__none__"] = self._get_point(y, samp_weight, x)
         else:
             domain_ids = np.unique(domain)
             for d in domain_ids:
-                weight_d = sample_weight[domain == d]
+                weight_d = samp_weight[domain == d]
                 if self.parameter == "proportion":
                     cat_dict = dict()
                     for k in range(categories.size):
@@ -197,19 +189,19 @@ class TaylorEstimator(_SurveyEstimator):
         if self.parameter == "proportion":
             self.ciprop_method = ciprop_method
 
-    def _score_variable(self, y, sample_weight, x=None):
+    def _score_variable(self, y, samp_weight, x=None):
         """Provides the scores used to calculate the variance
         """
 
-        y_weighted = y * sample_weight
+        y_weighted = y * samp_weight
         if self.parameter in ("proportion", "mean"):
-            scale_weights = np.sum(sample_weight)
+            scale_weights = np.sum(samp_weight)
             location_weights = np.sum(y_weighted) / scale_weights
-            return sample_weight * (y - location_weights) / scale_weights
+            return samp_weight * (y - location_weights) / scale_weights
         elif self.parameter == "ratio":
-            weighted_sum_x = np.sum(x * sample_weight)
+            weighted_sum_x = np.sum(x * samp_weight)
             weighted_ratio = np.sum(y_weighted) / weighted_sum_x
-            return sample_weight * (y - x * weighted_ratio) / weighted_sum_x
+            return samp_weight * (y - x * weighted_ratio) / weighted_sum_x
         else:  # self.parameter == "total":
             return y_weighted
 
@@ -281,7 +273,7 @@ class TaylorEstimator(_SurveyEstimator):
     def get_variance(
         self,
         y,
-        sample_weight,
+        samp_weight,
         x=None,
         stratum=None,
         psu=None,
@@ -295,7 +287,7 @@ class TaylorEstimator(_SurveyEstimator):
 
         y:
 
-        sample_weight:
+        samp_weight:
 
         domains:
 
@@ -312,8 +304,8 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, sample_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
-                excluded_units, y, sample_weight, x, stratum, domain, psu, ssu
+            y, samp_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
+                excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
             )
 
         if self.parameter == "proportion":
@@ -326,19 +318,19 @@ class TaylorEstimator(_SurveyEstimator):
             if self.parameter == "proportion":
                 cat_dict = dict()
                 for k in range(categories.size):
-                    y_score_k = self._score_variable(y_dummies[:, k], sample_weight)
+                    y_score_k = self._score_variable(y_dummies[:, k], samp_weight)
                     cat_dict_k = dict(
                         {categories[k]: self._taylor_variance(y_score_k, stratum, psu, ssu)}
                     )
                     cat_dict.update(cat_dict_k)
                 variance["__none__"] = cat_dict
             else:
-                y_score = self._score_variable(y, sample_weight, x)
+                y_score = self._score_variable(y, samp_weight, x)
                 variance[self.domains] = self._taylor_variance(y_score, stratum, psu, ssu)
 
         else:
             for d in np.unique(domain):
-                weight_d = sample_weight * (domain == d)
+                weight_d = samp_weight * (domain == d)
                 if self.parameter == "ratio":
                     x_d = x * (domain == d)
                 else:
@@ -363,7 +355,7 @@ class TaylorEstimator(_SurveyEstimator):
     def get_confint(
         self,
         y,
-        sample_weight,
+        samp_weight,
         x=None,
         stratum=None,
         psu=None,
@@ -377,7 +369,7 @@ class TaylorEstimator(_SurveyEstimator):
 
         y:
 
-        sample_weight:
+        samp_weight:
 
         domain:
 
@@ -394,16 +386,16 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, sample_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
-                excluded_units, y, sample_weight, x, stratum, domain, psu, ssu
+            y, samp_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
+                excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
             )
 
-        self._degree_of_freedom(sample_weight, stratum, psu)
+        self._degree_of_freedom(samp_weight, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
         # t_quantile = normal.ppf(1 - self.alpha / 2)
 
-        estimate = self.get_point(y, sample_weight, x, domain)
-        variance = self.get_variance(y, sample_weight, x, stratum, psu, ssu, domain)
+        estimate = self.get_point(y, samp_weight, x, domain)
+        variance = self.get_variance(y, samp_weight, x, stratum, psu, ssu, domain)
 
         lower_ci = {}
         upper_ci = {}
@@ -431,7 +423,7 @@ class TaylorEstimator(_SurveyEstimator):
     def get_coefvar(
         self,
         y,
-        sample_weight,
+        samp_weight,
         x=None,
         stratum=None,
         psu=None,
@@ -445,7 +437,7 @@ class TaylorEstimator(_SurveyEstimator):
 
         y:
 
-        sample_weight:
+        samp_weight:
 
         domain:
 
@@ -462,12 +454,12 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, sample_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
-                excluded_units, y, sample_weight, x, stratum, domain, psu, ssu
+            y, samp_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
+                excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
             )
 
-        estimate = self.get_point(y, sample_weight, x, domain)
-        variance = self.get_variance(y, sample_weight, x, stratum, psu, ssu, domain)
+        estimate = self.get_point(y, samp_weight, x, domain)
+        variance = self.get_variance(y, samp_weight, x, stratum, psu, ssu, domain)
 
         coef_var = {}
         for key in variance:
@@ -484,7 +476,7 @@ class TaylorEstimator(_SurveyEstimator):
     def estimate(
         self,
         y,
-        sample_weight,
+        samp_weight,
         x=None,
         stratum=None,
         psu=None,
@@ -517,8 +509,8 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, sample_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
-                excluded_units, y, sample_weight, x, stratum, domain, psu, ssu
+            y, samp_weight, x, stratum, domain, psu, ssu = self._exclude_nans(
+                excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
             )
 
         if stratum is not None:
@@ -526,10 +518,10 @@ class TaylorEstimator(_SurveyEstimator):
         if domain is not None:
             self.domains = np.unique(domain).tolist()
 
-        self.point_est = self.get_point(y, sample_weight, x, domain)
-        self.variance = self.get_variance(y, sample_weight, x, stratum, psu, ssu, domain)
+        self.point_est = self.get_point(y, samp_weight, x, domain)
+        self.variance = self.get_variance(y, samp_weight, x, stratum, psu, ssu, domain)
 
-        self._degree_of_freedom(sample_weight, stratum, psu)
+        self._degree_of_freedom(samp_weight, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
         for key in self.variance:
@@ -555,12 +547,8 @@ class TaylorEstimator(_SurveyEstimator):
                 self.upper_ci[key] = upper_ci
             else:
                 self.stderror[key] = pow(self.variance[key], 0.5)
-                self.lower_ci[key] = self.point_est[key] - t_quantile * pow(
-                    self.variance[key], 0.5
-                )
-                self.upper_ci[key] = self.point_est[key] + t_quantile * pow(
-                    self.variance[key], 0.5
-                )
+                self.lower_ci[key] = self.point_est[key] - t_quantile * self.stderror[key]
+                self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
                 self.coef_var[key] = pow(self.variance[key], 0.5) / self.point_est[key]
 
         return self

@@ -56,13 +56,9 @@ class ReplicateEstimator(_SurveyEstimator):
             self.degree_of_freedom = rep_weight_cls.degree_of_freedom
             self.fay_coef = rep_weight_cls.fay_coef if self.method == "brr" else None
 
-    def _rep_point(
-        self, y: np.ndarray, rep_weights: np.ndarray, x: np.ndarray
-    ) -> np.ndarray:
+    def _rep_point(self, y: np.ndarray, rep_weights: np.ndarray, x: np.ndarray) -> np.ndarray:
         if self.parameter in ("proportion", "mean"):
-            return np.sum(rep_weights * y[:, None], axis=0) / np.sum(
-                rep_weights, axis=0
-            )
+            return np.sum(rep_weights * y[:, None], axis=0) / np.sum(rep_weights, axis=0)
         elif self.parameter == "total":
             return np.sum(rep_weights * y[:, None], axis=0)
         elif self.parameter == "ratio":
@@ -71,14 +67,10 @@ class ReplicateEstimator(_SurveyEstimator):
             )
 
     def _bias(
-        self,
-        y: np.ndarray,
-        sample_weight: np.ndarray,
-        rep_weights: np.ndarray,
-        x: np.ndarray,
+        self, y: np.ndarray, samp_weight: np.ndarray, rep_weights: np.ndarray, x: np.ndarray
     ) -> float:
 
-        estimate = self.get_point(y, sample_weight, x).get("__none__")
+        estimate = self.get_point(y, samp_weight, x).get("__none__")
         rep_estimates = self._rep_point(y, rep_weights, x)
 
         return float(np.sum(np.mean(rep_estimates) - estimate))
@@ -93,9 +85,9 @@ class ReplicateEstimator(_SurveyEstimator):
         elif self.rep_coefs is None and self.method == "bootstrap":
             self.rep_coefs = (1 / self.number_reps) * np.ones(self.number_reps)
         elif self.rep_coefs is None and self.method == "brr":
-            self.rep_coefs = (
-                1 / (self.number_reps * pow(1 - self.fay_coef, 2))
-            ) * np.ones(self.number_reps)
+            self.rep_coefs = (1 / (self.number_reps * pow(1 - self.fay_coef, 2))) * np.ones(
+                self.number_reps
+            )
         elif self.rep_coefs is None and self.method == "jackknife":
             self.rep_coefs = ((self.number_reps - 1) / self.number_reps) * np.ones(
                 self.number_reps
@@ -117,20 +109,13 @@ class ReplicateEstimator(_SurveyEstimator):
             pseudo_estimates = jk_factor * estimate - (jk_factor - 1) * rep_estimates
             if conservative:
                 variance = float(
-                    np.sum(
-                        rep_coefs
-                        * pow((pseudo_estimates - estimate) / (jk_factor - 1), 2)
-                    )
+                    np.sum(rep_coefs * pow((pseudo_estimates - estimate) / (jk_factor - 1), 2))
                 )
             elif not conservative:
                 variance = float(
                     np.sum(
                         rep_coefs
-                        * pow(
-                            (pseudo_estimates - np.mean(pseudo_estimates))
-                            / (jk_factor - 1),
-                            2,
-                        )
+                        * pow((pseudo_estimates - np.mean(pseudo_estimates)) / (jk_factor - 1), 2)
                     )
                 )
         else:
@@ -145,7 +130,7 @@ class ReplicateEstimator(_SurveyEstimator):
     def _get_bias(
         self,
         y: np.ndarray,
-        sample_weight: np.ndarray,
+        samp_weight: np.ndarray,
         rep_weights: np.ndarray,
         x: Optional[np.ndarray] = None,
         domain: np.ndarray = None,
@@ -157,7 +142,7 @@ class ReplicateEstimator(_SurveyEstimator):
         Args:
             y (array) : 
 
-            sample_Weight (array):
+            samp_weight (array):
 
             re_weights (array):
 
@@ -172,8 +157,8 @@ class ReplicateEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, sample_weight, x, stratum, domain, _, _ = self._exclude_nans(
-                excluded_units, y, sample_weight, x, None, domain, None, None
+            y, samp_weight, x, stratum, domain, _, _ = self._exclude_nans(
+                excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
 
@@ -190,17 +175,17 @@ class ReplicateEstimator(_SurveyEstimator):
                     cat_dict_k = dict(
                         {
                             categories[k]: self._bias(
-                                y_dummies[:, k], sample_weight, rep_weights, None
+                                y_dummies[:, k], samp_weight, rep_weights, None
                             )
                         }
                     )
                     cat_dict.update(cat_dict_k)
                 bias["__none__"] = cat_dict
             else:
-                bias["__none__"] = self._bias(y, sample_weight, rep_weights, x)
+                bias["__none__"] = self._bias(y, samp_weight, rep_weights, x)
         else:
             for d in np.unique(domain):
-                sample_weight_d = sample_weight * (domain == d)
+                samp_weight_d = samp_weight * (domain == d)
                 rep_weights_d = rep_weights * (domain == d)[:, None]
                 if self.parameter == "ratio":
                     x_d = x * (domain == d)
@@ -213,10 +198,7 @@ class ReplicateEstimator(_SurveyEstimator):
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._bias(
-                                    y_dummies_d[:, k],
-                                    sample_weight_d,
-                                    rep_weights,
-                                    None,
+                                    y_dummies_d[:, k], samp_weight_d, rep_weights, None
                                 )
                             }
                         )
@@ -224,14 +206,14 @@ class ReplicateEstimator(_SurveyEstimator):
                     bias[d] = cat_dict
                 else:
                     y_d = y * (domain == d)
-                    bias[d] = self._bias(y_d, sample_weight_d, rep_weights, x_d)
+                    bias[d] = self._bias(y_d, samp_weight_d, rep_weights, x_d)
 
         return bias
 
     def _get_variance(
         self,
         y: np.ndarray,
-        sample_weight: np.ndarray,
+        samp_weight: np.ndarray,
         rep_weights: np.ndarray,
         rep_coefs: np.ndarray,
         x: np.ndarray = None,
@@ -245,7 +227,7 @@ class ReplicateEstimator(_SurveyEstimator):
         Args:
             y (array) : 
 
-            sample_Weight (array):
+            samp_weight (array):
 
             rep_weights (array):
 
@@ -267,9 +249,7 @@ class ReplicateEstimator(_SurveyEstimator):
             if self.parameter == "proportion":
                 cat_dict = dict()
                 for k in range(categories.size):
-                    estimate_k = self.get_point(y_dummies[:, k], sample_weight, x)[
-                        "__none__"
-                    ][1]
+                    estimate_k = self.get_point(y_dummies[:, k], samp_weight, x)["__none__"][1]
                     cat_dict_k = dict(
                         {
                             categories[k]: self._variance(
@@ -285,13 +265,13 @@ class ReplicateEstimator(_SurveyEstimator):
                     cat_dict.update(cat_dict_k)
                 variance["__none__"] = cat_dict
             else:
-                estimate = self.get_point(y, sample_weight, x).get("__none__")
+                estimate = self.get_point(y, samp_weight, x).get("__none__")
                 variance["__none__"] = self._variance(
                     y, rep_weights, rep_coefs, x, estimate, conservative
                 )
         else:
             for d in np.unique(domain):
-                sample_weight_d = sample_weight * (domain == d)
+                samp_weight_d = samp_weight * (domain == d)
                 rep_weights_d = rep_weights * (domain == d)[:, None]
                 if self.parameter == "ratio":
                     x_d = x * (domain == d)
@@ -301,9 +281,9 @@ class ReplicateEstimator(_SurveyEstimator):
                     y_dummies_d = y_dummies * (domain == d)[:, None]
                     cat_dict = dict()
                     for k in range(categories.size):
-                        estimate_d_k = self.get_point(
-                            y_dummies_d[:, k], sample_weight_d, x_d
-                        ).get("__none__")[1]
+                        estimate_d_k = self.get_point(y_dummies_d[:, k], samp_weight_d, x_d).get(
+                            "__none__"
+                        )[1]
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._variance(
@@ -320,9 +300,7 @@ class ReplicateEstimator(_SurveyEstimator):
                     variance[d] = cat_dict
                 else:
                     y_d = y * (domain == d)
-                    estimate_d = self.get_point(y_d, sample_weight_d, x_d).get(
-                        "__none__"
-                    )
+                    estimate_d = self.get_point(y_d, samp_weight_d, x_d).get("__none__")
                     variance[d] = self._variance(
                         y_d, rep_weights_d, rep_coefs, x_d, estimate_d, conservative
                     )
@@ -387,9 +365,7 @@ class ReplicateEstimator(_SurveyEstimator):
             if parameter == "proportion":
                 coef_var_k = {}
                 for level in variance[key]:
-                    coef_var_k[level] = (
-                        pow(variance[key][level], 0.5) / estimate[key][level]
-                    )
+                    coef_var_k[level] = pow(variance[key][level], 0.5) / estimate[key][level]
                 coef_var[key] = coef_var_k
             else:
                 coef_var[key] = pow(variance[key], 0.5) / estimate[key]
@@ -399,7 +375,7 @@ class ReplicateEstimator(_SurveyEstimator):
     def estimate(
         self,
         y: np.ndarray,
-        sample_weight: np.ndarray,
+        samp_weight: np.ndarray,
         rep_weights: np.ndarray,
         x: Optional[np.ndarray] = None,
         rep_coefs: Optional[Union[float, np.ndarray]] = None,
@@ -414,7 +390,7 @@ class ReplicateEstimator(_SurveyEstimator):
 
             y:
 
-            sample_weights:
+            samp_weights:
 
             rep_weights: 
 
@@ -428,13 +404,16 @@ class ReplicateEstimator(_SurveyEstimator):
         if self.parameter == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
+        if not isinstance(rep_weights, np.ndarray):
+            rep_weights = formats.numpy_array(rep_weights)
+
         if exclude_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, sample_weight, x, _, domain, _, _ = self._exclude_nans(
-                excluded_units, y, sample_weight, x, None, domain, None, None
+            y, samp_weight, x, _, domain, _, _ = self._exclude_nans(
+                excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
 
@@ -448,10 +427,10 @@ class ReplicateEstimator(_SurveyEstimator):
         if domain is not None:
             self.domains = np.unique(domain)
 
-        self.point_est = self.get_point(y, sample_weight, x, domain)
+        self.point_est = self.get_point(y, samp_weight, x, domain)
         self.variance = self._get_variance(
             y,
-            sample_weight,
+            samp_weight,
             rep_weights,
             np.array(self.rep_coefs),
             x,
