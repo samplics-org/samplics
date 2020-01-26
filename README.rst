@@ -14,10 +14,10 @@ sampling techniques for complex survey designs.
 
 Selection
 ================
-Since the full population cannot be observed, a sample of units is selected
-to estimate parameters of interest from the population. The assumption is
-that the sample **representative** of the population for the characteristics
-of interest.
+Since the full population cannot be observed, a sample is selected
+to estimate population parameters of interest. The assumption is
+that the sample is **representative** of the population for the characteristics
+of interest. The selection methods in samplics are:
 
 * Simple random sampling (SRS)
 * Systematic selection (SYS)
@@ -31,10 +31,10 @@ of interest.
 
 Weighting
 =========
-Sample weighting is the main mechanism used in surveys to fromalize the
+Sample weighting is the main mechanism used in surveys to formalize the
 representivity of the sample. The base or design weights are usually
 adjusted to compensate for distorsions due nonresponse and other shorcomings
-of the sample.
+of the operationalization of the sampling design.
 
 * Weight adjustment due to nonresponse
 * Weight poststratification, calibration and normalization
@@ -47,6 +47,7 @@ mechanism and the weight adjustments.
 
  * Taylor linearization procedures
  * Replicate-based estimation i.e. Boostrap, BRR, and Jackknife
+ * Regression-based
 
 Parameters of interest
 * Linear parameters e.g. total, mean, proportion
@@ -107,6 +108,27 @@ we can use a code similar to:
         resp_status=full_sample["response_status"],
         resp_dict=status_mapping
         )
+
+.. code:: python
+
+    import samplics
+    from samplics.estimation import TaylorEstimation, ReplicateEstimator
+
+    zinc_mean_str = TaylorEstimator("mean").estimate(
+        y=nhanes2f["zinc"], 
+        samp_weight=nhanes2f["finalwgt"], 
+        stratum=nhanes2f["stratid"], 
+        psu=nhanes2f["psuid"], 
+        exclude_nan=True
+    )
+
+    ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
+        y=nhanes2brr["weight"], 
+        samp_weight=nhanes2brr["finalwgt"], 
+        x=nhanes2brr["height"],
+        rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
+        exclude_nan = True
+    )
 
 
 Contributing
