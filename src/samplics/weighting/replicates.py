@@ -24,7 +24,7 @@ class ReplicateWeight:
         random_seed: int = None,
     ):
 
-        self.method = method
+        self.method = method.lower()
         self.stratification = stratification
         if self.method == "bootstrap":
             self.number_reps = number_reps
@@ -33,7 +33,6 @@ class ReplicateWeight:
             self.number_reps = number_reps
             self.fay_coef = fay_coef
 
-        self.number_reps = 0
         self.number_psus = 0
         self.number_strata = 0
         self.rep_coefs = []
@@ -54,16 +53,18 @@ class ReplicateWeight:
 
     def _rep_prefix(self, prefix):
 
-        if self.method == "jackknife":
+        if self.method == "jackknife" and prefix is None:
             rep_prefix = "_jk_wgt_"
-        elif self.method == "bootstrap":
+        elif self.method == "bootstrap" and prefix is None:
             rep_prefix = "_boot_wgt_"
-        elif self.method == "brr":
+        elif self.method == "brr" and prefix is None:
             rep_prefix = "_brr_wgt_"
-        elif self.method == "brr" and self.fay_coef > 0:
+        elif self.method == "brr" and self.fay_coef > 0 and prefix is None:
             rep_prefix = "_fay_wgt_"
-        else:
+        elif prefix is None:
             rep_prefix = "_rep_wgt_"
+        else:
+            rep_prefix = prefix
 
         return rep_prefix
 
@@ -140,17 +141,22 @@ class ReplicateWeight:
 
         # scipy.linalg.hadamard only produce hadamard matrices of order 2**k
         # Hence, number_reps has to be of the form 2**k
-        # This can be revisited when Hadamard matrices of size 4k will be feasible witj scipy
+        # This can be revisited when Hadamard matrices of size 4k will be feasible with scipy
         # number_mod = 0 if number_reps % 4 == 0 else 4
         # number_reps = 4 * (number_reps // 4) + number_mod
-        nb_reps_log2 = int(math.log(self.number_reps, 2))
-        if math.pow(2, nb_reps_log2) != self.number_reps:
-            self.number_reps = int(math.pow(2, nb_reps_log2 + 1))
+
+        if self.number_reps <= 28:
+            if self.number_reps // 4 != 0:
+                self.number_reps = 4 * (self.number_reps // 4 + 1)
+        else:
+            nb_reps_log2 = int(math.log(self.number_reps, 2))
+            if math.pow(2, nb_reps_log2) != self.number_reps:
+                self.number_reps = int(math.pow(2, nb_reps_log2 + 1))
 
         return self
 
     def _brr_replicates(self, psu, stratum):
-        """Creates the brr replicate structure """
+        """Creates the brr replicate structure"""
 
         if not (0 <= self.fay_coef < 1):
             raise ValueError("The Fay coefficient must be greater or equal to 0 and lower than 1.")
@@ -161,7 +167,7 @@ class ReplicateWeight:
         )
 
         brr_coefs = hdd.hadamard(self.number_reps).astype(float)
-        brr_coefs = brr_coefs[:, 0 : self.number_strata]
+        brr_coefs = brr_coefs[:, 1 : self.number_strata + 1]
         brr_coefs = np.repeat(brr_coefs, 2, axis=1)
         for r in np.arange(self.number_reps):
             for h in np.arange(self.number_strata):
@@ -210,7 +216,7 @@ class ReplicateWeight:
 
     def replicate(
         self,
-        sample_weight,
+        samp_weight,
         psu,
         stratum=None,
         rep_coefs=False,
@@ -228,17 +234,18 @@ class ReplicateWeight:
             A ndarray (matrix): .
         """
 
-        sample_weight = formats.numpy_array(sample_weight)
+        samp_weight = formats.numpy_array(samp_weight)
 
         if not self.stratification:
             stratum = None
 
-        self._degree_of_freedom(sample_weight, stratum, psu)
+        self._degree_of_freedom(samp_weight, stratum, psu)
 
         if self.stratification and stratum is None:
             raise AssertionError("For a stratified design, stratum must be specified.")
         elif stratum is not None:
             stratum_psu = pd.DataFrame({str_varname: stratum, psu_varname: psu})
+            stratum_psu.sort_values(by=str_varname, inplace=True)
             key = [str_varname, psu_varname]
         elif self.method == "brr":
             _, str_index = np.unique(psu, return_index=True)
@@ -268,21 +275,20 @@ class ReplicateWeight:
             )
         else:
             raise AssertionError(
-                "Replication method not recognized. Possible options are: \
-                'bootstrap', 'brr', and 'jackknife'"
+                "Replication method not recognized. Possible options are: 'bootstrap', 'brr', and 'jackknife'"
             )
 
         rep_prefix = self._rep_prefix(rep_prefix)
         _rep_data = self._reps_to_dataframe(psus_ids, _rep_data, rep_prefix)
 
-        sample_weight = pd.DataFrame({"sample_weight": sample_weight})
-        sample_weight.reset_index(drop=True, inplace=True)
-        full_sample = pd.concat([stratum_psu, sample_weight], axis=1)
+        samp_weight = pd.DataFrame({"_samp_weight": samp_weight})
+        samp_weight.reset_index(drop=True, inplace=True)
+        full_sample = pd.concat([stratum_psu, samp_weight], axis=1)
         full_sample = pd.merge(full_sample, _rep_data, on=key, how="left", sort=False)
 
         if not rep_coefs:
             rep_cols = [col for col in full_sample if col.startswith(rep_prefix)]
-            full_sample[rep_cols] = full_sample[rep_cols].mul(sample_weight.values, axis=0)
+            full_sample[rep_cols] = full_sample[rep_cols].mul(samp_weight.values, axis=0)
 
         return full_sample
 

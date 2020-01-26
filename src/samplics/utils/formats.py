@@ -46,12 +46,18 @@ def array_to_dict(arr: np.ndarray, domain: np.array = None) -> Dict:
 
 def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 
-    nb_vars = df.shape[1]
-    varlist = df.columns
-    x_concat = df[varlist[0]]
-    if nb_vars > 1:
-        for k in range(1, nb_vars):
-            x_concat = x_concat.astype(str) + "_&_" + df[varlist[k]].astype(str)
+    if isinstance(df, pd.Series):
+        x_concat = df
+    elif isinstance(df, pd.DataFrame):
+        nb_vars = df.shape[1]
+        varlist = df.columns
+        x_concat = df[varlist[0]]
+        if nb_vars > 1:
+            for k in range(1, nb_vars):
+                x_concat = x_concat.astype(str) + "_&_" + df[varlist[k]].astype(str)
+    else:
+        raise AssertionError("The input data is not a pandas dataframe")
+
     x_concat.rename(columns="_array", inplace=True)
 
     return x_concat

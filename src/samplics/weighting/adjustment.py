@@ -110,7 +110,7 @@ class SampleWeight:
 
     @staticmethod
     def _adjust_factor(
-        samp_weight: np.ndarray, resp_code: np.ndarray
+        samp_weight: np.ndarray, resp_code: np.ndarray, unknown_to_inelig: bool
     ) -> Tuple[np.ndarray, np.ndarray]:
 
         in_sample = resp_code == "in"  # ineligible
@@ -123,12 +123,18 @@ class SampleWeight:
         nr_weights_sum = np.sum(samp_weight[nr_sample])
         uk_weights_sum = np.sum(samp_weight[uk_sample])
 
-        adjust_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
+        if unknown_to_inelig:
+            adjust_uk = (in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum) / (
+                in_weights_sum + rr_weights_sum + nr_weights_sum
+            )
+            adjust_rr = (rr_weights_sum + nr_weights_sum) / rr_weights_sum
+        else:
+            adjust_uk = 1
+            adjust_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
 
-        adjust_factor = np.ones(samp_weight.size)  # ineligibles will get 1 by default
-        adjust_factor[rr_sample] = adjust_rr
-        adjust_factor[nr_sample] = 0
-        adjust_factor[uk_sample] = 0
+        adjust_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 1 by default
+        adjust_factor[rr_sample] = adjust_rr * adjust_uk
+        adjust_factor[in_sample] = adjust_uk
 
         return adjust_factor, adjust_rr
 
@@ -138,6 +144,7 @@ class SampleWeight:
         adjust_class: np.ndarray,
         resp_status: np.ndarray,
         resp_dict: Dict = None,
+        unknown_to_inelig: bool = True,
     ) -> np.ndarray:
         """
         adjust sample weight to account for non-response. 
@@ -176,23 +183,32 @@ class SampleWeight:
 
         resp_code = self._response(resp_status, resp_dict)
         samp_weight = formats.numpy_array(samp_weight)
-        if adjust_class is not None:
-            adjust_class = formats.non_missing_array(adjust_class)
         adjusted_weight = np.ones(samp_weight.size) * np.nan
 
-        if adjust_class is None or adjust_class.size <= 1:
+        if adjust_class is None:
             adjust_factor, self.adjust_factor["__none__"] = self._adjust_factor(
-                samp_weight, resp_code
+                samp_weight, resp_code, unknown_to_inelig
             )
             adjusted_weight = adjust_factor * samp_weight
         else:
-            for c in np.unique(adjust_class):
-                samp_weight_c = samp_weight[adjust_class == c]
-                resp_code_c = resp_code[adjust_class == c]
-                adjust_factor_c, self.adjust_factor[c] = self._adjust_factor(
-                    samp_weight_c, resp_code_c
+            if isinstance(adjust_class, list):
+                adjust_class = pd.DataFrame(np.column_stack(adjust_class))
+            elif isinstance(adjust_class, np.ndarray):
+                adjust_class = pd.DataFrame(adjust_class)
+            elif not isinstance(adjust_class, (pd.Series, pd.DataFrame)):
+                raise AssertionError(
+                    "adjsut_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
                 )
-                adjusted_weight[adjust_class == c] = adjust_factor_c * samp_weight_c
+
+            adjust_array = formats.dataframe_to_array(adjust_class)
+
+            for c in np.unique(adjust_array):
+                samp_weight_c = samp_weight[adjust_array == c]
+                resp_code_c = resp_code[adjust_array == c]
+                adjust_factor_c, self.adjust_factor[c] = self._adjust_factor(
+                    samp_weight_c, resp_code_c, unknown_to_inelig
+                )
+                adjusted_weight[adjust_array == c] = adjust_factor_c * samp_weight_c
         self.deff_wgt = self.deff_weight(adjusted_weight)
 
         return adjusted_weight
