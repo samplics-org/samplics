@@ -102,10 +102,10 @@ we can use a code similar to:
         }
 
     full_sample["nr_weight"] = SampleWeight().adjust(
-        sample_weight=full_sample["design_weight"],
-        adjustment_class=full_sample["region"],
-        response_status=full_sample["response_status"],
-        response_dict=status_mapping
+        samp_weight=full_sample["design_weight"],
+        adjust_class=full_sample["region"],
+        resp_status=full_sample["response_status"],
+        resp_dict=status_mapping
         )
 
 
