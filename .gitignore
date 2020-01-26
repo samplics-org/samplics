@@ -119,6 +119,7 @@ dmypy.json
 #Extra
 datasets
 reference_material
+notebooks/*.csv
 
 
 # End of https://www.gitignore.io/api/python
