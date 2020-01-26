@@ -2,7 +2,7 @@
 *SAMPLICS*
 ==========
 
-*samplics*, for sample analytics, is a python package for selecting, weighting
+*samplics* is a python package for selecting, weighting
 and analyzing sample obtained from complex sampling design.
 
 Sample Analytics
@@ -56,7 +56,7 @@ Installation
 ------------
 ``pip install samplics``
 
-if both Python 2.x and python 3.x is installed in your environment,
+if both Python 2.x and python 3.x is installed on your computer,
 you may have to use: ``pip3 install samplics``
 
 Dependencies

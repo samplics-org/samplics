@@ -3,7 +3,7 @@ from typing import Optional, Any, Union, Dict, Tuple
 import numpy as np
 import pandas as pd
 
-import math
+import mathgit a
 
 from samplics.utils import checks, formats, hadamard as hdd
 
@@ -30,7 +30,7 @@ class ReplicateWeight:
             self.number_reps = number_reps
             self.rep_coefs = list((1 / number_reps) * np.ones(number_reps))
         elif self.method == "brr":
-            self.number_reps = number_reps
+            self.number_reps = 0
             self.fay_coef = fay_coef
 
         self.number_psus = 0
@@ -139,19 +139,13 @@ class ReplicateWeight:
         if self.number_reps < self.number_strata:
             self.number_reps = self.number_strata
 
-        # scipy.linalg.hadamard only produce hadamard matrices of order 2**k
-        # Hence, number_reps has to be of the form 2**k
-        # This can be revisited when Hadamard matrices of size 4k will be feasible with scipy
-        # number_mod = 0 if number_reps % 4 == 0 else 4
-        # number_reps = 4 * (number_reps // 4) + number_mod
-
         if self.number_reps <= 28:
             if self.number_reps // 4 != 0:
                 self.number_reps = 4 * (self.number_reps // 4 + 1)
         else:
             nb_reps_log2 = int(math.log(self.number_reps, 2))
             if math.pow(2, nb_reps_log2) != self.number_reps:
-                self.number_reps = int(math.pow(2, nb_reps_log2 + 1))
+                self.number_reps = int(math.pow(2, nb_reps_log2))
 
         return self
 
