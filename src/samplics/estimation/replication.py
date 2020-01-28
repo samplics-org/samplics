@@ -4,19 +4,15 @@
 #
 # License: MIT
 
-from typing import Any, Optional, Union, Dict, Tuple
+import math
+from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
-import math
-
+from samplics.estimation.expansion import _SurveyEstimator
+from samplics.utils import checks, formats
 from scipy.stats import norm as normal
 from scipy.stats import t as student
-
-from samplics.utils import checks, formats
-
-from samplics.estimation.expansion import _SurveyEstimator
 
 EstimateType = Any  # Dict[np.ndarray, Union[Dict[np.ndarray, float], float]]
 

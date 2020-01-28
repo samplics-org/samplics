@@ -4,13 +4,11 @@ Author: Mamadou S Diallo <msdiallo@QuantifyAfrica.org>
 License: MIT
 """
 
-from typing import Any, Union, Dict, Tuple
+import math
+from typing import Any, Dict, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
-import math
-
 from samplics.utils import checks, formats
 
 
@@ -63,7 +61,7 @@ class Sample:
         mos: np.ndarray,
         sample: np.ndarray,
         hits: np.ndarray,
-        probs: np.ndarray
+        probs: np.ndarray,
     ) -> pd.DataFrame:
         def var_name(**variables):
             return [x for x in variables]
@@ -79,7 +77,7 @@ class Sample:
                 "_mos": mos,
                 "_sample": sample,
                 "_hits": hits,
-                "_probs": probs
+                "_probs": probs,
             }
         )
 
@@ -695,7 +693,9 @@ class Sample:
         shuffle: bool = False,
         to_dataframe: bool = False,
         sample_only: bool = False,
-    ) -> Union[Tuple[np.ndarray, np.ndarray],]:
+    ) -> Union[
+        Tuple[np.ndarray, np.ndarray],
+    ]:
         """
         select a sample. 
 

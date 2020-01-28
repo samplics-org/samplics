@@ -5,11 +5,10 @@ Author: Mamadou S Diallo <msdiallo@QuantifyAfrica.org>
 License: MIT
 """
 
-from typing import Optional, Any, Union, Dict, Tuple, List
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
 from samplics.utils import checks, formats
 
 

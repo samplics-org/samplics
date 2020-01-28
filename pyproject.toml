@@ -48,6 +48,8 @@ jupyterlab = "^1.2.4"
 nb_black = "^1.0.7"
 certifi = "^2019.11.28"
 pytest-cov = "^2.8.1"
+nox = "^2019.11.9"
+isort = "^4.3.21"
 
 [tool.black]
 line-length = 99

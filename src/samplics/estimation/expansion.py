@@ -1,15 +1,13 @@
 """Estimation of linear parameters
 """
 
-import numpy as np
-import pandas as pd
-
-from scipy.stats import norm as normal
-from scipy.stats import t as student
-
 import math
 
+import numpy as np
+import pandas as pd
 from samplics.utils import checks, formats
+from scipy.stats import norm as normal
+from scipy.stats import t as student
 
 
 class _SurveyEstimator:

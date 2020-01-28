@@ -115,16 +115,16 @@ we can use a code similar to:
     from samplics.estimation import TaylorEstimation, ReplicateEstimator
 
     zinc_mean_str = TaylorEstimator("mean").estimate(
-        y=nhanes2f["zinc"], 
-        samp_weight=nhanes2f["finalwgt"], 
-        stratum=nhanes2f["stratid"], 
-        psu=nhanes2f["psuid"], 
+        y=nhanes2f["zinc"],
+        samp_weight=nhanes2f["finalwgt"],
+        stratum=nhanes2f["stratid"],
+        psu=nhanes2f["psuid"],
         exclude_nan=True
     )
 
     ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
-        y=nhanes2brr["weight"], 
-        samp_weight=nhanes2brr["finalwgt"], 
+        y=nhanes2brr["weight"],
+        samp_weight=nhanes2brr["finalwgt"],
         x=nhanes2brr["height"],
         rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
         exclude_nan = True

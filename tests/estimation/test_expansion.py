@@ -1,12 +1,9 @@
-import numpy as np
-import pandas as pd
-
 import math
 
-from samplics.estimation import TaylorEstimator
-
+import numpy as np
+import pandas as pd
 import pytest
-
+from samplics.estimation import TaylorEstimator
 
 yrbs = pd.read_csv("./tests/estimation/yrbs.csv")
 
@@ -293,4 +290,3 @@ def test_prop_estimator_with_str():
     assert np.isclose(prop_estimator.upper_ci["__none__"][1.0], 0.850_516_3)
     assert np.isclose(prop_estimator.coef_var["__none__"][0.0], 0.019_862_1 / 0.186_377_5)
     assert np.isclose(prop_estimator.coef_var["__none__"][1.0], 0.019_862_1 / 0.813_622_5)
-

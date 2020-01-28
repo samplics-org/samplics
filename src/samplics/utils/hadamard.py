@@ -1,6 +1,6 @@
-import numpy as np
 import math
 
+import numpy as np
 from scipy.linalg import hadamard as hdd
 
 # from numba import njit

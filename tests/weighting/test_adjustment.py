@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
-
-from samplics.weighting import SampleWeight
-
 import pytest
+from samplics.weighting import SampleWeight
 
 income_sample = pd.read_csv("./tests/weighting/synthetic_income_data.csv")
 
@@ -185,4 +183,3 @@ trim_wgt_wih_class = sample_wgt_trim_without.trim(
 
 # def test_trim_todo():
 #     assert trim_wgt_wih_class
-

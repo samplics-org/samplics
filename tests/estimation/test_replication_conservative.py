@@ -1,14 +1,11 @@
+import math
+import pprint
+
 import numpy as np
 import pandas as pd
-
-import math
-
-from samplics.weighting import ReplicateWeight
-
-from samplics.estimation import ReplicateEstimator
-
-import pprint
 import pytest
+from samplics.estimation import ReplicateEstimator
+from samplics.weighting import ReplicateWeight
 
 """Jackknife estimates"""
 nhanes2jkn = pd.read_csv("./tests/estimation/nhanes2jknife.csv")
@@ -27,9 +24,7 @@ rep_wgt_jkn = rep_wgt_jkn.values
 
 def test_jkn_mean():
     jkn_mean = ReplicateEstimator("jackknife", "mean")
-    jkn_mean.estimate(
-        y_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=True, exclude_nan=True
-    )
+    jkn_mean.estimate(y_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=True, exclude_nan=True)
     jkn_var = jkn_mean.variance
     jkn_stderr = pow(jkn_var.get("__none__"), 0.5)
     assert np.isclose(jkn_stderr, 0.2320822, atol=1e-7)
@@ -38,12 +33,7 @@ def test_jkn_mean():
 def test_jkn_mean_d():
     jkn_mean_d = ReplicateEstimator("jackknife", "mean")
     jkn_mean_d.estimate(
-        y_jkn,
-        sample_wgt_jkn,
-        rep_wgt_jkn,
-        domain=domain_jkn,
-        conservative=True,
-        exclude_nan=True,
+        y_jkn, sample_wgt_jkn, rep_wgt_jkn, domain=domain_jkn, conservative=True, exclude_nan=True,
     )
     jkn_var_d = jkn_mean_d.variance
     jkn_stderr_d1 = pow(jkn_var_d.get(1), 0.5)
@@ -92,9 +82,7 @@ def test_jkn_total_d():
 
 def test_jkn_prop():
     jkn_prop = ReplicateEstimator("jackknife", "proportion")
-    jkn_prop.estimate(
-        z_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=True, exclude_nan=True
-    )
+    jkn_prop.estimate(z_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=True, exclude_nan=True)
     jkn_var = jkn_prop.variance
     jkn_stderr_1 = pow(jkn_var.get("__none__")[1], 0.5)
     jkn_stderr_2 = pow(jkn_var.get("__none__")[2], 0.5)
@@ -107,12 +95,7 @@ def test_jkn_prop():
 def test_jkn_prop_d():
     jkn_prop_d = ReplicateEstimator("jackknife", "proportion")
     jkn_prop_d.estimate(
-        z_jkn,
-        sample_wgt_jkn,
-        rep_wgt_jkn,
-        domain=domain_jkn,
-        conservative=True,
-        exclude_nan=True,
+        z_jkn, sample_wgt_jkn, rep_wgt_jkn, domain=domain_jkn, conservative=True, exclude_nan=True,
     )
     jkn_var_d = jkn_prop_d.variance
     jkn_stderr_d1_1 = pow(jkn_var_d.get(1)[1], 0.5)
@@ -191,9 +174,7 @@ rep_wgt_brr = rep_wgt_brr.values
 
 def test_brr_mean():
     brr_mean = ReplicateEstimator("brr", "mean")
-    brr_mean.estimate(
-        y_brr, sample_wgt_brr, rep_wgt_brr, conservative=True, exclude_nan=True
-    )
+    brr_mean.estimate(y_brr, sample_wgt_brr, rep_wgt_brr, conservative=True, exclude_nan=True)
     brr_var = brr_mean.variance
     brr_stderr = pow(brr_var.get("__none__"), 0.5)
     assert np.isclose(brr_stderr, 0.1656454, atol=1e-7)
@@ -255,9 +236,7 @@ def test_brr_total_d():
 
 def test_brr_prop():
     brr_prop = ReplicateEstimator("brr", "proportion")
-    brr_prop.estimate(
-        z_brr, sample_wgt_brr, rep_wgt_brr, conservative=True, exclude_nan=True
-    )
+    brr_prop.estimate(z_brr, sample_wgt_brr, rep_wgt_brr, conservative=True, exclude_nan=True)
     brr_var = brr_prop.variance
     brr_stderr_0 = pow(brr_var.get("__none__")[0.0], 0.5)
     brr_stderr_1 = pow(brr_var.get("__none__")[1.0], 0.5)
@@ -268,12 +247,7 @@ def test_brr_prop():
 def test_brr_prop_d():
     brr_prop_d = ReplicateEstimator("brr", "proportion")
     brr_prop_d.estimate(
-        z_brr,
-        sample_wgt_brr,
-        rep_wgt_brr,
-        domain=domain_brr,
-        conservative=True,
-        exclude_nan=True,
+        z_brr, sample_wgt_brr, rep_wgt_brr, domain=domain_brr, conservative=True, exclude_nan=True,
     )
     brr_var_d = brr_prop_d.variance
     brr_stderr_d1_0 = pow(brr_var_d.get(1)[0.0], 0.5)
@@ -345,9 +319,7 @@ rep_wgt_fay = rep_wgt_fay.values
 
 def test_fay_mean():
     fay_mean = ReplicateEstimator("brr", "mean", fay_coef=fay_coef)
-    fay_mean.estimate(
-        y_fay, sample_wgt_fay, rep_wgt_fay, conservative=True, exclude_nan=True
-    )
+    fay_mean.estimate(y_fay, sample_wgt_fay, rep_wgt_fay, conservative=True, exclude_nan=True)
     fay_var = fay_mean.variance
     fay_stderr = pow(fay_var.get("__none__"), 0.5)
     assert np.isclose(fay_stderr, 0.1655724, atol=1e-7)
@@ -356,12 +328,7 @@ def test_fay_mean():
 def test_fay_mean_d():
     fay_mean_d = ReplicateEstimator("brr", "mean", fay_coef=fay_coef)
     fay_mean_d.estimate(
-        y_fay,
-        sample_wgt_fay,
-        rep_wgt_fay,
-        domain=domain_fay,
-        conservative=True,
-        exclude_nan=True,
+        y_fay, sample_wgt_fay, rep_wgt_fay, domain=domain_fay, conservative=True, exclude_nan=True,
     )
     fay_var_d = fay_mean_d.variance
     fay_stderr_d1 = pow(fay_var_d.get(1), 0.5)
@@ -407,9 +374,7 @@ def test_fay_total_d():
 
 def test_fay_prop():
     fay_prop = ReplicateEstimator("brr", "proportion", fay_coef=fay_coef)
-    fay_prop.estimate(
-        z_fay, sample_wgt_fay, rep_wgt_fay, conservative=True, exclude_nan=True
-    )
+    fay_prop.estimate(z_fay, sample_wgt_fay, rep_wgt_fay, conservative=True, exclude_nan=True)
     fay_var = fay_prop.variance
     fay_stderr_0 = pow(fay_var.get("__none__")[0.0], 0.5)
     fay_stderr_1 = pow(fay_var.get("__none__")[1.0], 0.5)
@@ -420,12 +385,7 @@ def test_fay_prop():
 def test_fay_prop_d():
     fay_prop_d = ReplicateEstimator("brr", "proportion", fay_coef=fay_coef)
     fay_prop_d.estimate(
-        z_fay,
-        sample_wgt_fay,
-        rep_wgt_fay,
-        domain=domain_fay,
-        conservative=True,
-        exclude_nan=True,
+        z_fay, sample_wgt_fay, rep_wgt_fay, domain=domain_fay, conservative=True, exclude_nan=True,
     )
     fay_var_d = fay_prop_d.variance
     fay_stderr_d1_0 = pow(fay_var_d.get(1)[0.0], 0.5)
@@ -495,9 +455,7 @@ rep_wgt_boot = rep_wgt_boot.values
 
 def test_boot_mean():
     boot_mean = ReplicateEstimator("bootstrap", "mean")
-    boot_mean.estimate(
-        y_boot, sample_wgt_boot, rep_wgt_boot, conservative=True, exclude_nan=True
-    )
+    boot_mean.estimate(y_boot, sample_wgt_boot, rep_wgt_boot, conservative=True, exclude_nan=True)
     boot_var = boot_mean.variance
     boot_stderr = pow(boot_var.get("__none__"), 0.5)
     assert np.isclose(boot_stderr, 6.530090, atol=1e-6)
@@ -561,9 +519,7 @@ def test_boot_total_d():
 
 def test_boot_prop():
     boot_prop = ReplicateEstimator("bootstrap", "proportion")
-    boot_prop.estimate(
-        z_boot, sample_wgt_boot, rep_wgt_boot, conservative=True, exclude_nan=True
-    )
+    boot_prop.estimate(z_boot, sample_wgt_boot, rep_wgt_boot, conservative=True, exclude_nan=True)
     boot_var = boot_prop.variance
     boot_stderr_0 = pow(boot_var.get("__none__")[0.0], 0.5)
     boot_stderr_1 = pow(boot_var.get("__none__")[1.0], 0.5)
@@ -607,12 +563,7 @@ def test_boot_prop_d():
 def test_boot_ratio():
     boot_ratio = ReplicateEstimator("bootstrap", "ratio")
     boot_ratio.estimate(
-        y_boot,
-        sample_wgt_boot,
-        rep_wgt_boot,
-        x=x_boot,
-        conservative=True,
-        exclude_nan=True,
+        y_boot, sample_wgt_boot, rep_wgt_boot, x=x_boot, conservative=True, exclude_nan=True,
     )
     boot_var = boot_ratio.variance
     boot_stderr = pow(boot_var.get("__none__"), 0.5)
