@@ -368,8 +368,10 @@ class SampleWeight:
         if not isinstance(data, (pd.DataFrame, pd.Series)):
             raise AssertionError("data must be a pandas dataframe.")
 
-        if isinstance(data[x_cont], pd.Series):
+        if isinstance(data[x_cat], pd.Series):
             nb_cols = (data[x_cat].drop_duplicates()).shape[0] + 1
+        elif x_cont is None:
+            nb_cols = (data[x_cat].drop_duplicates()).shape[0]
         else:
             nb_cols = (data[x_cat].drop_duplicates()).shape[0] + len(x_cont)
 

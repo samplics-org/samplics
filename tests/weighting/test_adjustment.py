@@ -28,7 +28,7 @@ design_wgt = income_sample["design_wgt"]
 sample_wgt_nr_without = SampleWeight()
 
 nr_wgt_without_adj_class = sample_wgt_nr_without.adjust(
-    design_wgt, None, resp_status=response_code, resp_dict=response_map
+    design_wgt, None, resp_status=response_code, resp_dict=response_map, unknown_to_inelig=False
 )
 
 
@@ -62,7 +62,7 @@ def test_deff_wgt_without_domain():
 sample_wgt_nr_with = SampleWeight()
 
 nr_wgt_with_adj_class = sample_wgt_nr_with.adjust(
-    design_wgt, region_id, response_code, response_map
+    design_wgt, region_id, response_code, response_map, unknown_to_inelig=False
 )
 
 
