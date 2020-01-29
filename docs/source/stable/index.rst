@@ -13,10 +13,9 @@ samplics's modules
 ------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   gettingstarted
-   stable/index
+   modules
 
 Indices and tables
 ==================

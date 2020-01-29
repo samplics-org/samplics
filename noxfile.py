@@ -12,7 +12,18 @@ def tests(session):
 
 @nox.session
 def docs(session):
-    session.run("sphinx-build", "-W", "-n", "-b", "html", "docs/source", "docs/build")
+    session.install(".")
+    session.install("sphinx", "sphinx-autobuild", "sphinx_bootstrap_theme", "nbsphinx")
+    session.chdir("docs")
+    # session.run("rm", "-rf", "build/", external=True)
+    session.run("make", "clean")
+    session.run("sphinx-apidoc", "-o", "source", "../src/samplics")
+    sphinx_args = ["-b", "html", "source", "build"]
+
+    if "serve" in session.posargs:
+        session.run("sphinx-autobuild", *sphinx_args)
+    else:
+        session.run("sphinx-build", *sphinx_args)
 
 
 @nox.session
