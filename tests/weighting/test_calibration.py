@@ -270,7 +270,7 @@ def test_calibration_num_domain():
     ).all()
 
 
-# Mixed (categorical andnon-vategorical)
+# Mixed (categorical and non-categorical)
 sample_mix = pd.DataFrame(
     [
         ["A1", 1, 2, 8],
