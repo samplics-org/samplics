@@ -1,1 +1,1 @@
-from samplics.utils import checks, formats, hadamard
+from samplics.utils import checks, formats, hadamard, types
