@@ -4,5 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-Number = Union[float, int]
 Array = Union[np.ndarray, pd.Series]
+Number = Union[float, int]
+StringNumber = Union[str, float, int]
+DictStrNum = Dict[StringNumber, Number]

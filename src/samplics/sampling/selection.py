@@ -108,7 +108,7 @@ class Sample:
         probs: np.ndarray,
         samp_unit: np.ndarray,
         samp_size: Dict[Any, int],
-        stratum: np.ndarray = None,
+        stratum: Optional[np.ndarray] = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
         select a sample. 
@@ -179,7 +179,10 @@ class Sample:
 
     # SRS methods
     def _srs_inclusion_probs(
-        self, samp_unit: np.ndarray, samp_size: Dict[Any, int], stratum: np.ndarray = None
+        self,
+        samp_unit: np.ndarray,
+        samp_size: Dict[Any, int],
+        stratum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
         The inclusion probabilities based on the simple random 
@@ -226,7 +229,7 @@ class Sample:
         samp_unit: np.ndarray,
         samp_size: Dict[Any, int],
         mos: np.ndarray,
-        stratum: np.ndarray = None,
+        stratum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
         The inclusion probabilities based on the simple random 
@@ -349,7 +352,9 @@ class Sample:
         return sample, hits
 
     @staticmethod
-    def _pps_brewer_select(samp_unit: Array, samp_size: int, mos: Array) -> Tuple[Array, Array]:
+    def _pps_brewer_select(
+        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
 
         all_indices = np.arange(samp_unit.size)
         all_probs = mos / np.sum(mos)
@@ -509,9 +514,9 @@ class Sample:
     def _sys_inclusion_probs(
         self,
         samp_unit: np.ndarray,
-        samp_size: Union[Dict[Any, int], int] = None,
+        samp_size: Union[Dict[Any, int], int, None] = None,
         stratum: np.ndarray = None,
-        samp_rate: Union[Dict[Any, float], float] = None,
+        samp_rate: Union[Dict[Any, float], float, None] = None,
     ) -> np.ndarray:
         """
         The inclusion probabilities based on the simple random 

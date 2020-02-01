@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 from samplics.utils import checks, formats
+from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class SampleWeight:
@@ -19,19 +20,19 @@ class SampleWeight:
     def __init__(self) -> None:
 
         self.number_scale_d = 1
-        self.number_units: Dict = {}
-        self.deff_wgt: Dict = {}
-        self.norm_factor: Dict = {}
-        self.control: Dict = {}
-        self.adjust_factor: Dict = {}
+        self.number_units: Dict[StringNumber, int] = {}
+        self.deff_wgt: Dict[StringNumber, Number] = {}
+        self.norm_factor: Dict[StringNumber, Number] = {}
+        self.control: Dict[StringNumber, Number] = {}
+        self.adjust_factor: Dict[StringNumber, Number] = {}
         self.trim_method = ""
         self.calib_factor = ""
 
-    def __repr__(self):
-        return super().__repr__()
+    def __repr__(self) -> None:
+        pass
 
-    def __str__(self):
-        return super().__str__()
+    def __str__(self) -> None:
+        pass
 
     def _number_units(self, domain: np.ndarray, samp_weight: np.ndarray) -> None:
         """Returns the number of units"""
@@ -43,7 +44,7 @@ class SampleWeight:
             self.number_units = dict(zip(keys, values))
 
     @staticmethod
-    def _deff_wgt(samp_weight: np.ndarray) -> float:
+    def _deff_wgt(samp_weight: np.ndarray) -> Number:
         """compute the design effect due to unequal weights -
         Page 71 of Valliant and Dever (2018) """
 
@@ -53,7 +54,9 @@ class SampleWeight:
 
         return deff_w
 
-    def deff_weight(self, samp_weight: np.ndarray, domain: np.ndarray = None) -> Dict:
+    def deff_weight(
+        self, samp_weight: np.ndarray, domain: Optional[np.ndarray] = None
+    ) -> Dict[StringNumber, Number]:
         """compute the design effect due to unequal weights across estimation scale_d.  
 
         Args:
@@ -69,7 +72,7 @@ class SampleWeight:
             design effect due to weighting.
         """
 
-        deff_w = {}
+        deff_w: Dict[StringNumber, Number] = {}
         if domain is None:
             deff_w["__none__"] = self._deff_wgt(samp_weight)
         else:
@@ -81,7 +84,7 @@ class SampleWeight:
 
     @staticmethod
     def _norm_adjustment(
-        samp_weight: np.ndarray, control: Union[float, Dict]
+        samp_weight: np.ndarray, control: Union[Dict[StringNumber, Number], Number]
     ) -> Tuple[np.ndarray, np.ndarray]:
 
         sum_weights = np.sum(samp_weight)
@@ -142,7 +145,7 @@ class SampleWeight:
         samp_weight: np.ndarray,
         adjust_class: np.ndarray,
         resp_status: np.ndarray,
-        resp_dict: Dict = None,
+        resp_dict: Union[Dict[str, StringNumber], None] = None,
         unknown_to_inelig: bool = True,
     ) -> np.ndarray:
         """
@@ -217,26 +220,26 @@ class SampleWeight:
         samp_weight: np.ndarray,
         x: np.ndarray,
         x_weighted_total: np.ndarray,
-        control: np.ndarray,
+        x_control: np.ndarray,
         scale: np.ndarray,
-    ):
+    ) -> np.ndarray:
 
         v_inv_d = np.diag(samp_weight / scale)
         core_matrix = np.dot(np.matmul(np.transpose(x), v_inv_d), x)
         if x.shape == (x.size,):
-            core_factor = (control - x_weighted_total) / core_matrix
+            core_factor = (x_control - x_weighted_total) / core_matrix
         else:
             core_factor = np.matmul(
-                np.transpose(control - x_weighted_total), np.linalg.inv(core_matrix)
+                np.transpose(x_control - x_weighted_total), np.linalg.inv(core_matrix)
             )
 
         return core_factor
 
     def normalize(
         self,
-        samp_weight: np.ndarray,
-        control: Union[float, Dict[float, float]] = None,
-        domain: np.ndarray = None,
+        samp_weight: Array,
+        control: Union[Dict[StringNumber, Number], Number, None] = None,
+        domain: Optional[Array] = None,
     ) -> np.ndarray:
         """
         normalize the sample weights to sum to a known constants or 
@@ -269,30 +272,34 @@ class SampleWeight:
                 weight_k = samp_weight[domain == key]
                 if control is None:
                     levels[k] = np.sum(domain == key)
-                elif control is not None and not isinstance(control, (float, int)):
+                elif control is not None and isinstance(control, Dict):
                     levels[k] = control[key]
                 elif isinstance(control, (float, int)):
                     levels[k] = control
+
                 (norm_weight[domain == key], self.norm_factor[key]) = self._norm_adjustment(
                     weight_k, levels[k]
                 )
                 self.control[key] = levels[k]
         else:
-            if control is not None:
-                level = control
-            else:
-                level = np.sum(samp_weight.size)
-            norm_weight, self.norm_factor["__none__"] = self._norm_adjustment(samp_weight, level)
-            self.control["__none__"] = level
+            if control is None:
+                control = {"__none__": np.sum(samp_weight.size).astype("int")}
+            elif isinstance(control, (int, float)):
+                control = {"__none__": control}
+
+            norm_weight, self.norm_factor["__none__"] = self._norm_adjustment(
+                samp_weight, control["__none__"]
+            )
+            self.control["__none__"] = control["__none__"]
 
         return norm_weight
 
     def poststratify(
         self,
-        samp_weight: np.ndarray,
-        control: Union[float, Dict[float, float]] = None,
-        factor: Union[float, Dict[float, float]] = None,
-        domain: np.ndarray = None,
+        samp_weight: Array,
+        control: Union[Dict[StringNumber, Number], None] = None,
+        factor: Union[Dict[StringNumber, Number], None] = None,
+        domain: Optional[Array] = None,
     ) -> np.ndarray:
 
         if control is None and factor is None:
@@ -316,24 +323,30 @@ class SampleWeight:
 
         return self.normalize(samp_weight, control, domain)
 
-    def _raked_wgt(self, samp_weight, X, control, domain):
+    def _raked_wgt(
+        self,
+        samp_weight: np.ndarray,
+        X: np.ndarray,
+        control: Union[Dict[StringNumber, Number], None],
+        domain: Optional[Array] = None,
+    ) -> None:
         pass
 
     def rake(
         self,
-        samp_weight: np.ndarray,
-        x: np.ndarray,
-        control: Union[float, Dict[float, float]],
-        scale=1,
-        domain=None,
+        samp_weight: Array,
+        x: Union[np.ndarray, pd.DataFrame],
+        control: Union[Dict[StringNumber, Number], None] = None,
+        scale: Union[np.ndarray, Number] = 1,
+        domain: Optional[Array] = None,
     ) -> np.ndarray:
 
         pass
 
     @staticmethod
     def _calib_covariates(
-        data: pd.DataFrame, x_cat: List[str] = None, x_cont: List[str] = None
-    ) -> Tuple[pd.DataFrame, Dict[str, int]]:
+        data: pd.DataFrame, x_cat: Optional[List[str]] = None, x_cont: Optional[List[str]] = None
+    ) -> Tuple[pd.DataFrame, Dict[StringNumber, Number]]:
 
         if not isinstance(data, pd.DataFrame) or data is None:
             raise ValueError("data must be a pandas dataframe.")
@@ -360,10 +373,10 @@ class SampleWeight:
     def calib_covariates(
         self,
         data: pd.DataFrame,
-        x_cat: List[str] = None,
-        x_cont: List[str] = None,
-        domain: List[str] = None,
-    ) -> Tuple[np.ndarray, Dict[str, int]]:
+        x_cat: Optional[List[str]] = None,
+        x_cont: Optional[List[str]] = None,
+        domain: Optional[List[str]] = None,
+    ) -> Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]:
 
         if not isinstance(data, (pd.DataFrame, pd.Series)):
             raise AssertionError("data must be a pandas dataframe.")
@@ -375,13 +388,13 @@ class SampleWeight:
         else:
             nb_cols = (data[x_cat].drop_duplicates()).shape[0] + len(x_cont)
 
+        x_dict: Dict[StringNumber, Dict[StringNumber, Number]] = {}
         if domain is None:
-            x_array, x_dict = self._calib_covariates(data, x_cat, x_cont)
+            x_array, x_dict["__none__"] = self._calib_covariates(data, x_cat, x_cont)
             for key in x_dict:
-                x_dict[key] = np.nan
+                x_dict["__none__"][key] = np.nan
         else:
             x_array = np.zeros((data.shape[0], nb_cols))
-            x_dict = {}
             for d in np.unique(data[domain].values):
                 x_array[data[domain] == d, :], x_dict[d] = self._calib_covariates(
                     data[data[domain] == d], x_cat, x_cont
@@ -389,10 +402,13 @@ class SampleWeight:
                 for key in x_dict[d]:
                     x_dict[d][key] = np.nan
 
-        return x_array, x_dict
+        if domain is None:
+            return x_array, x_dict["__none__"]
+        else:
+            return x_array, x_dict
 
     def _calib_wgt(self, x: np.ndarray, core_factor: np.ndarray) -> np.ndarray:
-        def _core_vector(x_i, core_factor):
+        def _core_vector(x_i: np.ndarray, core_factor: np.ndarray) -> np.ndarray:
             return np.dot(core_factor, x_i)
 
         if x.shape == (x.size,):
@@ -408,9 +424,9 @@ class SampleWeight:
         self,
         samp_weight: np.ndarray,
         aux_vars: np.ndarray,
-        control: Dict[Any, Any] = None,
-        domain: np.ndarray = None,
-        scale: Union[np.ndarray, float] = 1,
+        control: Union[Dict[StringNumber, Union[DictStrNum, Number]], None] = None,
+        domain: Optional[np.ndarray] = None,
+        scale: Union[np.ndarray, Number] = 1,
         bounded: bool = False,
         additive: bool = False,
     ) -> np.ndarray:
@@ -442,7 +458,7 @@ class SampleWeight:
                 samp_weight=samp_weight,
                 x=aux_vars,
                 x_weighted_total=x_w_total,
-                control=np.array(list(control.values())),
+                x_control=np.array(list(control.values())),
                 scale=scale,
             )
             adjust_factor = 1 + self._calib_wgt(aux_vars, core_factor) / scale
@@ -458,20 +474,27 @@ class SampleWeight:
                     x_w_total = np.sum(x_w)
                 else:
                     x_w_total = np.sum(x_w, axis=1)
+
                 x_d = aux_vars[domain == d]
                 samp_weight_d = samp_weight[domain == d]
                 if one_dimension:  # one dimentional array
                     x_w_total_d = np.sum(x_w[domain == d])
                 else:
                     x_w_total_d = np.sum(np.transpose(x_w)[domain == d], axis=0)
-                control_d = control[d]
+
+                control_d = control.get(d)
+                if isinstance(control_d, (int, float)):
+                    control_d_values = [control_d]
+                elif isinstance(control_d, Dict):
+                    control_d_values = list(control_d.values())
+
                 scale_d = scale[domain == d]
                 if additive:
                     core_factor_d = self._core_matrix(
                         samp_weight=samp_weight,
                         x=aux_vars,
                         x_weighted_total=x_w_total_d,
-                        control=np.array(list(control_d.values())),
+                        x_control=np.array(control_d_values),
                         scale=scale,
                     )
                     adjust_factor[:, k] = (domain == d) + self._calib_wgt(
@@ -482,7 +505,7 @@ class SampleWeight:
                         samp_weight=samp_weight_d,
                         x=aux_vars[domain == d],
                         x_weighted_total=x_w_total_d,
-                        control=np.array(list(control_d.values())),
+                        x_control=np.array(control_d_values),
                         scale=scale_d,
                     )
                     adjust_factor[domain == d] = 1 + self._calib_wgt(x_d, core_factor_d) / scale_d
@@ -497,10 +520,10 @@ class SampleWeight:
 
     def trim(
         self,
-        samp_weight: np.ndarray,
+        samp_weight: Array,
         method: str,
-        threshold: Union[float, Dict[float, float]],
-        domain: np.ndarray = None,
+        threshold: Union[Dict[StringNumber, Union[DictStrNum, Number]], None],
+        domain: Optional[Array] = None,
     ) -> np.ndarray:
         """
         trim sample weight to reduce the influence of extreme weights. 
