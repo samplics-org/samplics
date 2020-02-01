@@ -5,7 +5,7 @@ License: MIT
 """
 
 import math
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple, Union, Optional
 
 import numpy as np
 import pandas as pd
@@ -44,20 +44,25 @@ class Sample:
         self.fpc: Dict[Any, float] = {}
 
     @staticmethod
-    def _convert_to_dict(obj_any: Any, obj_type: str) -> Dict[Any, float]:
+    def _convert_to_dict(obj_any: Any, obj_type: type) -> Dict[Any, Any]:
 
-        if obj_any is not None and isinstance(obj_any, (int, float)):
+        if obj_any is not None and isinstance(obj_any, obj_type):
             obj_dict = {"__none__": obj_any}
         elif obj_any is not None and isinstance(obj_any, Dict):
             obj_dict = obj_any
         elif not isinstance(obj_any, dict):
-            raise TypeError(f"{str(obj_any)} must be a dictionary or {obj_type}.")
+            raise TypeError(f"{str(obj_any)} must be a dictionary or {obj_type.__name__}.")
 
         return obj_dict
 
     @staticmethod
     def _to_dataframe(
-        samp_unit: Array, stratum: Array, mos: Array, sample: Array, hits: Array, probs: Array
+        samp_unit: np.ndarray,
+        stratum: np.ndarray,
+        mos: np.ndarray,
+        sample: np.ndarray,
+        hits: np.ndarray,
+        probs: np.ndarray,
     ) -> pd.DataFrame:
 
         df = pd.DataFrame(
@@ -78,7 +83,9 @@ class Sample:
 
         return df
 
-    def _calculate_fpc(self, samp_unit: Array, samp_size: Dict[Any, int], stratum: Array) -> None:
+    def _calculate_fpc(
+        self, samp_unit: np.ndarray, samp_size: Dict[Any, int], stratum: np.ndarray
+    ) -> None:
 
         samp_unit = checks.check_sample_unit(samp_unit)
         samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
@@ -97,8 +104,12 @@ class Sample:
             )
 
     def _grs_select(
-        self, probs: Array, samp_unit: Array, samp_size: Dict[Any, int], stratum: Array = None
-    ) -> Tuple[Array, Array]:
+        self,
+        probs: np.ndarray,
+        samp_unit: np.ndarray,
+        samp_size: Dict[Any, int],
+        stratum: np.ndarray = None,
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """
         select a sample. 
 
@@ -153,7 +164,7 @@ class Sample:
         return sample, hits
 
     @staticmethod
-    def _anycertainty(samp_size: Dict[Any, int], stratum: Array, mos: Array) -> bool:
+    def _anycertainty(samp_size: Dict[Any, int], stratum: np.ndarray, mos: np.ndarray) -> bool:
 
         if stratum is not None:
             certainty = np.zeros(stratum.size)
@@ -168,8 +179,8 @@ class Sample:
 
     # SRS methods
     def _srs_inclusion_probs(
-        self, samp_unit: Array, samp_size: Dict[Any, int], stratum: Array = None
-    ) -> Array:
+        self, samp_unit: np.ndarray, samp_size: Dict[Any, int], stratum: np.ndarray = None
+    ) -> np.ndarray:
         """
         The inclusion probabilities based on the simple random 
         selection (SRS) sampling approach
@@ -211,8 +222,12 @@ class Sample:
 
     # PPS methods
     def _pps_inclusion_probs(
-        self, samp_unit: Array, samp_size: Dict[Any, int], mos: Array, stratum: Array = None
-    ) -> Array:
+        self,
+        samp_unit: np.ndarray,
+        samp_size: Dict[Any, int],
+        mos: np.ndarray,
+        stratum: np.ndarray = None,
+    ) -> np.ndarray:
         """
         The inclusion probabilities based on the simple random 
         selection (SRS) sampling approach
@@ -253,7 +268,9 @@ class Sample:
         return incl_probs
 
     @staticmethod
-    def _pps_sys_select(samp_unit: Array, samp_size: int, mos: Array) -> Tuple[Array, Array]:
+    def _pps_sys_select(
+        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
 
         cumsize = np.append(0, np.cumsum(mos))
         samp_interval = cumsize[-1] / samp_size
@@ -269,7 +286,9 @@ class Sample:
         return hits >= 1, hits
 
     @staticmethod
-    def _pps_hv_select(samp_unit: Array, samp_size: int, mos: Array) -> Tuple[Array, Array]:
+    def _pps_hv_select(
+        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
 
         pop_size = samp_unit.size
         all_indices = np.arange(pop_size)
@@ -354,7 +373,9 @@ class Sample:
         return sample, hits
 
     @staticmethod
-    def _pps_murphy_select(samp_unit: Array, samp_size: int, mos: Array) -> Tuple[Array, Array]:
+    def _pps_murphy_select(
+        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
 
         if samp_size != 2:
             raise ValueError(
@@ -403,8 +424,12 @@ class Sample:
         return sample, hits
 
     def _pps_select(
-        self, samp_unit: Array, samp_size: Dict[Any, int], stratum: Array, mos: Array
-    ) -> Tuple[Array, Array]:
+        self,
+        samp_unit: np.ndarray,
+        samp_size: Dict[Any, int],
+        stratum: np.ndarray,
+        mos: np.ndarray,
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """
         select a sample. 
 
@@ -483,11 +508,11 @@ class Sample:
 
     def _sys_inclusion_probs(
         self,
-        samp_unit: Array,
+        samp_unit: np.ndarray,
         samp_size: Union[Dict[Any, int], int] = None,
-        stratum: Array = None,
+        stratum: np.ndarray = None,
         samp_rate: Union[Dict[Any, float], float] = None,
-    ) -> Array:
+    ) -> np.ndarray:
         """
         The inclusion probabilities based on the simple random 
         selection (SRS) sampling approach
@@ -515,7 +540,9 @@ class Sample:
         pass
 
     @staticmethod
-    def _sys_selection_method(samp_unit: Array, samp_size: int, samp_rate: float) -> Array:
+    def _sys_selection_method(
+        samp_unit: np.ndarray, samp_size: int, samp_rate: float
+    ) -> Tuple[np.ndarray, np.ndarray]:
 
         if samp_size is not None and samp_rate is not None:
             raise AssertionError(
@@ -536,11 +563,11 @@ class Sample:
 
     def _sys_select(
         self,
-        samp_unit: Array,
+        samp_unit: np.ndarray,
         samp_size: Dict[Any, int],
-        stratum: Array,
+        stratum: np.ndarray,
         samp_rate: Dict[Any, float],
-    ) -> Tuple[Array, Array]:
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """
         The inclusion probabilities based on the simple random 
         selection (SRS) sampling approach
@@ -589,10 +616,10 @@ class Sample:
         self,
         samp_unit: Array,
         samp_size: Union[Dict[Any, int], int],
-        stratum: Array = None,
-        mos: Array = None,
-        samp_rate: Union[Dict[Any, float], float] = None,
-    ) -> Array:
+        stratum: Optional[Array] = None,
+        mos: Optional[Array] = None,
+        samp_rate: Union[Dict[Any, float], float, None] = None,
+    ) -> np.ndarray:
         """
         The inclusion probabilities based on the simple random 
         selection (SRS) sampling approach
@@ -617,7 +644,7 @@ class Sample:
             A array of the inclusion probabilities
         """
         samp_unit = checks.check_sample_unit(samp_unit)
-        samp_unit = checks.check_sample_unit(samp_unit)
+
         if stratum is not None:
             stratum = formats.numpy_array(stratum)
         if mos is not None:
@@ -626,9 +653,9 @@ class Sample:
         samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
 
         if samp_size is not None:
-            samp_size = self._convert_to_dict(samp_size, "int")
+            samp_size = self._convert_to_dict(samp_size, int)
         if samp_rate is not None:
-            samp_rate = self._convert_to_dict(samp_rate, "float")
+            samp_rate = self._convert_to_dict(samp_rate, float)
 
         if self.method == "srs":
             incl_probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum)
@@ -667,11 +694,11 @@ class Sample:
     def select(
         self,
         samp_unit: Array,
-        samp_size: Union[Dict[Any, int], int] = None,
-        stratum: Array = None,
-        mos: Array = None,
-        samp_rate: Union[Dict[Any, float], float] = None,
-        probs: Array = None,
+        samp_size: Union[Dict[Any, int], int, None] = None,
+        stratum: Optional[Array] = None,
+        mos: Optional[Array] = None,
+        samp_rate: Union[Dict[Any, float], float, None] = None,
+        probs: Optional[Array] = None,
         shuffle: bool = False,
         to_dataframe: bool = False,
         sample_only: bool = False,
@@ -693,9 +720,6 @@ class Sample:
 
         samp_unit = checks.check_sample_unit(samp_unit)
 
-        if isinstance(samp_size, int):
-            samp_size = {"__none__": samp_size}
-
         if stratum is not None:
             stratum = formats.numpy_array(stratum)
         if mos is not None:
@@ -710,9 +734,9 @@ class Sample:
 
         if samp_size is not None:
             samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
-            samp_size = self._convert_to_dict(samp_size, "int")
+            samp_size = self._convert_to_dict(samp_size, int)
         if samp_rate is not None:
-            samp_rate = self._convert_to_dict(samp_rate, "float")
+            samp_rate = self._convert_to_dict(samp_rate, float)
 
         if shuffle and self.method in ("sys", "pps-sys"):
             suffled_order = np.random.shuffle(range(samp_unit.size))
