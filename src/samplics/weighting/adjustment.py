@@ -391,7 +391,7 @@ class SampleWeight:
         x_dict: Dict[StringNumber, Dict[StringNumber, Number]] = {}
         if domain is None:
             x_array, x_dict["__none__"] = self._calib_covariates(data, x_cat, x_cont)
-            for key in x_dict:
+            for key in x_dict["__none__"]:
                 x_dict["__none__"][key] = np.nan
         else:
             x_array = np.zeros((data.shape[0], nb_cols))

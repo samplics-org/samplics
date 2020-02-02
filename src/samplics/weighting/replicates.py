@@ -1,10 +1,11 @@
 import math
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, List
 
 import numpy as np
 import pandas as pd
 from samplics.utils import checks, formats
 from samplics.utils import hadamard as hdd
+from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class ReplicateWeight:
@@ -40,7 +41,9 @@ class ReplicateWeight:
             self.random_seed = random_seed
             np.random.seed(random_seed)
 
-    def _reps_to_dataframe(self, psus, rep_data, rep_prefix):
+    def _reps_to_dataframe(
+        self, psus: pd.DataFrame, rep_data: List[str], rep_prefix: str
+    ) -> pd.DataFrame:
 
         rep_data = pd.DataFrame(rep_data)
         rep_data.reset_index(drop=True, inplace=True)
@@ -50,7 +53,7 @@ class ReplicateWeight:
 
         return rep_data
 
-    def _rep_prefix(self, prefix):
+    def _rep_prefix(self, prefix: str) -> str:
 
         if self.method == "jackknife" and prefix is None:
             rep_prefix = "_jk_wgt_"
@@ -67,7 +70,9 @@ class ReplicateWeight:
 
         return rep_prefix
 
-    def _degree_of_freedom(self, weight, stratum=None, psu=None):
+    def _degree_of_freedom(
+        self, weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None
+    ) -> None:
 
         stratum = formats.numpy_array(stratum)
         psu = formats.numpy_array(psu)
@@ -82,7 +87,9 @@ class ReplicateWeight:
 
     # Bootstrap methods
     @staticmethod
-    def _boot_psus_replicates(number_psus, number_reps, samp_rate=0, size_gap=1):
+    def _boot_psus_replicates(
+        number_psus: int, number_reps: int, samp_rate: Number = 0, size_gap: int = 1
+    ) -> np.ndarray:
         """Creates the bootstrap replicates structure"""
 
         if number_psus <= size_gap:
@@ -101,7 +108,9 @@ class ReplicateWeight:
 
         return boot_coefs
 
-    def _boot_replicates(self, psu, stratum, samp_rate=0, size_gap=1):
+    def _boot_replicates(
+        self, psu: np.ndarray, stratum: np.ndarray, samp_rate: Number = 0, size_gap: int = 1
+    ) -> np.ndarray:
 
         if stratum is None:
             psu_ids = np.unique(psu)
@@ -124,7 +133,7 @@ class ReplicateWeight:
         return boot_coefs
 
     # BRR methods
-    def _brr_number_reps(self, psu, stratum=None):
+    def _brr_number_reps(self, psu: np.ndarray, stratum: np.ndarray = None) -> None:
 
         if stratum is None:
             self.number_psus = np.unique(psu).size
@@ -146,9 +155,7 @@ class ReplicateWeight:
             if math.pow(2, nb_reps_log2) != self.number_reps:
                 self.number_reps = int(math.pow(2, nb_reps_log2))
 
-        return self
-
-    def _brr_replicates(self, psu, stratum):
+    def _brr_replicates(self, psu: np.ndarray, stratum: np.ndarray) -> np.ndarray:
         """Creates the brr replicate structure"""
 
         if not (0 <= self.fay_coef < 1):
@@ -175,7 +182,7 @@ class ReplicateWeight:
 
     # Jackknife
     @staticmethod
-    def _jkn_psus_replicates(number_psus):
+    def _jkn_psus_replicates(number_psus: np.ndarray) -> np.ndarray:
         """Creates the jackknife delete-1 replicate structure """
 
         jk_coefs = (number_psus / (number_psus - 1)) * (
@@ -184,7 +191,7 @@ class ReplicateWeight:
 
         return jk_coefs
 
-    def _jkn_replicates(self, psu, stratum):
+    def _jkn_replicates(self, psu: np.ndarray, stratum: np.ndarray) -> np.ndarray:
 
         self.rep_coefs = ((self.number_reps - 1) / self.number_reps) * np.ones(self.number_reps)
 
@@ -209,14 +216,14 @@ class ReplicateWeight:
 
     def replicate(
         self,
-        samp_weight,
-        psu,
-        stratum=None,
-        rep_coefs=False,
-        rep_prefix=None,
-        psu_varname="_psu",
-        str_varname="_stratum",
-    ):
+        samp_weight: Array,
+        psu: Array,
+        stratum: Array = None,
+        rep_coefs: Union[Array, Number] = False,
+        rep_prefix: str = None,
+        psu_varname: str = "_psu",
+        str_varname: str = "_stratum",
+    ) -> pd.DataFrame:
         """
         select a sample. 
 
@@ -252,7 +259,7 @@ class ReplicateWeight:
             key = [str_varname, psu_varname]
         else:
             stratum_psu = pd.DataFrame({psu_varname: psu})
-            key = psu_varname
+            key = [psu_varname]
 
         psus_ids = stratum_psu.drop_duplicates()
 
@@ -285,11 +292,11 @@ class ReplicateWeight:
 
         return full_sample
 
-    def normalize(self, rep_weights):
+    def normalize(self, rep_weights: Union[np.ndarray, pd.DataFrame]) -> pd.DataFrame:
         pass
 
-    def adjust(self, rep_weights):
+    def adjust(self, rep_weights: Union[np.ndarray, pd.DataFrame]) -> pd.DataFrame:
         pass
 
-    def trim(self, rep_weights):
+    def trim(self, rep_weights: Union[np.ndarray, pd.DataFrame]) -> pd.DataFrame:
         pass
