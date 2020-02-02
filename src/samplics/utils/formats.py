@@ -3,6 +3,8 @@ from typing import Any, Dict, Union
 import numpy as np
 import pandas as pd
 
+from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+
 
 def numpy_array(arr: Any) -> np.ndarray:
 
@@ -10,15 +12,6 @@ def numpy_array(arr: Any) -> np.ndarray:
         return np.asarray(arr)
     else:
         return arr
-
-
-def _merge_samples(folder, datasets, keys):
-    """
-    folder provide the location of the datasets
-    datasest is a tupple or list of datasets
-    keys is the list of merging keys
-    """
-    pass
 
 
 def non_missing_array(arr: np.ndarray) -> np.ndarray:
@@ -29,7 +22,7 @@ def non_missing_array(arr: np.ndarray) -> np.ndarray:
         return arr
 
 
-def array_to_dict(arr: np.ndarray, domain: np.array = None) -> Dict:
+def array_to_dict(arr: np.ndarray, domain: np.ndarray = None) -> Dict[StringNumber, Number]:
 
     if domain is None:
         keys, counts = np.unique(numpy_array(arr), return_counts=True)

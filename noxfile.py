@@ -28,18 +28,15 @@ def docs(session):
 
 @nox.session
 def format(session):
-    session.install("black", "isort")
+    session.install("black")
     session.run("black", *LINT_FILES)
-    session.run("isort", "--recursive", *LINT_FILES)
 
 
 @nox.session
 def lint(session):
-    session.install("black", "isort", "mypy")
+    session.install("black", "mypy")
     session.run("black", "--diff", "--check", *LINT_FILES)
-    session.run("isort", "--diff", "--check-only", "--recursive", *LINT_FILES)
     session.run("mypy", "--strict", "--ignore-missing-imports", "src")
-    session.run("mypy", "--strict", "--ignore-missing-imports", "-2", "src")
 
 
 @nox.session

@@ -1,21 +1,18 @@
-"""Estimation of linear parameters
-"""
-
 from typing import TypeVar, Type, Any, Dict, List, Optional, Tuple, Union
-
-import math
 
 import numpy as np
 import pandas as pd
 
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+import math
 
 from scipy.stats import norm as normal
 from scipy.stats import t as student
 
+from samplics.utils import checks, formats
+from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
-TaylorType = TypeVar("TaylorType", bound="TaylorEstimator")
+
+TypeTaylorEst = TypeVar("TypeTaylorEst", bound="TaylorEstimator")
 
 
 class _SurveyEstimator:
@@ -404,7 +401,7 @@ class TaylorEstimator(_SurveyEstimator):
         return variance
 
     def estimate(
-        self: TaylorType,
+        self: TypeTaylorEst,
         y: Array,
         samp_weight: Array,
         x: Optional[Array] = None,
@@ -415,7 +412,7 @@ class TaylorEstimator(_SurveyEstimator):
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
-    ) -> TaylorType:
+    ) -> TypeTaylorEst:
         """Computes the parameter point estimates
 
         Args:

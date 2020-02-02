@@ -1,14 +1,8 @@
-"""
-Author: Mamadou S Diallo <msdiallo@QuantifyAfrica.org>
-
-
-License: MIT
-"""
-
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+
 from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
@@ -44,7 +38,7 @@ class SampleWeight:
             self.number_units = dict(zip(keys, values))
 
     @staticmethod
-    def _deff_wgt(samp_weight: np.ndarray) -> Number:
+    def _deff_wgt(samp_weight: np.ndarray) -> float:
         """compute the design effect due to unequal weights -
         Page 71 of Valliant and Dever (2018) """
 
@@ -52,7 +46,7 @@ class SampleWeight:
         relvar_w = np.power(samp_weight - mean_w, 2) / mean_w ** 2
         deff_w = 1 + np.mean(relvar_w)
 
-        return deff_w
+        return float(deff_w)
 
     def deff_weight(
         self, samp_weight: np.ndarray, domain: Optional[np.ndarray] = None
@@ -346,7 +340,7 @@ class SampleWeight:
     @staticmethod
     def _calib_covariates(
         data: pd.DataFrame, x_cat: Optional[List[str]] = None, x_cont: Optional[List[str]] = None
-    ) -> Tuple[pd.DataFrame, Dict[StringNumber, Number]]:
+    ) -> Tuple[np.ndarray, Dict[StringNumber, Number]]:
 
         if not isinstance(data, pd.DataFrame) or data is None:
             raise ValueError("data must be a pandas dataframe.")
@@ -362,7 +356,7 @@ class SampleWeight:
             x_array = x_dummies.astype("int")
         else:
             x_array = pd.concat([x_dummies, data[x_cont]], axis=1).astype("int")
-            x_cont_dict = {}
+            x_cont_dict: Dict[StringNumber, Number] = {}
             nb_obs = data[x_cont].shape[0]
             for var in x_cont:
                 x_cont_dict[var] = nb_obs

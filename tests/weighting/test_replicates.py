@@ -1,6 +1,9 @@
+import pytest
+
 import numpy as np
 import pandas as pd
-import pytest
+
+
 from samplics.weighting import ReplicateWeight
 
 test_data = pd.read_csv("./tests/weighting/small_data_for_testing_replicate_weights.csv")

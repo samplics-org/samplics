@@ -1,8 +1,10 @@
-import math
+import pytest
 
 import numpy as np
 import pandas as pd
-import pytest
+
+import math
+
 from samplics.estimation import TaylorEstimator
 
 yrbs = pd.read_csv("./tests/estimation/yrbs.csv")

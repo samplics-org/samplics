@@ -1,16 +1,12 @@
-"""
-Author: Mamadou S Diallo <msdiallo@QuantifyAfrica.org>
-
-License: MIT
-"""
-
-import math
 from typing import Any, Dict, Tuple, Union, Optional
 
 import numpy as np
 import pandas as pd
+
+import math
+
 from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, Number, StringNumber
 
 
 class Sample:
@@ -84,7 +80,7 @@ class Sample:
         return df
 
     def _calculate_fpc(
-        self, samp_unit: np.ndarray, samp_size: Dict[Any, int], stratum: np.ndarray
+        self, samp_unit: np.ndarray, samp_size: Union[Dict[Any, int], int], stratum: np.ndarray
     ) -> None:
 
         samp_unit = checks.check_sample_unit(samp_unit)
@@ -93,8 +89,6 @@ class Sample:
         self.fpc = dict()
         if self.stratification:
             strata = np.unique(stratum)
-            if not isinstance(samp_size, dict):
-                samp_size = dict(zip(strata, np.repeat(samp_size, strata.size)))
             for k, s in enumerate(strata):
                 number_units_s = len(samp_unit[stratum == s])
                 self.fpc[s] = np.sqrt((number_units_s - samp_size[s]) / (number_units_s - 1))
@@ -107,7 +101,7 @@ class Sample:
         self,
         probs: np.ndarray,
         samp_unit: np.ndarray,
-        samp_size: Dict[Any, int],
+        samp_size: Union[Dict[Any, int], int],
         stratum: Optional[np.ndarray] = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -138,9 +132,6 @@ class Sample:
         sample = hits = np.zeros(samp_unit.size).astype("int")
         self._calculate_fpc(samp_unit, samp_size, stratum)
         if self.stratification:
-            if not isinstance(samp_size, dict):
-                strata = np.unique(stratum)
-                samp_size = dict(zip(strata, np.repeat(samp_size, strata.size)))
             all_indices = np.array(range(samp_unit.size))
             sampled_indices_list = []
             for s in np.unique(stratum):
@@ -164,24 +155,28 @@ class Sample:
         return sample, hits
 
     @staticmethod
-    def _anycertainty(samp_size: Dict[Any, int], stratum: np.ndarray, mos: np.ndarray) -> bool:
+    def _anycertainty(
+        samp_size: Dict[StringNumber, int], stratum: np.ndarray, mos: np.ndarray
+    ) -> bool:
 
         if stratum is not None:
-            certainty = np.zeros(stratum.size)
+            probs = np.zeros(stratum.size)
             for s in np.unique(stratum):
                 stratum_units = stratum == s
                 mos_s = mos[stratum_units]
-                certainty[stratum_units] = samp_size[s] * mos_s / np.sum(mos_s)
+                probs[stratum_units] = samp_size[s] * mos_s / np.sum(mos_s)
         else:
-            certainty = samp_size["__none__"] * mos / np.sum(mos)
+            probs = samp_size["__none__"] * mos / np.sum(mos)
 
-        return (certainty >= 1).any()
+        certainty: bool = (probs >= 1).any()
+
+        return certainty
 
     # SRS methods
     def _srs_inclusion_probs(
         self,
         samp_unit: np.ndarray,
-        samp_size: Dict[Any, int],
+        samp_size: Union[Dict[Any, int], int],
         stratum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """
@@ -210,9 +205,6 @@ class Sample:
 
         number_units = samp_unit.size
         if self.stratification:
-            if not isinstance(samp_size, dict):
-                strata = np.unique(stratum)
-                samp_size = dict(zip(strata, np.repeat(samp_size, strata.size)))
             incl_probs = np.zeros(number_units) * np.nan
             for s in np.unique(stratum):
                 number_units_s = samp_unit[stratum == s].size
@@ -707,7 +699,7 @@ class Sample:
         shuffle: bool = False,
         to_dataframe: bool = False,
         sample_only: bool = False,
-    ) -> Tuple[Array, Array, Array]:
+    ) -> Union[pd.DataFrame, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
         """
         select a sample. 
 

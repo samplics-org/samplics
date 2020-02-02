@@ -1,20 +1,20 @@
-"""Estimation of linear parameters
-"""
-# Author: Mamadou S Diallo <msdiallo@QuantifyAfrica.org>
-#
-# License: MIT
-
-import math
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import TypeVar, Type, Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from samplics.estimation.expansion import _SurveyEstimator
-from samplics.utils import checks, formats
+
+import math
+
 from scipy.stats import norm as normal
 from scipy.stats import t as student
 
-EstimateType = Any  # Dict[np.ndarray, Union[Dict[np.ndarray, float], float]]
+from samplics.estimation.expansion import _SurveyEstimator
+
+from samplics.utils import checks, formats
+from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+
+
+TypeRepEst = TypeVar("TypeRepEst", bound="ReplicateEstimator")
 
 
 class ReplicateEstimator(_SurveyEstimator):
@@ -27,9 +27,9 @@ class ReplicateEstimator(_SurveyEstimator):
         method: str,
         parameter: str,
         rep_weight_cls: Optional[Any] = None,
-        fay_coef=None,
+        fay_coef: Optional[Number] = None,
         alpha: float = 0.05,
-        random_seed=None,
+        random_seed: Optional[int] = None,
     ) -> None:
         """Initializes the instance """
 
@@ -39,8 +39,8 @@ class ReplicateEstimator(_SurveyEstimator):
         super().__init__(parameter, alpha, random_seed)
         self.method = method.lower()
         self.conservative = False
-        self.degree_of_freedom = None
-        self.rep_coefs = None
+        self.degree_of_freedom: Optional[int] = None
+        self.rep_coefs: Optional[np.ndarray] = None
         if method == "brr" and fay_coef is not None:
             self.fay_coef = fay_coef
         elif method == "brr":
@@ -66,7 +66,7 @@ class ReplicateEstimator(_SurveyEstimator):
         self, y: np.ndarray, samp_weight: np.ndarray, rep_weights: np.ndarray, x: np.ndarray
     ) -> float:
 
-        estimate = self.get_point(y, samp_weight, x).get("__none__")
+        estimate = self._get_point(y, samp_weight, x).get("__none__")
         rep_estimates = self._rep_point(y, rep_weights, x)
 
         return float(np.sum(np.mean(rep_estimates) - estimate))
@@ -130,8 +130,8 @@ class ReplicateEstimator(_SurveyEstimator):
         rep_weights: np.ndarray,
         x: Optional[np.ndarray] = None,
         domain: np.ndarray = None,
-        exclude_nan: bool = False,
-    ) -> EstimateType:
+        remove_nan: bool = False,
+    ) -> Dict[StringNumber, Any]:
         """
         estimate bias using replication methods. 
 
@@ -148,12 +148,12 @@ class ReplicateEstimator(_SurveyEstimator):
             A dictionary: .
         """
 
-        if exclude_nan:
+        if remove_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, _, _ = self._exclude_nans(
+            y, samp_weight, x, stratum, domain, _, _ = self._remove_nans(
                 excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
@@ -163,7 +163,7 @@ class ReplicateEstimator(_SurveyEstimator):
             categories = y_dummies.columns
             y_dummies = y_dummies.values
 
-        bias: EstimateType = {}
+        bias: Dict[StringNumber, Any] = {}
         if domain is None:
             if self.parameter == "proportion":
                 cat_dict = dict()
@@ -215,8 +215,8 @@ class ReplicateEstimator(_SurveyEstimator):
         x: np.ndarray = None,
         domain: np.ndarray = None,
         conservative: bool = False,
-        exclude_nan: bool = False,
-    ) -> EstimateType:
+        remove_nan: bool = False,
+    ) -> Dict[StringNumber, Any]:
         """
         estimate variance using replication methods. 
 
@@ -240,12 +240,12 @@ class ReplicateEstimator(_SurveyEstimator):
             categories = y_dummies.columns
             y_dummies = y_dummies.values
 
-        variance: EstimateType = {}
+        variance: Dict[StringNumber, Any] = {}
         if domain is None:
             if self.parameter == "proportion":
                 cat_dict = dict()
                 for k in range(categories.size):
-                    estimate_k = self.get_point(y_dummies[:, k], samp_weight, x)["__none__"][1]
+                    estimate_k = self._get_point(y_dummies[:, k], samp_weight, x)["__none__"][1]
                     cat_dict_k = dict(
                         {
                             categories[k]: self._variance(
@@ -261,7 +261,7 @@ class ReplicateEstimator(_SurveyEstimator):
                     cat_dict.update(cat_dict_k)
                 variance["__none__"] = cat_dict
             else:
-                estimate = self.get_point(y, samp_weight, x).get("__none__")
+                estimate = self._get_point(y, samp_weight, x).get("__none__")
                 variance["__none__"] = self._variance(
                     y, rep_weights, rep_coefs, x, estimate, conservative
                 )
@@ -277,7 +277,7 @@ class ReplicateEstimator(_SurveyEstimator):
                     y_dummies_d = y_dummies * (domain == d)[:, None]
                     cat_dict = dict()
                     for k in range(categories.size):
-                        estimate_d_k = self.get_point(y_dummies_d[:, k], samp_weight_d, x_d).get(
+                        estimate_d_k = self._get_point(y_dummies_d[:, k], samp_weight_d, x_d).get(
                             "__none__"
                         )[1]
                         cat_dict_d_k = dict(
@@ -296,7 +296,7 @@ class ReplicateEstimator(_SurveyEstimator):
                     variance[d] = cat_dict
                 else:
                     y_d = y * (domain == d)
-                    estimate_d = self.get_point(y_d, samp_weight_d, x_d).get("__none__")
+                    estimate_d = self._get_point(y_d, samp_weight_d, x_d).get("__none__")
                     variance[d] = self._variance(
                         y_d, rep_weights_d, rep_coefs, x_d, estimate_d, conservative
                     )
@@ -305,8 +305,11 @@ class ReplicateEstimator(_SurveyEstimator):
 
     @staticmethod
     def _get_confint(
-        parameter: str, estimate: EstimateType, variance: EstimateType, quantile: float
-    ) -> Tuple[EstimateType, EstimateType]:
+        parameter: str,
+        estimate: Dict[StringNumber, Any],
+        variance: Dict[StringNumber, Any],
+        quantile: float,
+    ) -> Tuple[Dict[StringNumber, Any], Dict[StringNumber, Any]]:
         """
         estimate variance using replication methods. 
 
@@ -318,8 +321,8 @@ class ReplicateEstimator(_SurveyEstimator):
             A dictionary: .
         """
 
-        lower_ci: EstimateType = {}
-        upper_ci: EstimateType = {}
+        lower_ci: Dict[StringNumber, Any] = {}
+        upper_ci: Dict[StringNumber, Any] = {}
         for key in variance:
             if parameter == "proportion":
                 lower_ci_k = {}
@@ -343,8 +346,8 @@ class ReplicateEstimator(_SurveyEstimator):
 
     @staticmethod
     def _get_coefvar(
-        parameter: str, estimate: EstimateType, variance: EstimateType
-    ) -> EstimateType:
+        parameter: str, estimate: Dict[StringNumber, Any], variance: Dict[StringNumber, Any]
+    ) -> Dict[StringNumber, Any]:
         """Computes the coefficient of variation
 
         Args:
@@ -369,17 +372,17 @@ class ReplicateEstimator(_SurveyEstimator):
         return coef_var
 
     def estimate(
-        self,
-        y: np.ndarray,
-        samp_weight: np.ndarray,
-        rep_weights: np.ndarray,
-        x: Optional[np.ndarray] = None,
-        rep_coefs: Optional[Union[float, np.ndarray]] = None,
+        self: TypeRepEst,
+        y: Array,
+        samp_weight: Array,
+        rep_weights: Union[np.ndarray, pd.DataFrame],
+        x: Union[np.ndarray, pd.DataFrame, None] = None,
+        rep_coefs: Union[float, np.ndarray, None] = None,
         domain: Optional[np.ndarray] = None,
         conservative: bool = False,
         deff: bool = False,  # Todo
-        exclude_nan: bool = False,
-    ) -> EstimateType:
+        remove_nan: bool = False,
+    ) -> TypeRepEst:
         """Computes the parameter point estimates
 
         Args:
@@ -403,12 +406,12 @@ class ReplicateEstimator(_SurveyEstimator):
         if not isinstance(rep_weights, np.ndarray):
             rep_weights = formats.numpy_array(rep_weights)
 
-        if exclude_nan:
+        if remove_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, _, domain, _, _ = self._exclude_nans(
+            y, samp_weight, x, _, domain, _, _ = self._remove_nans(
                 excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
@@ -423,7 +426,7 @@ class ReplicateEstimator(_SurveyEstimator):
         if domain is not None:
             self.domains = np.unique(domain)
 
-        self.point_est = self.get_point(y, samp_weight, x, domain)
+        self.point_est = self._get_point(y, samp_weight, x, domain)
         self.variance = self._get_variance(
             y,
             samp_weight,
@@ -432,13 +435,13 @@ class ReplicateEstimator(_SurveyEstimator):
             x,
             domain,
             conservative,
-            exclude_nan,
+            remove_nan,
         )
 
         if self.method == "brr" and self.degree_of_freedom is None:
-            self.degree_of_freedom = self.number_reps / 2
+            self.degree_of_freedom = int(self.number_reps / 2)
         elif self.degree_of_freedom is None:
-            self.degree_of_freedom = self.number_reps - 1
+            self.degree_of_freedom = int(self.number_reps) - 1
 
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 

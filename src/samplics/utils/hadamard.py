@@ -1,12 +1,13 @@
+import numpy as np
+
 import math
 
-import numpy as np
 from scipy.linalg import hadamard as hdd
 
 # from numba import njit
 
 
-def hadamard(n):
+def hadamard(n: int) -> np.ndarray:
 
     n_log2 = int(math.log(n, 2))
     if math.pow(2, n_log2) == n:
@@ -16,7 +17,7 @@ def hadamard(n):
         return eval(hadamard_run)
 
 
-def _hadamard2():
+def _hadamard2() -> np.ndarray:
 
     hadamard2 = np.ones((2, 2))
     hadamard2[1, 1] = -1
@@ -25,7 +26,7 @@ def _hadamard2():
 
 
 # @njit
-def _hadamard12():
+def _hadamard12() -> np.ndarray:
 
     hadamard12 = np.ones((12, 12))
 
@@ -56,7 +57,7 @@ def _hadamard12():
 
 
 # @njit
-def _hadamard20():
+def _hadamard20() -> np.ndarray:
 
     hadamard20 = np.ones((20, 20))
 
@@ -73,7 +74,7 @@ def _hadamard20():
 
 
 # @njit
-def _hadamard24():
+def _hadamard24() -> np.ndarray:
 
     hadamard24 = np.ones((24, 24))
 
@@ -118,7 +119,7 @@ def _hadamard24():
 
 
 # @njit
-def _hadamard28():
+def _hadamard28() -> np.ndarray:
 
     hadamard28 = np.ones((28, 28))
 

@@ -1,8 +1,10 @@
-import math
 from typing import Any, Dict, Optional, Tuple, Union, List
 
 import numpy as np
 import pandas as pd
+
+import math
+
 from samplics.utils import checks, formats
 from samplics.utils import hadamard as hdd
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
