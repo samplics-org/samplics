@@ -8,7 +8,6 @@ import math
 from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber
 
-
 class Sample:
     """Class implements an arbitrary random selection based on given 
     inclusion probability and sample size
