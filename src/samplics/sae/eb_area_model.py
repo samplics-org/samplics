@@ -22,8 +22,7 @@ class AreaModel:
         self.re_coef: np.ndarray = np.array([])
         self.re_cov: np.ndarray = np.array([])
         self.method: str = "REML"
-        self.iterations: int = 0
-        self.convergence: bool = False
+        self.convergence: Dict[str, Union[float, int]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
         self.point_est: Dict[Any, float] = {}
         self.mse: Dict[Any, float] = {}
@@ -54,21 +53,11 @@ class AreaModel:
             Tuple[np.ndarray, np.ndarray] -- [description]
         """
 
-        p = np.shape(X)[1]
-        beta_term1 = np.zeros(shape=(p, p))
-        beta_term2 = np.zeros(shape=(p, 1))
-        for d in area:
-            yhat_d = yhat[area == d]
-            X_d = X[area == d]
-            b_d = b_const[area == d]
-            phi_d = sigma2_e[area == d]
-            sigma2_d = float(sigma2_v * b_d ** 2 + phi_d)
-            beta_term1 = beta_term1 + np.dot(np.transpose(X_d), X_d) / sigma2_d
-            beta_term2 = beta_term2 + np.transpose(X_d) * yhat_d / sigma2_d
-        beta_hat = np.matmul(np.linalg.inv(beta_term1), beta_term2)
-        v_i = sigma2_e + sigma2_v * b_const ** 2
-        V = np.diag(v_i)
+        V = np.diag(sigma2_v * (b_const ** 2) + sigma2_e)
         V_inv = np.linalg.inv(V)
+        x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
+        x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
+        beta_hat = np.matmul(x_v_x_inv_x, yhat)
         beta_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
 
         return beta_hat.ravel(), np.linalg.inv(beta_cov)
@@ -183,19 +172,16 @@ class AreaModel:
         sigma2_e: np.ndarray,
         b_const: np.ndarray,
         sigma2_v_start: float,
-        maxiter: int = 100,
-        tol: float = 1.0e-6,
-        rtol: float = 0.0,
+        maxiter: int,
+        abstol: float,
+        reltol: float,
     ) -> Tuple[float, float, int, float, bool]:  # May not need variance
         """ Fisher-scroring algorithm for estimation of variance component"""
 
-        iterations = 1
-        if rtol < 0.0:
-            AssertionError("Relative tolerance must be positive.")
-        elif rtol != 0.0:
-            tol = rtol
+        iterations = 0
 
-        tolerance = tol + 1.0
+        tolerance = abstol + 1.0
+        tol = 0.9 * tolerance
         sigma2_v = sigma2_v_start
         while tolerance > tol:
             sigma2_v_previous = sigma2_v
@@ -231,12 +217,11 @@ class AreaModel:
 
             sigma2_v += deriv_sigma / info_sigma
             sigma2_v_cov = 1 / info_sigma
-            if rtol == 0:
-                tolerance = abs(sigma2_v - sigma2_v_previous)
-            else:  # rtol > 0:
-                tolerance = abs(sigma2_v - sigma2_v_previous) / sigma2_v_previous
 
+            tolerance = abs(sigma2_v - sigma2_v_previous)
+            tol = max(abstol, reltol * abs(sigma2_v))
             convergence = tolerance <= tol
+
             if iterations == maxiter:
                 break
             else:
@@ -348,9 +333,8 @@ class AreaModel:
         b_const: Union[np.array, float, int] = 1.0,
         sigma2_v_start: float = 0.001,
         maxiter: int = 100,
-        tol: float = 1.0e-6,
-        rtol: float = 0.0,
-        to_dataframe: bool = False,
+        abstol: float = 1.0e-4,
+        reltol: float = 0.0,
     ) -> None:
 
         if method.upper() not in ("FH", "ML", "REML"):
@@ -366,6 +350,12 @@ class AreaModel:
         X = formats.numpy_array(X)
         b_const = formats.numpy_array(b_const)
 
+        if abstol <= 0.0 and reltol <= 0.0:
+            AssertionError("At least one tolerance parameters must be positive.")
+        else:
+            abstol = max(abstol, 0)
+            reltol = max(reltol, 0)
+
         (sigma2_v, sigma2_v_cov, iterations, tolerance, convergence) = self._iterative_methods(
             area=area,
             yhat=yhat,
@@ -374,8 +364,8 @@ class AreaModel:
             b_const=b_const,
             sigma2_v_start=sigma2_v_start,
             maxiter=maxiter,
-            tol=tol,
-            rtol=rtol,
+            abstol=abstol,
+            reltol=reltol,
         )
 
         beta, beta_cov = self._fixed_coefs(
@@ -388,20 +378,13 @@ class AreaModel:
         self.re_coef = sigma2_v
         self.re_cov = sigma2_v_cov
 
-        self.convergence = convergence
-        self.iterations = iterations
-        self.tolerance = tolerance
+        self.convergence["achieved"] = convergence
+        self.convergence["iterations"] = iterations
+        self.convergence["precision"] = tolerance
 
         self.goodness["AIC"] = None
         self.goodness["BIC"] = None
         self.goodness["KIC"] = None
-
-        if to_dataframe:
-            self.estimates_df = pd.DataFrame.from_dict(self.estimates)
-            self.fe_coef_df = pd.DataFrame.from_dict(self.fe_coef)
-            self.re_coef_df = pd.DataFrame.from_dict(self.re_coef)
-            self.method_df = pd.DataFrame.from_dict(self.method)
-            self.goodness_df = pd.DataFrame.from_dict(self.goodness)
 
     def predict(self, link: str = None) -> Tuple[Dict[Any, float], Dict[Any, float]]:
 
