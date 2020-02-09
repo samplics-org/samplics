@@ -25,10 +25,14 @@ class AreaModel:
         self.iterations: int = 0
         self.convergence: bool = False
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.estimates: Dict[Any, float] = {}
+        self.point_est: Dict[Any, float] = {}
+        self.mse: Dict[Any, float] = {}
+        self.mse_as1: Dict[Any, float] = {}
+        self.mse_as2: Dict[Any, float] = {}
+        self.mse_terms: Dict[str, Dict[Any, float]] = {}
 
     @staticmethod
-    def _fixed_effects(
+    def _fixed_coefs(
         area: np.ndarray,
         yhat: np.ndarray,
         X: np.ndarray,
@@ -36,6 +40,19 @@ class AreaModel:
         sigma2_v: float,
         b_const: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """[summary]
+        
+        Arguments:
+            area {np.ndarray} -- [description]
+            yhat {np.ndarray} -- [description]
+            X {np.ndarray} -- [description]
+            sigma2_e {np.ndarray} -- [description]
+            sigma2_v {float} -- [description]
+            b_const {np.ndarray} -- [description]
+        
+        Returns:
+            Tuple[np.ndarray, np.ndarray] -- [description]
+        """
 
         p = np.shape(X)[1]
         beta_term1 = np.zeros(shape=(p, p))
@@ -59,6 +76,20 @@ class AreaModel:
     def _likelihood(
         self, yhat: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray
     ) -> float:
+        """[summary]
+        
+        Args:
+            yhat (np.ndarray): [description]
+            X (np.ndarray): [description]
+            beta (np.ndarray): [description]
+            V (np.ndarray): [description]
+        
+        Raises:
+            AssertionError: [description]
+        
+        Returns:
+            float: [description]
+        """
 
         if self.method == "ML":
             ll_term1 = np.log(abs(V))
@@ -91,7 +122,7 @@ class AreaModel:
     ) -> Tuple[float, float]:
 
         if self.method == "ML":
-            beta, beta_cov = self._fixed_effects(
+            beta, beta_cov = self._fixed_coefs(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
             )
             deriv_sigma = 0.0
@@ -123,7 +154,7 @@ class AreaModel:
             deriv_sigma = -0.5 * (term1 - term2)
             info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
         elif self.method == "FH":  # Fay-Herriot approximation
-            beta, beta_cov = self._fixed_effects(
+            beta, beta_cov = self._fixed_coefs(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
             )
             deriv_sigma = 0.0
@@ -306,4 +337,84 @@ class AreaModel:
             mse2_area_specific = g1 - g1_partial + g2 + g3 + g3_star
 
         return (estimates, mse, mse1_area_specific, mse2_area_specific, g1, g2, g3, g3_star)
+
+    def fit(
+        self,
+        area: Array,
+        yhat: Array,
+        X: Array,
+        sigma2_e: Array,
+        method: str = "REML",
+        b_const: Union[np.array, float, int] = 1.0,
+        sigma2_v_start: float = 0.001,
+        maxiter: int = 100,
+        tol: float = 1.0e-6,
+        rtol: float = 0.0,
+        to_dataframe: bool = False,
+    ) -> None:
+
+        if method.upper() not in ("FH", "ML", "REML"):
+            raise AssertionError("method must be 'FH', 'ML, or 'REML'.")
+        else:
+            self.method = method.upper()
+
+        if isinstance(b_const, (int, float)):
+            b_const = np.ones(area.size) * b_const
+
+        (sigma2_v, sigma2_v_cov, iterations, tolerance, convergence) = self._iterative_methods(
+            area=area,
+            yhat=yhat,
+            X=X,
+            sigma2_e=sigma2_e,
+            b_const=b_const,
+            sigma2_v_start=sigma2_v_start,
+            maxiter=maxiter,
+            tol=tol,
+            rtol=rtol,
+        )
+
+        beta, beta_cov = self._fixed_coefs(
+            area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
+        )
+
+        self.fe_coef["beta"] = beta
+        self.fe_coef["stderr"] = beta_cov
+        self.fe_coef["tvalue"] = None
+        self.fe_coef["pvalue"] = None
+
+        self.re_coef["sigma2"] = sigma2_v
+        self.re_coef["stderr"] = sigma2_v_cov
+
+        self.convergence = convergence
+        self.iterations = iterations
+        self.tolerance = tolerance
+
+        self.goodness["AIC"] = None
+        self.goodness["BIC"] = None
+        self.goodness["KIC"] = None
+
+        if to_dataframe:
+            self.estimates_df = pd.DataFrame.from_dict(self.estimates)
+            self.fe_coef_df = pd.DataFrame.from_dict(self.fe_coef)
+            self.re_coef_df = pd.DataFrame.from_dict(self.re_coef)
+            self.method_df = pd.DataFrame.from_dict(self.method)
+            self.goodness_df = pd.DataFrame.from_dict(self.goodness)
+
+    def predict(self, link: str = None) -> Tuple[Dict[Any, float], Dict[Any, float]]:
+
+        if self.estimates is None:
+            AssertionError("Check that the model was fitted before running the predictions")
+
+        point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
+            domains=self.domains,
+            fitting_method=self.fitting_method["method"],
+            y=self.survey_estimates,
+            X=self.fe_covariates,
+            beta=self.fixed_effects["beta"],
+            sampling_errors=self.sampling_errors,
+            sigma2_v=self.random_effects["sigma2"],
+            sigma2_v_cov=self.random_effects["stderr"],
+        )
+
+        self.point_est = dict()
 

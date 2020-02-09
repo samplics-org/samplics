@@ -112,6 +112,7 @@ dmypy.json
 # IDE and Editors
 .idea
 .vscode
+*.code-workspace
 
 #MaCOS
 .DS_Store
