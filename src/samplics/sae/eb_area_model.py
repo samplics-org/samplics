@@ -62,16 +62,16 @@ class AreaModel:
             X_d = X[area == d]
             b_d = b_const[area == d]
             phi_d = sigma2_e[area == d]
-            sigma2_d = sigma2_v * b_d ** 2 + phi_d
-            beta_term1 += np.matmul(np.transpose(X_d), X_d) / sigma2_d
-            beta_term2 += np.transpose(X_d) * yhat_d / sigma2_d
+            sigma2_d = float(sigma2_v * b_d ** 2 + phi_d)
+            beta_term1 = beta_term1 + np.dot(np.transpose(X_d), X_d) / sigma2_d
+            beta_term2 = beta_term2 + np.transpose(X_d) * yhat_d / sigma2_d
         beta_hat = np.matmul(np.linalg.inv(beta_term1), beta_term2)
         v_i = sigma2_e + sigma2_v * b_const ** 2
         V = np.diag(v_i)
         V_inv = np.linalg.inv(V)
         beta_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
 
-        return beta_hat.ravel(), beta_cov.ravel()
+        return beta_hat.ravel(), np.linalg.inv(beta_cov)
 
     def _likelihood(
         self, yhat: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray
@@ -361,6 +361,11 @@ class AreaModel:
         if isinstance(b_const, (int, float)):
             b_const = np.ones(area.size) * b_const
 
+        area = formats.numpy_array(area)
+        yhat = formats.numpy_array(yhat)
+        X = formats.numpy_array(X)
+        b_const = formats.numpy_array(b_const)
+
         (sigma2_v, sigma2_v_cov, iterations, tolerance, convergence) = self._iterative_methods(
             area=area,
             yhat=yhat,
@@ -377,13 +382,11 @@ class AreaModel:
             area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
         )
 
-        self.fe_coef["beta"] = beta
-        self.fe_coef["stderr"] = beta_cov
-        self.fe_coef["tvalue"] = None
-        self.fe_coef["pvalue"] = None
+        self.fe_coef = beta
+        self.fe_cov = beta_cov
 
-        self.re_coef["sigma2"] = sigma2_v
-        self.re_coef["stderr"] = sigma2_v_cov
+        self.re_coef = sigma2_v
+        self.re_cov = sigma2_v_cov
 
         self.convergence = convergence
         self.iterations = iterations
