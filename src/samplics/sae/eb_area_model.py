@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
+import math
+
 import statsmodels.api as sm
 
 from scipy.stats import norm as normal
@@ -22,13 +24,29 @@ class AreaModel:
         self.re_coef: np.ndarray = np.array([])
         self.re_cov: np.ndarray = np.array([])
         self.method: str = "REML"
-        self.convergence: Dict[str, Union[float, int]] = {}
+        self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
         self.point_est: Dict[Any, float] = {}
         self.mse: Dict[Any, float] = {}
         self.mse_as1: Dict[Any, float] = {}
         self.mse_as2: Dict[Any, float] = {}
         self.mse_terms: Dict[str, Dict[Any, float]] = {}
+
+    def __str__(self) -> str:
+
+        estimation = pd.DataFrame()
+        estimation["area"] = self.area
+        estimation["estimate"] = self.point_est
+        estimation["mse"] = self.mse
+
+        fit = pd.DataFrame()
+        fit["beta_coef"] = self.fe_coef
+        fit["beta_stderr"] = np.diag(self.fe_cov) ** (1 / 2)
+
+        return f"""\n\n{self.model} Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_coef}\n\n"""
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
     @staticmethod
     def _fixed_coefs(
@@ -62,39 +80,21 @@ class AreaModel:
 
         return beta_hat.ravel(), np.linalg.inv(beta_cov)
 
-    def _likelihood(
-        self, yhat: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray
-    ) -> float:
-        """[summary]
-        
-        Args:
-            yhat (np.ndarray): [description]
-            X (np.ndarray): [description]
-            beta (np.ndarray): [description]
-            V (np.ndarray): [description]
-        
-        Raises:
-            AssertionError: [description]
-        
-        Returns:
-            float: [description]
-        """
+    def _likelihood(self, y: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray) -> float:
 
-        if self.method == "ML":
-            ll_term1 = np.log(abs(V))
-            resid_term = yhat - np.matmul(X, beta)
-            V_inv = np.linalg.inv(V)
-            resid_var = np.matmul(np.transpose(resid_term), V_inv)
-            ll_term2 = np.matmul(resid_var, resid_term)
-            loglike = -0.5 * (ll_term1 + ll_term2)
+        const = (y.size - X.shape[1]) * np.log(2 * np.pi)
+        ll_term1 = np.log(np.linalg.det(V))
+        V_inv = np.linalg.inv(V)
+        resid_term = y - np.dot(X, beta)
+        if self.method in ("ML", "FH"):  # Whta is likelihood for FH
+            resid_var = np.dot(np.transpose(resid_term), V_inv)
+            ll_term2 = np.dot(resid_var, resid_term)
+            loglike = -0.5 * (const + ll_term1 + ll_term2)
         elif self.method == "REML":
-            ll_term1 = np.log(abs(V))
-            v_inv = np.linalg.inv(V)
-            xT_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
-            ll_term2 = np.log(abs(xT_vinv_x))
-            resid_term = yhat - np.matmul(X, beta)
-            ll_term3 = np.log(np.matmul(np.matmul(yhat, v_inv), resid_term))
-            loglike = -0.5 * (ll_term1 + ll_term2 + ll_term3)
+            xT_vinv_x = np.dot(np.dot(np.transpose(X), V_inv), X)
+            ll_term2 = np.log(np.linalg.det(xT_vinv_x))
+            ll_term3 = np.dot(np.dot(y, V_inv), resid_term)
+            loglike = -0.5 * (const + ll_term1 + ll_term2 + ll_term3)
         else:
             raise AssertionError("A fitting method must be specified.")
 
@@ -119,15 +119,15 @@ class AreaModel:
             for d in area:
                 b_d = b_const[area == d]
                 phi_d = sigma2_e[area == d]
-                X_d = X[area == d]
+                X_d = X[area == d, :]
                 yhat_d = yhat[area == d]
                 mu_d = np.matmul(X_d, beta)
                 resid_d = yhat_d - mu_d
-                sigma2_d = sigma2_v * b_d ** 2 + phi_d
-                term1 = b_d ** 2 / sigma2_d
-                term2 = (b_d * resid_d) ** 2 / sigma2_d ** 2
+                sigma2_d = sigma2_v * (b_d ** 2) + phi_d
+                term1 = float(b_d ** 2 / sigma2_d)
+                term2 = float(((b_d ** 2) * (resid_d ** 2)) / (sigma2_d ** 2))
                 deriv_sigma += -0.5 * (term1 - term2)
-                info_sigma += 0.5 * term1 ** 2
+                info_sigma += 0.5 * (term1 ** 2)
         elif self.method == "REML":
             B = np.diag(b_const ** 2)
             v_i = sigma2_e + sigma2_v * b_const ** 2
@@ -151,15 +151,15 @@ class AreaModel:
             for d in area:
                 b_d = b_const[area == d]
                 phi_d = sigma2_e[area == d]
-                X_d = X[area == d]
+                X_d = X[area == d, :]
                 yhat_d = yhat[area == d]
-                mu_d = np.matmul(X_d, beta)
+                mu_d = np.dot(X_d, beta)
                 resid_d = yhat_d - mu_d
-                sigma2_d = sigma2_v * b_d ** 2 + phi_d
-                deriv_sigma += resid_d ** 2 / sigma2_d
-                info_sigma += -((b_d * resid_d) ** 2) / sigma2_d ** 2
-            m = np.size(area)
-            p = np.shape(X)[1]
+                sigma2_d = sigma2_v * (b_d ** 2) + phi_d
+                deriv_sigma += float((resid_d ** 2) / sigma2_d)
+                info_sigma += -float(((b_d ** 2) * (resid_d ** 2)) / (sigma2_d ** 2))
+            m = yhat.size
+            p = X.shape[1]
             deriv_sigma = m - p - deriv_sigma
 
         return float(deriv_sigma), float(info_sigma)
@@ -185,35 +185,9 @@ class AreaModel:
         sigma2_v = sigma2_v_start
         while tolerance > tol:
             sigma2_v_previous = sigma2_v
-            if self.method == "ML":  # Fisher-scoring algorithm
-                deriv_sigma, info_sigma = self._derivatives_sigma(
-                    area=area,
-                    yhat=yhat,
-                    X=X,
-                    sigma2_e=sigma2_e,
-                    sigma2_v=sigma2_v,
-                    b_const=b_const,
-                )
-            elif self.method == "REML":  # Fisher-scoring algorithm
-                deriv_sigma, info_sigma = self._derivatives_sigma(
-                    area=area,
-                    yhat=yhat,
-                    X=X,
-                    sigma2_e=sigma2_e,
-                    sigma2_v=sigma2_v,
-                    b_const=b_const,
-                )
-            elif self.method == "FH":  # Fisher-scoring algorithm
-                deriv_sigma, info_sigma = self._derivatives_sigma(
-                    area=area,
-                    yhat=yhat,
-                    X=X,
-                    sigma2_e=sigma2_e,
-                    sigma2_v=sigma2_v,
-                    b_const=b_const,
-                )
-            else:
-                AssertionError("fiting_method must be specified")
+            deriv_sigma, info_sigma = self._derivatives_sigma(
+                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
+            )
 
             sigma2_v += deriv_sigma / info_sigma
             sigma2_v_cov = 1 / info_sigma
@@ -233,10 +207,10 @@ class AreaModel:
 
     def _eb_estimates(
         self,
-        area: np.ndarray,
         yhat: np.ndarray,
         X: np.ndarray,
         beta: np.ndarray,
+        area: np.ndarray,
         sigma2_e: np.ndarray,
         sigma2_v: float,
         sigma2_v_cov: float,
@@ -252,10 +226,10 @@ class AreaModel:
         np.dtype,
     ]:
 
-        v_i = sigma2_e + sigma2_v * b_const ** 2
+        v_i = sigma2_e + sigma2_v * (b_const ** 2)
         V = np.diag(v_i)
         V_inv = np.diag(1 / v_i)
-        mu = np.matmul(X, beta)
+        mu = np.dot(X, beta)
         resid = yhat - mu
         G = np.diag(np.ones(np.size(yhat)) * sigma2_v)
 
@@ -266,20 +240,15 @@ class AreaModel:
         x_vinv_x = np.matmul(np.matmul(np.transpose(X), V_inv), X)
         g2_term = np.linalg.inv(x_vinv_x)
 
-        zTz = np.matmul(np.matmul(np.transpose(Z), V_inv), Z)
-        zTz_diag = np.diag(zTz)
-        b_term_ml1 = np.sum(zTz_diag)
-        b_term_ml2 = np.sum(zTz_diag * b_const ** 2 / v_i)
+        # zTz = np.matmul(np.matmul(np.transpose(Z), V_inv), Z)
+        # zTz_diag = np.diag(zTz)
+        # b_term_ml1 = np.sum(zTz_diag)
+        # b_term_ml2 = np.sum(zTz_diag * b_const ** 2 / v_i)
 
         b_term_ml1 = np.linalg.inv(x_vinv_x)
-        b_term_ml2_diag = b_const ** 2 / v_i ** 2
+        b_term_ml2_diag = (b_const ** 2) / (v_i ** 2)
         b_term_ml2 = np.matmul(np.matmul(np.transpose(X), np.diag(b_term_ml2_diag)), X)
         b_term_ml = np.trace(np.matmul(b_term_ml1, b_term_ml2))
-
-        b_term_fh1 = np.size(yhat) * np.sum(1 / v_i ** 2)
-        b_term_fh2 = np.sum(1 / v_i) ** 2
-        b_term_fh3 = np.sum(1 / v_i) ** 3
-        b_term_fh = 2 * (b_term_fh1 - b_term_fh2) / b_term_fh3
 
         estimates = np.array(yhat) * np.nan
         g1 = np.array(yhat) * np.nan
@@ -289,28 +258,34 @@ class AreaModel:
 
         g1_partial = np.array(yhat) * np.nan
 
+        b_term_fh1 = yhat.size * np.sum(1 / (v_i ** 2))
+        b_term_fh2 = np.sum(1 / v_i) ** 2
+        b_term_fh3 = np.sum(1 / v_i) ** 3
+
+        if self.method == "ML":
+            b_sigma2_v = -(1 / 2 * sigma2_v_cov) * b_term_ml
+        elif self.method == "FH":
+            b_sigma2_v = 2 * (b_term_fh1 - b_term_fh2) / b_term_fh3
+            print(b_sigma2_v)
+        else:
+            b_sigma2_v = 0
+
         for d in area:
             b_d = b_const[area == d]
             phi_d = sigma2_e[area == d]
-            X_d = X[area == d]
+            X_d = X[area == d, :]
             yhat_d = yhat[area == d]
             mu_d = np.matmul(X_d, beta)
             resid_d = yhat_d - mu_d
             variance_d = sigma2_v * b_d ** 2 + phi_d
-            gamma_d = sigma2_v * b_d ** 2 / variance_d
+            gamma_d = sigma2_v * (b_d ** 2) / variance_d
             estimates[area == d] = gamma_d * yhat_d + (1 - gamma_d) * mu_d
             g1[area == d] = gamma_d * phi_d
             g2_term_d = np.matmul(np.matmul(X_d, g2_term), np.transpose(X_d))
             g2[area == d] = (1 - gamma_d) ** 2 * float(g2_term_d)
             g3[area == d] = (phi_d ** 2 * b_d ** 4 / variance_d ** 3) * sigma2_v_cov
             g3_star[area == d] = (g3[area == d] / variance_d) * resid_d ** 2
-            if self.method == "ML":
-                b_sigma2_v = -(1 / 2 * sigma2_v_cov) * b_term_ml
-            elif self.method == "FH":
-                b_sigma2_v = -(1 / 2 * sigma2_v_cov) * b_term_fh
-            else:
-                b_sigma2_v = 0
-            g1_partial[area == d] = b_d ** 2 * (1 - gamma_d) ** 2 * b_sigma2_v
+            g1_partial[area == d] = (b_d ** 2) * ((1 - gamma_d) ** 2) * b_sigma2_v
 
         if self.method == "REML":
             mse = g1 + g2 + 2 * g3
@@ -323,38 +298,18 @@ class AreaModel:
 
         return (estimates, mse, mse1_area_specific, mse2_area_specific, g1, g2, g3, g3_star)
 
-    def fit(
+    def _fit(
         self,
-        area: Array,
         yhat: Array,
         X: Array,
+        area: Array,
         sigma2_e: Array,
-        method: str = "REML",
-        b_const: Union[np.array, float, int] = 1.0,
-        sigma2_v_start: float = 0.001,
-        maxiter: int = 100,
-        abstol: float = 1.0e-4,
-        reltol: float = 0.0,
+        sigma2_v_start: float,
+        b_const: np.array,
+        maxiter: int,
+        abstol: float,
+        reltol: float,
     ) -> None:
-
-        if method.upper() not in ("FH", "ML", "REML"):
-            raise AssertionError("method must be 'FH', 'ML, or 'REML'.")
-        else:
-            self.method = method.upper()
-
-        if isinstance(b_const, (int, float)):
-            b_const = np.ones(area.size) * b_const
-
-        area = formats.numpy_array(area)
-        yhat = formats.numpy_array(yhat)
-        X = formats.numpy_array(X)
-        b_const = formats.numpy_array(b_const)
-
-        if abstol <= 0.0 and reltol <= 0.0:
-            AssertionError("At least one tolerance parameters must be positive.")
-        else:
-            abstol = max(abstol, 0)
-            reltol = max(reltol, 0)
 
         (sigma2_v, sigma2_v_cov, iterations, tolerance, convergence) = self._iterative_methods(
             area=area,
@@ -382,25 +337,77 @@ class AreaModel:
         self.convergence["iterations"] = iterations
         self.convergence["precision"] = tolerance
 
-        self.goodness["AIC"] = None
-        self.goodness["BIC"] = None
-        self.goodness["KIC"] = None
+        nb_domains = yhat.size
+        nb_params = X.shape[1] + 1
+        Z_b2_Z = np.ones(shape=(nb_domains, nb_domains))
+        V = np.diag(sigma2_e) + sigma2_v * Z_b2_Z
+        logllike = self._likelihood(yhat, X=X, beta=self.fe_coef, V=V)
+        self.goodness["loglike"] = logllike
+        self.goodness["AIC"] = -2 * logllike + 2 * (nb_params + 1)
+        self.goodness["BIC"] = -2 * logllike + math.log(nb_domains) * (nb_params + 1)
+        # self.goodness["KIC"] = 0
 
-    def predict(self, link: str = None) -> Tuple[Dict[Any, float], Dict[Any, float]]:
+    def predict(
+        self,
+        y_s: Array,
+        X_s: Array,
+        X_r: Array,
+        area_s: Array,
+        area_r: Array,
+        sigma2_e: Array,
+        sigma2_v_start: float = 0.001,
+        method: str = "REML",
+        b_const: Union[np.array, float, int] = 1.0,
+        maxiter: int = 100,
+        abstol: float = 1.0e-4,
+        reltol: float = 0.0,
+    ) -> Tuple[Dict[Any, float], Dict[Any, float]]:
 
-        if self.estimates is None:
-            AssertionError("Check that the model was fitted before running the predictions")
+        if method.upper() not in ("FH", "ML", "REML"):
+            raise AssertionError("method must be 'FH', 'ML, or 'REML'.")
+        else:
+            self.method = method.upper()
 
-        point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
-            domains=self.domains,
-            fitting_method=self.fitting_method["method"],
-            y=self.survey_estimates,
-            X=self.fe_covariates,
-            beta=self.fixed_effects["beta"],
-            sampling_errors=self.sampling_errors,
-            sigma2_v=self.random_effects["sigma2"],
-            sigma2_v_cov=self.random_effects["stderr"],
+        if isinstance(b_const, (int, float)):
+            b_const = np.ones(area_s.size) * b_const
+
+        area_s = formats.numpy_array(area_s)
+        area_r = formats.numpy_array(area_r)
+        y_s = formats.numpy_array(y_s)
+        X_s = formats.numpy_array(X_s)
+        X_r = formats.numpy_array(X_r)
+        b_const = formats.numpy_array(b_const)
+
+        if abstol <= 0.0 and reltol <= 0.0:
+            AssertionError("At least one tolerance parameters must be positive.")
+        else:
+            abstol = max(abstol, 0)
+            reltol = max(reltol, 0)
+
+        self._fit(
+            yhat=y_s,
+            X=X_s,
+            area=area_s,
+            sigma2_e=sigma2_e,
+            sigma2_v_start=sigma2_v_start,
+            b_const=b_const,
+            maxiter=maxiter,
+            abstol=abstol,
+            reltol=reltol,
         )
 
-        self.point_est = dict()
+        point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
+            yhat=y_s,
+            X=X_s,
+            area=area_s,
+            beta=self.fe_coef,
+            sigma2_e=sigma2_e,
+            sigma2_v=self.re_coef,
+            sigma2_v_cov=self.re_cov,
+            b_const=b_const,
+        )
+
+        self.point_est = point_est
+        self.mse = mse
+        self.area = area_s
 
