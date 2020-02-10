@@ -82,7 +82,8 @@ class AreaModel:
 
     def _likelihood(self, y: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray) -> float:
 
-        const = (y.size - X.shape[1]) * np.log(2 * np.pi)
+        m = y.size
+        const = m * np.log(2 * np.pi)
         ll_term1 = np.log(np.linalg.det(V))
         V_inv = np.linalg.inv(V)
         resid_term = y - np.dot(X, beta)
@@ -130,7 +131,7 @@ class AreaModel:
                 info_sigma += 0.5 * (term1 ** 2)
         elif self.method == "REML":
             B = np.diag(b_const ** 2)
-            v_i = sigma2_e + sigma2_v * b_const ** 2
+            v_i = sigma2_e + sigma2_v * (b_const ** 2)
             V = np.diag(v_i)
             v_inv = np.linalg.inv(V)
             x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
@@ -226,12 +227,13 @@ class AreaModel:
         np.dtype,
     ]:
 
+        m = yhat.size
         v_i = sigma2_e + sigma2_v * (b_const ** 2)
         V = np.diag(v_i)
         V_inv = np.diag(1 / v_i)
         mu = np.dot(X, beta)
         resid = yhat - mu
-        G = np.diag(np.ones(np.size(yhat)) * sigma2_v)
+        G = np.diag(np.ones(m) * sigma2_v)
 
         Z = np.diag(b_const)
 
@@ -239,11 +241,6 @@ class AreaModel:
         d = np.transpose(X - np.matmul(np.transpose(b), X))
         x_vinv_x = np.matmul(np.matmul(np.transpose(X), V_inv), X)
         g2_term = np.linalg.inv(x_vinv_x)
-
-        # zTz = np.matmul(np.matmul(np.transpose(Z), V_inv), Z)
-        # zTz_diag = np.diag(zTz)
-        # b_term_ml1 = np.sum(zTz_diag)
-        # b_term_ml2 = np.sum(zTz_diag * b_const ** 2 / v_i)
 
         b_term_ml1 = np.linalg.inv(x_vinv_x)
         b_term_ml2_diag = (b_const ** 2) / (v_i ** 2)
@@ -258,33 +255,33 @@ class AreaModel:
 
         g1_partial = np.array(yhat) * np.nan
 
-        b_term_fh1 = yhat.size * np.sum(1 / (v_i ** 2))
-        b_term_fh2 = np.sum(1 / v_i) ** 2
-        b_term_fh3 = np.sum(1 / v_i) ** 3
-
-        if self.method == "ML":
-            b_sigma2_v = -(1 / 2 * sigma2_v_cov) * b_term_ml
-        elif self.method == "FH":
-            b_sigma2_v = 2 * (b_term_fh1 - b_term_fh2) / b_term_fh3
-            print(b_sigma2_v)
-        else:
+        sum_inv_vi2 = np.sum(1 / (v_i ** 2))
+        if self.method == "REML":
             b_sigma2_v = 0
+            g3_scale = 2 / sum_inv_vi2
+        elif self.method == "ML":
+            b_sigma2_v = -(1 / 2 * sigma2_v_cov) * b_term_ml
+            g3_scale = 2 / sum_inv_vi2
+        elif self.method == "FH":
+            sum_vi = np.sum((1 / v_i))
+            b_sigma2_v = 2 * (m * sum_inv_vi2 - sum_vi ** 2) / (sum_vi ** 3)
+            g3_scale = 2 * m / sum_vi ** 2
 
         for d in area:
             b_d = b_const[area == d]
             phi_d = sigma2_e[area == d]
-            X_d = X[area == d, :]
+            X_d = X[area == d]
             yhat_d = yhat[area == d]
             mu_d = np.matmul(X_d, beta)
             resid_d = yhat_d - mu_d
-            variance_d = sigma2_v * b_d ** 2 + phi_d
+            variance_d = sigma2_v * (b_d ** 2) + phi_d
             gamma_d = sigma2_v * (b_d ** 2) / variance_d
             estimates[area == d] = gamma_d * yhat_d + (1 - gamma_d) * mu_d
             g1[area == d] = gamma_d * phi_d
             g2_term_d = np.matmul(np.matmul(X_d, g2_term), np.transpose(X_d))
-            g2[area == d] = (1 - gamma_d) ** 2 * float(g2_term_d)
-            g3[area == d] = (phi_d ** 2 * b_d ** 4 / variance_d ** 3) * sigma2_v_cov
-            g3_star[area == d] = (g3[area == d] / variance_d) * resid_d ** 2
+            g2[area == d] = ((1 - gamma_d) ** 2) * float(g2_term_d)
+            g3[area == d] = ((1 - gamma_d) ** 2) * g3_scale / variance_d
+            g3_star[area == d] = (g3[area == d] / variance_d) * (resid_d ** 2)
             g1_partial[area == d] = (b_d ** 2) * ((1 - gamma_d) ** 2) * b_sigma2_v
 
         if self.method == "REML":
@@ -337,15 +334,14 @@ class AreaModel:
         self.convergence["iterations"] = iterations
         self.convergence["precision"] = tolerance
 
-        nb_domains = yhat.size
-        nb_params = X.shape[1] + 1
-        Z_b2_Z = np.ones(shape=(nb_domains, nb_domains))
+        m = yhat.size
+        p = X.shape[1] + 1
+        Z_b2_Z = np.ones(shape=(m, m))
         V = np.diag(sigma2_e) + sigma2_v * Z_b2_Z
         logllike = self._likelihood(yhat, X=X, beta=self.fe_coef, V=V)
         self.goodness["loglike"] = logllike
-        self.goodness["AIC"] = -2 * logllike + 2 * (nb_params + 1)
-        self.goodness["BIC"] = -2 * logllike + math.log(nb_domains) * (nb_params + 1)
-        # self.goodness["KIC"] = 0
+        self.goodness["AIC"] = -2 * logllike + 2 * (p + 1)
+        self.goodness["BIC"] = -2 * logllike + math.log(m) * (p + 1)
 
     def predict(
         self,
@@ -364,7 +360,7 @@ class AreaModel:
     ) -> Tuple[Dict[Any, float], Dict[Any, float]]:
 
         if method.upper() not in ("FH", "ML", "REML"):
-            raise AssertionError("method must be 'FH', 'ML, or 'REML'.")
+            raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'.")
         else:
             self.method = method.upper()
 
