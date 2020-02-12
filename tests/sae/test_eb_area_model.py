@@ -17,7 +17,7 @@ sigma2_e = milk["SD"] ** 2
 ## REML method
 fh_model_reml = AreaModel(model="FH")
 fh_model_reml.predict(
-    y_s=yhat,
+    yhat_s=yhat,
     X_s=X,
     X_r=None,
     area_s=area,
@@ -163,7 +163,7 @@ def test_fay_herriot_REML_mse():
 ## ML method
 fh_model_ml = AreaModel(model="FH")
 fh_model_ml.predict(
-    y_s=yhat,
+    yhat_s=yhat,
     X_s=X,
     X_r=None,
     area_s=area,
@@ -310,7 +310,7 @@ def test_fay_herriot_ML_mse():
 
 fh_model_fh = AreaModel(model="FH")
 fh_model_fh.predict(
-    y_s=yhat,
+    yhat_s=yhat,
     X_s=X,
     X_r=None,
     area_s=area,

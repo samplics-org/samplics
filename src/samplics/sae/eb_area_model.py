@@ -345,7 +345,7 @@ class AreaModel:
 
     def predict(
         self,
-        y_s: Array,
+        yhat_s: Array,
         X_s: Array,
         X_r: Array,
         area_s: Array,
@@ -369,7 +369,7 @@ class AreaModel:
 
         area_s = formats.numpy_array(area_s)
         area_r = formats.numpy_array(area_r)
-        y_s = formats.numpy_array(y_s)
+        yhat_s = formats.numpy_array(yhat_s)
         X_s = formats.numpy_array(X_s)
         X_r = formats.numpy_array(X_r)
         b_const = formats.numpy_array(b_const)
@@ -381,7 +381,7 @@ class AreaModel:
             reltol = max(reltol, 0)
 
         self._fit(
-            yhat=y_s,
+            yhat=yhat_s,
             X=X_s,
             area=area_s,
             sigma2_e=sigma2_e,
@@ -393,7 +393,7 @@ class AreaModel:
         )
 
         point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
-            yhat=y_s,
+            yhat=yhat_s,
             X=X_s,
             area=area_s,
             beta=self.fe_coef,
