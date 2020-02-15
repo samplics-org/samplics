@@ -11,7 +11,6 @@ area = milk["SmallArea"]
 yhat = milk["yi"]
 X = pd.get_dummies(milk["MajorArea"])
 X.loc[:, 1] = 1
-# print(X)
 sigma2_e = milk["SD"] ** 2
 
 ## REML method
@@ -26,7 +25,6 @@ fh_model_reml.predict(
     method="REML",
     abstol=1e-4,
 )
-# print(fh_model_reml.goodness)
 
 
 def test_fay_herriot_REML_convergence():
@@ -172,7 +170,6 @@ fh_model_ml.predict(
     method="ML",
     abstol=1e-4,
 )
-# print(fh_model_ml.goodness)
 
 
 def test_fay_herriot_ML_convergence():
