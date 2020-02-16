@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from samplics.sae.eb_area_model import AreaModel
+from samplics.sae.eb_area_model import AreaModelFH
 
 milk = pd.read_csv("./tests/sae/milk.csv")
 
@@ -14,16 +14,9 @@ X.loc[:, 1] = 1
 sigma2_e = milk["SD"] ** 2
 
 ## REML method
-fh_model_reml = AreaModel(model="FH")
+fh_model_reml = AreaModelFH(method="REML")
 fh_model_reml.predict(
-    yhat_s=yhat,
-    X_s=X,
-    X_r=None,
-    area_s=area,
-    area_r=None,
-    sigma2_e=sigma2_e,
-    method="REML",
-    abstol=1e-4,
+    yhat_s=yhat, X_s=X, X_r=None, area_s=area, area_r=None, sigma2_e=sigma2_e, abstol=1e-4,
 )
 
 
@@ -159,16 +152,9 @@ def test_fay_herriot_REML_mse():
 
 
 ## ML method
-fh_model_ml = AreaModel(model="FH")
+fh_model_ml = AreaModelFH(method="ML")
 fh_model_ml.predict(
-    yhat_s=yhat,
-    X_s=X,
-    X_r=None,
-    area_s=area,
-    area_r=None,
-    sigma2_e=sigma2_e,
-    method="ML",
-    abstol=1e-4,
+    yhat_s=yhat, X_s=X, X_r=None, area_s=area, area_r=None, sigma2_e=sigma2_e, abstol=1e-4,
 )
 
 
@@ -305,19 +291,10 @@ def test_fay_herriot_ML_mse():
 
 ## FH method
 
-fh_model_fh = AreaModel(model="FH")
+fh_model_fh = AreaModelFH(method="FH")
 fh_model_fh.predict(
-    yhat_s=yhat,
-    X_s=X,
-    X_r=None,
-    area_s=area,
-    area_r=None,
-    sigma2_e=sigma2_e,
-    method="FH",
-    abstol=1e-4,
+    yhat_s=yhat, X_s=X, X_r=None, area_s=area, area_r=None, sigma2_e=sigma2_e, abstol=1e-4,
 )
-
-# print(fh_model_fh.goodness)
 
 
 def test_fay_herriot_FH_convergence():

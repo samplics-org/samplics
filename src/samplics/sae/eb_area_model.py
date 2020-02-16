@@ -13,17 +13,22 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
-class AreaModel:
-    "Implement the area level model"
+class AreaModelFH:
+    """implement the area level model"""
 
     # Other option for method are spatial (SP), temporal (TP), spatial-temporal (ST)
-    def __init__(self, model: str = "FH") -> None:
-        self.model: str = model.upper()
+    def __init__(self, method: str = "REML") -> None:
+        self.model: str = "FH"
+
+        if method.upper() not in ("FH", "ML", "REML"):
+            raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'.")
+        else:
+            self.method = method.upper()
+
         self.fe_coef: np.ndarray = np.array([])
         self.fe_cov: np.ndarray = np.array([])
         self.re_coef: np.ndarray = np.array([])
         self.re_cov: np.ndarray = np.array([])
-        self.method: str = "REML"
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
         self.point_est: Dict[Any, float] = {}
@@ -352,17 +357,11 @@ class AreaModel:
         area_r: Array,
         sigma2_e: Array,
         sigma2_v_start: float = 0.001,
-        method: str = "REML",
         b_const: Union[np.array, float, int] = 1.0,
         maxiter: int = 100,
         abstol: float = 1.0e-4,
         reltol: float = 0.0,
     ) -> Tuple[Dict[Any, float], Dict[Any, float]]:
-
-        if method.upper() not in ("FH", "ML", "REML"):
-            raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'.")
-        else:
-            self.method = method.upper()
 
         if isinstance(b_const, (int, float)):
             b_const = np.ones(area_s.size) * b_const
@@ -407,3 +406,22 @@ class AreaModel:
         self.mse = mse
         self.area = area_s
 
+
+class AreaModelST:
+    """implements the Spatial-temporal model"""
+
+    pass
+
+
+class AreaModelRY:
+    """implements the Rao-Yu model"""
+
+    """NB: is this an special case of AreaModelST?"""
+
+    pass
+
+
+class AreaModelRobust:
+    """implements the Robust model"""
+
+    pass
