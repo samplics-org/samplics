@@ -126,18 +126,15 @@ class UnitModel:
         reml = True if self.method == "REML" else False
         basic_model = sm.MixedLM(y, X, area)
         basic_fit = basic_model.fit(reml=reml, full_output=True)
-        print(basic_fit.summary())
         self.area_s = np.unique(formats.numpy_array(area))
 
         self.sigma2_e = basic_fit.scale
-        print(self.sigma2_e)
         self.fixed_effects = basic_fit.fe_params
         self.random_effects = basic_fit.cov_re.to_numpy()
 
         self.fe_cov = basic_fit.bse_fe
         self.re_cov = basic_fit.cov_re.to_numpy()
         self.re_cov_cov = basic_fit.bse_re
-        print(self.re_cov)
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"])
 
@@ -180,8 +177,6 @@ class UnitModel:
         X = formats.numpy_array(X)
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
-
-            print(np.matmul(X, self.fixed_effects))
 
         random_effect = self.gamma * (self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects))
 
