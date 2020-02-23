@@ -29,12 +29,19 @@ class UnitModel:
         self.boxcox = boxcox
 
         self.fixed_effects: np.ndarray = np.array([])
-        self.fe_cov: np.ndarray = np.array([])
+        self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
-        self.re_cov: np.ndarray = np.array([])
+        self.re_std: Optional[float] = None
+        self.re_std_cov: Optional[float] = None
+        self.error_var: Optional[float] = None
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.point_est: Dict[Any, float] = {}
+
+        self.ybar_s: np.ndarray = np.array([])
+        self.xbar_s: np.ndarray = np.array([])
+        self.gamma: np.ndarray = np.array([])
+
+        self.y_predicted: np.ndarray = np.array([])
         self.mse: Dict[Any, float] = {}
         self.mse_as1: Dict[Any, float] = {}
         self.mse_as2: Dict[Any, float] = {}
@@ -98,7 +105,7 @@ class UnitModel:
                 delta_d = 1 / np.sum(a_factor_d)
             else:
                 delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
-            gamma[k] = self.re_cov / (self.re_cov + self.sigma2_e * delta_d)
+            gamma[k] = self.re_std / (self.re_std + self.error_var * delta_d)
 
         return arr1_mean, arr2_mean, gamma
 
@@ -128,13 +135,13 @@ class UnitModel:
         basic_fit = basic_model.fit(reml=reml, full_output=True)
         self.area_s = np.unique(formats.numpy_array(area))
 
-        self.sigma2_e = basic_fit.scale
+        self.error_var = basic_fit.scale
         self.fixed_effects = basic_fit.fe_params
         self.random_effects = basic_fit.cov_re.to_numpy()
 
-        self.fe_cov = basic_fit.bse_fe
-        self.re_cov = basic_fit.cov_re.to_numpy()
-        self.re_cov_cov = basic_fit.bse_re
+        self.fe_std = basic_fit.bse_fe
+        self.re_std = basic_fit.cov_re.to_numpy()
+        self.re_std_cov = basic_fit.bse_re
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"])
 
