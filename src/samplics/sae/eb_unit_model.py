@@ -28,6 +28,7 @@ class UnitModel:
         self.parameter = parameter.lower()
         self.boxcox = boxcox
 
+        self.fitted = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
@@ -40,6 +41,7 @@ class UnitModel:
         self.ybar_s: np.ndarray = np.array([])
         self.xbar_s: np.ndarray = np.array([])
         self.gamma: np.ndarray = np.array([])
+        self.fpc: np.ndarray = np.array([])
 
         self.y_predicted: np.ndarray = np.array([])
         self.mse: Dict[Any, float] = {}
@@ -97,7 +99,7 @@ class UnitModel:
             a_factor_d = a_factor[area == d]
             weight_d = weight[area == d]
             aw_factor_d = weight_d * a_factor_d
-            arr1w_d = arr1[area == d] * aw_factor_d
+            arr1w_d = arr1[area == d] * a_factor_d
             arr1_mean[k] = np.sum(arr1w_d) / np.sum(aw_factor_d)
             arr2w_d = arr2[area == d, :] * aw_factor_d[:, None]
             arr2_mean[k, :] = np.sum(arr2w_d, axis=0) / np.sum(aw_factor_d)
@@ -111,18 +113,19 @@ class UnitModel:
 
     def fit(
         self,
-        y: np.ndarray,
-        X: np.ndarray,
-        area: np.ndarray,
+        y: Array,
+        X: Array,
+        area: Array,
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
 
+        X = formats.numpy_array(X)
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)
-        elif intercept and isinstance(X, pd.DataFrame):
-            X.insert(0, "Intercept", 1, False)
+        # elif intercept and isinstance(X, pd.DataFrame):
+        #     X = X.insert(0, "Intercept", 1, False)
 
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
@@ -172,25 +175,36 @@ class UnitModel:
             beta_w = self._beta(y, X, area, samp_weight, scale)
             # print(beta_w)
 
-    def _predictor_basic(
-        self, y_s: Array, X_s: Array, X_r: Array, X_smean: Array, X_rmean: Array, area: np.ndarray
-    ) -> np.ndarray:
+        self.fitted = True
 
-        term1 = np.matmul(X_smean, self.fixed_effects)
-        term2 = self.gamma * ()
+    def predict(
+        self,
+        X: Array,
+        area: Array,
+        samp_size: Optional[Array] = None,
+        pop_size: Optional[Array] = None,
+        intercept: bool = True,
+    ) -> None:
 
-    def predict(self, X: Array, area: Array, intercept: bool = True,) -> None:
+        if not self.fitted:
+            raise ("The model must be fitted first with .fit() before running the prediction.")
 
         X = formats.numpy_array(X)
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
 
-        random_effect = self.gamma * (self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects))
+        self.random_effect = self.gamma * (
+            self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects)
+        )
 
-        y_predict = np.matmul(X, self.fixed_effects) + random_effect
-
-        self.random_effect = random_effect
-        self.y_predicted = y_predict
+        if samp_size is None or pop_size is None:
+            self.fpc = np.zeros(X.shape[0])
+            self.y_predicted = np.matmul(X, self.fixed_effects) + self.random_effect
+        else:
+            self.fpc = samp_size / pop_size
+            self.y_predicted = np.matmul(X, self.fixed_effects) + (
+                self.fpc + (1 - self.fpc) * self.gamma
+            ) * (self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects))
 
 
 class UnitModelRobust:

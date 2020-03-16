@@ -17,6 +17,8 @@ X_s = cornsoybean[["CornPix", "SoyBeansPix"]]
 
 X_smean = cornsoybean_mean[["MeanCornPixPerSeg", "MeanSoyBeansPixPerSeg"]]
 
+samp_size = np.array([1, 1, 1, 2, 3, 3, 3, 3, 4, 5, 5, 6])
+pop_size = np.array([545, 566, 394, 424, 564, 570, 402, 567, 687, 569, 965, 556])
 
 eblup_bhf_reml = UnitModel()
 eblup_bhf_reml.fit(y_s, X_s, area_s)
@@ -30,7 +32,6 @@ results = pd.DataFrame(
         "random effects": eblup_bhf_reml.random_effect,
     }
 )
-print(eblup_bhf_reml.mse)
 
 
 def test_eblup_bhf_reml():
@@ -112,5 +113,35 @@ def test_y_predicted_bhf_reml():
     ).all()
 
 
-def test_mse_bhf_reml():
-    assert False
+# def test_mse_bhf_reml():
+#     assert False
+
+
+## With FPC
+
+eblup_bhf_reml_fpc = UnitModel()
+eblup_bhf_reml_fpc.fit(y_s, X_s, area_s)
+
+eblup_bhf_reml_fpc.predict(X_smean, np.unique(area_s), samp_size, pop_size)
+print(eblup_bhf_reml_fpc.y_predicted)
+
+def test_y_predicted_bhf_reml_fpc():
+    assert np.isclose(
+        eblup_bhf_reml_fpc.y_predicted,
+        np.array(
+            [
+                122.582519,
+                123.527414,
+                113.034260,
+                114.990082,
+                137.266001,
+                108.980696,
+                116.483886,
+                122.771075,
+                111.564754,
+                124.156518,
+                112.462566,
+                131.251525,
+            ]
+        ),
+    ).all()
