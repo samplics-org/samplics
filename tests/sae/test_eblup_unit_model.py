@@ -10,6 +10,8 @@ from samplics.utils.basic_functions import BoxCox
 cornsoybean = pd.read_csv("./tests/sae/cornsoybean.csv")
 cornsoybean_mean = pd.read_csv("./tests/sae/cornsoybeanmeans.csv")
 
+cornsoybean = cornsoybean.sample(frac=1)
+
 area_s = cornsoybean["County"]
 
 y_s = cornsoybean["CornHec"]
@@ -124,6 +126,7 @@ eblup_bhf_reml_fpc.fit(y_s, X_s, area_s)
 
 eblup_bhf_reml_fpc.predict(X_smean, np.unique(area_s), samp_size, pop_size)
 print(eblup_bhf_reml_fpc.y_predicted)
+
 
 def test_y_predicted_bhf_reml_fpc():
     assert np.isclose(

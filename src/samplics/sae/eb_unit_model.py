@@ -114,6 +114,25 @@ class UnitModel:
 
         return arr1_mean, arr2_mean, gamma
 
+    def _g1(self, scale: np.ndarray) -> np.ndarray:
+
+        return self.gamma * (self.error_var / scale)
+
+    def _g2(self, A_inv: np.ndarray) -> np.ndarray:
+
+        g2 = np.zeros(self.area_s.shape[0])
+        for k, _ in enumerate(self.area_s):
+            xbar_diff = self.Xbar_s[k] - self.gamma[k]
+            g2[k] = np.matmul(np.matmul(np.transpose(xbar_diff), A_inv), xbar_diff)
+
+        return g2
+
+    def _g3(self):
+        pass
+
+    def _mse1(self):
+        pass
+
     def fit(
         self,
         y: Array,
@@ -186,6 +205,7 @@ class UnitModel:
         area: Array,
         samp_size: Optional[Array] = None,
         pop_size: Optional[Array] = None,
+        scale: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
 
