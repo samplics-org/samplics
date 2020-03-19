@@ -28,6 +28,8 @@ class UnitModel:
         self.parameter = parameter.lower()
         self.boxcox = boxcox
 
+        self.area_s: np.ndarray = np.array([])
+
         self.fitted = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
@@ -40,6 +42,7 @@ class UnitModel:
 
         self.ybar_s: np.ndarray = np.array([])
         self.xbar_s: np.ndarray = np.array([])
+        self.Xbar_s: np.ndarray = np.array([])
         self.gamma: np.ndarray = np.array([])
         self.fpc: np.ndarray = np.array([])
 
