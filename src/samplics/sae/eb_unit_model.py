@@ -29,6 +29,7 @@ class UnitModel:
         self.boxcox = boxcox
 
         self.area_s: np.ndarray = np.array([])
+        self.area_p: np.ndarray = np.array([])
 
         self.fitted = False
         self.fixed_effects: np.ndarray = np.array([])
@@ -126,12 +127,18 @@ class UnitModel:
 
     @staticmethod
     def _g2(
-        self, area: np.ndarray, gamma: np.ndarray, A_inv: np.ndarray, Xbar: np.ndarray
+        self,
+        area: np.ndarray,
+        X: np.ndarray,
+        gamma: np.ndarray,
+        A_inv: np.ndarray,
+        Xbar: np.ndarray,
     ) -> np.ndarray:
 
-        g2 = np.zeros(area.shape[0])
-        for k, _ in enumerate(area):
-            xbar_diff = Xbar[k] - gamma[k]
+        areas = np.unique(area)
+        g2 = np.zeros(areas.shape[0])
+        for k, d in enumerate(areas):
+            xbar_diff = X[area == d] - gamma[k] * Xbar[area == d]
             g2[k] = np.matmul(np.matmul(np.transpose(xbar_diff), A_inv), xbar_diff)
 
         return g2
@@ -146,6 +153,20 @@ class UnitModel:
         g3 = 0
 
         return g1 + g2 + 2 * g3
+
+    def _data_split(
+        self, area: np.ndarray, X: np.ndarray, scale: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+
+        ps = np.isin(area, self.area_s)
+        area_ps = area[ps]
+        area_pr = area[~ps]
+        X_ps = X[ps]
+        X_pr = X[~ps]
+        scale_ps = scale[ps]
+        scale_pr = scale[~ps]
+
+        return area_ps, area_pr, X_ps, X_pr, scale_ps, scale_pr, ps
 
     def fit(
         self,
@@ -226,6 +247,9 @@ class UnitModel:
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
 
+        if isinstance(scale, (float, int)):
+            scale = np.ones(area.shape[0]) * scale
+
         X = formats.numpy_array(X)
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
@@ -242,6 +266,8 @@ class UnitModel:
             self.y_predicted = np.matmul(X, self.fixed_effects) + (
                 self.fpc + (1 - self.fpc) * self.gamma
             ) * (self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects))
+
+        area_ps, area_pr, X_ps, X_pr, scale_ps, scale_pr, ps = self._data_split(area, X, scale)
 
 
 class UnitModelRobust:
