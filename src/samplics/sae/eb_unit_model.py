@@ -130,8 +130,13 @@ class UnitModel:
     def _g3(self):
         pass
 
-    def _mse1(self):
-        pass
+    def _mse1(self, scale: np.ndarray, A_inv: np.ndarray) -> np.ndarray:
+
+        g1 = self._g1(scale)
+        g2 = self._g2(A_inv)
+        g3 = 0
+
+        return g1 + g2 + 2 * g3
 
     def fit(
         self,
