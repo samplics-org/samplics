@@ -114,15 +114,24 @@ class UnitModel:
 
         return arr1_mean, arr2_mean, gamma
 
-    def _g1(self, scale: np.ndarray) -> np.ndarray:
+    def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
 
-        return self.gamma * (self.error_var / scale)
+        return gamma * (self.error_var / scale)
 
-    def _g2(self, A_inv: np.ndarray) -> np.ndarray:
+    def A_matrix(self, area: np.ndarray, X: np.ndarray, scale: np.ndarray):
 
-        g2 = np.zeros(self.area_s.shape[0])
-        for k, _ in enumerate(self.area_s):
-            xbar_diff = self.Xbar_s[k] - self.gamma[k]
+        A = np.diag(np.zeros(X.shape[1]))
+        for area in area_s:
+            pass
+
+    @staticmethod
+    def _g2(
+        self, area: np.ndarray, gamma: np.ndarray, A_inv: np.ndarray, Xbar: np.ndarray
+    ) -> np.ndarray:
+
+        g2 = np.zeros(area.shape[0])
+        for k, _ in enumerate(area):
+            xbar_diff = Xbar[k] - gamma[k]
             g2[k] = np.matmul(np.matmul(np.transpose(xbar_diff), A_inv), xbar_diff)
 
         return g2
