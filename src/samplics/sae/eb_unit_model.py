@@ -200,7 +200,7 @@ class UnitModel:
     ) -> None:
 
         area = formats.numpy_array(area)
-
+        y = formats.numpy_array(y)
         X = formats.numpy_array(X)
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)
@@ -224,10 +224,10 @@ class UnitModel:
 
         self.error_var = basic_fit.scale
         self.fixed_effects = basic_fit.fe_params
-        self.random_effects = basic_fit.cov_re.to_numpy()
+        self.random_effects = basic_fit.cov_re
 
         self.fe_std = basic_fit.bse_fe
-        self.re_std = basic_fit.cov_re.to_numpy()
+        self.re_std = basic_fit.cov_re
         self.re_std_cov = basic_fit.bse_re
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"])
