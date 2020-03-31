@@ -118,26 +118,37 @@ class UnitModel:
 
     def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
 
+        print(self.error_var)
+        print(scale)
+        print(gamma)
+
         return gamma * (self.error_var / scale)
 
-    def _A_matrix(self, area: np.ndarray, X: np.ndarray, scale: np.ndarray):
+    def _A_matrix(self, area: np.ndarray, X: np.ndarray):
 
+        areas = np.unique(area)
         A = np.diag(np.zeros(X.shape[1]))
-        for area in area_s:
-            pass
+        for d in areas:
+            n_d = np.sum(area == d)
+            X_d = X[area == d]
+            V = self.error_var * np.diag(np.ones(n_d)) + (self.re_std ** 2) * np.ones([n_d, n_d])
+            A = A + np.matmul(np.matmul(np.transpose(X_d), np.linalg.inv(V)), X_d)
+
+        return A
 
     @staticmethod
     def _g2(
-        area: np.ndarray, X: np.ndarray, gamma: np.ndarray, A_inv: np.ndarray, Xbar: np.ndarray,
+        areas: np.ndarray,
+        Xs_mean: np.ndarray,
+        Xp_mean: np.ndarray,
+        gamma: np.ndarray,
+        A_inv: np.ndarray,
     ) -> np.ndarray:
 
-        areas = np.unique(area)
-        g2 = np.zeros(areas.shape[0])
-        for k, d in enumerate(areas):
-            xbar_diff = X[area == d] - gamma[k] * Xbar[area == d]
-            g2[k] = np.matmul(np.matmul(np.transpose(xbar_diff), A_inv), xbar_diff)
+        xbar_diff = Xp_mean - gamma[:, None] * Xs_mean
+        g2_matrix = np.matmul(np.matmul(xbar_diff, A_inv), np.transpose(xbar_diff))
 
-        return g2
+        return np.diag(g2_matrix)
 
     def _g3(self):
         pass
@@ -151,8 +162,16 @@ class UnitModel:
         return g1 + g2 + 2 * g3
 
     def _data_split(
-        self, area: np.ndarray, X: np.ndarray, Xmean: np.ndarray, scale: np.ndarray
+        self,
+        area: np.ndarray,
+        X: np.ndarray,
+        Xmean: np.ndarray,
+        Xbar: np.ndarray,
+        scale: np.ndarray,
     ) -> Tuple[
+        np.ndarray,
+        np.ndarray,
+        np.ndarray,
         np.ndarray,
         np.ndarray,
         np.ndarray,
@@ -174,10 +193,24 @@ class UnitModel:
         ps_area = np.isin(areas, areas_ps)
         Xmean_ps = Xmean[ps_area]
         Xmean_pr = Xmean[~ps_area]
+        Xbar_ps = Xbar[ps_area]
+        Xbar_pr = Xbar[~ps_area]
         scale_ps = scale[ps_area]
         scale_pr = scale[~ps_area]
 
-        return area_ps, area_pr, X_ps, X_pr, Xmean_ps, Xmean_pr, scale_ps, scale_pr, ps
+        return (
+            area_ps,
+            area_pr,
+            X_ps,
+            X_pr,
+            Xmean_ps,
+            Xmean_pr,
+            Xbar_ps,
+            Xbar_pr,
+            scale_ps,
+            scale_pr,
+            ps,
+        )
 
     @staticmethod
     def _sumby(group, y):  # Could use pd.grouby().sum(), may scale better
@@ -291,10 +324,12 @@ class UnitModel:
             X_pr,
             Xmean_ps,
             Xmean_pr,
+            Xbar_ps,
+            Xbar_pr,
             scale_ps,
             scale_pr,
             ps,
-        ) = self._data_split(area, X, Xmean, self.scale)
+        ) = self._data_split(area, X, Xmean, self.Xbar_s, self.scale)
 
         areas_ps = np.unique(area_ps)
         gamma_ps = self.gamma[np.isin(self.area_s, areas_ps)]
@@ -309,11 +344,14 @@ class UnitModel:
             ) * (self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects))
 
         g1 = self._g1(gamma_ps, scale_ps)
+        # print(g1, "\n")
+
+        A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
+        # print.pprint(A_inv)
+
+        g2 = self._g2(areas_ps, Xbar_ps, Xmean_ps, gamma_ps, A_inv)
+
         print(g1, "\n")
-
-        # A_inv = np.linalg.inv(self._A_matrix(area_ps, X, scale_ps))
-
-        # g2 = self._g2(area_ps, X_ps, gamma_ps, A_inv, Xmean)
 
 
 class UnitModelRobust:

@@ -25,5 +25,5 @@ eblup_bhf_reml.fit(y_s, X_s, area_s)
 
 eblup_bhf_reml.predict(X_s, X_smean, area_s)
 
-print(eblup_bhf_reml.gamma, "\n")
+#print(eblup_bhf_reml.gamma, "\n")
 
