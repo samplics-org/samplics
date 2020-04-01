@@ -260,7 +260,7 @@ class UnitModel:
         self.random_effects = basic_fit.cov_re
 
         self.fe_std = basic_fit.bse_fe
-        self.re_std = basic_fit.cov_re
+        self.re_std = float(basic_fit.cov_re) ** 0.5
         self.re_std_cov = basic_fit.bse_re
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"])
