@@ -14,7 +14,7 @@ sigma2u = 0.25 ** 2
 # print(sigma2u / (sigma2u + sigma2e / 50))
 
 # Population sizes
-N = 10_0000  # _000
+N = 10_0000_000
 nb_areas = 250
 
 
@@ -65,29 +65,29 @@ X_s = X[sample == 1]
 area_s = area[sample == 1]
 areas, nd = np.unique(area_s, return_counts=True)
 # print(areas.shape)
-print(nd)
+# print(nd)
 
-basic_model = sm.MixedLM(y_s, X_s, area_s)
-basic_fit = basic_model.fit(reml=True, full_output=True)
+# basic_model = sm.MixedLM(y_s, X_s, area_s)
+# basic_fit = basic_model.fit(reml=True, full_output=True)
 
-print(f"Fixed effects: {basic_fit.fe_params}")
+# print(f"Fixed effects: {basic_fit.fe_params}")
 
-print(f"sigma_e: {basic_fit.scale}")
-print(f"sigma_u: {float(basic_fit.cov_re)**0.5}")
+# print(f"sigma_e: {basic_fit.scale}")
+# print(f"sigma_u: {float(basic_fit.cov_re)**0.5}")
 
-print(basic_fit.cov_re / (basic_fit.cov_re + basic_fit.scale**2/nd))
+# print(basic_fit.cov_re / (basic_fit.cov_re + basic_fit.scale ** 2 / nd))
 
 
-# sample_data = pd.DataFrame(
-#     np.column_stack((y_s, area_s, X_s[:, 1:4])), columns=["y", "area", "X1", "X2", "X3"]
-# ).astype({"area": "int16", "X1": "int8", "X3": "int8"})
-# # print(sample_data)
+sample_data = pd.DataFrame(
+    np.column_stack((y_s, area_s, X_s[:, 1:4])), columns=["y", "area", "X1", "X2", "X3"],
+).astype({"area": "int16", "X1": "int8", "X3": "int8"})
+# print(sample_data)
 
-# sample_data.to_csv("./tests/sae/UnitLevel_sample_seed531451.csv")
+sample_data.to_csv("./tests/sae/UnitLevel_sample_seed531451.csv", index=False)
 
-# population_data = pd.DataFrame(
-#     np.column_stack([areas, Xmean[:, 1:4]]), columns=["area", "X1", "X2", "X3"]
-# ).astype({"area": "int16"})
-# # print(population_data)
+population_data = pd.DataFrame(
+    np.column_stack((areas, Xmean[:, 1:4], Nd)), columns=["area", "X1", "X2", "X3", "Nsize"]
+).astype({"area": "int16", "Nsize": "int32"})
+# print(population_data)
 
-# population_data.to_csv("./tests/sae/UnitLevel_pop_seed531451.csv")
+population_data.to_csv("./tests/sae/UnitLevel_pop_seed531451.csv", index=False)
