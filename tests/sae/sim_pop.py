@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+
 import statsmodels.api as sm
 
 from samplics.sae.eb_unit_model import UnitModel
@@ -12,7 +14,7 @@ sigma2u = 0.25 ** 2
 # print(sigma2u / (sigma2u + sigma2e / 50))
 
 # Population sizes
-N = 10_000_000
+N = 10_0000  # _000
 nb_areas = 250
 
 
@@ -43,6 +45,11 @@ X3 = np.random.binomial(1, p=0.6, size=N)
 X = np.column_stack((np.ones(N), X1, X2, X3))
 # print(X)
 
+Xmean = np.zeros((nb_areas, X.shape[1])) * np.nan
+for k, d in enumerate(areas):
+    Xmean[k, :] = np.mean(X[area == d], axis=0)
+# print(Xmean)
+
 beta = np.array([1, 3, -3, 3])
 
 y = np.matmul(X, beta) + total_error
@@ -58,20 +65,29 @@ X_s = X[sample == 1]
 area_s = area[sample == 1]
 areas, nd = np.unique(area_s, return_counts=True)
 # print(areas.shape)
-# print(nd)
+print(nd)
 
-# basic_model = sm.MixedLM(y_s, X_s, area_s)
-# basic_fit = basic_model.fit(reml=True, full_output=True)
+basic_model = sm.MixedLM(y_s, X_s, area_s)
+basic_fit = basic_model.fit(reml=True, full_output=True)
 
-# print(f"Fixed effects: {basic_fit.fe_params}")
+print(f"Fixed effects: {basic_fit.fe_params}")
 
-# print(f"sigma_e: {basic_fit.scale}")
-# print(f"sigma_u: {float(basic_fit.cov_re)**0.5}")
+print(f"sigma_e: {basic_fit.scale}")
+print(f"sigma_u: {float(basic_fit.cov_re)**0.5}")
+
+print(basic_fit.cov_re / (basic_fit.cov_re + basic_fit.scale**2/nd))
 
 
-eblup_bhf_reml = UnitModel()
-eblup_bhf_reml.fit(y_s, X_s, area_s, intercept=False)
+# sample_data = pd.DataFrame(
+#     np.column_stack((y_s, area_s, X_s[:, 1:4])), columns=["y", "area", "X1", "X2", "X3"]
+# ).astype({"area": "int16", "X1": "int8", "X3": "int8"})
+# # print(sample_data)
 
-print(f"Fixed effects: {eblup_bhf_reml.fixed_effects}")
-print(f"Sigma u: {eblup_bhf_reml.re_std}")
-print(f"Sigma e: {eblup_bhf_reml.error_var**0.5}")
+# sample_data.to_csv("./tests/sae/UnitLevel_sample_seed531451.csv")
+
+# population_data = pd.DataFrame(
+#     np.column_stack([areas, Xmean[:, 1:4]]), columns=["area", "X1", "X2", "X3"]
+# ).astype({"area": "int16"})
+# # print(population_data)
+
+# population_data.to_csv("./tests/sae/UnitLevel_pop_seed531451.csv")

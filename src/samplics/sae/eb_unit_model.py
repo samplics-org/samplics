@@ -37,7 +37,7 @@ class UnitModel:
         self.random_effects: np.ndarray = np.array([])
         self.re_std: Optional[float] = None
         self.re_std_cov: Optional[float] = None
-        self.error_var: Optional[float] = None
+        self.error_std: Optional[float] = None
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
 
@@ -112,17 +112,17 @@ class UnitModel:
                 delta_d = 1 / np.sum(a_factor_d)
             else:
                 delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
-            gamma[k] = self.re_std / (self.re_std + self.error_var * delta_d)
+            gamma[k] = (self.re_std ** 2) / (self.re_std ** 2 + (self.error_std ** 2) * delta_d)
 
         return arr1_mean, arr2_mean, gamma
 
     def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
 
-        print(self.error_var)
-        print(scale)
-        print(gamma)
+        # print(self.error_std)
+        # print(scale)
+        # print(gamma)
 
-        return gamma * (self.error_var / scale)
+        return gamma * (self.error_std ** 2 / scale)
 
     def _A_matrix(self, area: np.ndarray, X: np.ndarray):
 
@@ -131,7 +131,9 @@ class UnitModel:
         for d in areas:
             n_d = np.sum(area == d)
             X_d = X[area == d]
-            V = self.error_var * np.diag(np.ones(n_d)) + (self.re_std ** 2) * np.ones([n_d, n_d])
+            V = (self.error_std ** 2) * np.diag(np.ones(n_d)) + (self.re_std ** 2) * np.ones(
+                [n_d, n_d]
+            )
             A = A + np.matmul(np.matmul(np.transpose(X_d), np.linalg.inv(V)), X_d)
 
         return A
@@ -255,7 +257,7 @@ class UnitModel:
         basic_fit = basic_model.fit(reml=reml, full_output=True)
         self.area_s = np.unique(formats.numpy_array(area))
 
-        self.error_var = basic_fit.scale
+        self.error_std = basic_fit.scale
         self.fixed_effects = basic_fit.fe_params
         self.random_effects = basic_fit.cov_re
 
@@ -351,7 +353,7 @@ class UnitModel:
 
         g2 = self._g2(areas_ps, Xbar_ps, Xmean_ps, gamma_ps, A_inv)
 
-        print(g1, "\n")
+        # print(g1, "\n")
 
 
 class UnitModelRobust:
