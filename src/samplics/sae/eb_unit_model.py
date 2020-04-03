@@ -45,9 +45,8 @@ class UnitModel:
 
         self.ybar_s: np.ndarray = np.array([])
         self.xbar_s: np.ndarray = np.array([])
-        self.Xbar_s: np.ndarray = np.array([])
+        self.Xbar_p: np.ndarray = np.array([])
         self.gamma: np.ndarray = np.array([])
-        self.fpc: np.ndarray = np.array([])
         self.scale: np.ndarray = np.array([])
 
         self.y_predicted: np.ndarray = np.array([])
@@ -168,64 +167,6 @@ class UnitModel:
 
         return g1 + g2 + 2 * g3
 
-    def _data_split(
-        self,
-        area: np.ndarray,
-        X: np.ndarray,
-        Xmean: np.ndarray,
-        Xbar: np.ndarray,
-        scale: np.ndarray,
-        samp_size: np.ndarray,
-    ) -> Tuple[
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-    ]:
-
-        ps = np.isin(area, self.area_s)
-        area_ps = area[ps]
-        area_pr = area[~ps]
-        X_ps = X[ps]
-        X_pr = X[~ps]
-
-        areas = np.unique(area)
-        areas_ps = np.unique(area_ps)
-        ps_area = np.isin(areas, areas_ps)
-        Xmean_ps = Xmean[ps_area]
-        Xmean_pr = Xmean[~ps_area]
-        Xbar_ps = Xbar[ps_area]
-        Xbar_pr = Xbar[~ps_area]
-        scale_ps = scale[ps_area]
-        scale_pr = scale[~ps_area]
-        samp_size_ps = samp_size[ps_area]
-        samp_size_pr = samp_size[~ps_area]
-
-        return (
-            area_ps,
-            area_pr,
-            X_ps,
-            X_pr,
-            Xmean_ps,
-            Xmean_pr,
-            Xbar_ps,
-            Xbar_pr,
-            scale_ps,
-            scale_pr,
-            samp_size_ps,
-            samp_size_pr,
-            ps,
-        )
-
     @staticmethod
     def _sumby(group, y):  # Could use pd.grouby().sum(), may scale better
 
@@ -299,7 +240,7 @@ class UnitModel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ybar_s, self.Xbar_s, self.gamma, self.samp_size = self._area_stats(
+        self.ybar_s, self.xbar_s, self.gamma, self.samp_size = self._area_stats(
             y, X, area, samp_weight, scale
         )
 
@@ -324,6 +265,7 @@ class UnitModel:
 
         X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
+        self.Xbar_p = Xmean
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
             Xmean = np.insert(Xmean, 0, 1, axis=1)
@@ -331,41 +273,32 @@ class UnitModel:
             pop_size = formats.numpy_array(pop_size)
 
         self.random_effects = self.gamma * (
-            self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects)
+            self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects)
         )
 
-        (
-            area_ps,
-            area_pr,
-            X_ps,
-            X_pr,
-            Xmean_ps,
-            Xmean_pr,
-            Xbar_ps,
-            Xbar_pr,
-            scale_ps,
-            scale_pr,
-            samp_size_ps,
-            samp_size_pr,
-            ps,
-        ) = self._data_split(area, X, Xmean, self.Xbar_s, self.scale, self.samp_size)
+        ps = np.isin(area, self.area_s)
+        area_ps = area[ps]
+        X_ps = X[ps]
 
+        areas = np.unique(area)
         areas_ps = np.unique(area_ps)
-        gamma_ps = self.gamma[np.isin(self.area_s, areas_ps)]
+        ps_area = np.isin(areas, areas_ps)
+        Xmean_ps = Xmean[ps_area]
+        Xmean_pr = Xmean[~ps_area]
+        xbar_ps = self.xbar_s[ps_area]
+        scale_ps = self.scale[ps_area]
+        samp_size_ps = self.samp_size[ps_area]
+        gamma_ps = self.gamma[ps_area]
+
+        samp_rate_ps = samp_size_ps / pop_size[ps_area]
 
         if pop_size is None or pop_size is None:
             self.fpc = np.zeros(Xmean_ps.shape[0])
-            self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + self.random_effects
+            self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
         else:
-            self.fpc = samp_size_ps / pop_size
             self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + (
-                self.fpc + (1 - self.fpc) * gamma_ps
-            ) * (self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects))
-            # self.y_predicted = (
-            #     self.fpc * self.ybar_s
-            #     + np.matmul(Xmean_ps - self.fpc[:, None] * self.Xbar_s, self.fixed_effects)
-            #     + (1 - self.fpc) * self.random_effects
-            # )
+                samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
+            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
 
         g1 = self._g1(gamma_ps, scale_ps)
         # print(g1, "\n")
@@ -373,7 +306,7 @@ class UnitModel:
         A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
         # print.pprint(A_inv)
 
-        g2 = self._g2(areas_ps, Xbar_ps, Xmean_ps, gamma_ps, A_inv)
+        g2 = self._g2(areas_ps, xbar_ps, Xmean_ps, gamma_ps, A_inv)
 
         # print(g1, "\n")
 
