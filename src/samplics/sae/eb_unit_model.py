@@ -30,6 +30,8 @@ class UnitModel:
 
         self.area_s: np.ndarray = np.array([])
         self.area_p: np.ndarray = np.array([])
+        self.samp_size = np.array([])
+        self.pop_size = np.array([])
 
         self.fitted = False
         self.fixed_effects: np.ndarray = np.array([])
@@ -100,21 +102,24 @@ class UnitModel:
         arr1_mean = np.zeros(areas.size)
         arr2_mean = np.zeros((areas.size, arr2.shape[1]))
         gamma = np.zeros(areas.size)
+        samp_size = np.zeros(areas.size)
         for k, d in enumerate(areas):
-            a_factor_d = a_factor[area == d]
-            weight_d = weight[area == d]
+            sample_d = area == d
+            a_factor_d = a_factor[sample_d]
+            weight_d = weight[sample_d]
             aw_factor_d = weight_d * a_factor_d
-            arr1w_d = arr1[area == d] * a_factor_d
+            arr1w_d = arr1[sample_d] * a_factor_d
             arr1_mean[k] = np.sum(arr1w_d) / np.sum(aw_factor_d)
-            arr2w_d = arr2[area == d, :] * aw_factor_d[:, None]
+            arr2w_d = arr2[sample_d, :] * aw_factor_d[:, None]
             arr2_mean[k, :] = np.sum(arr2w_d, axis=0) / np.sum(aw_factor_d)
             if samp_weight is None:
                 delta_d = 1 / np.sum(a_factor_d)
             else:
                 delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
             gamma[k] = (self.re_std ** 2) / (self.re_std ** 2 + (self.error_std ** 2) * delta_d)
+            samp_size[k] = np.sum(sample_d)
 
-        return arr1_mean, arr2_mean, gamma
+        return arr1_mean, arr2_mean, gamma, samp_size
 
     def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
 
@@ -170,7 +175,10 @@ class UnitModel:
         Xmean: np.ndarray,
         Xbar: np.ndarray,
         scale: np.ndarray,
+        samp_size: np.ndarray,
     ) -> Tuple[
+        np.ndarray,
+        np.ndarray,
         np.ndarray,
         np.ndarray,
         np.ndarray,
@@ -199,6 +207,8 @@ class UnitModel:
         Xbar_pr = Xbar[~ps_area]
         scale_ps = scale[ps_area]
         scale_pr = scale[~ps_area]
+        samp_size_ps = samp_size[ps_area]
+        samp_size_pr = samp_size[~ps_area]
 
         return (
             area_ps,
@@ -211,6 +221,8 @@ class UnitModel:
             Xbar_pr,
             scale_ps,
             scale_pr,
+            samp_size_ps,
+            samp_size_pr,
             ps,
         )
 
@@ -257,9 +269,9 @@ class UnitModel:
         basic_fit = basic_model.fit(reml=reml, full_output=True)
         self.area_s = np.unique(formats.numpy_array(area))
 
-        self.error_std = basic_fit.scale
+        self.error_std = basic_fit.scale ** 0.5
         self.fixed_effects = basic_fit.fe_params
-        #self.random_effects = np.array(list(basic_fit.random_effects.values()))
+        # self.random_effects = np.array(list(basic_fit.random_effects.values()))
 
         self.fe_std = basic_fit.bse_fe
         self.re_std = float(basic_fit.cov_re) ** 0.5
@@ -287,7 +299,9 @@ class UnitModel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ybar_s, self.Xbar_s, self.gamma = self._area_stats(y, X, area, samp_weight, scale)
+        self.ybar_s, self.Xbar_s, self.gamma, self.samp_size = self._area_stats(
+            y, X, area, samp_weight, scale
+        )
 
         # samp_weight = np.ones(y.size)
         if samp_weight is not None:
@@ -301,7 +315,6 @@ class UnitModel:
         X: Array,
         Xmean: Array,
         area: Array,
-        samp_size: Optional[Array] = None,
         pop_size: Optional[Array] = None,
         intercept: bool = True,
     ) -> None:
@@ -314,6 +327,8 @@ class UnitModel:
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
             Xmean = np.insert(Xmean, 0, 1, axis=1)
+        if pop_size is not None:
+            pop_size = formats.numpy_array(pop_size)
 
         self.random_effects = self.gamma * (
             self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects)
@@ -330,20 +345,27 @@ class UnitModel:
             Xbar_pr,
             scale_ps,
             scale_pr,
+            samp_size_ps,
+            samp_size_pr,
             ps,
-        ) = self._data_split(area, X, Xmean, self.Xbar_s, self.scale)
+        ) = self._data_split(area, X, Xmean, self.Xbar_s, self.scale, self.samp_size)
 
         areas_ps = np.unique(area_ps)
         gamma_ps = self.gamma[np.isin(self.area_s, areas_ps)]
 
-        if samp_size is None or pop_size is None:
+        if pop_size is None or pop_size is None:
             self.fpc = np.zeros(Xmean_ps.shape[0])
             self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + self.random_effects
         else:
-            self.fpc = samp_size / pop_size
+            self.fpc = samp_size_ps / pop_size
             self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + (
                 self.fpc + (1 - self.fpc) * gamma_ps
             ) * (self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects))
+            # self.y_predicted = (
+            #     self.fpc * self.ybar_s
+            #     + np.matmul(Xmean_ps - self.fpc[:, None] * self.Xbar_s, self.fixed_effects)
+            #     + (1 - self.fpc) * self.random_effects
+            # )
 
         g1 = self._g1(gamma_ps, scale_ps)
         # print(g1, "\n")
