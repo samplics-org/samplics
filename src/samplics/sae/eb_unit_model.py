@@ -263,6 +263,9 @@ class UnitModel:
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
 
+        area = formats.numpy_array(area)
+        self.area_p = np.unique(formats.numpy_array(area))
+
         X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
         self.Xbar_p = Xmean
@@ -278,10 +281,10 @@ class UnitModel:
 
         ps = np.isin(area, self.area_s)
         area_ps = area[ps]
-        X_ps = X[ps]
-
         areas = np.unique(area)
         areas_ps = np.unique(area_ps)
+
+        X_ps = X[ps]
         ps_area = np.isin(areas, areas_ps)
         Xmean_ps = Xmean[ps_area]
         Xmean_pr = Xmean[~ps_area]
@@ -299,6 +302,10 @@ class UnitModel:
             self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + (
                 samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
             ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
+
+        if np.sum(~ps) > 0:
+            yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
+            self.y_predicted = np.append(self.y_predicted, yr_pred)
 
         g1 = self._g1(gamma_ps, scale_ps)
         # print(g1, "\n")
