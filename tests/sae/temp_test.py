@@ -17,7 +17,7 @@ print(f"Sigma u: {eblup_bhf_reml.re_std}")
 print(f"Sigma e: {eblup_bhf_reml.error_std}\n")
 
 population = pd.read_csv("./tests/sae/UnitLevel_pop_seed531451.csv")
-#print(population)
+# print(population)
 
 Xmean_s = population[["X1", "X2", "X3"]]
 
@@ -25,6 +25,4 @@ eblup_bhf_reml.predict(X_s, Xmean_s, area_s)
 
 print(f"Gamma parameter:\n {eblup_bhf_reml.gamma}\n")
 
-#print(eblup_bhf_reml.y_predicted)
-
-print()
+print(pd.DataFrame(eblup_bhf_reml.y_predicted))

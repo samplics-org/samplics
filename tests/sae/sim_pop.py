@@ -14,7 +14,7 @@ sigma2u = 0.25 ** 2
 # print(sigma2u / (sigma2u + sigma2e / 50))
 
 # Population sizes
-N = 10_0000_000
+N = 1_0000_000
 nb_areas = 250
 
 
@@ -36,7 +36,7 @@ X1 = np.array([])
 for k, s in enumerate(Nd):
     Xk = np.random.binomial(1, p=p1[k], size=s)
     X1 = np.append(X1, Xk)
-    # print(f"Proportion for Area {k} is {np.mean(Xk)}")
+    print(f"Proportion for Area {k} is {np.mean(Xk)}")
 
 X2 = 0.01 + np.random.beta(0.5, 1, N)
 # print(f"{np.min(X2)}, {np.mean(X2)}, {np.median(X2)}, {np.max(X2)}")
@@ -46,7 +46,8 @@ X = np.column_stack((np.ones(N), X1, X2, X3))
 # print(X)
 
 Xmean = np.zeros((nb_areas, X.shape[1])) * np.nan
-for k, d in enumerate(areas):
+for k, d in enumerate(areas):  # can do this faster using pd.groupby().mean()
+    print(f"Computing {k}th mean for area {d}")
     Xmean[k, :] = np.mean(X[area == d], axis=0)
 # print(Xmean)
 
@@ -64,11 +65,13 @@ X_s = X[sample == 1]
 
 area_s = area[sample == 1]
 areas, nd = np.unique(area_s, return_counts=True)
-# print(areas.shape)
-# print(nd)
+print(areas.shape)
+print(nd)
 
-# basic_model = sm.MixedLM(y_s, X_s, area_s)
-# basic_fit = basic_model.fit(reml=True, full_output=True)
+basic_model = sm.MixedLM(y_s, X_s, area_s)
+basic_fit = basic_model.fit(reml=True, full_output=True)
+
+print(basic_fit.random_effects)
 
 # print(f"Fixed effects: {basic_fit.fe_params}")
 
@@ -78,16 +81,16 @@ areas, nd = np.unique(area_s, return_counts=True)
 # print(basic_fit.cov_re / (basic_fit.cov_re + basic_fit.scale ** 2 / nd))
 
 
-sample_data = pd.DataFrame(
-    np.column_stack((y_s, area_s, X_s[:, 1:4])), columns=["y", "area", "X1", "X2", "X3"],
-).astype({"area": "int16", "X1": "int8", "X3": "int8"})
-# print(sample_data)
+# sample_data = pd.DataFrame(
+#     np.column_stack((y_s, area_s, X_s[:, 1:4])), columns=["y", "area", "X1", "X2", "X3"],
+# ).astype({"area": "int16", "X1": "int8", "X3": "int8"})
+# # print(sample_data)
 
-sample_data.to_csv("./tests/sae/UnitLevel_sample_seed531451.csv", index=False)
+# sample_data.to_csv("./tests/sae/UnitLevel_sample_seed531451.csv", index=False)
 
-population_data = pd.DataFrame(
-    np.column_stack((areas, Xmean[:, 1:4], Nd)), columns=["area", "X1", "X2", "X3", "Nsize"]
-).astype({"area": "int16", "Nsize": "int32"})
-# print(population_data)
+# population_data = pd.DataFrame(
+#     np.column_stack((areas, Xmean[:, 1:4], Nd)), columns=["area", "X1", "X2", "X3", "Nsize"]
+# ).astype({"area": "int16", "Nsize": "int32"})
+# # print(population_data)
 
-population_data.to_csv("./tests/sae/UnitLevel_pop_seed531451.csv", index=False)
+# population_data.to_csv("./tests/sae/UnitLevel_pop_seed531451.csv", index=False)

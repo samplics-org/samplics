@@ -259,7 +259,7 @@ class UnitModel:
 
         self.error_std = basic_fit.scale
         self.fixed_effects = basic_fit.fe_params
-        self.random_effects = basic_fit.cov_re
+        #self.random_effects = np.array(list(basic_fit.random_effects.values()))
 
         self.fe_std = basic_fit.bse_fe
         self.re_std = float(basic_fit.cov_re) ** 0.5
@@ -315,7 +315,7 @@ class UnitModel:
             X = np.insert(X, 0, 1, axis=1)
             Xmean = np.insert(Xmean, 0, 1, axis=1)
 
-        self.random_effect = self.gamma * (
+        self.random_effects = self.gamma * (
             self.ybar_s - np.matmul(self.Xbar_s, self.fixed_effects)
         )
 
@@ -338,7 +338,7 @@ class UnitModel:
 
         if samp_size is None or pop_size is None:
             self.fpc = np.zeros(Xmean_ps.shape[0])
-            self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + self.random_effect
+            self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + self.random_effects
         else:
             self.fpc = samp_size / pop_size
             self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + (
