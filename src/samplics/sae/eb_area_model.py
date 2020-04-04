@@ -13,7 +13,7 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
-class AreaModelFH:
+class EblupAreaLevel:
     """implement the area level model"""
 
     # Other option for method are spatial (SP), temporal (TP), spatial-temporal (ST)
@@ -406,22 +406,3 @@ class AreaModelFH:
         self.mse = mse
         self.area = area_s
 
-
-class AreaModelST:
-    """implements the Spatial-temporal model"""
-
-    pass
-
-
-class AreaModelRY:
-    """implements the Rao-Yu model"""
-
-    """NB: is this an special case of AreaModelST?"""
-
-    pass
-
-
-class AreaModelRobust:
-    """implements the Robust model"""
-
-    pass

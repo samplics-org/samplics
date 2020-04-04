@@ -13,7 +13,7 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
-class UnitModel:
+class EblupUnitLevel:
     """implements the unit level model"""
 
     def __init__(
@@ -318,7 +318,7 @@ class UnitModel:
         # print(g1, "\n")
 
 
-class UnitModelRobust:
+class RobustUnitLevel:
     """implement the robust unit level model"""
 
     pass
