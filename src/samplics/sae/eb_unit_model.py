@@ -156,8 +156,28 @@ class EblupUnitLevel:
 
         return np.diag(g2_matrix)
 
-    def _g3(self):
-        pass
+    @staticmethod
+    def _g3(
+        sigma2u: float, sigma2e: float, scale: np.ndarray, samp_size: np.ndarray
+    ) -> np.ndarray:
+
+        alpha = sigma2e + scale * sigma2u
+
+        i_vv = 0.5 * sum((scale / alpha) ** 2)
+        i_ee = 0.5 * sum((samp_size - 1) / (sigma2e ** 2) + 1 / (alpha ** 2))
+        i_ve = 0.5 * sum(scale / (alpha ** 2))
+
+        Info_matrix = np.array([[i_vv, i_ve], [i_ve, i_ee]])
+        Variance = np.linalg.inv(Info_matrix)
+
+        g3_scale = 1 / ((scale ** 2) * ((sigma2u + sigma2e / scale) ** 3))
+        g3 = g3_scale * (
+            (sigma2e ** 2) * Variance[0, 0]
+            + (sigma2u ** 2) * Variance[1, 1]
+            - 2 * (sigma2e * sigma2u) * Variance[0, 1]
+        )
+
+        return g3
 
     def _mse1(self, scale: np.ndarray, A_inv: np.ndarray) -> np.ndarray:
 
@@ -307,15 +327,14 @@ class EblupUnitLevel:
             yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
             self.y_predicted = np.append(self.y_predicted, yr_pred)
 
-        g1 = self._g1(gamma_ps, scale_ps)
-        # print(g1, "\n")
-
         A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
-        # print.pprint(A_inv)
-
+        g1 = self._g1(gamma_ps, scale_ps)
         g2 = self._g2(areas_ps, xbar_ps, Xmean_ps, gamma_ps, A_inv)
+        g3 = self._g3(self.error_std ** 2, self.re_std ** 2, scale_ps, samp_size_ps)
 
-        # print(g1, "\n")
+        mse_ps = g1 + g2 + 2 * g3
+
+        print(f"The MSE estimator is:\n {mse_ps}\n")
 
 
 class RobustUnitLevel:
