@@ -167,14 +167,13 @@ class EblupUnitLevel:
         i_ee = 0.5 * sum((samp_size - 1) / (sigma2e ** 2) + 1 / (alpha ** 2))
         i_ve = 0.5 * sum(scale / (alpha ** 2))
 
-        Info_matrix = np.array([[i_vv, i_ve], [i_ve, i_ee]])
-        Variance = np.linalg.inv(Info_matrix)
+        i_determinant = i_vv * i_ee - i_ve * i_ve
 
         g3_scale = 1 / ((scale ** 2) * ((sigma2u + sigma2e / scale) ** 3))
         g3 = g3_scale * (
-            (sigma2e ** 2) * Variance[0, 0]
-            + (sigma2u ** 2) * Variance[1, 1]
-            - 2 * (sigma2e * sigma2u) * Variance[0, 1]
+            (sigma2e ** 2) * (i_ee / i_determinant)
+            + (sigma2u ** 2) * (i_vv / i_determinant)
+            - 2 * (sigma2e * sigma2u) * (-i_vv / i_determinant)
         )
 
         return g3
@@ -224,19 +223,14 @@ class EblupUnitLevel:
         return np.append(ys_pred, yr_pred)
 
     def _sim_pop(
-        self, number_reps: int, error_std: np.ndarray, re_std: np.ndarray, scale: np.ndarray
+        self, nb_reps: int, nb_areas: int, samp_size: int, scale: np.ndarray
     ) -> np.ndarray:
 
-        error = np.random.normal(loc=0, scale=(scale ** 2) * error_std, size=N)
-        area = np.sort(np.random.choice(range(1, nb_areas + 1), N))
-        areas, Nd = np.unique(area, return_counts=True)
-        # print(areas)
-
-        random_effects = np.random.normal(loc=0, scale=re_std, size=nb_areas)
-        total_error = np.repeat(random_effects, Nd) + error
-        # print(total_error)
-
-        y = np.matmul(X, beta) + total_error
+        error = np.random.normal(
+            loc=0, scale=(scale ** 2) * self.error_std, size=(nb_reps, samp_size)
+        )
+        re = np.random.normal(loc=0, scale=self.re_std, size=(nb_reps, nb_areas))
+        y = np.matmul(X, self.fixed_effects) + np.repeat(re, Nd, axis=1) + error
 
         return y
 
@@ -255,8 +249,6 @@ class EblupUnitLevel:
         X = formats.numpy_array(X)
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)
-        # elif intercept and isinstance(X, pd.DataFrame):
-        #     X = X.insert(0, "Intercept", 1, False)
 
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
@@ -320,11 +312,17 @@ class EblupUnitLevel:
         Xmean: Array,
         area: Array,
         pop_size: Optional[Array] = None,
+        scale: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
 
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
+
+        if isinstance(scale, (float, int)):
+            scale = np.ones(y.shape[0]) * scale
+        else:
+            scale = formats.numpy_array(scale)
 
         area = formats.numpy_array(area)
         self.area_p = np.unique(formats.numpy_array(area))
