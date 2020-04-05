@@ -87,10 +87,16 @@ class EblupUnitLevel:
 
         return beta
 
-    def _area_stats(self, arr1, arr2, area, samp_weight, scale):
-
-        arr1 = formats.numpy_array(arr1)
-        arr2 = formats.numpy_array(arr2)
+    @staticmethod
+    def _area_stats(
+        arr1: np.ndarray,
+        arr2: np.ndarray,
+        area: np.ndarray,
+        error_std: float,
+        re_std: float,
+        samp_weight: Optional[np.ndarray],
+        scale: np.ndarray,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
         if samp_weight is None:
             weight = np.ones(arr1.size)
@@ -115,16 +121,12 @@ class EblupUnitLevel:
                 delta_d = 1 / np.sum(a_factor_d)
             else:
                 delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
-            gamma[k] = (self.re_std ** 2) / (self.re_std ** 2 + (self.error_std ** 2) * delta_d)
+            gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
             samp_size[k] = np.sum(sample_d)
 
         return arr1_mean, arr2_mean, gamma, samp_size
 
     def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
-
-        # print(self.error_std)
-        # print(scale)
-        # print(gamma)
 
         return gamma * (self.error_std ** 2 / scale)
 
@@ -230,9 +232,20 @@ class EblupUnitLevel:
             loc=0, scale=(scale ** 2) * self.error_std, size=(nb_reps, samp_size)
         )
         re = np.random.normal(loc=0, scale=self.re_std, size=(nb_reps, nb_areas))
-        y = np.matmul(X, self.fixed_effects) + np.repeat(re, Nd, axis=1) + error
+        mu = np.matmul(X, self.fixed_effects)
+        y = mu[None, :] + np.repeat(re, Nd, axis=1) + error
 
-        return y
+        return np.transpose(y)
+
+    def _boot_params(self, y: np.ndarray, x: np.ndarray):
+
+        for k in range(y.shape[0]):
+            reml = True if self.method == "REML" else False
+            boot_model = sm.MixedLM(y[k, :], X, area)
+            boot_fit = boot_model.fit(reml=reml, full_output=True)
+            boot_error_std = boot_fit.scale ** 0.5
+            boot_fe = boot_fit.fe_params
+            boot_re = boot_gamma * (boot_ybar_s - np.matmul(self.xbar_s, boot_re))
 
     def fit(
         self,
@@ -296,7 +309,7 @@ class EblupUnitLevel:
         self.goodness["BIC"] = bic
 
         self.ybar_s, self.xbar_s, self.gamma, self.samp_size = self._area_stats(
-            y, X, area, samp_weight, scale
+            y, X, area, self.error_std, self.re_std, samp_weight, scale
         )
 
         # samp_weight = np.ones(y.size)
@@ -320,7 +333,7 @@ class EblupUnitLevel:
             raise ("The model must be fitted first with .fit() before running the prediction.")
 
         if isinstance(scale, (float, int)):
-            scale = np.ones(y.shape[0]) * scale
+            scale = np.ones(X.shape[0]) * scale
         else:
             scale = formats.numpy_array(scale)
 
