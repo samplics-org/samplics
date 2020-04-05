@@ -124,7 +124,7 @@ class EblupUnitLevel:
             gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
             samp_size[k] = np.sum(sample_d)
 
-        return y_mean, X_mean, gamma, samp_size
+        return y_mean, X_mean, gamma, samp_size.astype(int)
 
     def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
 
@@ -224,31 +224,33 @@ class EblupUnitLevel:
 
         return np.append(ys_pred, yr_pred)
 
-    def _sim_pop(
+    def _boot_sample(
         self, nb_reps: int, X: np.ndarray, nb_areas: int, samp_size: int, scale: np.ndarray
     ) -> np.ndarray:
 
-        error = np.random.normal(
-            loc=0, scale=(scale ** 2) * self.error_std, size=(nb_reps, sum(samp_size))
+        error = np.abs(scale) * np.random.normal(
+            loc=0, scale=self.error_std, size=(nb_reps, sum(samp_size))
         )
         re = np.random.normal(loc=0, scale=self.re_std, size=(nb_reps, nb_areas))
         mu = np.matmul(X, self.fixed_effects)
-        y = mu[None, :] + np.repeat(re, samp_size, axis=1) + error
+        y = np.repeat(mu[None, :], nb_reps, axis=0) + np.repeat(re, samp_size, axis=1) + error
 
         return np.transpose(y)
 
-    def _boot_params(self, y: np.ndarray, X: np.ndarray):
+    def _boot_params(self, y: np.ndarray, X: np.ndarray, area: np.ndarray):
 
-        for k in range(y.shape[0]):
+        for k in range(y.shape[1]):
             reml = True if self.method == "REML" else False
-            boot_model = sm.MixedLM(y[k, :], X, area)
+            boot_model = sm.MixedLM(y[:, k], X, area)
             boot_fit = boot_model.fit(reml=reml, full_output=True)
-            boot_error_std = boot_fit.scale ** 0.5
             boot_fe = boot_fit.fe_params
+            boot_error_std = boot_fit.scale ** 0.5
+            boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ybar_s, boot_xbar_s, boot_gamma, boot_samp_size = self._area_stats(
-                y[k, :], X, area, boot_error_std, boot_re_std, samp_weight, scale
+                y[:, k], X, area, boot_error_std, boot_re_std, samp_weight, scale
             )
             boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_re))
+            print(f"This is {k}th iteration.")
 
         return True
 
@@ -388,8 +390,11 @@ class EblupUnitLevel:
 
         print(f"The MSE estimator is:\n {mse_ps}\n")
 
-        y_boot = self._sim_pop(number_reps, X_ps, areas.size, samp_size_ps, scale[ps])
-        print(self._boot_params(y_boot, X_ps))
+        X_ps_sorted = X_ps[np.argsort(area_ps)]
+        y_boot = self._boot_sample(number_reps, X_ps_sorted, areas.size, samp_size_ps, scale[ps])
+        print(y_boot.shape)
+        print(X.shape)
+        print(self._boot_params(y_boot, X_ps_sorted, area_ps))
 
 
 class RobustUnitLevel:
