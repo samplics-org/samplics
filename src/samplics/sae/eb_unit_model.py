@@ -47,7 +47,7 @@ class EblupUnitLevel:
         self.xbar_s: np.ndarray = np.array([])
         self.Xbar_p: np.ndarray = np.array([])
         self.gamma: np.ndarray = np.array([])
-        self.scale: np.ndarray = np.array([])
+        self.a_factor: np.ndarray = np.array([])
 
         self.y_predicted: np.ndarray = np.array([])
         self.mse: Dict[Any, float] = {}
@@ -225,19 +225,19 @@ class EblupUnitLevel:
         return np.append(ys_pred, yr_pred)
 
     def _sim_pop(
-        self, nb_reps: int, nb_areas: int, samp_size: int, scale: np.ndarray
+        self, nb_reps: int, X: np.ndarray, nb_areas: int, samp_size: int, scale: np.ndarray
     ) -> np.ndarray:
 
         error = np.random.normal(
-            loc=0, scale=(scale ** 2) * self.error_std, size=(nb_reps, samp_size)
+            loc=0, scale=(scale ** 2) * self.error_std, size=(nb_reps, sum(samp_size))
         )
         re = np.random.normal(loc=0, scale=self.re_std, size=(nb_reps, nb_areas))
         mu = np.matmul(X, self.fixed_effects)
-        y = mu[None, :] + np.repeat(re, Nd, axis=1) + error
+        y = mu[None, :] + np.repeat(re, samp_size, axis=1) + error
 
         return np.transpose(y)
 
-    def _boot_params(self, y: np.ndarray, x: np.ndarray):
+    def _boot_params(self, y: np.ndarray, X: np.ndarray):
 
         for k in range(y.shape[0]):
             reml = True if self.method == "REML" else False
@@ -245,7 +245,12 @@ class EblupUnitLevel:
             boot_fit = boot_model.fit(reml=reml, full_output=True)
             boot_error_std = boot_fit.scale ** 0.5
             boot_fe = boot_fit.fe_params
-            boot_re = boot_gamma * (boot_ybar_s - np.matmul(self.xbar_s, boot_re))
+            boot_ybar_s, boot_xbar_s, boot_gamma, boot_samp_size = self._area_stats(
+                y[k, :], X, area, boot_error_std, boot_re_std, samp_weight, scale
+            )
+            boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_re))
+
+        return True
 
     def fit(
         self,
@@ -271,7 +276,7 @@ class EblupUnitLevel:
         else:
             scale = formats.numpy_array(scale)
 
-        self.scale = self._sumby(area, scale)
+        self.a_factor = self._sumby(area, scale)
 
         reml = True if self.method == "REML" else False
         basic_model = sm.MixedLM(y, X, area)
@@ -325,6 +330,7 @@ class EblupUnitLevel:
         Xmean: Array,
         area: Array,
         pop_size: Optional[Array] = None,
+        number_reps: int = 500,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
@@ -363,7 +369,7 @@ class EblupUnitLevel:
         Xmean_ps = Xmean[ps_area]
         Xmean_pr = Xmean[~ps_area]
         xbar_ps = self.xbar_s[ps_area]
-        scale_ps = self.scale[ps_area]
+        afactor_ps = self.a_factor[ps_area]
         samp_size_ps = self.samp_size[ps_area]
         gamma_ps = self.gamma[ps_area]
 
@@ -374,13 +380,16 @@ class EblupUnitLevel:
         )
 
         A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
-        g1 = self._g1(gamma_ps, scale_ps)
+        g1 = self._g1(gamma_ps, afactor_ps)
         g2 = self._g2(areas_ps, xbar_ps, Xmean_ps, gamma_ps, A_inv)
-        g3 = self._g3(self.error_std ** 2, self.re_std ** 2, scale_ps, samp_size_ps)
+        g3 = self._g3(self.error_std ** 2, self.re_std ** 2, afactor_ps, samp_size_ps)
 
         mse_ps = g1 + g2 + 2 * g3
 
         print(f"The MSE estimator is:\n {mse_ps}\n")
+
+        y_boot = self._sim_pop(number_reps, X_ps, areas.size, samp_size_ps, scale[ps])
+        print(self._boot_params(y_boot, X_ps))
 
 
 class RobustUnitLevel:
