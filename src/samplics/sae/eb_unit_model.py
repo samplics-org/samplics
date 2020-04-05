@@ -89,8 +89,8 @@ class EblupUnitLevel:
 
     @staticmethod
     def _area_stats(
-        arr1: np.ndarray,
-        arr2: np.ndarray,
+        y: np.ndarray,
+        X: np.ndarray,
         area: np.ndarray,
         error_std: float,
         re_std: float,
@@ -99,13 +99,13 @@ class EblupUnitLevel:
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
         if samp_weight is None:
-            weight = np.ones(arr1.size)
+            weight = np.ones(y.size)
 
         a_factor = 1 / (scale ** 2)
 
         areas = np.unique(area)
-        arr1_mean = np.zeros(areas.size)
-        arr2_mean = np.zeros((areas.size, arr2.shape[1]))
+        y_mean = np.zeros(areas.size)
+        X_mean = np.zeros((areas.size, X.shape[1]))
         gamma = np.zeros(areas.size)
         samp_size = np.zeros(areas.size)
         for k, d in enumerate(areas):
@@ -113,10 +113,10 @@ class EblupUnitLevel:
             a_factor_d = a_factor[sample_d]
             weight_d = weight[sample_d]
             aw_factor_d = weight_d * a_factor_d
-            arr1w_d = arr1[sample_d] * a_factor_d
-            arr1_mean[k] = np.sum(arr1w_d) / np.sum(aw_factor_d)
-            arr2w_d = arr2[sample_d, :] * aw_factor_d[:, None]
-            arr2_mean[k, :] = np.sum(arr2w_d, axis=0) / np.sum(aw_factor_d)
+            yw_d = y[sample_d] * a_factor_d
+            y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
+            Xw_d = X[sample_d, :] * aw_factor_d[:, None]
+            X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
             if samp_weight is None:
                 delta_d = 1 / np.sum(a_factor_d)
             else:
@@ -124,7 +124,7 @@ class EblupUnitLevel:
             gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
             samp_size[k] = np.sum(sample_d)
 
-        return arr1_mean, arr2_mean, gamma, samp_size
+        return y_mean, X_mean, gamma, samp_size
 
     def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
 
