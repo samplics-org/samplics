@@ -197,6 +197,49 @@ class EblupUnitLevel:
 
         return sums
 
+    def _predict(
+        self,
+        pop_size: np.ndarray,
+        Xmean_ps: np.ndarray,
+        Xmean_pr: np.ndarray,
+        xbar_ps: np.ndarray,
+        gamma_ps: np.ndarray,
+        samp_rate_ps: np.ndarray,
+        ps: np.ndarray,
+        ps_area: np.ndarray,
+    ) -> np.ndarray:
+
+        if pop_size is None or pop_size is None:
+            self.fpc = np.zeros(Xmean_ps.shape[0])
+            ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
+        else:
+            ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
+                samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
+            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
+
+        yr_pred = np.array([])
+        if np.sum(~ps) > 0:
+            yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
+
+        return np.append(ys_pred, yr_pred)
+
+    def _sim_pop(
+        self, number_reps: int, error_std: np.ndarray, re_std: np.ndarray, scale: np.ndarray
+    ) -> np.ndarray:
+
+        error = np.random.normal(loc=0, scale=(scale ** 2) * error_std, size=N)
+        area = np.sort(np.random.choice(range(1, nb_areas + 1), N))
+        areas, Nd = np.unique(area, return_counts=True)
+        # print(areas)
+
+        random_effects = np.random.normal(loc=0, scale=re_std, size=nb_areas)
+        total_error = np.repeat(random_effects, Nd) + error
+        # print(total_error)
+
+        y = np.matmul(X, beta) + total_error
+
+        return y
+
     def fit(
         self,
         y: Array,
@@ -315,17 +358,9 @@ class EblupUnitLevel:
 
         samp_rate_ps = samp_size_ps / pop_size[ps_area]
 
-        if pop_size is None or pop_size is None:
-            self.fpc = np.zeros(Xmean_ps.shape[0])
-            self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
-        else:
-            self.y_predicted = np.matmul(Xmean_ps, self.fixed_effects) + (
-                samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
-            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
-
-        if np.sum(~ps) > 0:
-            yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
-            self.y_predicted = np.append(self.y_predicted, yr_pred)
+        self.y_predicted = self._predict(
+            pop_size, Xmean_ps, Xmean_pr, xbar_ps, gamma_ps, samp_rate_ps, ps, ps_area,
+        )
 
         A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
         g1 = self._g1(gamma_ps, scale_ps)
