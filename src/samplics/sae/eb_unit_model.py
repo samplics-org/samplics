@@ -225,40 +225,40 @@ class EblupUnitLevel:
 
         return np.append(ys_pred, yr_pred)
 
-    def _boot_sample(
-        self, nb_reps: int, X: np.ndarray, nb_areas: int, samp_size: np.ndarray, scale: np.ndarray
+    def bootstrap_mse(
+        self,
+        number_reps: int,
+        X: np.ndarray,
+        area: np.ndarray,
+        samp_size: np.ndarray,
+        samp_weight: Optional[Array] = None,
+        scale: Union[Array, Number] = 1,
+        intercept: bool = True,
     ) -> np.ndarray:
 
         # n = np.sum(samp_size)
-        # y_boot = np.zeros((nb_reps, n)) * np.nan
+        # y_boot = np.zeros((number_reps, n)) * np.nan
         # mu = np.matmul(X, self.fixed_effects)
 
-        # for k in range(nb_reps):
+        # for k in range(number_reps):
         #     error = np.abs(scale) * np.random.normal(loc=0, scale=self.error_std, size=n)
         #     re = np.random.normal(loc=0, scale=self.re_std, size=nb_areas)
         #     y_boot[k, :] = mu + np.repeat(re, samp_size) + error
 
+        nb_areas = len(np.unique(area))
+
         error = np.abs(scale) * np.random.normal(
-            loc=0, scale=self.error_std, size=(nb_reps, sum(samp_size))
+            loc=0, scale=self.error_std, size=(number_reps, area.size)
         )
-        re = np.random.normal(loc=0, scale=self.re_std, size=(nb_reps, nb_areas))
+        re = np.random.normal(loc=0, scale=self.re_std, size=(number_reps, nb_areas))
         mu = np.matmul(X, self.fixed_effects)
-        y_boot = np.repeat(mu[None, :], nb_reps, axis=0) + np.repeat(re, samp_size, axis=1) + error
-
-        return np.transpose(y_boot)
-
-    def _boot_params(
-        self,
-        y: np.ndarray,
-        X: np.ndarray,
-        area: np.ndarray,
-        samp_weight: np.ndarray,
-        scale: np.ndarray,
-    ) -> float:
+        y_boot = (
+            np.repeat(mu[None, :], number_reps, axis=0) + np.repeat(re, samp_size, axis=1) + error
+        )
 
         reml = True if self.method == "REML" else False
-        for k in range(y.shape[1]):
-            boot_model = sm.MixedLM(y[:, k], X, area)
+        for k in range(y_boot.shape[0]):
+            boot_model = sm.MixedLM(y_boot[k, :], X, area)
             boot_fit = boot_model.fit(
                 start_params=np.append(self.fixed_effects, self.re_std ** 2),
                 reml=reml,
@@ -268,7 +268,7 @@ class EblupUnitLevel:
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ybar_s, boot_xbar_s, boot_gamma, boot_samp_size = self._area_stats(
-                y[:, k], X, area, boot_error_std, boot_re_std, samp_weight, scale
+                y_boot[k, :], X, area, boot_error_std, boot_re_std, samp_weight, scale
             )
             boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
             if k == 0:
@@ -429,13 +429,20 @@ class EblupUnitLevel:
         area_ps_sorted = area_ps[np.argsort(area_ps)]
         if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
             scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
-        y_bootstrap = self._boot_sample(
-            self.number_reps, X_ps_sorted, areas_ps.size, samp_size_ps, scale_ps_ordered,
-        )
+
+        # y_bootstrap = self._boot_sample(
+        #     self.number_reps, X_ps_sorted, areas_ps.size, samp_size_ps, scale_ps_ordered,
+        # )
         # print(y_boot.shape)
+
         print(
-            self._boot_params(
-                y_bootstrap, X_ps_sorted, area_ps_sorted, samp_weight_ps, scale_ps_ordered
+            self.bootstrap_mse(
+                self.number_reps,
+                X_ps_sorted,
+                area_ps_sorted,
+                samp_size_ps,
+                samp_weight_ps,
+                scale_ps_ordered,
             )
         )
 
