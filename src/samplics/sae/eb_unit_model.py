@@ -32,6 +32,7 @@ class EblupUnitLevel:
         self.area_p: np.ndarray = np.array([])
         self.samp_size = np.array([])
         self.pop_size = np.array([])
+        self.number_reps: int
 
         self.fitted = False
         self.fixed_effects: np.ndarray = np.array([])
@@ -225,34 +226,57 @@ class EblupUnitLevel:
         return np.append(ys_pred, yr_pred)
 
     def _boot_sample(
-        self, nb_reps: int, X: np.ndarray, nb_areas: int, samp_size: int, scale: np.ndarray
+        self, nb_reps: int, X: np.ndarray, nb_areas: int, samp_size: np.ndarray, scale: np.ndarray
     ) -> np.ndarray:
+
+        # n = np.sum(samp_size)
+        # y_boot = np.zeros((nb_reps, n)) * np.nan
+        # mu = np.matmul(X, self.fixed_effects)
+
+        # for k in range(nb_reps):
+        #     error = np.abs(scale) * np.random.normal(loc=0, scale=self.error_std, size=n)
+        #     re = np.random.normal(loc=0, scale=self.re_std, size=nb_areas)
+        #     y_boot[k, :] = mu + np.repeat(re, samp_size) + error
 
         error = np.abs(scale) * np.random.normal(
             loc=0, scale=self.error_std, size=(nb_reps, sum(samp_size))
         )
         re = np.random.normal(loc=0, scale=self.re_std, size=(nb_reps, nb_areas))
         mu = np.matmul(X, self.fixed_effects)
-        y = np.repeat(mu[None, :], nb_reps, axis=0) + np.repeat(re, samp_size, axis=1) + error
+        y_boot = np.repeat(mu[None, :], nb_reps, axis=0) + np.repeat(re, samp_size, axis=1) + error
 
-        return np.transpose(y)
+        return np.transpose(y_boot)
 
-    def _boot_params(self, y: np.ndarray, X: np.ndarray, area: np.ndarray):
+    def _boot_params(
+        self,
+        y: np.ndarray,
+        X: np.ndarray,
+        area: np.ndarray,
+        samp_weight: np.ndarray,
+        scale: np.ndarray,
+    ) -> float:
 
+        reml = True if self.method == "REML" else False
         for k in range(y.shape[1]):
-            reml = True if self.method == "REML" else False
             boot_model = sm.MixedLM(y[:, k], X, area)
-            boot_fit = boot_model.fit(reml=reml, full_output=True)
+            boot_fit = boot_model.fit(
+                start_params=np.append(self.fixed_effects, self.re_std ** 2),
+                reml=reml,
+                # full_output=True,
+            )
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ybar_s, boot_xbar_s, boot_gamma, boot_samp_size = self._area_stats(
                 y[:, k], X, area, boot_error_std, boot_re_std, samp_weight, scale
             )
-            boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_re))
-            print(f"This is {k}th iteration.")
+            boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
+            if k == 0:
+                print(f"Starting the {self.number_reps} bootstrap iterations")
+            if (k + 1) % 5 == 0:
+                print(f"{k+1} bootstrap iterations")
 
-        return True
+        return 0.1
 
     def fit(
         self,
@@ -333,6 +357,7 @@ class EblupUnitLevel:
         area: Array,
         pop_size: Optional[Array] = None,
         number_reps: int = 500,
+        samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
@@ -340,10 +365,18 @@ class EblupUnitLevel:
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
 
+        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+            samp_weight = formats.numpy_array(samp_weight)
+
         if isinstance(scale, (float, int)):
             scale = np.ones(X.shape[0]) * scale
         else:
             scale = formats.numpy_array(scale)
+
+        if isinstance(number_reps, int):
+            self.number_reps = int(number_reps)
+        else:
+            self.number_reps = number_reps
 
         area = formats.numpy_array(area)
         self.area_p = np.unique(formats.numpy_array(area))
@@ -374,6 +407,7 @@ class EblupUnitLevel:
         afactor_ps = self.a_factor[ps_area]
         samp_size_ps = self.samp_size[ps_area]
         gamma_ps = self.gamma[ps_area]
+        samp_weight_ps = samp_weight[ps] if samp_weight is not None else None
 
         samp_rate_ps = samp_size_ps / pop_size[ps_area]
 
@@ -391,10 +425,19 @@ class EblupUnitLevel:
         print(f"The MSE estimator is:\n {mse_ps}\n")
 
         X_ps_sorted = X_ps[np.argsort(area_ps)]
-        y_boot = self._boot_sample(number_reps, X_ps_sorted, areas.size, samp_size_ps, scale[ps])
-        print(y_boot.shape)
-        print(X.shape)
-        print(self._boot_params(y_boot, X_ps_sorted, area_ps))
+        scale_ps_ordered = scale[ps]
+        area_ps_sorted = area_ps[np.argsort(area_ps)]
+        if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
+            scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
+        y_bootstrap = self._boot_sample(
+            self.number_reps, X_ps_sorted, areas_ps.size, samp_size_ps, scale_ps_ordered,
+        )
+        # print(y_boot.shape)
+        print(
+            self._boot_params(
+                y_bootstrap, X_ps_sorted, area_ps_sorted, samp_weight_ps, scale_ps_ordered
+            )
+        )
 
 
 class RobustUnitLevel:
