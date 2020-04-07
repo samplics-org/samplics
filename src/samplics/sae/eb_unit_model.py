@@ -17,16 +17,9 @@ class EblupUnitLevel:
     """implements the unit level model"""
 
     def __init__(
-        self,
-        method: str = "REML",
-        parameter: str = "mean",
-        boxcox: Optional[float] = None,
-        function=None,
+        self, method: str = "REML",
     ):
-        self.model = "BHF"
         self.method = method.upper()
-        self.parameter = parameter.lower()
-        self.boxcox = boxcox
 
         self.area_s: np.ndarray = np.array([])
         self.area_p: np.ndarray = np.array([])
@@ -52,9 +45,6 @@ class EblupUnitLevel:
 
         self.y_predicted: np.ndarray = np.array([])
         self.mse: Dict[Any, float] = {}
-        self.mse_as1: Dict[Any, float] = {}
-        self.mse_as2: Dict[Any, float] = {}
-        self.mse_terms: Dict[str, Dict[Any, float]] = {}
 
     def _beta(
         self,
@@ -127,20 +117,6 @@ class EblupUnitLevel:
 
         return y_mean, X_mean, gamma, samp_size.astype(int)
 
-    def _A_matrix(self, area: np.ndarray, X: np.ndarray):
-
-        areas = np.unique(area)
-        A = np.diag(np.zeros(X.shape[1]))
-        for d in areas:
-            n_d = np.sum(area == d)
-            X_d = X[area == d]
-            V = (self.error_std ** 2) * np.diag(np.ones(n_d)) + (self.re_std ** 2) * np.ones(
-                [n_d, n_d]
-            )
-            A = A + np.matmul(np.matmul(np.transpose(X_d), np.linalg.inv(V)), X_d)
-
-        return A
-
     def _mse(
         self,
         areas: np.ndarray,
@@ -185,32 +161,6 @@ class EblupUnitLevel:
             sums[k] = np.sum(y[group == gr])
 
         return sums
-
-    def _area_prediction(
-        self,
-        pop_size: np.ndarray,
-        Xmean_ps: np.ndarray,
-        Xmean_pr: np.ndarray,
-        xbar_ps: np.ndarray,
-        gamma_ps: np.ndarray,
-        samp_rate_ps: np.ndarray,
-        ps: np.ndarray,
-        ps_area: np.ndarray,
-    ) -> np.ndarray:
-
-        if pop_size is None or pop_size is None:
-            self.fpc = np.zeros(Xmean_ps.shape[0])
-            ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
-        else:
-            ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
-                samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
-            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
-
-        yr_pred = np.array([])
-        if np.sum(~ps) > 0:
-            yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
-
-        return np.append(ys_pred, yr_pred)
 
     def _split_data(
         self, area: np.ndarray, X: np.ndarray, Xmean: np.ndarray, samp_weight: np.ndarray
@@ -268,12 +218,16 @@ class EblupUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
+        log_steps: int = 5,
     ) -> np.ndarray:
 
         area = formats.numpy_array(area)
         X = formats.numpy_array(X)
-        if intercept and isinstance(X, np.ndarray):
+        Xmean = formats.numpy_array(Xmean)
+
+        if intercept:
             X = np.insert(X, 0, 1, axis=1)
+            Xmean = np.insert(Xmean, 0, 1, axis=1)
 
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
@@ -320,6 +274,8 @@ class EblupUnitLevel:
         )
 
         reml = True if self.method == "REML" else False
+        boot_mse = np.zeros((number_reps, nb_areas))
+        print(f"Starting the {number_reps} bootstrap iterations")
         for k in range(y_ps_boot.shape[0]):
             boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
             boot_fit = boot_model.fit(
@@ -338,12 +294,14 @@ class EblupUnitLevel:
                 scale_ps_ordered,
             )
             boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
-            if k == 0:
-                print(f"Starting the {number_reps} bootstrap iterations")
-            if (k + 1) % 5 == 0:
-                print(f"{k+1} bootstrap iterations")
+            boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
+            boot_mu_h = np.matmul(Xmean_ps, boot_fe) + boot_re
+            boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
 
-        return 0.1
+            if log_steps > 0:
+                print(f"{k+1} bootstrap iterations") if (k + 1) % log_steps == 0 else None
+
+        return np.mean(boot_mse, axis=0)
 
     def fit(
         self,
@@ -472,15 +430,68 @@ class EblupUnitLevel:
 
         samp_rate_ps = samp_size_ps / pop_size[ps_area]
 
-        self.y_predicted = self._area_prediction(
-            pop_size, Xmean_ps, Xmean_pr, xbar_ps, gamma_ps, samp_rate_ps, ps, ps_area,
+        if pop_size is None or pop_size is None:
+            ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
+        else:
+            ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
+                samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
+            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
+
+        yr_pred = np.array([])
+        if np.sum(~ps) > 0:
+            yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
+
+        y_predicted = np.append(ys_pred, yr_pred)
+
+        A_ps = np.diag(np.zeros(X_ps.shape[1]))
+        for d in areas_ps:
+            n_ps_d = np.sum(area_ps == d)
+            X_ps_d = X_ps[area_ps == d]
+            V_ps_d = (self.error_std ** 2) * np.diag(np.ones(n_ps_d)) + (
+                self.re_std ** 2
+            ) * np.ones([n_ps_d, n_ps_d])
+            A_ps = A_ps + np.matmul(np.matmul(np.transpose(X_ps_d), np.linalg.inv(V_ps_d)), X_ps_d)
+
+        mse_ps = self._mse(
+            areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, a_factor_ps, np.linalg.inv(A_ps)
         )
 
-        A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
-
-        mse_ps = self._mse(areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, a_factor_ps, A_inv)
-
         print(f"The MSE estimator is:\n {mse_ps}\n")
+
+
+class EbUnitLevel:
+    """implements the unit level model"""
+
+    def __init__(
+        self, method: str = "REML", boxcox: Optional[float] = None, function=None,
+    ):
+        self.method = method.upper()
+        self.boxcox = boxcox
+
+        self.area_s: np.ndarray = np.array([])
+        self.area_p: np.ndarray = np.array([])
+        self.samp_size = np.array([])
+        self.pop_size = np.array([])
+        self.number_reps: int
+
+        self.fitted = False
+        self.fixed_effects: np.ndarray = np.array([])
+        self.fe_std: np.ndarray = np.array([])
+        self.random_effects: np.ndarray = np.array([])
+        self.re_std: Optional[float] = None
+        self.re_std_cov: Optional[float] = None
+        self.error_std: Optional[float] = None
+        self.convergence: Dict[str, Union[float, int, bool]] = {}
+        self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
+
+        self.ybar_s: np.ndarray = np.array([])
+        self.xbar_s: np.ndarray = np.array([])
+        self.Xbar_p: np.ndarray = np.array([])
+        self.gamma: np.ndarray = np.array([])
+        self.a_factor: np.ndarray = np.array([])
+
+        self.y_predicted: np.ndarray = np.array([])
+        self.mse: Dict[Any, float] = {}
 
 
 class RobustUnitLevel:
