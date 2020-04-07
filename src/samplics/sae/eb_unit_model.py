@@ -127,10 +127,6 @@ class EblupUnitLevel:
 
         return y_mean, X_mean, gamma, samp_size.astype(int)
 
-    def _g1(self, gamma: np.ndarray, scale: np.ndarray,) -> np.ndarray:
-
-        return gamma * (self.error_std ** 2 / scale)
-
     def _A_matrix(self, area: np.ndarray, X: np.ndarray):
 
         areas = np.unique(area)
@@ -145,31 +141,30 @@ class EblupUnitLevel:
 
         return A
 
-    @staticmethod
-    def _g2(
+    def _mse(
+        self,
         areas: np.ndarray,
         Xs_mean: np.ndarray,
         Xp_mean: np.ndarray,
         gamma: np.ndarray,
+        samp_size: np.ndarray,
+        scale: np.ndarray,
         A_inv: np.ndarray,
     ) -> np.ndarray:
 
+        sigma2e = self.error_std ** 2
+        sigma2u = self.re_std ** 2
+
+        g1 = gamma * sigma2e / scale
+
         xbar_diff = Xp_mean - gamma[:, None] * Xs_mean
         g2_matrix = np.matmul(np.matmul(xbar_diff, A_inv), np.transpose(xbar_diff))
-
-        return np.diag(g2_matrix)
-
-    @staticmethod
-    def _g3(
-        sigma2u: float, sigma2e: float, scale: np.ndarray, samp_size: np.ndarray
-    ) -> np.ndarray:
+        g2 = np.diag(g2_matrix)
 
         alpha = sigma2e + scale * sigma2u
-
         i_vv = 0.5 * sum((scale / alpha) ** 2)
         i_ee = 0.5 * sum((samp_size - 1) / (sigma2e ** 2) + 1 / (alpha ** 2))
         i_ve = 0.5 * sum(scale / (alpha ** 2))
-
         i_determinant = i_vv * i_ee - i_ve * i_ve
 
         g3_scale = 1 / ((scale ** 2) * ((sigma2u + sigma2e / scale) ** 3))
@@ -178,14 +173,6 @@ class EblupUnitLevel:
             + (sigma2u ** 2) * (i_vv / i_determinant)
             - 2 * (sigma2e * sigma2u) * (-i_vv / i_determinant)
         )
-
-        return g3
-
-    def _mse1(self, scale: np.ndarray, A_inv: np.ndarray) -> np.ndarray:
-
-        g1 = self._g1(scale)
-        g2 = self._g2(A_inv)
-        g3 = 0
 
         return g1 + g2 + 2 * g3
 
@@ -416,11 +403,8 @@ class EblupUnitLevel:
         )
 
         A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
-        g1 = self._g1(gamma_ps, afactor_ps)
-        g2 = self._g2(areas_ps, xbar_ps, Xmean_ps, gamma_ps, A_inv)
-        g3 = self._g3(self.error_std ** 2, self.re_std ** 2, afactor_ps, samp_size_ps)
 
-        mse_ps = g1 + g2 + 2 * g3
+        mse_ps = self._mse(areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, afactor_ps, A_inv)
 
         print(f"The MSE estimator is:\n {mse_ps}\n")
 
@@ -429,11 +413,6 @@ class EblupUnitLevel:
         area_ps_sorted = area_ps[np.argsort(area_ps)]
         if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
             scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
-
-        # y_bootstrap = self._boot_sample(
-        #     self.number_reps, X_ps_sorted, areas_ps.size, samp_size_ps, scale_ps_ordered,
-        # )
-        # print(y_boot.shape)
 
         print(
             self.bootstrap_mse(
