@@ -455,20 +455,20 @@ class EblupUnitLevel:
             self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects)
         )
 
-        ps = np.isin(area, self.area_s)
-        area_ps = area[ps]
-        areas = np.unique(area)
-        areas_ps = np.unique(area_ps)
-
-        X_ps = X[ps]
-        ps_area = np.isin(areas, areas_ps)
-        Xmean_ps = Xmean[ps_area]
-        Xmean_pr = Xmean[~ps_area]
-        xbar_ps = self.xbar_s[ps_area]
-        afactor_ps = self.a_factor[ps_area]
-        samp_size_ps = self.samp_size[ps_area]
-        gamma_ps = self.gamma[ps_area]
-        samp_weight_ps = samp_weight[ps] if samp_weight is not None else None
+        (
+            ps,
+            ps_area,
+            X_ps,
+            area_ps,
+            areas_ps,
+            Xmean_ps,
+            Xmean_pr,
+            xbar_ps,
+            a_factor_ps,
+            samp_size_ps,
+            gamma_ps,
+            samp_weight_ps,
+        ) = self._split_data(area, X, Xmean, samp_weight)
 
         samp_rate_ps = samp_size_ps / pop_size[ps_area]
 
@@ -478,7 +478,7 @@ class EblupUnitLevel:
 
         A_inv = np.linalg.inv(self._A_matrix(area_ps, X_ps))
 
-        mse_ps = self._mse(areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, afactor_ps, A_inv)
+        mse_ps = self._mse(areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, a_factor_ps, A_inv)
 
         print(f"The MSE estimator is:\n {mse_ps}\n")
 
