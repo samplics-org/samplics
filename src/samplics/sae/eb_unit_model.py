@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
+
 import math
 
 import statsmodels.api as sm
@@ -220,9 +221,9 @@ class EblupUnitLevel:
         intercept: bool = True,
     ) -> np.ndarray:
 
-        area = formats.numpy_array(area)
         X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
+        area = formats.numpy_array(area)
 
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
@@ -282,7 +283,10 @@ class EblupUnitLevel:
         for k in range(y_ps_boot.shape[0]):
             boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
             boot_fit = boot_model.fit(
-                start_params=np.append(self.fixed_effects, self.re_std ** 2), reml=reml,
+                start_params=np.append(self.fixed_effects, self.re_std ** 2),
+                reml=reml,
+                # tol=2e-3,
+                # maxiter=50,
             )
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
