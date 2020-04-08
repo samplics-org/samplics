@@ -218,7 +218,6 @@ class EblupUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
-        log_steps: int = 5,
     ) -> np.ndarray:
 
         area = formats.numpy_array(area)
@@ -273,9 +272,13 @@ class EblupUnitLevel:
             + error
         )
 
+        bar_length = min(50, number_reps)
+        steps = np.linspace(0, number_reps, bar_length).astype(int)
+        i = 0
+
         reml = True if self.method == "REML" else False
         boot_mse = np.zeros((number_reps, nb_areas))
-        print(f"Starting the {number_reps} bootstrap iterations")
+        print(f"Running the {number_reps} bootstrap iterations")
         for k in range(y_ps_boot.shape[0]):
             boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
             boot_fit = boot_model.fit(
@@ -284,7 +287,7 @@ class EblupUnitLevel:
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
-            boot_ybar_s, boot_xbar_s, boot_gamma, boot_samp_size = self._area_stats(
+            boot_ybar_s, boot_xbar_s, boot_gamma, _ = self._area_stats(
                 y_ps_boot[k, :],
                 X_ps_sorted,
                 area_ps,
@@ -298,8 +301,15 @@ class EblupUnitLevel:
             boot_mu_h = np.matmul(Xmean_ps, boot_fe) + boot_re
             boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
 
-            if log_steps > 0:
-                print(f"{k+1} bootstrap iterations") if (k + 1) % log_steps == 0 else None
+            if k in steps:
+                i += 1
+                print(
+                    f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i), end="",
+                )
+        print("\n")
+
+        # if log_steps > 0:
+        #     print(f"{k+1} bootstrap iterations") if (k + 1) % log_steps == 0 else None
 
         return np.mean(boot_mse, axis=0)
 
