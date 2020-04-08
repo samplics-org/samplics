@@ -330,8 +330,14 @@ class EblupUnitLevel:
         self.a_factor = self._sumby(area, scale)
 
         reml = True if self.method == "REML" else False
+        beta_ols = sm.OLS(y, X).fit().params
+        resid_ols = y - np.matmul(X, beta_ols)
+        re_ols = self._sumby(area, resid_ols) / self._sumby(area, np.ones(area.size))
+
         basic_model = sm.MixedLM(y, X, area)
-        basic_fit = basic_model.fit(reml=reml, full_output=True)
+        basic_fit = basic_model.fit(
+            start_params=np.append(beta_ols, np.std(re_ols) ** 2), reml=reml, full_output=True
+        )
         self.area_s = np.unique(formats.numpy_array(area))
 
         self.error_std = basic_fit.scale ** 0.5
