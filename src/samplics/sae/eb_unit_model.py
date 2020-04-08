@@ -219,6 +219,8 @@ class EblupUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
+        tol: float = 1e-4,
+        maxiter: int = 200,
     ) -> np.ndarray:
 
         X = formats.numpy_array(X)
@@ -285,8 +287,8 @@ class EblupUnitLevel:
             boot_fit = boot_model.fit(
                 start_params=np.append(self.fixed_effects, self.re_std ** 2),
                 reml=reml,
-                # tol=2e-3,
-                # maxiter=50,
+                tol=tol,
+                maxiter=maxiter,
             )
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
@@ -312,9 +314,6 @@ class EblupUnitLevel:
                 )
         print("\n")
 
-        # if log_steps > 0:
-        #     print(f"{k+1} bootstrap iterations") if (k + 1) % log_steps == 0 else None
-
         return np.mean(boot_mse, axis=0)
 
     def fit(
@@ -325,6 +324,8 @@ class EblupUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
+        tol: float = 1e-4,
+        maxiter: int = 200,
     ) -> None:
 
         area = formats.numpy_array(area)
@@ -350,7 +351,11 @@ class EblupUnitLevel:
 
         basic_model = sm.MixedLM(y, X, area)
         basic_fit = basic_model.fit(
-            start_params=np.append(beta_ols, np.std(re_ols) ** 2), reml=reml, full_output=True
+            start_params=np.append(beta_ols, np.std(re_ols) ** 2),
+            reml=reml,
+            full_output=True,
+            tol=tol,
+            maxiter=maxiter,
         )
         self.area_s = np.unique(formats.numpy_array(area))
 
