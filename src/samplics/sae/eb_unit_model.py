@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
-
 import math
 
 import statsmodels.api as sm
@@ -22,8 +21,11 @@ class EblupUnitLevel:
     ):
         self.method = method.upper()
 
+        self.y_s: np.ndarray = np.array([])
+        self.X_s: np.ndarray = np.array([])
         self.area_s: np.ndarray = np.array([])
-        self.area_p: np.ndarray = np.array([])
+        self.areas_s: np.ndarray = np.array([])
+        self.areas_p: np.ndarray = np.array([])
         self.samp_size = np.array([])
         self.pop_size = np.array([])
         self.number_reps: int
@@ -342,6 +344,10 @@ class EblupUnitLevel:
         else:
             scale = formats.numpy_array(scale)
 
+        self.y_s = y
+        self.X_s = X
+        self.area_s = area
+
         self.a_factor = self._sumby(area, scale)
 
         reml = True if self.method == "REML" else False
@@ -357,7 +363,7 @@ class EblupUnitLevel:
             tol=tol,
             maxiter=maxiter,
         )
-        self.area_s = np.unique(formats.numpy_array(area))
+        self.areas_s = np.unique(formats.numpy_array(area))
 
         self.error_std = basic_fit.scale ** 0.5
         self.fixed_effects = basic_fit.fe_params
@@ -423,7 +429,6 @@ class EblupUnitLevel:
             scale = formats.numpy_array(scale)
 
         area = formats.numpy_array(area)
-        self.area_p = np.unique(formats.numpy_array(area))
 
         X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
@@ -493,8 +498,8 @@ class EbUnitLevel:
         self.method = method.upper()
         self.boxcox = boxcox
 
-        self.area_s: np.ndarray = np.array([])
-        self.area_p: np.ndarray = np.array([])
+        self.areas_s: np.ndarray = np.array([])
+        self.areas_p: np.ndarray = np.array([])
         self.samp_size = np.array([])
         self.pop_size = np.array([])
         self.number_reps: int
@@ -533,8 +538,12 @@ class EbUnitLevel:
         eblupUL = EblupUnitLevel()
         eblupUL.fit(y, X, area, samp_weight, scale, intercept, tol, maxiter)
 
+        self.y_s = y
+        self.X_s = X
+        self.area_s = area
+
+        self.areas_s = eblupUL.area_s
         self.a_factor = eblupUL.a_factor
-        self.area_s = eblupUL.area_s
         self.error_std = eblupUL.error_std
 
         self.fixed_effects = eblupUL.fixed_effects
@@ -553,11 +562,13 @@ class EbUnitLevel:
 
     @staticmethod
     def _predict_indicator(
+        number_samples,
         y_s,
         X_s,
         area_s,
         X_r,
         area_r,
+        areas_r,
         fixed_effects,
         gamma,
         sigma2e,
@@ -566,55 +577,87 @@ class EbUnitLevel:
         indicator,
         *args,
     ):
+        nb_areas_r = len(areas_r)
+        mu_r = X_r @ fixed_effects
 
-        nb_areas_r = len(np.unique(area_r))
-        areas_r, N_dr = np.unique(area_r, return_counts=True)
-        mu_r = np.dot(X_r, fixed_effects)
+        bar_length = min(50, number_samples)
+        steps = np.linspace(0, number_samples, bar_length).astype(int)
+        s = 0
 
-        eta = np.zeros(nb_areas_r) * np.nan
-        for i, d in enumerate(areas_r):
-            y_ds = y_s[area_s == d]
-            oos = area_r == d
-            mu_dr = mu_r[oos]
-            gamma_dr = gamma[i]
-            scale_dr = scale[oos]
-            y_dr = (
-                mu_dr
-                + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
-                + np.random.normal(scale=np.scale_dr * (sigma2e ** 0.5))
-            )
-
-            # non-vectorized solution to compute y_dr
-            # y_dr = np.zeros(np.sum(oos))
-            # for j in range(N_dr[areas_r == dr]):
-            #     y_dr[j] = (
-            #         mu_dr[j]
-            #         + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
-            #         + np.random.normal(scale=scale_dr[j] * (sigma2e * ** 0.5))
-            #     )
-
-            eta[i] = indicator(np.append(y_dr, y_ds), *args)
-
-    def predict(self, number_samples, y_s, X_s, area_s, X_r, area_r, scale, indicator, *args):
-
+        print(f"Generating the {number_samples} samples from the model")
+        eta = np.zeros((number_samples, nb_areas_r))
         for k in range(number_samples):
-            if k % 100 == 0 and k > 0:
-                print(f"Generating {k}th simulated census")
+            for i, d in enumerate(areas_r):
+                y_ds = y_s[area_s == d]
+                oos = area_r == d
+                mu_dr = mu_r[oos]
+                gamma_dr = gamma[i]
+                scale_dr = scale[oos]
+                y_dr = (
+                    mu_dr
+                    + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
+                    + np.random.normal(scale=scale_dr * (sigma2e ** 0.5))
+                )
 
-            eta[k, :] = self._predict_indicator(
-                y_s,
-                X_s,
-                area_s,
-                X_r,
-                area_r,
-                fixed_effects,
-                gamma,
-                self.error_std ** 2,
-                self.re_std ** 2,
-                scale,
-                indicator,
-                *args,
-            )
+                # non-vectorized solution to compute y_dr
+                # N_dr = np.sum(oos)
+                # y_dr = np.zeros(N_dr)
+                # for j in range(N_dr):
+                #     y_dr[j] = (
+                #         mu_dr[j]
+                #         + ((sigma2u * (1 - gamma_dr)) ** 0.5) * np.random.normal()
+                #         + scale_dr[j] * (sigma2e ** 0.5) * np.random.normal()
+                #     )
+
+                eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
+
+            if k in steps:
+                s += 1
+                print(
+                    f"\r[%-{bar_length-1}s] %d%%" % ("=" * s, 2 + (100 / bar_length) * s), end="",
+                )
+        print("\n")
+
+        return eta
+
+    def predict(
+        self, indicator, number_samples, X, area, samp_weight=None, scale=1, intercept=True, *args,
+    ):
+
+        if not self.fitted:
+            raise ("The model must be fitted first with .fit() before running the prediction.")
+
+        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+            samp_weight = formats.numpy_array(samp_weight)
+
+        if isinstance(scale, (float, int)):
+            scale = np.ones(X.shape[0]) * scale
+        else:
+            scale = formats.numpy_array(scale)
+
+        area = formats.numpy_array(area)
+        self.areas_p = np.unique(area)
+
+        X = formats.numpy_array(X)
+        if intercept:
+            X = np.insert(X, 0, 1, axis=1)
+
+        eta = self._predict_indicator(
+            number_samples,
+            self.y_s,
+            self.X_s,
+            self.area_s,
+            X,
+            area,
+            self.areas_p,
+            self.fixed_effects,
+            self.gamma,
+            self.error_std ** 2,
+            self.re_std ** 2,
+            scale,
+            indicator,
+            *args,
+        )
 
 
 class RobustUnitLevel:
