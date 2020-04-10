@@ -40,10 +40,10 @@ class EblupUnitLevel:
 
         self.ybar_s: np.ndarray = np.array([])
         self.xbar_s: np.ndarray = np.array([])
-        self.Xbar_p: np.ndarray = np.array([])
         self.gamma: np.ndarray = np.array([])
         self.a_factor: np.ndarray = np.array([])
 
+        self.Xbar_p: np.ndarray = np.array([])
         self.y_predicted: np.ndarray = np.array([])
         self.mse: Dict[Any, float] = {}
 
@@ -511,12 +511,110 @@ class EbUnitLevel:
 
         self.ybar_s: np.ndarray = np.array([])
         self.xbar_s: np.ndarray = np.array([])
-        self.Xbar_p: np.ndarray = np.array([])
         self.gamma: np.ndarray = np.array([])
         self.a_factor: np.ndarray = np.array([])
 
+        self.Xbar_p: np.ndarray = np.array([])
         self.y_predicted: np.ndarray = np.array([])
         self.mse: Dict[Any, float] = {}
+
+    def fit(
+        self,
+        y: Array,
+        X: Array,
+        area: Array,
+        samp_weight: Optional[Array] = None,
+        scale: Union[Array, Number] = 1,
+        intercept: bool = True,
+        tol: float = 1e-4,
+        maxiter: int = 200,
+    ) -> None:
+
+        eblupUL = EblupUnitLevel()
+        eblupUL.fit(y, X, area, samp_weight, scale, intercept, tol, maxiter)
+
+        self.a_factor = eblupUL.a_factor
+        self.area_s = eblupUL.area_s
+        self.error_std = eblupUL.error_std
+
+        self.fixed_effects = eblupUL.fixed_effects
+        self.fe_std = eblupUL.fe_std
+        self.re_std = eblupUL.re_std
+        self.re_std_cov = eblupUL.re_std_cov
+        self.convergence = eblupUL.convergence
+        self.goodness = eblupUL.goodness
+
+        self.ybar_s = eblupUL.ybar_s
+        self.xbar_s = eblupUL.xbar_s
+        self.gamma = eblupUL.gamma
+        self.samp_size = eblupUL.samp_size
+
+        self.fitted = eblupUL.fitted
+
+    @staticmethod
+    def _predict_indicator(
+        y_s,
+        X_s,
+        area_s,
+        X_r,
+        area_r,
+        fixed_effects,
+        gamma,
+        sigma2e,
+        sigma2u,
+        scale,
+        indicator,
+        *args,
+    ):
+
+        nb_areas_r = len(np.unique(area_r))
+        areas_r, N_dr = np.unique(area_r, return_counts=True)
+        mu_r = np.dot(X_r, fixed_effects)
+
+        eta = np.zeros(nb_areas_r) * np.nan
+        for i, d in enumerate(areas_r):
+            y_ds = y_s[area_s == d]
+            oos = area_r == d
+            mu_dr = mu_r[oos]
+            gamma_dr = gamma[i]
+            scale_dr = scale[oos]
+            y_dr = (
+                mu_dr
+                + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
+                + np.random.normal(scale=np.scale_dr * (sigma2e ** 0.5))
+            )
+
+            # non-vectorized solution to compute y_dr
+            # y_dr = np.zeros(np.sum(oos))
+            # for j in range(N_dr[areas_r == dr]):
+            #     y_dr[j] = (
+            #         mu_dr[j]
+            #         + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
+            #         + np.random.normal(scale=scale_dr[j] * (sigma2e * ** 0.5))
+            #     )
+
+            eta[i] = indicator(np.append(y_dr, y_ds), *args)
+
+    def predict(self, number_samples, y_s, X_s, area_s, X_r, area_r, scale, indicator, *args):
+
+        for k in range(number_samples):
+            if k % 100 == 0 and k > 0:
+                print(f"Generating {k}th simulated census")
+
+            eta[k, :] = self._predict_indicator(
+                y_s,
+                X_s,
+                area_s,
+                X_r,
+                area_r,
+                fixed_effects,
+                gamma,
+                self.error_std ** 2,
+                self.re_std ** 2,
+                scale,
+                indicator,
+                *args,
+            )
 
 
 class RobustUnitLevel:
