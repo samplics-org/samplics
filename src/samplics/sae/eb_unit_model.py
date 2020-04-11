@@ -583,41 +583,87 @@ class EbUnitLevel:
         nb_areas_r = len(areas_r)
         mu_r = X_r @ fixed_effects
 
-        bar_length = min(50, number_samples)
-        steps = np.linspace(0, number_samples, bar_length).astype(int)
-        s = 0
+        # bar_length = min(50, number_samples)
+        # steps = np.linspace(0, number_samples, bar_length).astype(int)
+        # s = 0
 
-        print(f"Generating the {number_samples} samples from the model")
+        # Method 1
+        # print(f"Generating the {number_samples} samples from the model")
+        # eta = np.zeros((number_samples, nb_areas_r)) * np.nan
+        # for k in range(number_samples):
+        #     for i, d in enumerate(areas_r):
+        #         y_ds = y_s[area_s == d]
+        #         oos = area_r == d
+        #         mu_dr = mu_r[oos]
+        #         gamma_dr = gamma[i]
+        #         scale_dr = scale[oos]
+        #         y_dr = (
+        #             mu_dr
+        #             + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
+        #             + np.random.normal(scale=scale_dr * (sigma2e ** 0.5))
+        #         )
+
+        #         eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
+
+        #     if k in steps:
+        #         s += 1
+        #         print(
+        #             "\r[%-{}s] %d%%".format(bar_length - 1)
+        #             % ("=" * s, 2 + (100 / bar_length) * s),
+        #             end="",
+        #         )
+        # print("\n")
+
+        # Method 2
+        print(f"Generating the {number_samples} replicates samples per small area (domain)\n")
         eta = np.zeros((number_samples, nb_areas_r)) * np.nan
-        for k in range(number_samples):
-            for i, d in enumerate(areas_r):
-                y_ds = y_s[area_s == d]
-                oos = area_r == d
-                mu_dr = mu_r[oos]
-                gamma_dr = gamma[i]
-                scale_dr = scale[oos]
-                y_dr = (
-                    mu_dr
-                    + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
-                    + np.random.normal(scale=scale_dr * (sigma2e ** 0.5))
+        for i, d in enumerate(areas_r):
+            oos = area_r == d
+            #mu_dr = X_r[oos] @ fixed_effects
+            mu_dr = mu_r[oos]
+            gamma_dr = gamma[i]
+            scale_dr = scale[oos]
+            N_dr = np.sum(oos)
+            cycle_size = int(100e6 // N_dr)
+            number_cycles = int(number_samples // cycle_size)
+            last_cycle_size = number_samples % cycle_size
+            print(f"Calculation for the {d}th domain with a total of {number_cycles+1} cycle(s)")
+            y_dr = np.asarray([])
+            for k in range(number_cycles + 1):
+                if k == number_cycles:
+                    cycle_size = last_cycle_size
+                if cycle_size > 0:
+                    print(f"{k+1}th cycle with {cycle_size} samples (domain {d})")
+                re_effects = np.random.normal(
+                    scale=(sigma2u * (1 - gamma_dr)) ** 0.5, size=cycle_size
                 )
-
-                eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
-
-            if k in steps:
-                s += 1
-                print(
-                    "\r[%-{}s] %d%%".format(bar_length - 1)
-                    % ("=" * s, 2 + (100 / bar_length) * s),
-                    end="",
+                errors = np.random.normal(
+                    scale=scale_dr * (sigma2e ** 0.5), size=(cycle_size, N_dr)
                 )
-        print("\n")
+                y_dr_k = mu_dr[None, :] + re_effects[:, None] + errors
+                y_dr = np.append(y_dr, y_dr_k)
+
+            print("\n")
+
+            y_ds = y_s[area_s == d]
+            eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
+
+            # if k in steps:
+            #     s += 1
+            #     print(
+            #         "\r[%-{}s] %d%%".format(bar_length - 1)
+            #         % ("=" * s, 2 + (100 / bar_length) * s),
+            #         end="",
+            # )
+        # print("\n")
 
         return eta
 
     def predict(
         self, indicator, number_samples, X, area, samp_weight=None, scale=1, intercept=True, *args,
     ):
+
+        print(f"Got here 1")
 
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
@@ -629,13 +675,15 @@ class EbUnitLevel:
             scale = np.ones(X.shape[0]) * scale
         else:
             scale = formats.numpy_array(scale)
-
+        print(f"Got here 2")
         area = formats.numpy_array(area)
         self.areas_p = np.unique(area)
-
+        print(f"Got here 3")
         X = formats.numpy_array(X)
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
+
+        print(f"Got here!!!!")
 
         eta = self._predict_indicator(
             number_samples,
@@ -661,49 +709,3 @@ class RobustUnitLevel:
     pass
 
 
-@njit(parallel=True, fastmath=True)
-def _predict_indicator(
-    number_samples,
-    y_s,
-    X_s,
-    area_s,
-    X_r,
-    area_r,
-    areas_r,
-    fixed_effects,
-    gamma,
-    sigma2e,
-    sigma2u,
-    scale,
-    indicator,
-    *args,
-):
-    nb_areas_r = len(areas_r)
-    mu_r = X_r @ fixed_effects
-
-    eta = np.zeros((number_samples, nb_areas_r))
-    for k in range(number_samples):
-        print(k)
-        i = 0
-        for d in areas_r:
-            y_ds = y_s[area_s == d]
-            oos = area_r == d
-            mu_dr = mu_r[oos]
-            gamma_dr = gamma[i]
-            scale_dr = scale[oos]
-
-            # non-vectorized solution to compute y_dr
-            N_dr = sum(oos)
-            y_dr = np.zeros(N_dr)
-            for j in prange(N_dr):
-                y_dr[j] = (
-                    mu_dr[j]
-                    + ((sigma2u * (1 - gamma_dr)) ** 0.5) * np.random.normal()
-                    + scale_dr[j] * (sigma2e ** 0.5) * np.random.normal()
-                )
-
-            eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
-
-            i += 1
-
-    return eta
