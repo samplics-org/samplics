@@ -1,5 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+from numba import njit, prange
+
 import numpy as np
 import pandas as pd
 
@@ -561,6 +563,7 @@ class EbUnitLevel:
         self.fitted = eblupUL.fitted
 
     @staticmethod
+    # @njit
     def _predict_indicator(
         number_samples,
         y_s,
@@ -585,7 +588,7 @@ class EbUnitLevel:
         s = 0
 
         print(f"Generating the {number_samples} samples from the model")
-        eta = np.zeros((number_samples, nb_areas_r))
+        eta = np.zeros((number_samples, nb_areas_r)) * np.nan
         for k in range(number_samples):
             for i, d in enumerate(areas_r):
                 y_ds = y_s[area_s == d]
@@ -599,22 +602,14 @@ class EbUnitLevel:
                     + np.random.normal(scale=scale_dr * (sigma2e ** 0.5))
                 )
 
-                # non-vectorized solution to compute y_dr
-                # N_dr = np.sum(oos)
-                # y_dr = np.zeros(N_dr)
-                # for j in range(N_dr):
-                #     y_dr[j] = (
-                #         mu_dr[j]
-                #         + ((sigma2u * (1 - gamma_dr)) ** 0.5) * np.random.normal()
-                #         + scale_dr[j] * (sigma2e ** 0.5) * np.random.normal()
-                #     )
-
                 eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
 
             if k in steps:
                 s += 1
                 print(
-                    f"\r[%-{bar_length-1}s] %d%%" % ("=" * s, 2 + (100 / bar_length) * s), end="",
+                    "\r[%-{}s] %d%%".format(bar_length - 1)
+                    % ("=" * s, 2 + (100 / bar_length) * s),
+                    end="",
                 )
         print("\n")
 
@@ -664,3 +659,51 @@ class RobustUnitLevel:
     """implement the robust unit level model"""
 
     pass
+
+
+@njit(parallel=True, fastmath=True)
+def _predict_indicator(
+    number_samples,
+    y_s,
+    X_s,
+    area_s,
+    X_r,
+    area_r,
+    areas_r,
+    fixed_effects,
+    gamma,
+    sigma2e,
+    sigma2u,
+    scale,
+    indicator,
+    *args,
+):
+    nb_areas_r = len(areas_r)
+    mu_r = X_r @ fixed_effects
+
+    eta = np.zeros((number_samples, nb_areas_r))
+    for k in range(number_samples):
+        print(k)
+        i = 0
+        for d in areas_r:
+            y_ds = y_s[area_s == d]
+            oos = area_r == d
+            mu_dr = mu_r[oos]
+            gamma_dr = gamma[i]
+            scale_dr = scale[oos]
+
+            # non-vectorized solution to compute y_dr
+            N_dr = sum(oos)
+            y_dr = np.zeros(N_dr)
+            for j in prange(N_dr):
+                y_dr[j] = (
+                    mu_dr[j]
+                    + ((sigma2u * (1 - gamma_dr)) ** 0.5) * np.random.normal()
+                    + scale_dr[j] * (sigma2e ** 0.5) * np.random.normal()
+                )
+
+            eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
+
+            i += 1
+
+    return eta
