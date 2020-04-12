@@ -629,8 +629,6 @@ class EbUnitLevel:
         *args,
     ):
 
-        print(f"Got here 1")
-
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
 
@@ -641,10 +639,8 @@ class EbUnitLevel:
             scale = np.ones(X.shape[0]) * scale
         else:
             scale = formats.numpy_array(scale)
-        print(f"Got here 2")
         area = formats.numpy_array(area)
         self.areas_p = np.unique(area)
-        print(f"Got here 3")
         X = formats.numpy_array(X)
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
@@ -670,6 +666,13 @@ class EbUnitLevel:
         )
 
         print(eta)
+
+
+
+class EllUnitLevel:
+    """implement the ELL unit level model"""
+
+    pass
 
 
 class RobustUnitLevel:
