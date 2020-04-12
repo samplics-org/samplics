@@ -1,7 +1,5 @@
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from numba import njit, prange
-
 import numpy as np
 import pandas as pd
 
@@ -577,63 +575,30 @@ class EbUnitLevel:
         sigma2e,
         sigma2u,
         scale,
+        max_array_length,
         indicator,
         *args,
     ):
         nb_areas_r = len(areas_r)
         mu_r = X_r @ fixed_effects
 
-        # bar_length = min(50, number_samples)
-        # steps = np.linspace(0, number_samples, bar_length).astype(int)
-        # s = 0
-
-        # Method 1
-        # print(f"Generating the {number_samples} samples from the model")
-        # eta = np.zeros((number_samples, nb_areas_r)) * np.nan
-        # for k in range(number_samples):
-        #     for i, d in enumerate(areas_r):
-        #         y_ds = y_s[area_s == d]
-        #         oos = area_r == d
-        #         mu_dr = mu_r[oos]
-        #         gamma_dr = gamma[i]
-        #         scale_dr = scale[oos]
-        #         y_dr = (
-        #             mu_dr
-        #             + np.random.normal(scale=(sigma2u * (1 - gamma_dr)) ** 0.5)
-        #             + np.random.normal(scale=scale_dr * (sigma2e ** 0.5))
-        #         )
-
-        #         eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
-
-        #     if k in steps:
-        #         s += 1
-        #         print(
-        #             "\r[%-{}s] %d%%".format(bar_length - 1)
-        #             % ("=" * s, 2 + (100 / bar_length) * s),
-        #             end="",
-        #         )
-        # print("\n")
-
-        # Method 2
         print(f"Generating the {number_samples} replicates samples per small area (domain)\n")
         eta = np.zeros((number_samples, nb_areas_r)) * np.nan
         for i, d in enumerate(areas_r):
             oos = area_r == d
-            #mu_dr = X_r[oos] @ fixed_effects
             mu_dr = mu_r[oos]
             gamma_dr = gamma[i]
             scale_dr = scale[oos]
             N_dr = np.sum(oos)
-            cycle_size = int(100e6 // N_dr)
+            cycle_size = int(max_array_length // N_dr)
             number_cycles = int(number_samples // cycle_size)
             last_cycle_size = number_samples % cycle_size
-            print(f"Calculation for the {d}th domain with a total of {number_cycles+1} cycle(s)")
-            y_dr = np.asarray([])
+            print(f"Calculation for the {d}th domain with a total of {number_cycles+1} batch(es)")
             for k in range(number_cycles + 1):
                 if k == number_cycles:
                     cycle_size = last_cycle_size
                 if cycle_size > 0:
-                    print(f"{k+1}th cycle with {cycle_size} samples (domain {d})")
+                    print(f"{k+1}th batch with {cycle_size} samples (domain {d})")
                 re_effects = np.random.normal(
                     scale=(sigma2u * (1 - gamma_dr)) ** 0.5, size=cycle_size
                 )
@@ -641,26 +606,27 @@ class EbUnitLevel:
                     scale=scale_dr * (sigma2e ** 0.5), size=(cycle_size, N_dr)
                 )
                 y_dr_k = mu_dr[None, :] + re_effects[:, None] + errors
-                y_dr = np.append(y_dr, y_dr_k)
-
+                if k == 0:
+                    y_dr = y_dr_k
+                else:
+                    y_dr = np.append(y_dr, y_dr_k, axis=0)
             print("\n")
+            y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
+            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=y_d, *args)  # *)
 
-            y_ds = y_s[area_s == d]
-            eta[k, i] = indicator(np.append(y_dr, y_ds), *args)  # *)
-
-            # if k in steps:
-            #     s += 1
-            #     print(
-            #         "\r[%-{}s] %d%%".format(bar_length - 1)
-            #         % ("=" * s, 2 + (100 / bar_length) * s),
-            #         end="",
-            # )
-        # print("\n")
-
-        return eta
+        return np.mean(eta, axis=0)
 
     def predict(
-        self, indicator, number_samples, X, area, samp_weight=None, scale=1, intercept=True, *args,
+        self,
+        indicator,
+        number_samples,
+        X,
+        area,
+        samp_weight=None,
+        scale=1,
+        max_array_length=100e6,
+        intercept=True,
+        *args,
     ):
 
         print(f"Got here 1")
@@ -698,14 +664,15 @@ class EbUnitLevel:
             self.error_std ** 2,
             self.re_std ** 2,
             scale,
+            max_array_length,
             indicator,
             *args,
         )
+
+        print(eta)
 
 
 class RobustUnitLevel:
     """implement the robust unit level model"""
 
     pass
-
-
