@@ -213,112 +213,6 @@ class EblupUnitLevel:
             samp_weight_ps,
         )
 
-    def bootstrap_mse(
-        self,
-        number_reps: int,
-        X: np.ndarray,
-        Xmean: Array,
-        area: np.ndarray,
-        samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
-        intercept: bool = True,
-        tol: float = 1e-4,
-        maxiter: int = 200,
-    ) -> np.ndarray:
-
-        X = formats.numpy_array(X)
-        Xmean = formats.numpy_array(Xmean)
-        area = formats.numpy_array(area)
-
-        if intercept:
-            X = np.insert(X, 0, 1, axis=1)
-            Xmean = np.insert(Xmean, 0, 1, axis=1)
-
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-            samp_weight = formats.numpy_array(samp_weight)
-
-        if isinstance(scale, (float, int)):
-            scale = np.ones(X.shape[0]) * scale
-        else:
-            scale = formats.numpy_array(scale)
-
-        self.a_factor = self._sumby(area, scale)
-
-        (
-            ps,
-            ps_area,
-            X_ps,
-            area_ps,
-            areas_ps,
-            Xmean_ps,
-            Xmean_pr,
-            xbar_ps,
-            a_factor_ps,
-            samp_size_ps,
-            gamma_ps,
-            samp_weight_ps,
-        ) = self._split_data(area, X, Xmean, samp_weight)
-
-        X_ps_sorted = X_ps[np.argsort(area_ps)]
-        scale_ps_ordered = scale[ps]
-        area_ps_sorted = area_ps[np.argsort(area_ps)]
-        if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
-            scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
-
-        nb_areas = len(np.unique(area_ps))
-
-        error = np.abs(scale_ps_ordered) * np.random.normal(
-            loc=0, scale=self.error_std, size=(number_reps, area_ps.size)
-        )
-        re = np.random.normal(loc=0, scale=self.re_std, size=(number_reps, nb_areas))
-        mu = np.matmul(X_ps_sorted, self.fixed_effects)
-        y_ps_boot = (
-            np.repeat(mu[None, :], number_reps, axis=0)
-            + np.repeat(re, samp_size_ps, axis=1)
-            + error
-        )
-
-        bar_length = min(50, number_reps)
-        steps = np.linspace(0, number_reps, bar_length).astype(int)
-        i = 0
-
-        reml = True if self.method == "REML" else False
-        boot_mse = np.zeros((number_reps, nb_areas))
-        print(f"Running the {number_reps} bootstrap iterations")
-        for k in range(y_ps_boot.shape[0]):
-            boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
-            boot_fit = boot_model.fit(
-                start_params=np.append(self.fixed_effects, self.re_std ** 2),
-                reml=reml,
-                tol=tol,
-                maxiter=maxiter,
-            )
-            boot_fe = boot_fit.fe_params
-            boot_error_std = boot_fit.scale ** 0.5
-            boot_re_std = float(boot_fit.cov_re) ** 0.5
-            boot_ybar_s, boot_xbar_s, boot_gamma, _ = self._area_stats(
-                y_ps_boot[k, :],
-                X_ps_sorted,
-                area_ps,
-                boot_error_std,
-                boot_re_std,
-                samp_weight_ps,
-                scale_ps_ordered,
-            )
-            boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
-            boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
-            boot_mu_h = np.matmul(Xmean_ps, boot_fe) + boot_re
-            boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
-
-            if k in steps:
-                i += 1
-                print(
-                    f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i), end="",
-                )
-        print("\n")
-
-        return np.mean(boot_mse, axis=0)
-
     def fit2(
         self,
         y: Array,
@@ -346,7 +240,7 @@ class EblupUnitLevel:
         else:
             scale = formats.numpy_array(scale)
 
-        beta_ols = np.linalg.lstsq(X, y)
+        beta_ols = np.linalg.lstsq(X, y)[0]
         resid_ols = y - np.matmul(X, beta_ols)
         re_ols = self._sumby(area, resid_ols) / self._sumby(area, np.ones(area.size))
         error_ols = resid_ols - re_ols
@@ -545,6 +439,111 @@ class EblupUnitLevel:
         print(f"The MSE estimator is:\n {mse_ps}\n")
 
 
+def bootstrap_mse(
+    self,
+    number_reps: int,
+    X: np.ndarray,
+    Xmean: Array,
+    area: np.ndarray,
+    samp_weight: Optional[Array] = None,
+    scale: Union[Array, Number] = 1,
+    intercept: bool = True,
+    tol: float = 1e-4,
+    maxiter: int = 200,
+) -> np.ndarray:
+
+    X = formats.numpy_array(X)
+    Xmean = formats.numpy_array(Xmean)
+    area = formats.numpy_array(area)
+
+    if intercept:
+        X = np.insert(X, 0, 1, axis=1)
+        Xmean = np.insert(Xmean, 0, 1, axis=1)
+
+    if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+        samp_weight = formats.numpy_array(samp_weight)
+
+    if isinstance(scale, (float, int)):
+        scale = np.ones(X.shape[0]) * scale
+    else:
+        scale = formats.numpy_array(scale)
+
+    self.a_factor = self._sumby(area, scale)
+
+    (
+        ps,
+        ps_area,
+        X_ps,
+        area_ps,
+        areas_ps,
+        Xmean_ps,
+        Xmean_pr,
+        xbar_ps,
+        a_factor_ps,
+        samp_size_ps,
+        gamma_ps,
+        samp_weight_ps,
+    ) = self._split_data(area, X, Xmean, samp_weight)
+
+    X_ps_sorted = X_ps[np.argsort(area_ps)]
+    scale_ps_ordered = scale[ps]
+    area_ps_sorted = area_ps[np.argsort(area_ps)]
+    if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
+        scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
+
+    nb_areas = len(np.unique(area_ps))
+
+    error = np.abs(scale_ps_ordered) * np.random.normal(
+        loc=0, scale=self.error_std, size=(number_reps, area_ps.size)
+    )
+    re = np.random.normal(loc=0, scale=self.re_std, size=(number_reps, nb_areas))
+    mu = np.matmul(X_ps_sorted, self.fixed_effects)
+    y_ps_boot = (
+        np.repeat(mu[None, :], number_reps, axis=0) + np.repeat(re, samp_size_ps, axis=1) + error
+    )
+
+    bar_length = min(50, number_reps)
+    steps = np.linspace(0, number_reps, bar_length).astype(int)
+    i = 0
+
+    reml = True if self.method == "REML" else False
+    boot_mse = np.zeros((number_reps, nb_areas))
+    print(f"Running the {number_reps} bootstrap iterations")
+    for k in range(y_ps_boot.shape[0]):
+        boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
+        boot_fit = boot_model.fit(
+            start_params=np.append(self.fixed_effects, self.re_std ** 2),
+            reml=reml,
+            tol=tol,
+            maxiter=maxiter,
+        )
+        boot_fe = boot_fit.fe_params
+        boot_error_std = boot_fit.scale ** 0.5
+        boot_re_std = float(boot_fit.cov_re) ** 0.5
+        boot_ybar_s, boot_xbar_s, boot_gamma, _ = self._area_stats(
+            y_ps_boot[k, :],
+            X_ps_sorted,
+            area_ps,
+            boot_error_std,
+            boot_re_std,
+            samp_weight_ps,
+            scale_ps_ordered,
+        )
+        boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
+        boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
+        boot_mu_h = np.matmul(Xmean_ps, boot_fe) + boot_re
+        boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
+
+        if k in steps:
+            i += 1
+            print(
+                f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i), end="",
+            )
+    print("\n")
+
+    return np.mean(boot_mse, axis=0)
+
+
 class EbUnitLevel:
     """implements the unit level model"""
 
@@ -666,6 +665,7 @@ class EbUnitLevel:
                     y_dr = y_dr_k
                 else:
                     y_dr = np.append(y_dr, y_dr_k, axis=0)
+
             print("\n")
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=y_d, *args)  # *)
@@ -700,8 +700,6 @@ class EbUnitLevel:
         X = formats.numpy_array(X)
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
-
-        print(f"Got here!!!!")
 
         eta = self._predict_indicator(
             number_samples,
