@@ -11,6 +11,7 @@ from scipy.stats import boxcox, norm as normal
 
 from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.sae.core_sae_functions import fixed_coefficients, iterative_fisher_scoring
 
 
 class EblupUnitLevel:
@@ -317,6 +318,61 @@ class EblupUnitLevel:
         print("\n")
 
         return np.mean(boot_mse, axis=0)
+
+    def fit2(
+        self,
+        y: Array,
+        X: Array,
+        area: Array,
+        samp_weight: Optional[Array] = None,
+        scale: Union[Array, Number] = 1,
+        intercept: bool = True,
+        abstol: float = 1e-4,
+        reltol: float = 1e-3,
+        maxiter: int = 200,
+    ) -> None:
+
+        area = formats.numpy_array(area)
+        y = formats.numpy_array(y)
+        X = formats.numpy_array(X)
+        if intercept and isinstance(X, np.ndarray):
+            X = np.insert(X, 0, 1, axis=1)
+
+        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+            samp_weight = formats.numpy_array(samp_weight)
+
+        if isinstance(scale, (float, int)):
+            scale = np.ones(y.shape[0]) * scale
+        else:
+            scale = formats.numpy_array(scale)
+
+        beta_ols = np.linalg.lstsq(X, y)
+        resid_ols = y - np.matmul(X, beta_ols)
+        re_ols = self._sumby(area, resid_ols) / self._sumby(area, np.ones(area.size))
+        error_ols = resid_ols - re_ols
+
+        (
+            sigma2e,
+            sigma2v,
+            sigma2v_cov,
+            iterations,
+            tolerance,
+            convergence,
+        ) = iterative_fisher_scoring(
+            area=area,
+            y=y,
+            X=X,
+            sigma2e=np.std(error_ols) ** 2,
+            sigma2v=np.std(re_ols) ** 2,
+            scale=scale,
+            abstol=abstol,
+            reltol=reltol,
+            maxiter=maxiter,
+        )
+
+        beta, beta_cov = fixed_coefficients(
+            area=area, y=y, X=X, sigma2e=sigma2e, sigma2v=sigma2v, scale=scale
+        )
 
     def fit(
         self,
@@ -666,7 +722,6 @@ class EbUnitLevel:
         )
 
         print(eta)
-
 
 
 class EllUnitLevel:

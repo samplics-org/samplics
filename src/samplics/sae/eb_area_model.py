@@ -54,7 +54,7 @@ class EblupAreaLevel:
         return self.__str__()
 
     @staticmethod
-    def _fixed_coefs(
+    def _fixed_coefficients(
         area: np.ndarray,
         yhat: np.ndarray,
         X: np.ndarray,
@@ -85,7 +85,9 @@ class EblupAreaLevel:
 
         return beta_hat.ravel(), np.linalg.inv(beta_cov)
 
-    def _likelihood(self, y: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray) -> float:
+    def _log_likelihood(
+        self, y: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray
+    ) -> float:
 
         m = y.size
         const = m * np.log(2 * np.pi)
@@ -106,7 +108,7 @@ class EblupAreaLevel:
 
         return float(loglike)
 
-    def _derivatives_sigma(
+    def _partial_derivatives(
         self,
         area: np.ndarray,
         yhat: np.ndarray,
@@ -117,7 +119,7 @@ class EblupAreaLevel:
     ) -> Tuple[float, float]:
 
         if self.method == "ML":
-            beta, beta_cov = self._fixed_coefs(
+            beta, beta_cov = self._fixed_coefficients(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
             )
             deriv_sigma = 0.0
@@ -149,7 +151,7 @@ class EblupAreaLevel:
             deriv_sigma = -0.5 * (term1 - term2)
             info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
         elif self.method == "FH":  # Fay-Herriot approximation
-            beta, beta_cov = self._fixed_coefs(
+            beta, beta_cov = self._fixed_coefficients(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
             )
             deriv_sigma = 0.0
@@ -170,7 +172,7 @@ class EblupAreaLevel:
 
         return float(deriv_sigma), float(info_sigma)
 
-    def _iterative_methods(
+    def _iterative_fisher_scoring(
         self,
         area: np.ndarray,
         yhat: np.ndarray,
@@ -191,7 +193,7 @@ class EblupAreaLevel:
         sigma2_v = sigma2_v_start
         while tolerance > tol:
             sigma2_v_previous = sigma2_v
-            deriv_sigma, info_sigma = self._derivatives_sigma(
+            deriv_sigma, info_sigma = self._partial_derivatives(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
             )
 
@@ -300,7 +302,7 @@ class EblupAreaLevel:
 
         return (estimates, mse, mse1_area_specific, mse2_area_specific, g1, g2, g3, g3_star)
 
-    def _fit(
+    def fit(
         self,
         yhat: Array,
         X: Array,
@@ -313,7 +315,13 @@ class EblupAreaLevel:
         reltol: float,
     ) -> None:
 
-        (sigma2_v, sigma2_v_cov, iterations, tolerance, convergence) = self._iterative_methods(
+        (
+            sigma2_v,
+            sigma2_v_cov,
+            iterations,
+            tolerance,
+            convergence,
+        ) = self._iterative_fisher_scoring(
             area=area,
             yhat=yhat,
             X=X,
@@ -325,7 +333,7 @@ class EblupAreaLevel:
             reltol=reltol,
         )
 
-        beta, beta_cov = self._fixed_coefs(
+        beta, beta_cov = self._fixed_coefficients(
             area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
         )
 
@@ -343,7 +351,7 @@ class EblupAreaLevel:
         p = X.shape[1] + 1
         Z_b2_Z = np.ones(shape=(m, m))
         V = np.diag(sigma2_e) + sigma2_v * Z_b2_Z
-        logllike = self._likelihood(yhat, X=X, beta=self.fe_coef, V=V)
+        logllike = self._log_likelihood(yhat, X=X, beta=self.fe_coef, V=V)
         self.goodness["loglike"] = logllike
         self.goodness["AIC"] = -2 * logllike + 2 * (p + 1)
         self.goodness["BIC"] = -2 * logllike + math.log(m) * (p + 1)
@@ -379,7 +387,7 @@ class EblupAreaLevel:
             abstol = max(abstol, 0)
             reltol = max(reltol, 0)
 
-        self._fit(
+        self.fit(
             yhat=yhat_s,
             X=X_s,
             area=area_s,
@@ -405,4 +413,3 @@ class EblupAreaLevel:
         self.point_est = point_est
         self.mse = mse
         self.area = area_s
-
