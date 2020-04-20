@@ -119,7 +119,7 @@ def test_y_predicted_bhf_reml():
 #     assert False
 
 
-## With FPC
+# With FPC
 
 eblup_bhf_reml_fpc = UnitModel()
 eblup_bhf_reml_fpc.fit(y_s, X_s, area_s)
