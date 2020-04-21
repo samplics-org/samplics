@@ -15,7 +15,7 @@ from samplics.sae.core_sae_functions import fixed_coefficients, iterative_fisher
 
 
 class EblupUnitLevel:
-    """implements the unit level model"""
+    """implements the unit level modell"""
 
     def __init__(
         self, method: str = "REML",

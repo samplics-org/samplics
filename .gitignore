@@ -113,6 +113,7 @@ dmypy.json
 .idea
 .vscode
 *.code-workspace
+.vim
 
 #MaCOS
 .DS_Store
