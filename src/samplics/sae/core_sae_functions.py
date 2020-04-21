@@ -5,19 +5,39 @@ import pandas as pd
 
 import math
 
+from scipy import linalg
 from scipy.stats import norm as normal
 
 from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
+def covariance(
+    area: np.ndarray, sigma2e: np.ndarray, sigma2u: float, scale: np.ndarray,
+) -> np.ndarray:
+
+    n = area.shape[0]
+    areas, areas_size = np.unique(area, return_counts=True)
+    V = np.zeros((n, n))
+    for d in range(areas.size):
+        nd = areas_size[d]
+        R = 0.05 * np.diag(np.ones(nd))
+        Z = np.ones((nd, nd))
+        start = d * nd
+        end = (d + 1) * nd
+        V[start:end, start:end] = R + 0.01 * Z
+
+    return V
+
+
 def fixed_coefficients(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    sigma2e: np.ndarray,
-    sigma2v: float,
-    scale: np.ndarray,
+    # sigma2e: np.ndarray,
+    # sigma2u: float,
+    # scale: np.ndarray,
+    variance: np.ndarray,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """[summary]
     
@@ -26,15 +46,15 @@ def fixed_coefficients(
         y {np.ndarray} -- [description]
         X {np.ndarray} -- [description]
         sigma2e {np.ndarray} -- [description]
-        sigma2v {float} -- [description]
+        sigma2u {float} -- [description]
         scale {np.ndarray} -- [description]
     
     Returns:
         Tuple[np.ndarray, np.ndarray] -- [description]
     """
 
-    V = np.diag(sigma2v * (scale ** 2) + sigma2e)
-    V_inv = np.linalg.inv(V)
+    # V = np.diag(sigma2u * (scale ** 2) + sigma2e)
+    V_inv = np.linalg.inv(variance)
     x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
     x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
     beta_hat = np.matmul(x_v_x_inv_x, y)
@@ -52,7 +72,7 @@ def log_likelihood(
     ll_term1 = np.log(np.linalg.det(covariance))
     V_inv = np.linalg.inv(covariance)
     resid_term = y - np.dot(X, beta)
-    if method in ("ML", "FH"):  # What is likelihood for FH
+    if method == "ML":
         resid_var = np.dot(np.transpose(resid_term), V_inv)
         ll_term2 = np.dot(resid_var, resid_term)
         loglike = -0.5 * (const + ll_term1 + ll_term2)
@@ -73,13 +93,18 @@ def partial_derivatives(
     y: np.ndarray,
     X: np.ndarray,
     sigma2e: np.ndarray,
-    sigma2v: np.ndarray,
+    sigma2u: np.ndarray,
     scale: np.ndarray,
 ) -> Tuple[float, float]:
 
+    n = y.shape[0]
+    areas, nd = np.unique(area, return_counts=True)
+
+    V = covariance(area, sigma2e, sigma2u, scale)
+
     if method == "ML":
         beta, beta_cov = fixed_coefficients(
-            area=area, y=y, X=X, sigma2e=sigma2e, sigma2v=sigma2v, scale=scale
+            area=area, y=y, X=X, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale
         )
         deriv_sigma = 0.0
         info_sigma = 0.0
@@ -90,14 +115,14 @@ def partial_derivatives(
             y_d = y[area == d]
             mu_d = np.matmul(X_d, beta)
             resid_d = y_d - mu_d
-            sigma2_d = sigma2v * (b_d ** 2) + phi_d
+            sigma2_d = sigma2u * (b_d ** 2) + phi_d
             term1 = float(b_d ** 2 / sigma2_d)
             term2 = float(((b_d ** 2) * (resid_d ** 2)) / (sigma2_d ** 2))
             deriv_sigma += -0.5 * (term1 - term2)
             info_sigma += 0.5 * (term1 ** 2)
     elif method == "REML":
         B = np.diag(scale ** 2)
-        v_i = sigma2e + sigma2v * (scale ** 2)
+        v_i = sigma2e + sigma2u * (scale ** 2)
         V = np.diag(v_i)
         v_inv = np.linalg.inv(V)
         x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
@@ -109,25 +134,6 @@ def partial_derivatives(
         term2 = np.matmul(np.matmul(np.transpose(y), P_B_P), y)
         deriv_sigma = -0.5 * (term1 - term2)
         info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
-    elif method == "FH":  # Fay-Herriot approximation
-        beta, beta_cov = fixed_coefficients(
-            area=area, y=y, X=X, sigma2e=sigma2e, sigma2v=sigma2v, scale=scale
-        )
-        deriv_sigma = 0.0
-        info_sigma = 0.0
-        for d in area:
-            b_d = scale[area == d]
-            phi_d = sigma2e[area == d]
-            X_d = X[area == d, :]
-            y_d = y[area == d]
-            mu_d = np.dot(X_d, beta)
-            resid_d = y_d - mu_d
-            sigma2_d = sigma2v * (b_d ** 2) + phi_d
-            deriv_sigma += float((resid_d ** 2) / sigma2_d)
-            info_sigma += -float(((b_d ** 2) * (resid_d ** 2)) / (sigma2_d ** 2))
-        m = y.size
-        p = X.shape[1]
-        deriv_sigma = m - p - deriv_sigma
 
     return float(deriv_sigma), float(info_sigma)
 
@@ -137,7 +143,7 @@ def iterative_fisher_scoring(
     y: np.ndarray,
     X: np.ndarray,
     sigma2e: float,
-    sigma2v: float,
+    sigma2u: float,
     scale: np.ndarray,
     abstol: float,
     reltol: float,
@@ -150,16 +156,16 @@ def iterative_fisher_scoring(
     tolerance = abstol + 1.0
     tol = 0.9 * tolerance
     while tolerance > tol:
-        sigma2_v_previous = sigma2v
+        sigma2_u_previous = sigma2u
         deriv_sigma, info_sigma = partial_derivatives(
-            area=area, y=y, X=X, sigma2e=sigma2e, sigma2v=sigma2v, scale=scale,
+            area=area, y=y, X=X, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale,
         )
 
-        sigma2v += deriv_sigma / info_sigma
-        sigma2_v_cov = 1 / info_sigma
+        sigma2u += deriv_sigma / info_sigma
+        sigma2_u_cov = 1 / info_sigma
 
-        tolerance = abs(sigma2v - sigma2_v_previous)
-        tol = max(abstol, reltol * abs(sigma2v))
+        tolerance = abs(sigma2u - sigma2_u_previous)
+        tol = max(abstol, reltol * abs(sigma2u))
         convergence = tolerance <= tol
 
         if iterations == maxiter:
@@ -167,6 +173,6 @@ def iterative_fisher_scoring(
         else:
             iterations += 1
 
-    sigma2v = float(max(sigma2v, 0))
+    sigma2u = float(max(sigma2u, 0))
 
-    return sigma2v, sigma2_v_cov, iterations, tolerance, convergence
+    return sigma2u, sigma2_u_cov, iterations, tolerance, convergence
