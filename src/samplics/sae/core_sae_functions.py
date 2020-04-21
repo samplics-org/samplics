@@ -12,9 +12,7 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
-def covariance(
-    area: np.ndarray, sigma2e: np.ndarray, sigma2u: float, scale: np.ndarray,
-) -> np.ndarray:
+def covariance(area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray,) -> np.ndarray:
 
     n = area.shape[0]
     areas, areas_size = np.unique(area, return_counts=True)
@@ -30,7 +28,7 @@ def covariance(
 
 
 def inverse_covariance(
-    area: np.ndarray, sigma2e: np.ndarray, sigma2u: float, scale: np.ndarray,
+    area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray,
 ) -> np.ndarray:
 
     n = area.shape[0]
@@ -55,10 +53,10 @@ def fixed_coefficients(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    # sigma2e: np.ndarray,
+    # sigma2e: float,
     # sigma2u: float,
     # scale: np.ndarray,
-    variance: np.ndarray,
+    inv_cov: np.ndarray,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """[summary]
     
@@ -75,32 +73,46 @@ def fixed_coefficients(
     """
 
     # V = np.diag(sigma2u * (scale ** 2) + sigma2e)
-    V_inv = np.linalg.inv(variance)
-    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
-    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
+    # V_inv = np.linalg.inv(variance)
+    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), inv_cov), X))
+    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), inv_cov)
     beta_hat = np.matmul(x_v_x_inv_x, y)
     # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
 
     return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
 
 
+def log_det_covariance(area: np.ndarray, sigma2e: float, sigma2u: float) -> float:
+
+    det = 0
+    for d in np.unique(area):
+        nd = np.sum(area == d)
+        det += np.log(sigma2e ** nd * (1 + nd * sigma2u / sigma2e))
+
+    return det
+
+
 def log_likelihood(
-    method, y: np.ndarray, X: np.ndarray, beta: np.ndarray, covariance: np.ndarray
+    method,
+    y: np.ndarray,
+    X: np.ndarray,
+    beta: np.ndarray,
+    inv_covariance: np.ndarray,
+    log_det_covariance: float,
 ) -> float:
 
     n = y.size
     const = n * np.log(2 * np.pi)
-    ll_term1 = np.log(np.linalg.det(covariance))
-    V_inv = np.linalg.inv(covariance)
+    ll_term1 = log_det_covariance  # np.log(np.linalg.det(covariance))
     resid_term = y - np.dot(X, beta)
     if method == "ML":
-        resid_var = np.dot(np.transpose(resid_term), V_inv)
+        resid_var = np.dot(np.transpose(resid_term), inv_covariance)
         ll_term2 = np.dot(resid_var, resid_term)
         loglike = -0.5 * (const + ll_term1 + ll_term2)
     elif method == "REML":
-        xT_vinv_x = np.dot(np.dot(np.transpose(X), V_inv), X)
+        xT_vinv_x = np.dot(np.dot(np.transpose(X), inv_covariance), X)
         ll_term2 = np.log(np.linalg.det(xT_vinv_x))
-        ll_term3 = np.dot(np.dot(y, V_inv), resid_term)
+        ll_term3 = np.dot(np.dot(y, inv_covariance), resid_term)
         loglike = -0.5 * (const + ll_term1 + ll_term2 + ll_term3)
     else:
         raise AssertionError("A fitting method must be specified.")
@@ -113,8 +125,8 @@ def partial_derivatives(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    sigma2e: np.ndarray,
-    sigma2u: np.ndarray,
+    sigma2e: float,
+    sigma2u: float,
     scale: np.ndarray,
 ) -> Tuple[float, float]:
 
