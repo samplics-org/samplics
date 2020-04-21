@@ -19,15 +19,36 @@ def covariance(
     n = area.shape[0]
     areas, areas_size = np.unique(area, return_counts=True)
     V = np.zeros((n, n))
-    for d in range(areas.size):
-        nd = areas_size[d]
-        R = 0.05 * np.diag(np.ones(nd))
-        Z = np.ones((nd, nd))
-        start = d * nd
-        end = (d + 1) * nd
-        V[start:end, start:end] = R + 0.01 * Z
+    for i, d in enumerate(areas):
+        nd, scale_d = areas_size[i], scale[area == d]
+        Rd = sigma2e * np.diag(scale_d)
+        Zd = np.ones((nd, nd))
+        start, end = i * nd, (i + 1) * nd
+        V[start:end, start:end] = Rd + sigma2u * Zd
 
     return V
+
+
+def inverse_covariance(
+    area: np.ndarray, sigma2e: np.ndarray, sigma2u: float, scale: np.ndarray,
+) -> np.ndarray:
+
+    n = area.shape[0]
+    areas, areas_size = np.unique(area, return_counts=True)
+    V_inv = np.zeros((n, n))
+    for i, d in enumerate(areas):
+        nd, scale_d = areas_size[i], scale[area == d]
+        a_d = 1 / (scale_d ** 2)
+        sum_scale_d = np.sum(a_d)
+        Zd = np.ones((nd, nd))
+        start, end = i * nd, (i + 1) * nd
+        gamma_d = sigma2u / (sigma2u + sigma2e / sum_scale_d)
+        V_inv[start:end, start:end] = (1 / sigma2e) * (
+            np.diag(a_d)
+            - (gamma_d / sum_scale_d) * np.matmul(a_d[:, None], np.transpose(a_d[:, None]))
+        )
+
+    return V_inv
 
 
 def fixed_coefficients(
@@ -58,17 +79,17 @@ def fixed_coefficients(
     x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
     x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
     beta_hat = np.matmul(x_v_x_inv_x, y)
-    beta_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
+    # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
 
-    return beta_hat.ravel(), np.linalg.inv(beta_cov)
+    return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
 
 
 def log_likelihood(
     method, y: np.ndarray, X: np.ndarray, beta: np.ndarray, covariance: np.ndarray
 ) -> float:
 
-    m = y.size
-    const = m * np.log(2 * np.pi)
+    n = y.size
+    const = n * np.log(2 * np.pi)
     ll_term1 = np.log(np.linalg.det(covariance))
     V_inv = np.linalg.inv(covariance)
     resid_term = y - np.dot(X, beta)
@@ -103,7 +124,7 @@ def partial_derivatives(
     V = covariance(area, sigma2e, sigma2u, scale)
 
     if method == "ML":
-        beta, beta_cov = fixed_coefficients(
+        beta = fixed_coefficients(
             area=area, y=y, X=X, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale
         )
         deriv_sigma = 0.0
