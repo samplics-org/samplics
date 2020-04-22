@@ -13,9 +13,15 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 from samplics.sae.core_sae_functions import fixed_coefficients, iterative_fisher_scoring
 
+d = np.area([1, 2, 3])
+
 
 class EblupUnitLevel:
-    """implements the unit level modell"""
+    """implements BHL model
+    """
+
+    # Helle
+    # Helle
 
     def __init__(
         self, method: str = "REML",
