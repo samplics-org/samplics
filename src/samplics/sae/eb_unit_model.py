@@ -20,9 +20,6 @@ class EblupUnitLevel:
     """implements BHL model
     """
 
-    # Helle
-    # Helle
-
     def __init__(
         self, method: str = "REML",
     ):

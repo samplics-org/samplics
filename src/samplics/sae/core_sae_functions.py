@@ -12,6 +12,36 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
+def fixed_coefficients(
+    area: np.ndarray,
+    y: np.ndarray,
+    X: np.ndarray,
+    # sigma2e: float,
+    # sigma2u: float,
+    # scale: np.ndarray,
+    inv_cov: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray]:
+
+    """[summary]    Arguments:
+
+        area {np.ndarray} -- [description]
+        y {np.ndarray} -- [description]
+        X {np.ndarray} -- [description]
+        sigma2e {np.ndarray} -- [description]
+        sigma2u {float} -- [description]
+        scale {np.ndarray} -- [description]
+    Returns:
+        Tuple[np.ndarray, np.ndarray] -- [description]
+    """
+    # V = np.diag(sigma2u * (scale ** 2) + sigma2e)
+    # V_inv = np.linalg.inv(variance)
+    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), inv_cov), X))
+    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), inv_cov)
+    beta_hat = np.matmul(x_v_x_inv_x, y)
+
+    # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)    return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
+
+
 def covariance(area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray,) -> np.ndarray:
 
     n = area.shape[0]
@@ -47,39 +77,6 @@ def inverse_covariance(
         )
 
     return V_inv
-
-
-def fixed_coefficients(
-    area: np.ndarray,
-    y: np.ndarray,
-    X: np.ndarray,
-    # sigma2e: float,
-    # sigma2u: float,
-    # scale: np.ndarray,
-    inv_cov: np.ndarray,
-) -> Tuple[np.ndarray, np.ndarray]:
-    """[summary]
-    
-    Arguments:
-        area {np.ndarray} -- [description]
-        y {np.ndarray} -- [description]
-        X {np.ndarray} -- [description]
-        sigma2e {np.ndarray} -- [description]
-        sigma2u {float} -- [description]
-        scale {np.ndarray} -- [description]
-    
-    Returns:
-        Tuple[np.ndarray, np.ndarray] -- [description]
-    """
-
-    # V = np.diag(sigma2u * (scale ** 2) + sigma2e)
-    # V_inv = np.linalg.inv(variance)
-    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), inv_cov), X))
-    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), inv_cov)
-    beta_hat = np.matmul(x_v_x_inv_x, y)
-    # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
-
-    return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
 
 
 def log_det_covariance(area: np.ndarray, sigma2e: float, sigma2u: float) -> float:
@@ -125,50 +122,52 @@ def partial_derivatives(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
+    beta: np.ndarray,
     sigma2e: float,
     sigma2u: float,
     scale: np.ndarray,
 ) -> Tuple[float, float]:
 
     n = y.shape[0]
-    areas, nd = np.unique(area, return_counts=True)
+    areas, areas_size = np.unique(area, return_counts=True)
 
-    V = covariance(area, sigma2e, sigma2u, scale)
+    for i, d in enumerate(areas):
+        nd = areas_size[i]
+        V_inv = inverse_covariance(area, sigma2e, sigma2u, scale)
+        V_e = np.diag(np.ones(1 / scale ** 2) / sigma2e)
+        V_u = sigma2u * np.ones((nd, nd))
+        V_inv_e = -np.matmul(np.matmul(V_inv, V_e), V_inv)
+        V_inv_u = -np.matmul(np.matmul(V_inv, V_u), V_inv)
 
+    info_matrix = np.asarray([])
     if method == "ML":
-        beta = fixed_coefficients(
-            area=area, y=y, X=X, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale
-        )
-        deriv_sigma = 0.0
-        info_sigma = 0.0
-        for d in area:
-            b_d = scale[area == d]
-            phi_d = sigma2e[area == d]
-            X_d = X[area == d, :]
-            y_d = y[area == d]
-            mu_d = np.matmul(X_d, beta)
-            resid_d = y_d - mu_d
-            sigma2_d = sigma2u * (b_d ** 2) + phi_d
-            term1 = float(b_d ** 2 / sigma2_d)
-            term2 = float(((b_d ** 2) * (resid_d ** 2)) / (sigma2_d ** 2))
-            deriv_sigma += -0.5 * (term1 - term2)
-            info_sigma += 0.5 * (term1 ** 2)
+        error_term = y - np.matmul(X, beta)
+        term1_e = -0.5 * np.trace(np.matmul(V_e, V_u))
+        term2_e = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_e), error_term)
+        term1_u = -0.5 * np.trace(np.matmul(V_e, V_u))
+        term2_u = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_u), error_term)
+        info_matrix[1, 1] = 0.5 * np.matmul(np.matmul(V_inv, V_e), np.mat(V_inv, V_e))
+        info_matrix[2, 2] = 0.5 * np.matmul(np.matmul(V_inv, V_u), np.mat(V_inv, V_u))
+        info_matrix[1, 2] = 0.5 * np.matmul(np.matmul(V_inv, V_e), np.mat(V_inv, V_u))
+        info_matrix[2, 1] = info_matrix[1, 2]
     elif method == "REML":
-        B = np.diag(scale ** 2)
-        v_i = sigma2e + sigma2u * (scale ** 2)
-        V = np.diag(v_i)
-        v_inv = np.linalg.inv(V)
         x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
         x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
         P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
-        P_B = np.matmul(P, B)
-        P_B_P = np.matmul(P_B, P)
-        term1 = np.trace(P_B)
-        term2 = np.matmul(np.matmul(np.transpose(y), P_B_P), y)
-        deriv_sigma = -0.5 * (term1 - term2)
-        info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
+        term1_e = -0.5 * np.trace(np.matmul(P, V_e))
+        P_V_P_e = np.matmul(np.matmul(P, V_e), P)
+        term2_e = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_e), y)
+        term1_u = -0.5 * np.trace(np.matmul(P, V_u))
+        P_V_P_u = np.matmul(np.matmul(P, V_u), P)
+        term2_u = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_u), y)
+        info_matrix[1, 1] = 0.5 * np.matmul(np.matmul(P, V_e), np.mat(P, V_e))
+        info_matrix[2, 2] = 0.5 * np.matmul(np.matmul(P, V_u), np.mat(P, V_u))
+        info_matrix[1, 2] = 0.5 * np.matmul(np.matmul(P, V_e), np.mat(P, V_u))
+        info_matrix[2, 1] = info_matrix[1, 2]
 
-    return float(deriv_sigma), float(info_sigma)
+    derivatives = np.asarray(float(term1_e + term2_e), float(term1_u + term2_u))
+
+    return derivatives, info_matrix
 
 
 def iterative_fisher_scoring(
