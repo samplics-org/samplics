@@ -94,7 +94,7 @@ def log_det_covariance(
 
 
 def log_likelihood(
-    method,
+    method: str,
     y: np.ndarray,
     X: np.ndarray,
     beta: np.ndarray,
@@ -122,7 +122,7 @@ def log_likelihood(
 
 
 def partial_derivatives(
-    method,
+    method: str,
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
@@ -187,9 +187,11 @@ def partial_derivatives(
 
 
 def iterative_fisher_scoring(
+    method: str,
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
+    beta: np.ndarray,
     sigma2e: float,
     sigma2u: float,
     scale: np.ndarray,
@@ -203,24 +205,25 @@ def iterative_fisher_scoring(
 
     tolerance = abstol + 1.0
     tol = 0.9 * tolerance
+    sigma2 = np.asarray([0, 0])
+    sigma2_previous = np.asarray([0, 0])
     while tolerance > tol:
-        sigma2_u_previous = sigma2u
-        deriv_sigma, info_sigma = partial_derivatives(
-            area=area, y=y, X=X, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale,
+        derivatives, info_matrix = partial_derivatives(
+            method, area=area, y=y, X=X, beta=beta, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale,
         )
 
-        sigma2u += deriv_sigma / info_sigma
-        sigma2_u_cov = 1 / info_sigma
+        print(np.matmul(np.linalg.inv(info_matrix), derivatives))
+        sigma2 = sigma2 + np.matmul(np.linalg.inv(info_matrix), derivatives)
+        sigma2e, sigma2u = sigma2[0], sigma2[1]
 
-        tolerance = abs(sigma2u - sigma2_u_previous)
-        tol = max(abstol, reltol * abs(sigma2u))
+        tolerance = min(abs(sigma2 - sigma2_previous))
+        tol = max(abstol, reltol * min(abs(sigma2)))
         convergence = tolerance <= tol
+        sigma2_previous = sigma2
 
         if iterations == maxiter:
             break
         else:
             iterations += 1
 
-    sigma2u = float(max(sigma2u, 0))
-
-    return sigma2u, sigma2_u_cov, iterations, tolerance, convergence
+    return sigma2, np.linalg.inv(info_matrix), iterations, tolerance, convergence
