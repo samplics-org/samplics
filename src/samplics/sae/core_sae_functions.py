@@ -51,7 +51,8 @@ def covariance(area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarr
         nd, scale_d = areas_size[i], scale[area == d]
         Rd = sigma2e * np.diag(scale_d)
         Zd = np.ones((nd, nd))
-        start, end = i * nd, (i + 1) * nd
+        start = 0 if i == 0 else sum(areas_size[:i])
+        end = n if i == areas.size - 1 else sum(areas_size[: (i + 1)])
         V[start:end, start:end] = Rd + sigma2u * Zd
 
     return V
@@ -69,7 +70,8 @@ def inverse_covariance(
         a_d = 1 / (scale_d ** 2)
         sum_scale_d = np.sum(a_d)
         Zd = np.ones((nd, nd))
-        start, end = i * nd, (i + 1) * nd
+        start = 0 if i == 0 else sum(areas_size[:i])
+        end = n if i == areas.size - 1 else sum(areas_size[: (i + 1)])
         gamma_d = sigma2u / (sigma2u + sigma2e / sum_scale_d)
         V_inv[start:end, start:end] = (1 / sigma2e) * (
             np.diag(a_d)
@@ -79,12 +81,14 @@ def inverse_covariance(
     return V_inv
 
 
-def log_det_covariance(area: np.ndarray, sigma2e: float, sigma2u: float) -> float:
+def log_det_covariance(
+    area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray
+) -> float:
 
     det = 0
     for d in np.unique(area):
         nd = np.sum(area == d)
-        det += np.log(sigma2e ** nd * (1 + nd * sigma2u / sigma2e))
+        det += np.sum(np.log(scale)) + nd * np.log(sigma2e) + np.log(1 + nd * sigma2u / sigma2e)
 
     return det
 
@@ -126,46 +130,58 @@ def partial_derivatives(
     sigma2e: float,
     sigma2u: float,
     scale: np.ndarray,
-) -> Tuple[float, float]:
+) -> Tuple[np.ndarray, np.ndarray]:
 
-    n = y.shape[0]
-    areas, areas_size = np.unique(area, return_counts=True)
-
-    for i, d in enumerate(areas):
-        nd = areas_size[i]
-        V_inv = inverse_covariance(area, sigma2e, sigma2u, scale)
-        V_e = np.diag(np.ones(1 / scale ** 2) / sigma2e)
+    derivatives = np.zeros(2)
+    info_matrix = np.zeros((2, 2))
+    for d in np.unique(area):
+        aread = area == d
+        area_d = area[aread]
+        y_d = y[aread]
+        X_d = X[aread]
+        scale_d = scale[aread]
+        nd = np.sum(aread)
+        V_inv = inverse_covariance(area_d, sigma2e, sigma2u, scale_d)
+        V_e = np.diag((1 / scale_d ** 2) * (1 / sigma2e))
         V_u = sigma2u * np.ones((nd, nd))
         V_inv_e = -np.matmul(np.matmul(V_inv, V_e), V_inv)
         V_inv_u = -np.matmul(np.matmul(V_inv, V_u), V_inv)
 
-    info_matrix = np.asarray([])
-    if method == "ML":
-        error_term = y - np.matmul(X, beta)
-        term1_e = -0.5 * np.trace(np.matmul(V_e, V_u))
-        term2_e = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_e), error_term)
-        term1_u = -0.5 * np.trace(np.matmul(V_e, V_u))
-        term2_u = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_u), error_term)
-        info_matrix[1, 1] = 0.5 * np.matmul(np.matmul(V_inv, V_e), np.mat(V_inv, V_e))
-        info_matrix[2, 2] = 0.5 * np.matmul(np.matmul(V_inv, V_u), np.mat(V_inv, V_u))
-        info_matrix[1, 2] = 0.5 * np.matmul(np.matmul(V_inv, V_e), np.mat(V_inv, V_u))
-        info_matrix[2, 1] = info_matrix[1, 2]
-    elif method == "REML":
-        x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
-        x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
-        P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
-        term1_e = -0.5 * np.trace(np.matmul(P, V_e))
-        P_V_P_e = np.matmul(np.matmul(P, V_e), P)
-        term2_e = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_e), y)
-        term1_u = -0.5 * np.trace(np.matmul(P, V_u))
-        P_V_P_u = np.matmul(np.matmul(P, V_u), P)
-        term2_u = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_u), y)
-        info_matrix[1, 1] = 0.5 * np.matmul(np.matmul(P, V_e), np.mat(P, V_e))
-        info_matrix[2, 2] = 0.5 * np.matmul(np.matmul(P, V_u), np.mat(P, V_u))
-        info_matrix[1, 2] = 0.5 * np.matmul(np.matmul(P, V_e), np.mat(P, V_u))
-        info_matrix[2, 1] = info_matrix[1, 2]
+        info_matrix_d = np.zeros((2, 2))
+        if method == "ML":
+            error_term = y - np.matmul(X, beta)
+            term1_e = -0.5 * np.trace(np.matmul(V_e, V_u))
+            term2_e = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_e), error_term)
+            term1_u = -0.5 * np.trace(np.matmul(V_e, V_u))
+            term2_u = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_u), error_term)
+            info_matrix_d[0, 0] = 0.5 * np.trace(
+                np.matmul(np.matmul(V_inv, V_e), np.matmul(V_inv, V_e))
+            )
+            info_matrix_d[1, 1] = 0.5 * np.trace(
+                np.matmul(np.matmul(V_inv, V_u), np.matmul(V_inv, V_u))
+            )
+            info_matrix_d[0, 1] = 0.5 * np.trace(
+                np.matmul(np.matmul(V_inv, V_e), np.matmul(V_inv, V_u))
+            )
+            info_matrix_d[1, 0] = info_matrix_d[0, 1]
 
-    derivatives = np.asarray(float(term1_e + term2_e), float(term1_u + term2_u))
+        elif method == "REML":
+            x_vinv_x = np.matmul(np.matmul(np.transpose(X), V_inv), X)
+            x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
+            P = V_inv - np.matmul(np.matmul(V_inv, x_xvinvx_x), V_inv)
+            term1_e = -0.5 * np.trace(np.matmul(P, V_e))
+            P_V_P_e = np.matmul(np.matmul(P, V_e), P)
+            term2_e = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_e), y)
+            term1_u = -0.5 * np.trace(np.matmul(P, V_u))
+            P_V_P_u = np.matmul(np.matmul(P, V_u), P)
+            term2_u = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_u), y)
+            info_matrix_d[0, 0] = 0.5 * np.trace(np.matmul(np.matmul(P, V_e), np.matmul(P, V_e)))
+            info_matrix_d[1, 1] = 0.5 * np.trace(np.matmul(np.matmul(P, V_u), np.matmul(P, V_u)))
+            info_matrix_d[0, 1] = 0.5 * np.trace(np.matmul(np.matmul(P, V_e), np.matmul(P, V_u)))
+            info_matrix_d[1, 0] = info_matrix_d[0, 1]
+
+        derivatives = derivatives + np.asarray([term1_e + term2_e, term1_u + term2_u])
+        info_matrix = info_matrix + info_matrix_d
 
     return derivatives, info_matrix
 
