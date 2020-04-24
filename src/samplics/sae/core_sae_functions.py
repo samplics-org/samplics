@@ -142,17 +142,18 @@ def partial_derivatives(
         scale_d = scale[aread]
         nd = np.sum(aread)
         V_inv = inverse_covariance(area_d, sigma2e, sigma2u, scale_d)
-        V_e = np.diag((1 / scale_d ** 2) * (1 / sigma2e))
-        V_u = sigma2u * np.ones((nd, nd))
+        V_e = np.diag((scale_d ** 2))
+        V_u = np.ones((nd, nd))
         V_inv_e = -np.matmul(np.matmul(V_inv, V_e), V_inv)
         V_inv_u = -np.matmul(np.matmul(V_inv, V_u), V_inv)
 
         info_matrix_d = np.zeros((2, 2))
+
         if method == "ML":
-            error_term = y - np.matmul(X, beta)
-            term1_e = -0.5 * np.trace(np.matmul(V_e, V_u))
+            error_term = y_d - np.matmul(X_d, beta)
+            term1_e = -0.5 * np.trace(np.matmul(V_inv, V_e))
             term2_e = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_e), error_term)
-            term1_u = -0.5 * np.trace(np.matmul(V_e, V_u))
+            term1_u = -0.5 * np.trace(np.matmul(V_inv, V_u))
             term2_u = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_u), error_term)
             info_matrix_d[0, 0] = 0.5 * np.trace(
                 np.matmul(np.matmul(V_inv, V_e), np.matmul(V_inv, V_e))
@@ -166,15 +167,15 @@ def partial_derivatives(
             info_matrix_d[1, 0] = info_matrix_d[0, 1]
 
         elif method == "REML":
-            x_vinv_x = np.matmul(np.matmul(np.transpose(X), V_inv), X)
-            x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
+            x_vinv_x = np.matmul(np.matmul(np.transpose(X_d), V_inv), X_d)
+            x_xvinvx_x = np.matmul(np.matmul(X_d, np.linalg.inv(x_vinv_x)), np.transpose(X))
             P = V_inv - np.matmul(np.matmul(V_inv, x_xvinvx_x), V_inv)
             term1_e = -0.5 * np.trace(np.matmul(P, V_e))
             P_V_P_e = np.matmul(np.matmul(P, V_e), P)
-            term2_e = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_e), y)
+            term2_e = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_e), y_d)
             term1_u = -0.5 * np.trace(np.matmul(P, V_u))
             P_V_P_u = np.matmul(np.matmul(P, V_u), P)
-            term2_u = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_u), y)
+            term2_u = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_u), y_d)
             info_matrix_d[0, 0] = 0.5 * np.trace(np.matmul(np.matmul(P, V_e), np.matmul(P, V_e)))
             info_matrix_d[1, 1] = 0.5 * np.trace(np.matmul(np.matmul(P, V_u), np.matmul(P, V_u)))
             info_matrix_d[0, 1] = 0.5 * np.trace(np.matmul(np.matmul(P, V_e), np.matmul(P, V_u)))
@@ -202,9 +203,7 @@ def iterative_fisher_scoring(
     """ Fisher-scroring algorithm for estimation of variance component"""
 
     iterations = 0
-
-    tolerance = abstol + 1.0
-    tol = 0.9 * tolerance
+    tolerance, tol = 1, 0.9
     sigma2 = np.asarray([0, 0])
     sigma2_previous = np.asarray([0, 0])
     while tolerance > tol:
@@ -212,7 +211,7 @@ def iterative_fisher_scoring(
             method, area=area, y=y, X=X, beta=beta, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale,
         )
 
-        print(np.matmul(np.linalg.inv(info_matrix), derivatives))
+        # print(np.matmul(np.linalg.inv(info_matrix), derivatives))
         sigma2 = sigma2 + np.matmul(np.linalg.inv(info_matrix), derivatives)
         sigma2e, sigma2u = sigma2[0], sigma2[1]
 
