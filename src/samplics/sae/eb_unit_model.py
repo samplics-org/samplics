@@ -23,6 +23,7 @@ class EblupUnitLevel:
     ):
         # Setting
         self.method: str = method.upper()
+        self.boxcox: Dict[str, Optional(float)] = {"lambda": None}
 
         # Sample data
         self.y_s: np.ndarray = np.array([])
@@ -382,8 +383,7 @@ class EblupUnitLevel:
         )
         self.area_mse = dict(zip(areas_ps, mse_ps))
 
-        # TODO: add non-sampled areas
-
+        # TODO: add non-sampled areas prediction
 
     def bootstrap_mse(
         self,
@@ -445,7 +445,9 @@ class EblupUnitLevel:
         re = np.random.normal(loc=0, scale=self.re_std, size=(number_reps, nb_areas))
         mu = np.matmul(X_ps_sorted, self.fixed_effects)
         y_ps_boot = (
-            np.repeat(mu[None, :], number_reps, axis=0) + np.repeat(re, samp_size_ps, axis=1) + error
+            np.repeat(mu[None, :], number_reps, axis=0)
+            + np.repeat(re, samp_size_ps, axis=1)
+            + error
         )
 
         bar_length = min(50, number_reps)
@@ -496,32 +498,39 @@ class EbUnitLevel:
     def __init__(
         self, method: str = "REML", boxcox: Optional[float] = None, function=None,
     ):
-        self.method = method.upper()
-        self.boxcox = boxcox
 
+        # Setting
+        self.method: str = method.upper()
+        self.boxcox: Dict[str, Optional(float)] = {"lambda": None}
+
+        # Sample data
+        self.y_s: np.ndarray = np.array([])
+        self.X_s: np.ndarray = np.array([])
+        self.area_s: np.ndarray = np.array([])
         self.areas_s: np.ndarray = np.array([])
-        self.areas_p: np.ndarray = np.array([])
-        self.samp_size = Dict[str, int] = {}
-        self.pop_size = Dict[str, int] = {}
-        self.number_reps: int
+        self.samp_size: np.ndarray = np.array([])
+        self.ybar_s: np.ndarray = np.array([])
+        self.xbar_s: np.ndarray = np.array([])
 
-        self.fitted = False
+        # Fitted data
+        self.fitted: boolean = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
-        self.re_std: Optional[float] = None
-        self.re_std_cov: Optional[float] = None
-        self.error_std: Optional[float] = None
+        self.re_std: float = 0
+        self.re_std_cov: float = 0
+        self.error_std: float = 0
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-
-        self.ybar_s: np.ndarray = np.array([])
-        self.xbar_s: np.ndarray = np.array([])
         self.gamma: np.ndarray = np.array([])
         self.a_factor: np.ndarray = np.array([])
 
+        # Predict(ion/ed) data
+        self.areas_p: np.ndarray = np.array([])
+        self.pop_size: np.ndarray = np.array([])
         self.Xbar_p: np.ndarray = np.array([])
-        self.area_est: np.ndarray = np.array([])
+        self.number_reps: int = 0
+        self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
 
     def fit(
