@@ -294,7 +294,9 @@ class EblupUnitLevel:
         ybar_s, xbar_s, gamma, samp_size = self._area_stats(
             y, X, area, self.error_std, self.re_std, samp_weight, scale
         )
+        random_effects = gamma * (ybar_s - np.matmul(xbar_s, self.fixed_effects))
 
+        self.random_effects = dict(zip(self.areas_s, random_effects))
         self.ybar_s = dict(zip(self.areas_s, ybar_s))
         self.xbar_s = dict(zip(self.areas_s, xbar_s))
         self.gamma = dict(zip(self.areas_s, gamma))
@@ -330,19 +332,15 @@ class EblupUnitLevel:
             scale = formats.numpy_array(scale)
 
         area = formats.numpy_array(area)
-
         X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
-        self.Xbar_p = Xmean
+        self.Xbar_p = dict(zip(area, Xmean))
+
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
             Xmean = np.insert(Xmean, 0, 1, axis=1)
         if pop_size is not None:
             pop_size = formats.numpy_array(pop_size)
-
-        self.random_effects = self.gamma * (
-            self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects)
-        )
 
         (
             ps,
@@ -361,14 +359,15 @@ class EblupUnitLevel:
 
         samp_rate_ps = samp_size_ps / pop_size[ps_area]
 
-        if pop_size is None or pop_size is None:
+        if pop_size is None:
             ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
         else:
+            ybar_ps = np.asarray(list(self.ybar_s.values()))[ps_area]
             ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
                 samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
-            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
+            ) * (ybar_ps - np.matmul(xbar_ps, self.fixed_effects))
 
-        yr_pred = np.array([])
+        # yr_pred = np.array([])
         if np.sum(~ps) > 0:
             yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
 
@@ -387,7 +386,9 @@ class EblupUnitLevel:
             areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, a_factor_ps, np.linalg.inv(A_ps)
         )
 
-        print(f"The MSE estimator is:\n {mse_ps}\n")
+        self.area_mse = dict(zip(self.areas_ps, mse_ps))
+
+        # TODO: add non-sampled areas
 
 
 def bootstrap_mse(
@@ -506,8 +507,8 @@ class EbUnitLevel:
 
         self.areas_s: np.ndarray = np.array([])
         self.areas_p: np.ndarray = np.array([])
-        self.samp_size = np.array([])
-        self.pop_size = np.array([])
+        self.samp_size = Dict[str, int] = {}
+        self.pop_size = Dict[str, int] = {}
         self.number_reps: int
 
         self.fitted = False
