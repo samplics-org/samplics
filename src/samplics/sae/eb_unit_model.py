@@ -214,61 +214,6 @@ class EblupUnitLevel:
             samp_weight_ps,
         )
 
-    def fit2(
-        self,
-        y: Array,
-        X: Array,
-        area: Array,
-        samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
-        intercept: bool = True,
-        abstol: float = 1e-4,
-        reltol: float = 1e-3,
-        maxiter: int = 200,
-    ) -> None:
-
-        area = formats.numpy_array(area)
-        y = formats.numpy_array(y)
-        X = formats.numpy_array(X)
-        if intercept and isinstance(X, np.ndarray):
-            X = np.insert(X, 0, 1, axis=1)
-
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-            samp_weight = formats.numpy_array(samp_weight)
-
-        if isinstance(scale, (float, int)):
-            scale = np.ones(y.shape[0]) * scale
-        else:
-            scale = formats.numpy_array(scale)
-
-        beta_ols = np.linalg.lstsq(X, y)[0]
-        resid_ols = y - np.matmul(X, beta_ols)
-        re_ols = self._sumby(area, resid_ols) / self._sumby(area, np.ones(area.size))
-        error_ols = resid_ols - re_ols
-
-        (
-            sigma2e,
-            sigma2v,
-            sigma2v_cov,
-            iterations,
-            tolerance,
-            convergence,
-        ) = iterative_fisher_scoring(
-            area=area,
-            y=y,
-            X=X,
-            sigma2e=np.std(error_ols) ** 2,
-            sigma2v=np.std(re_ols) ** 2,
-            scale=scale,
-            abstol=abstol,
-            reltol=reltol,
-            maxiter=maxiter,
-        )
-
-        beta, beta_cov = fixed_coefficients(
-            area=area, y=y, X=X, sigma2e=sigma2e, sigma2v=sigma2v, scale=scale
-        )
-
     def fit(
         self,
         y: Array,
@@ -638,38 +583,53 @@ class EbUnitLevel:
         nb_areas_r = len(areas_r)
         mu_r = X_r @ fixed_effects
 
-        print(f"Generating the {number_samples} replicates samples per small area (domain)\n")
+        k = 0
+        bar_length = min(50, nb_areas_r)
+        steps = np.linspace(1, nb_areas_r - 1, bar_length).astype(int)
+        print(steps)
+        print(f"Generating the {number_samples} replicates samples\n")
         eta = np.zeros((number_samples, nb_areas_r)) * np.nan
         for i, d in enumerate(areas_r):
+            # print(d)
             oos = area_r == d
             mu_dr = mu_r[oos]
             gamma_dr = gamma[i]
             scale_dr = scale[oos]
             N_dr = np.sum(oos)
-            cycle_size = int(max_array_length // N_dr)
+            cycle_size = max(int(max_array_length // N_dr), 1)
             number_cycles = int(number_samples // cycle_size)
             last_cycle_size = number_samples % cycle_size
-            print(f"Calculation for the {d}th domain with a total of {number_cycles+1} batch(es)")
-            for k in range(number_cycles + 1):
-                if k == number_cycles:
+
+            # print(
+            #     f"Calculation for the {d}th domain with a total of {number_cycles+1} batch(es)\n"
+            # )
+            for j in range(number_cycles + 1):
+                if j == number_cycles:
                     cycle_size = last_cycle_size
-                if cycle_size > 0:
-                    print(f"{k+1}th batch with {cycle_size} samples (domain {d})")
+                # if cycle_size > 0:
+                #     print(f"{k+1}th batch with {cycle_size} samples (domain {d})")
                 re_effects = np.random.normal(
                     scale=(sigma2u * (1 - gamma_dr)) ** 0.5, size=cycle_size
                 )
                 errors = np.random.normal(
                     scale=scale_dr * (sigma2e ** 0.5), size=(cycle_size, N_dr)
                 )
-                y_dr_k = mu_dr[None, :] + re_effects[:, None] + errors
-                if k == 0:
-                    y_dr = y_dr_k
+                y_dr_j = mu_dr[None, :] + re_effects[:, None] + errors
+                if j == 0:
+                    y_dr = y_dr_j
                 else:
-                    y_dr = np.append(y_dr, y_dr_k, axis=0)
+                    y_dr = np.append(y_dr, y_dr_j, axis=0)
 
-            print("\n")
+            if i in steps:
+                k += 1
+                print(
+                    f"\r[%-{bar_length}s] %d%%" % ("=" * k, 2 * k), end="",
+                )
+
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=y_d, *args)  # *)
+
+        print("\n")
 
         return np.mean(eta, axis=0)
 
@@ -682,7 +642,7 @@ class EbUnitLevel:
         samp_weight=None,
         scale=1,
         intercept=True,
-        max_array_length=100e6,
+        max_array_length=1e6,
         *args,
     ):
 

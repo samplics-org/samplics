@@ -16,10 +16,9 @@ def fixed_coefficients(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    # sigma2e: float,
-    # sigma2u: float,
-    # scale: np.ndarray,
-    inv_cov: np.ndarray,
+    sigma2e: float,
+    sigma2u: float,
+    scale: np.ndarray,
 ) -> Tuple[np.ndarray, np.ndarray]:
 
     """[summary]    Arguments:
@@ -33,13 +32,13 @@ def fixed_coefficients(
     Returns:
         Tuple[np.ndarray, np.ndarray] -- [description]
     """
-    # V = np.diag(sigma2u * (scale ** 2) + sigma2e)
-    # V_inv = np.linalg.inv(variance)
-    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), inv_cov), X))
-    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), inv_cov)
+    V_inv = inverse_covariance(area, sigma2e, sigma2u, scale)
+    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
+    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
     beta_hat = np.matmul(x_v_x_inv_x, y)
 
-    # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)    return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
+    # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
+    return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
 
 
 def covariance(area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray,) -> np.ndarray:
@@ -126,7 +125,7 @@ def partial_derivatives(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    beta: np.ndarray,
+    # beta: np.ndarray,
     sigma2e: float,
     sigma2u: float,
     scale: np.ndarray,
@@ -134,55 +133,62 @@ def partial_derivatives(
 
     derivatives = np.zeros(2)
     info_matrix = np.zeros((2, 2))
-    for d in np.unique(area):
-        aread = area == d
-        area_d = area[aread]
-        y_d = y[aread]
-        X_d = X[aread]
-        scale_d = scale[aread]
-        nd = np.sum(aread)
-        V_inv = inverse_covariance(area_d, sigma2e, sigma2u, scale_d)
-        V_e = np.diag((scale_d ** 2))
-        V_u = np.ones((nd, nd))
-        V_inv_e = -np.matmul(np.matmul(V_inv, V_e), V_inv)
-        V_inv_u = -np.matmul(np.matmul(V_inv, V_u), V_inv)
 
-        info_matrix_d = np.zeros((2, 2))
-
-        if method == "ML":
+    if method == "ML":
+        beta = fixed_coefficients(area, y, X, sigma2e, sigma2u, scale)
+        for d in np.unique(area):
+            aread = area == d
+            area_d = area[aread]
+            y_d = y[aread]
+            X_d = X[aread]
+            scale_d = scale[aread]
+            nd = np.sum(aread)
+            V_inv = inverse_covariance(area_d, sigma2e, sigma2u, scale_d)
+            V_e = np.diag((scale_d ** 2))
+            V_u = np.ones((nd, nd))
+            V_inv_e = -np.matmul(V_inv @ V_e, V_inv)
+            V_inv_u = -np.matmul(V_inv @ V_u, V_inv)
             error_term = y_d - np.matmul(X_d, beta)
-            term1_e = -0.5 * np.trace(np.matmul(V_inv, V_e))
-            term2_e = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_e), error_term)
-            term1_u = -0.5 * np.trace(np.matmul(V_inv, V_u))
-            term2_u = -0.5 * np.matmul(np.matmul(np.transpose(error_term), V_inv_u), error_term)
-            info_matrix_d[0, 0] = 0.5 * np.trace(
-                np.matmul(np.matmul(V_inv, V_e), np.matmul(V_inv, V_e))
-            )
-            info_matrix_d[1, 1] = 0.5 * np.trace(
-                np.matmul(np.matmul(V_inv, V_u), np.matmul(V_inv, V_u))
-            )
-            info_matrix_d[0, 1] = 0.5 * np.trace(
-                np.matmul(np.matmul(V_inv, V_e), np.matmul(V_inv, V_u))
-            )
-            info_matrix_d[1, 0] = info_matrix_d[0, 1]
 
-        elif method == "REML":
-            x_vinv_x = np.matmul(np.matmul(np.transpose(X_d), V_inv), X_d)
-            x_xvinvx_x = np.matmul(np.matmul(X_d, np.linalg.inv(x_vinv_x)), np.transpose(X))
-            P = V_inv - np.matmul(np.matmul(V_inv, x_xvinvx_x), V_inv)
-            term1_e = -0.5 * np.trace(np.matmul(P, V_e))
-            P_V_P_e = np.matmul(np.matmul(P, V_e), P)
-            term2_e = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_e), y_d)
-            term1_u = -0.5 * np.trace(np.matmul(P, V_u))
-            P_V_P_u = np.matmul(np.matmul(P, V_u), P)
-            term2_u = 0.5 * np.matmul(np.matmul(np.transpose(y), P_V_P_u), y_d)
-            info_matrix_d[0, 0] = 0.5 * np.trace(np.matmul(np.matmul(P, V_e), np.matmul(P, V_e)))
-            info_matrix_d[1, 1] = 0.5 * np.trace(np.matmul(np.matmul(P, V_u), np.matmul(P, V_u)))
-            info_matrix_d[0, 1] = 0.5 * np.trace(np.matmul(np.matmul(P, V_e), np.matmul(P, V_u)))
-            info_matrix_d[1, 0] = info_matrix_d[0, 1]
+            derivatives[0] = (
+                derivatives[0]
+                - 0.5 * np.trace(V_inv @ V_e)
+                - 0.5 * error_term @ V_inv_e @ error_term
+            )
 
-        derivatives = derivatives + np.asarray([term1_e + term2_e, term1_u + term2_u])
-        info_matrix = info_matrix + info_matrix_d
+            derivatives[1] = (
+                derivatives[1]
+                - 0.5 * np.trace(V_inv @ V_u)
+                - 0.5 * error_term @ V_inv_u @ error_term
+            )
+
+            info_matrix[0, 0] = info_matrix[0, 0] + 0.5 * np.trace(
+                np.matmul(V_inv, V_e) @ np.matmul(V_inv, V_e)
+            )
+            info_matrix[1, 1] = info_matrix[1, 1] + 0.5 * np.trace(
+                np.matmul(V_inv, V_u) @ np.matmul(V_inv, V_u)
+            )
+            info_matrix[0, 1] = info_matrix[0, 1] + 0.5 * np.trace(
+                np.matmul(V_inv, V_e) @ np.matmul(V_inv, V_u)
+            )
+            info_matrix[1, 0] = info_matrix[0, 1]
+
+    elif method == "REML":
+        n = y.shape[0]
+        V_inv = inverse_covariance(area, sigma2e, sigma2u, scale)
+        V_e = np.diag((scale ** 2))
+        V_u = np.ones((n, n))
+        x_vinv_x = np.transpose(X) @ V_inv @ X
+        x_xvinvx_x = X @ np.linalg.inv(x_vinv_x) @ np.transpose(X)
+        P = V_inv - V_inv @ x_xvinvx_x @ V_inv
+
+        derivatives[0] = -0.5 * np.trace(P @ V_e) + 0.5 * y @ P @ V_e @ P @ y
+        derivatives[1] = -0.5 * np.trace(P @ V_u) + 0.5 * y @ P @ V_u @ P @ y
+
+        info_matrix[0, 0] = 0.5 * np.trace(np.matmul(P, V_e) @ np.matmul(P, V_e))
+        info_matrix[1, 1] = 0.5 * np.trace(np.matmul(P, V_u) @ np.matmul(P, V_u))
+        info_matrix[0, 1] = 0.5 * np.trace(np.matmul(P, V_e) @ np.matmul(P, V_u))
+        info_matrix[1, 0] = info_matrix[0, 1]
 
     return derivatives, info_matrix
 
@@ -192,7 +198,6 @@ def iterative_fisher_scoring(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    beta: np.ndarray,
     sigma2e: float,
     sigma2u: float,
     scale: np.ndarray,
@@ -208,13 +213,13 @@ def iterative_fisher_scoring(
     sigma2_previous = np.asarray([0, 0])
     while tolerance > tol:
         derivatives, info_matrix = partial_derivatives(
-            method, area=area, y=y, X=X, beta=beta, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale,
+            method, area=area, y=y, X=X, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale,
         )
 
         # print(np.matmul(np.linalg.inv(info_matrix), derivatives))
-        sigma2 = sigma2 + np.matmul(np.linalg.inv(info_matrix), derivatives)
+        sigma2 = sigma2 + derivatives @ np.linalg.inv(info_matrix)
         sigma2e, sigma2u = sigma2[0], sigma2[1]
-
+        print(tolerance)
         tolerance = min(abs(sigma2 - sigma2_previous))
         tol = max(abstol, reltol * min(abs(sigma2)))
         convergence = tolerance <= tol
