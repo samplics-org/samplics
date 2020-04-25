@@ -21,35 +21,35 @@ class EblupUnitLevel:
     def __init__(
         self, method: str = "REML",
     ):
-        self.method = method.upper()
+        self.method: str = method.upper()
 
         self.y_s: np.ndarray = np.array([])
         self.X_s: np.ndarray = np.array([])
         self.area_s: np.ndarray = np.array([])
         self.areas_s: np.ndarray = np.array([])
         self.areas_p: np.ndarray = np.array([])
-        self.samp_size = np.array([])
-        self.pop_size = np.array([])
-        self.number_reps: int
+        self.samp_size: Dict[Any, int] = {}  # Should be a dict() - TODO
+        self.pop_size: Dict[Any, int] = {}  # Should be a dict() - TODO
+        self.number_reps: int = 0
 
-        self.fitted = False
+        self.fitted: boolean = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
-        self.random_effects: np.ndarray = np.array([])
-        self.re_std: Optional[float] = None
-        self.re_std_cov: Optional[float] = None
-        self.error_std: Optional[float] = None
+        self.random_effects: Dict[Any, float] = {}
+        self.re_std: float = 0
+        self.re_std_cov: float = 0
+        self.error_std: float = 0
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
 
-        self.ybar_s: np.ndarray = np.array([])
-        self.xbar_s: np.ndarray = np.array([])
-        self.gamma: np.ndarray = np.array([])
-        self.a_factor: np.ndarray = np.array([])
+        self.ybar_s: Dict[Any, float] = {}
+        self.xbar_s: Dict[Any, float] = {}
+        self.gamma: Dict[Any, float] = {}
+        self.a_factor: Dict[Any, float] = {}
 
-        self.Xbar_p: np.ndarray = np.array([])
-        self.y_predicted: np.ndarray = np.array([])
-        self.mse: Dict[Any, float] = {}
+        self.Xbar_p: Dict[Any, float] = {}
+        self.area_est: Dict[Any, float] = {}
+        self.area_mse: Dict[Any, float] = {}
 
     def _beta(
         self,
@@ -69,13 +69,14 @@ class EblupUnitLevel:
         p = X.shape[1]
         beta1 = np.zeros((p, p))
         beta2 = np.zeros(p)
-        for k, d in enumerate(np.unique(area)):
-            w_d = weight[area == d]
-            y_d = y[area == d]
-            X_d = X[area == d]
-            Xw_d = Xw[area == d]
+        for d in np.unique(area):
+            aread = area == d
+            w_d = weight[aread]
+            y_d = y[aread]
+            X_d = X[aread]
+            Xw_d = Xw[aread]
             Xw_d_bar = np.sum(Xw_d, axis=0) / np.sum(w_d)
-            resid_d_w = X_d - Xw_d_bar * self.gamma[k]
+            resid_d_w = X_d - Xw_d_bar * self.gamma[d]
             beta1 = beta1 + np.matmul(np.transpose(Xw_d), resid_d_w)
             beta2 = beta2 + np.sum(resid_d_w * y_d[:, None] * w_d[:, None], axis=0)
 
@@ -193,10 +194,10 @@ class EblupUnitLevel:
         ps_area = np.isin(areas, areas_ps)
         Xmean_ps = Xmean[ps_area]
         Xmean_pr = Xmean[~ps_area]
-        xbar_ps = self.xbar_s[ps_area]
-        a_factor_ps = self.a_factor[ps_area]
-        samp_size_ps = self.samp_size[ps_area]
-        gamma_ps = self.gamma[ps_area]
+        xbar_ps = list(self.xbar_s.values())[ps_area]
+        a_factor_ps = list(self.a_factor.values())[ps_area]
+        samp_size_ps = list(self.samp_size.values())[ps_area]
+        gamma_ps = list(self.gamma.values())[ps_area]
         samp_weight_ps = samp_weight[ps] if samp_weight is not None else None
 
         return (
@@ -244,7 +245,7 @@ class EblupUnitLevel:
         self.X_s = X
         self.area_s = area
 
-        self.a_factor = self._sumby(area, scale)
+        self.a_factor = dict(zip(area, self._sumby(area, scale)))
 
         reml = True if self.method == "REML" else False
         beta_ols = sm.OLS(y, X).fit().params
@@ -259,7 +260,6 @@ class EblupUnitLevel:
             tol=tol,
             maxiter=maxiter,
         )
-        self.areas_s = np.unique(formats.numpy_array(area))
 
         self.error_std = basic_fit.scale ** 0.5
         self.fixed_effects = basic_fit.fe_params
@@ -291,9 +291,14 @@ class EblupUnitLevel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ybar_s, self.xbar_s, self.gamma, self.samp_size = self._area_stats(
+        ybar_s, xbar_s, gamma, samp_size = self._area_stats(
             y, X, area, self.error_std, self.re_std, samp_weight, scale
         )
+
+        self.ybar_s = dict(zip(self.areas_s, ybar_s))
+        self.xbar_s = dict(zip(self.areas_s, xbar_s))
+        self.gamma = dict(zip(self.areas_s, gamma))
+        self.samp_size = dict(zip(self.areas_s, samp_size))
 
         # samp_weight = np.ones(y.size)
         if samp_weight is not None:
@@ -521,8 +526,8 @@ class EbUnitLevel:
         self.a_factor: np.ndarray = np.array([])
 
         self.Xbar_p: np.ndarray = np.array([])
-        self.y_predicted: np.ndarray = np.array([])
-        self.mse: Dict[Any, float] = {}
+        self.area_est: np.ndarray = np.array([])
+        self.area_mse: Dict[Any, float] = {}
 
     def fit(
         self,
@@ -586,7 +591,7 @@ class EbUnitLevel:
         k = 0
         bar_length = min(50, nb_areas_r)
         steps = np.linspace(1, nb_areas_r - 1, bar_length).astype(int)
-        print(steps)
+
         print(f"Generating the {number_samples} replicates samples\n")
         eta = np.zeros((number_samples, nb_areas_r)) * np.nan
         for i, d in enumerate(areas_r):
@@ -662,7 +667,7 @@ class EbUnitLevel:
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
 
-        eta = self._predict_indicator(
+        self.eta = self._predict_indicator(
             number_samples,
             self.y_s,
             self.X_s,
@@ -680,8 +685,6 @@ class EbUnitLevel:
             *args,
         )
 
-        print(eta)
-
 
 def bootstrap_mse(
     self,
@@ -689,7 +692,6 @@ def bootstrap_mse(
     indicator,
     X: np.ndarray,
     area: np.ndarray,
-    samp_weight: Optional[Array] = None,
     scale: Union[Array, Number] = 1,
     intercept: bool = True,
     tol: float = 1e-4,
@@ -700,93 +702,23 @@ def bootstrap_mse(
     X = formats.numpy_array(X)
     Xmean = formats.numpy_array(Xmean)
     area = formats.numpy_array(area)
+    areas = np.unique(areas)
+    pop_size = X.shape[0] + self.samp_size
 
     if intercept:
         X = np.insert(X, 0, 1, axis=1)
         Xmean = np.insert(Xmean, 0, 1, axis=1)
-
-    if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-        samp_weight = formats.numpy_array(samp_weight)
 
     if isinstance(scale, (float, int)):
         scale = np.ones(X.shape[0]) * scale
     else:
         scale = formats.numpy_array(scale)
 
-    self.a_factor = self._sumby(area, scale)
+    # for d in areas:
 
-    (
-        ps,
-        ps_area,
-        X_ps,
-        area_ps,
-        areas_ps,
-        Xmean_ps,
-        Xmean_pr,
-        xbar_ps,
-        a_factor_ps,
-        samp_size_ps,
-        gamma_ps,
-        samp_weight_ps,
-    ) = self._split_data(area, X, Xmean, samp_weight)
+    #     y_dr = np.random.normal(scale=, size=)
 
-    X_ps_sorted = X_ps[np.argsort(area_ps)]
-    scale_ps_ordered = scale[ps]
-    area_ps_sorted = area_ps[np.argsort(area_ps)]
-    if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
-        scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
-
-    nb_areas = len(np.unique(area_ps))
-
-    error = np.abs(scale_ps_ordered) * np.random.normal(
-        loc=0, scale=self.error_std, size=(number_reps, area_ps.size)
-    )
-    re = np.random.normal(loc=0, scale=self.re_std, size=(number_reps, nb_areas))
-    mu = np.matmul(X_ps_sorted, self.fixed_effects)
-    y_ps_boot = (
-        np.repeat(mu[None, :], number_reps, axis=0) + np.repeat(re, samp_size_ps, axis=1) + error
-    )
-
-    bar_length = min(50, number_reps)
-    steps = np.linspace(0, number_reps, bar_length).astype(int)
-    i = 0
-
-    reml = True if self.method == "REML" else False
-    boot_mse = np.zeros((number_reps, nb_areas))
-    print(f"Running the {number_reps} bootstrap iterations")
-    for k in range(y_ps_boot.shape[0]):
-        boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
-        boot_fit = boot_model.fit(
-            start_params=np.append(self.fixed_effects, self.re_std ** 2),
-            reml=reml,
-            tol=tol,
-            maxiter=maxiter,
-        )
-        boot_fe = boot_fit.fe_params
-        boot_error_std = boot_fit.scale ** 0.5
-        boot_re_std = float(boot_fit.cov_re) ** 0.5
-        boot_ybar_s, boot_xbar_s, boot_gamma, _ = self._area_stats(
-            y_ps_boot[k, :],
-            X_ps_sorted,
-            area_ps,
-            boot_error_std,
-            boot_re_std,
-            samp_weight_ps,
-            scale_ps_ordered,
-        )
-        boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
-        boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
-        boot_mu_h = np.matmul(Xmean_ps, boot_fe) + boot_re
-        boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
-
-        if k in steps:
-            i += 1
-            print(
-                f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i), end="",
-            )
-    print("\n")
-
-    return np.mean(boot_mse, axis=0)
+    return True
 
 
 class EllUnitLevel:
