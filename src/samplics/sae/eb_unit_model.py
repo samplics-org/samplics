@@ -21,33 +21,36 @@ class EblupUnitLevel:
     def __init__(
         self, method: str = "REML",
     ):
+        # Setting
         self.method: str = method.upper()
 
+        # Sample data
         self.y_s: np.ndarray = np.array([])
         self.X_s: np.ndarray = np.array([])
         self.area_s: np.ndarray = np.array([])
         self.areas_s: np.ndarray = np.array([])
-        self.areas_p: np.ndarray = np.array([])
-        self.samp_size: Dict[Any, int] = {}  # Should be a dict() - TODO
-        self.pop_size: Dict[Any, int] = {}  # Should be a dict() - TODO
-        self.number_reps: int = 0
+        self.samp_size: np.ndarray = np.array([])
+        self.ybar_s: np.ndarray = np.array([])
+        self.xbar_s: np.ndarray = np.array([])
 
+        # Fitted data
         self.fitted: boolean = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
-        self.random_effects: Dict[Any, float] = {}
+        self.random_effects: np.ndarray = np.array([])
         self.re_std: float = 0
         self.re_std_cov: float = 0
         self.error_std: float = 0
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
+        self.gamma: np.ndarray = np.array([])
+        self.a_factor: np.ndarray = np.array([])
 
-        self.ybar_s: Dict[Any, float] = {}
-        self.xbar_s: Dict[Any, float] = {}
-        self.gamma: Dict[Any, float] = {}
-        self.a_factor: Dict[Any, float] = {}
-
-        self.Xbar_p: Dict[Any, float] = {}
+        # Predict(ion/ed) data
+        self.areas_p: np.ndarray = np.array([])
+        self.pop_size: np.ndarray = np.array([])
+        self.Xbar_p: np.ndarray = np.array([])
+        self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
 
@@ -194,10 +197,10 @@ class EblupUnitLevel:
         ps_area = np.isin(areas, areas_ps)
         Xmean_ps = Xmean[ps_area]
         Xmean_pr = Xmean[~ps_area]
-        xbar_ps = list(self.xbar_s.values())[ps_area]
-        a_factor_ps = list(self.a_factor.values())[ps_area]
-        samp_size_ps = list(self.samp_size.values())[ps_area]
-        gamma_ps = list(self.gamma.values())[ps_area]
+        xbar_ps = self.xbar_s[ps_area]
+        a_factor_ps = self.a_factor[ps_area]
+        samp_size_ps = self.samp_size[ps_area]
+        gamma_ps = self.gamma[ps_area]
         samp_weight_ps = samp_weight[ps] if samp_weight is not None else None
 
         return (
@@ -245,7 +248,7 @@ class EblupUnitLevel:
         self.X_s = X
         self.area_s = area
 
-        self.a_factor = dict(zip(area, self._sumby(area, scale)))
+        self.a_factor = self._sumby(area, scale)
 
         reml = True if self.method == "REML" else False
         beta_ols = sm.OLS(y, X).fit().params
@@ -291,16 +294,12 @@ class EblupUnitLevel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        ybar_s, xbar_s, gamma, samp_size = self._area_stats(
+        self.ybar_s, self.xbar_s, gamma, samp_size = self._area_stats(
             y, X, area, self.error_std, self.re_std, samp_weight, scale
         )
-        random_effects = gamma * (ybar_s - np.matmul(xbar_s, self.fixed_effects))
-
-        self.random_effects = dict(zip(self.areas_s, random_effects))
-        self.ybar_s = dict(zip(self.areas_s, ybar_s))
-        self.xbar_s = dict(zip(self.areas_s, xbar_s))
-        self.gamma = dict(zip(self.areas_s, gamma))
-        self.samp_size = dict(zip(self.areas_s, samp_size))
+        self.random_effects = gamma * (self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects))
+        self.gamma = gamma
+        self.samp_size = samp_size
 
         # samp_weight = np.ones(y.size)
         if samp_weight is not None:
@@ -362,12 +361,11 @@ class EblupUnitLevel:
         if pop_size is None:
             ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
         else:
-            ybar_ps = np.asarray(list(self.ybar_s.values()))[ps_area]
             ys_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
                 samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
-            ) * (ybar_ps - np.matmul(xbar_ps, self.fixed_effects))
+            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
 
-        # yr_pred = np.array([])
+        yr_pred = np.array([])
         if np.sum(~ps) > 0:
             yr_pred = np.matmul(Xmean_pr, self.fixed_effects)
 
@@ -386,7 +384,7 @@ class EblupUnitLevel:
             areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, a_factor_ps, np.linalg.inv(A_ps)
         )
 
-        self.area_mse = dict(zip(self.areas_ps, mse_ps))
+        self.area_mse = dict(zip(areas_ps, mse_ps))
 
         # TODO: add non-sampled areas
 
