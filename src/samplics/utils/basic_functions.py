@@ -30,8 +30,8 @@ class BoxCox:
 
         y = formats.numpy_array(y)
 
-        if min(y) <= 0:
-            y = y - min(y) + 1
+        if np.min(y) <= 0:
+            y = y - np.min(y) + 1
 
         if coef == 0:
             y_transformed = np.log(y)
@@ -56,12 +56,7 @@ class BoxCox:
         normality = np.abs(coefs) < 2.0
 
         p1 = plt.scatter(
-            lambda_range[normality],
-            coefs[normality],
-            marker="D",
-            c="green",
-            s=25,
-            alpha=0.3,
+            lambda_range[normality], coefs[normality], marker="D", c="green", s=25, alpha=0.3,
         )
         p2 = plt.scatter(
             lambda_range[~normality],
@@ -87,4 +82,3 @@ class BoxCox:
         self._plot_measure(
             y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="kurtosis"
         )
-

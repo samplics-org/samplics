@@ -502,11 +502,17 @@ class EbUnitLevel:
     """implements the unit level model"""
 
     def __init__(
-        self, method: str = "REML", indicator=None, boxcox: Optional[float] = None,
+        self,
+        method: str = "REML",
+        boxcox: Optional[float] = None,
+        constant: Number = 0,
+        indicator: Optional[Any] = None,
     ):
 
         # Setting
         self.method: str = method.upper()
+        self.indicator = indicator
+        self.constant = constant
         self.number_samples: Optional[int] = None
         if boxcox is None:
             self.boxcox = {"lambda": None}
@@ -569,6 +575,16 @@ class EbUnitLevel:
             scale = np.ones(y.shape[0]) * scale
         else:
             scale = formats.numpy_array(scale)
+
+        if self.boxcox is not None and self.boxcox["lambda"] == 0:
+            y_min = np.min(y)
+            if y_min <= 0 and self.constant <= -y_min:
+                y = y + (1 - y_min)  # to make the series positive for log-transformation
+            else:
+                y = y + self.constant
+            y = np.log(y)
+        elif self.boxcox is not None and self.boxcox["lambda"] != 0:
+            y = np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
 
         eblupUL = EblupUnitLevel()
         eblupUL.fit(y, X, area, samp_weight, scale, False, tol, maxiter)
@@ -744,6 +760,7 @@ class EbUnitLevel:
         tol: float = 1e-4,
         maxiter: int = 200,
         max_array_length=100e6,
+        *args,
     ) -> np.ndarray:
 
         X_p = formats.numpy_array(X)
@@ -762,7 +779,7 @@ class EbUnitLevel:
         area_ps, area_pr = area_p[ps], area_p[~ps]
         area = np.append(area_p, self.area_s[np.isin(self.area_s, areas_p)])
         _, N_d = np.unique(area, return_counts=True)
-        scale = np.append(scale_p, self.scale_s[np.isin(self.area_s, areas_p)], axis=0)
+        scaleboot = np.append(scale_p, self.scale_s[np.isin(self.area_s, areas_p)], axis=0)
         Xboot = np.append(X_p, self.X_s[np.isin(self.area_s, areas_p)], axis=0)
         # X_ps, X_pr = X[ps], X[~ps]
         # mu_ps = X_ps @ self.fixed_effects
@@ -776,24 +793,35 @@ class EbUnitLevel:
 
             areas_ps = np.unique(area_ps)
             areas_pr = np.unique(area_pr)
+            aboot_factor = np.zeros(areas_ps.size)
             yboot_s = np.asarray([])
             Xboot_s = np.asarray([])
-            areaboot_ds = np.asarray([])
+            Xboot_r = np.asarray([])
+            areaboot_s = np.asarray([])
+            areaboot_r = np.asarray([])
             for i, d in enumerate(areas_ps):
                 aread = area == d
                 area_d = area[aread]
+                scaleboot_d = scaleboot[aread]
+                aboot_factor[i] = np.sum(1 / scaleboot_d ** 2)
                 nd = int(self.samp_size[self.areas_s == d])
                 yboot_d = yboot[aread]
                 Xboot_d = Xboot[aread]
                 sample_d = np.random.choice(int(N_d[areas_p == d]), size=nd, replace=False)
                 if i == 0:
                     areaboot_s = area_d[sample_d]
+                    areaboot_r = area_d[~sample_d]
+                    scaleboot_r = scaleboot_d[~sample_d]
                     yboot_s = yboot_d[sample_d]
                     Xboot_s = Xboot_d[sample_d]
+                    Xboot_r = Xboot_d[~sample_d]
                 else:
+                    areaboot_s = np.append(areaboot_s, area_d[sample_d])
+                    areaboot_r = np.append(areaboot_r, area_d[~sample_d])
+                    scaleboot_r = np.append(scaleboot_r, scaleboot_d[~sample_d])
                     yboot_s = np.append(yboot_s, yboot_d[sample_d])
                     Xboot_s = np.append(Xboot_s, Xboot_d[sample_d], axis=0)
-                    areaboot_s = np.append(areaboot_s, area_d[sample_d])
+                    Xboot_r = np.append(Xboot_r, Xboot_d[~sample_d], axis=0)
 
             reml = True if self.method == "REML" else False
             beta_ols = sm.OLS(yboot_s, Xboot_s).fit().params
@@ -802,7 +830,7 @@ class EbUnitLevel:
                 areaboot_s, np.ones(areaboot_s.size)
             )
 
-            boot_model = sm.MixedLM(yboot_s, Xboot_s, areaboot_ds)
+            boot_model = sm.MixedLM(yboot_s, Xboot_s, areaboot_s)
             boot_fit = boot_model.fit(
                 start_params=np.append(beta_ols, np.std(re_ols) ** 2),
                 reml=reml,
@@ -811,31 +839,32 @@ class EbUnitLevel:
                 maxiter=maxiter,
             )
 
-            gamma_d = float(boot_fit.cov_re) / (
-                float(boot_fit.cov_re) + boot_fit.scale * (1 / np.sum(scale_d ** 2))
+            gammaboot = float(boot_fit.cov_re) / (
+                float(boot_fit.cov_re) + boot_fit.scale * (1 / aboot_factor)
             )
 
             area_est = self._predict_indicator(
                 self.number_samples,
-                yboot_ds,
-                Xboot_ds,
-                areaboot_ds,
-                X_d,
-                np.unique(area_d),
-                self.areas_p,
+                yboot_s,
+                Xboot_s,
+                areaboot_s,
+                Xboot_r,
+                areaboot_r,
+                np.unique(areaboot_r),
                 boot_fit.fe_params,
-                gamma_d,
+                gammaboot,
                 boot_fit.scale,
                 float(boot_fit.cov_re),
-                scale_d,
+                scaleboot_r,
                 max_array_length,
                 indicator,
                 *args,
             )
+            print(area_est)
             print(f"Bootstrap sample {b} completed\n")
         exit()
 
-        for d in areas:
+        for d in areas_ps:
             aread = area == d
             X_d = X[aread]
             X_ds = self.X_s[self.area_s == d]
