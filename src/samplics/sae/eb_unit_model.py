@@ -196,8 +196,11 @@ class EblupUnitLevel:
 
         X_ps = X[ps]
         ps_area = np.isin(areas, areas_ps)
-        Xmean_ps = Xmean[ps_area]
-        Xmean_pr = Xmean[~ps_area]
+        if Xmean is not None:
+            Xmean_ps = Xmean[ps_area]
+            Xmean_pr = Xmean[~ps_area]
+        else:
+            Xmean_ps = Xmean_pr = None
         xbar_ps = self.xbar_s[ps_area]
         a_factor_ps = self.a_factor[ps_area]
         samp_size_ps = self.samp_size[ps_area]
@@ -248,6 +251,7 @@ class EblupUnitLevel:
         self.y_s = y
         self.X_s = X
         self.area_s = area
+        self.areas_s = np.unique(area)
 
         self.a_factor = self._sumby(area, scale)
 
@@ -496,12 +500,16 @@ class EbUnitLevel:
     """implements the unit level model"""
 
     def __init__(
-        self, method: str = "REML", boxcox: Optional[float] = None, function=None,
+        self, method: str = "REML", indicator=None, boxcox: Optional[float] = None,
     ):
 
         # Setting
         self.method: str = method.upper()
-        self.boxcox: Dict[str, Optional(float)] = {"lambda": None}
+        self.number_samples: Optional[int] = None
+        if boxcox is None:
+            self.boxcox = {"lambda": None}
+        else:
+            self.boxcox = {"lambda": boxcox}
 
         # Sample data
         self.y_s: np.ndarray = np.array([])
@@ -552,7 +560,7 @@ class EbUnitLevel:
         self.X_s = X
         self.area_s = area
 
-        self.areas_s = eblupUL.area_s
+        self.areas_s = eblupUL.areas_s
         self.a_factor = eblupUL.a_factor
         self.error_std = eblupUL.error_std
 
@@ -571,7 +579,6 @@ class EbUnitLevel:
         self.fitted = eblupUL.fitted
 
     @staticmethod
-    # @njit
     def _predict_indicator(
         number_samples,
         y_s,
@@ -658,6 +665,8 @@ class EbUnitLevel:
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
 
+        self.number_samples = int(number_samples)
+
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
 
@@ -671,8 +680,23 @@ class EbUnitLevel:
         if intercept:
             X = np.insert(X, 0, 1, axis=1)
 
-        self.eta = self._predict_indicator(
-            number_samples,
+        # (
+        #     ps,
+        #     ps_area,
+        #     X_ps,
+        #     area_ps,
+        #     areas_ps,
+        #     _,
+        #     _,
+        #     xbar_ps,
+        #     a_factor_ps,
+        #     samp_size_ps,
+        #     gamma_ps,
+        #     samp_weight_ps,
+        # ) = EblupUnitLevel._split_data(area, X, None, samp_weight)
+
+        area_est = self._predict_indicator(
+            self.number_samples,
             self.y_s,
             self.X_s,
             self.area_s,
@@ -689,40 +713,121 @@ class EbUnitLevel:
             *args,
         )
 
+        self.area_est = dict(zip(self.areas_s, area_est))
 
-def bootstrap_mse(
-    self,
-    number_reps: int,
-    indicator,
-    X: np.ndarray,
-    area: np.ndarray,
-    scale: Union[Array, Number] = 1,
-    intercept: bool = True,
-    tol: float = 1e-4,
-    maxiter: int = 200,
-    max_array_length=100e6,
-) -> np.ndarray:
+    def bootstrap_mse(
+        self,
+        number_reps: int,
+        indicator,
+        X: np.ndarray,
+        area: np.ndarray,
+        scale: Union[Array, Number] = 1,
+        intercept: bool = True,
+        tol: float = 1e-4,
+        maxiter: int = 200,
+        max_array_length=100e6,
+    ) -> np.ndarray:
 
-    X = formats.numpy_array(X)
-    Xmean = formats.numpy_array(Xmean)
-    area = formats.numpy_array(area)
-    areas = np.unique(areas)
-    pop_size = X.shape[0] + self.samp_size
+        X_p = formats.numpy_array(X)
+        area_p = formats.numpy_array(area)
+        areas_p = np.unique(area_p)
 
-    if intercept:
-        X = np.insert(X, 0, 1, axis=1)
-        Xmean = np.insert(Xmean, 0, 1, axis=1)
+        if intercept:
+            X_p = np.insert(X_p, 0, 1, axis=1)
+            X_s = np.insert(self.X_s, 0, 1, axis=1)
+        else:
+            X_s = self.X_s
 
-    if isinstance(scale, (float, int)):
-        scale = np.ones(X.shape[0]) * scale
-    else:
-        scale = formats.numpy_array(scale)
+        if isinstance(scale, (float, int)):
+            scale = np.ones(X_p.shape[0]) * scale
+        else:
+            scale = formats.numpy_array(scale)
 
-    # for d in areas:
+        ps = np.isin(area_p, self.areas_s)
+        area_ps, area_pr = area_p[ps], area_p[~ps]
 
-    #     y_dr = np.random.normal(scale=, size=)
+        areas, Nd = np.unique(
+            np.append(area_p, self.area_s[np.isin(self.area_s, areas_p)]), return_counts=True
+        )
+        X = np.append(X_p, X_s[np.isin(self.area_s, areas_p)], axis=0)
+        # X_ps, X_pr = X[ps], X[~ps]
+        # mu_ps = X_ps @ self.fixed_effects
+        # mu_pr = X_pr @ self.fixed_effects
+        # mu_p = np.append(mu_ps, mu_pr, axis=0)
+        for b in range(number_reps):
+            re_effects = np.random.normal(scale=self.re_std * (1 - self.gamma) ** 0.5)
+            errors = np.random.normal(scale=scale * self.error_std)
+            yboot = X @ self.fixed_effects + np.repeat(re_effects, Nd) + errors
 
-    return True
+            print(yboot)
+        exit()
+
+        for d in areas:
+            aread = area == d
+            X_d = X[aread]
+            X_ds = X_s[self.area_s == d]
+            scale_d = scale[aread]
+            N_dr = np.sum(aread).astype(int)
+            d_sampled = self.areas_s == d
+            n_ds = int(self.samp_size[d_sampled]) if d in self.areas_s else 0
+            N_d = N_dr + n_ds
+
+            y_d = (
+                X_d @ self.fixed_effects
+                + np.random.normal(scale=self.re_std ** (1 / 2))
+                + np.random.normal(scale=scale_d * (self.error_std ** (1 / 2)))
+            )
+
+            y_d = np.append(y_d, self.y_s)
+            X_d = np.append(X_d, X_ds, axis=0)
+            area_d = np.append(area[aread], self.area_s)
+
+            param_d = indicator(y_d)
+            sample_d = np.random.choice(N_d, size=n_ds, replace=False)
+
+            yboot_ds = y_d[sample_d]
+            Xboot_ds = X_d[sample_d]
+            areaboot_ds = area_d[sample_d]
+
+            reml = True if self.method == "REML" else False
+            beta_ols = sm.OLS(yboot_ds, Xboot_ds).fit().params
+            resid_ols = yboot_ds - np.matmul(Xboot_ds, beta_ols)
+            re_ols = EblupUnitLevel._sumby(areaboot_ds, resid_ols) / EblupUnitLevel._sumby(
+                areaboot_ds, np.ones(areaboot_ds.size)
+            )
+
+            boot_model = sm.MixedLM(yboot_ds, Xboot_ds, areaboot_ds)
+            boot_fit = boot_model.fit(
+                start_params=np.append(beta_ols, np.std(re_ols) ** 2),
+                reml=reml,
+                full_output=True,
+                tol=tol,
+                maxiter=maxiter,
+            )
+
+            gamma_d = float(boot_fit.cov_re) / (
+                float(boot_fit.cov_re) + boot_fit.scale * (1 / np.sum(scale_d ** 2))
+            )
+
+            area_est = self._predict_indicator(
+                self.number_samples,
+                yboot_ds,
+                Xboot_ds,
+                areaboot_ds,
+                X_d,
+                np.unique(area_d),
+                self.areas_p,
+                boot_fit.fe_params,
+                gamma_d,
+                boot_fit.scale,
+                float(boot_fit.cov_re),
+                scale_d,
+                max_array_length,
+                indicator,
+                *args,
+            )
+
+        return yboot_ds
 
 
 class EllUnitLevel:
