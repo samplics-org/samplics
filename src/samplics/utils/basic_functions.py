@@ -11,6 +11,16 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
+def sumby(group, y):  # Could use pd.grouby().sum(), may scale better
+
+    groups = np.unique(group)
+    sums = np.zeros(groups.size)
+    for k, gr in enumerate(groups):
+        sums[k] = np.sum(y[group == gr])
+
+    return sums
+
+
 class BoxCox:
     def get_skewness(self, y: Array) -> float:
 
