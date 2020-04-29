@@ -86,10 +86,8 @@ class EblupUnitLevel:
         y: np.ndarray,
         X: np.ndarray,
         area: np.ndarray,
-        error_std: float,
-        re_std: float,
         samp_weight: Optional[np.ndarray],
-        a_factor: np.ndarray,
+        # a_factor: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
         areas = np.unique(area)
@@ -99,7 +97,7 @@ class EblupUnitLevel:
         samp_size = np.zeros(areas.size)
         for k, d in enumerate(areas):
             sample_d = area == d
-            a_factor_d = a_factor[self.areas_s == d]
+            a_factor_d = self.a_factor[d]
             if samp_weight is None:
                 weight_d = np.ones(np.sum(sample_d))
                 delta_d = 1 / np.sum(a_factor_d)
@@ -111,7 +109,7 @@ class EblupUnitLevel:
             y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
             Xw_d = X[sample_d, :] * aw_factor_d[:, None]
             X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
-            gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
+            gamma[k] = (self.re_std ** 2) / (self.re_std ** 2 + (self.error_std ** 2) * delta_d)
             samp_size[k] = np.sum(sample_d)
 
         return y_mean, X_mean, gamma, samp_size.astype(int)
@@ -181,9 +179,6 @@ class EblupUnitLevel:
         else:
             Xmean_ps = Xmean_pr = None
         xbar_ps = self.xbar_s[ps_area]
-        a_factor_ps = self.a_factor[ps_area]
-        samp_size_ps = self.samp_size[ps_area]
-        gamma_ps = self.gamma[ps_area]
         samp_weight_ps = samp_weight[ps] if samp_weight is not None else None
 
         return (
@@ -195,9 +190,6 @@ class EblupUnitLevel:
             Xmean_ps,
             Xmean_pr,
             xbar_ps,
-            a_factor_ps,
-            samp_size_ps,
-            gamma_ps,
             samp_weight_ps,
         )
 
@@ -281,13 +273,10 @@ class EblupUnitLevel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ybar_s, self.xbar_s, gamma, samp_size = self._area_stats(
-            y, X, area, self.error_std, self.re_std, samp_weight, self.a_factor
-        )
-
+        self.ybar_s, self.xbar_s, gamma, samp_size = self._area_stats(y, X, area, samp_weight)
         self.random_effects = gamma * (self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects))
-        self.gamma = gamma
-        self.samp_size = samp_size
+        self.gamma = dict(zip(self.areas_s, gamma))
+        self.samp_size = dict(zip(self.areas_s, samp_size))
 
         # samp_weight = np.ones(y.size)
         if samp_weight is not None:
@@ -297,54 +286,43 @@ class EblupUnitLevel:
         self.fitted = True
 
     def predict(
-        self,
-        X: Array,
-        Xmean: Array,
-        area: Array,
-        pop_size: Optional[Array] = None,
-        samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
-        intercept: bool = True,
+        self, Xmean: Array, area: Array, pop_size: Optional[Array] = None, intercept: bool = True,
     ) -> None:
 
         if not self.fitted:
             raise ("The model must be fitted first with .fit() before running the prediction.")
 
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-            samp_weight = formats.numpy_array(samp_weight)
-        if isinstance(scale, (float, int)):
-            scale = np.ones(X.shape[0]) * scale
-        else:
-            scale = formats.numpy_array(scale)
-        area = formats.numpy_array(area)
-        X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
-        self.Xbar_p = Xmean
         if intercept:
-            X = np.insert(X, 0, 1, axis=1)
             Xmean = np.insert(Xmean, 0, 1, axis=1)
 
-        (
-            ps,
-            ps_area,
-            X_ps,
-            area_ps,
-            areas_ps,
-            Xmean_ps,
-            Xmean_pr,
-            xbar_ps,
-            a_factor_ps,
-            samp_size_ps,
-            gamma_ps,
-            samp_weight_ps,
-        ) = self._split_data(area, X, Xmean, samp_weight)
+        self.Xbar_p = Xmean
+
+        area = formats.numpy_array(area)
+        areas_p = np.unique(area)
+
+        ps = np.isin(area, self.areas_s)
+        area_ps = area[ps]
+        areas_ps = np.unique(area_ps)
+
+        ps_area = np.isin(areas_p, areas_ps)
+
+        if Xmean is not None:
+            Xmean_ps = Xmean[ps_area]
+            Xmean_pr = Xmean[~ps_area]
+        else:
+            Xmean_ps = Xmean_pr = None
+
+        gamma_ps = np.asarray(list(self.gamma.values()))[ps_area]
 
         if pop_size is not None:
             pop_size = formats.numpy_array(pop_size)
-            samp_rate_ps = samp_size_ps / pop_size[ps_area]
+            pop_size_ps = pop_size[ps_area]
+            samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
+            samp_rate_ps = samp_size_ps / pop_size_ps
             eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
                 samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
-            ) * (self.ybar_s[ps_area] - np.matmul(xbar_ps, self.fixed_effects))
+            ) * (self.ybar_s[ps_area] - np.matmul(self.xbar_s[ps_area], self.fixed_effects))
         elif pop_size is None:
             eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
 
@@ -354,7 +332,8 @@ class EblupUnitLevel:
 
         self.area_est = dict(zip(areas_ps, eta_pred))
 
-        A_ps = np.diag(np.zeros(X_ps.shape[1]))
+        X_ps = self.X_s[np.isin(self.area_s, area)]
+        A_ps = np.diag(np.zeros(Xmean.shape[1]))
         for d in areas_ps:
             areadps = area_ps == d
             n_ps_d = np.sum(areadps)
@@ -364,8 +343,15 @@ class EblupUnitLevel:
             ) * np.ones([n_ps_d, n_ps_d])
             A_ps = A_ps + np.matmul(np.matmul(np.transpose(X_ps_d), np.linalg.inv(V_ps_d)), X_ps_d)
 
+        a_factor_ps = np.asarray(list(self.a_factor.values()))[ps_area]
         mse_ps = self._mse(
-            areas_ps, xbar_ps, Xmean_ps, gamma_ps, samp_size_ps, a_factor_ps, np.linalg.inv(A_ps)
+            areas_ps,
+            self.xbar_s[ps_area],
+            Xmean_ps,
+            gamma_ps,
+            samp_size_ps,
+            a_factor_ps,
+            np.linalg.inv(A_ps),
         )
         self.area_mse = dict(zip(areas_ps, mse_ps))
 
@@ -533,7 +519,7 @@ class EbUnitLevel:
             else:
                 y = y + self.constant
             y = np.log(y)
-        elif self.boxcox is not None and self.boxcox["lambda"] != 0:
+        elif self.boxcox["lambda"] is not None and self.boxcox["lambda"] != 0:
             y = np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
         return y
 
@@ -608,8 +594,7 @@ class EbUnitLevel:
             ss = self.areas_s == d
             ybar_d = self.ybar_s[ss]
             xbar_d = self.xbar_s[ss]
-            gamma_dr = gamma[ss]
-            mu_bias_dr = gamma_dr * (ybar_d - xbar_d @ fixed_effects)
+            mu_bias_dr = self.gamma[d] * (ybar_d - xbar_d @ fixed_effects)
             scale_dr = scale[oos]
             N_dr = np.sum(oos)
             cycle_size = max(int(max_array_length // N_dr), 1)
@@ -625,7 +610,7 @@ class EbUnitLevel:
                 # if cycle_size > 0:
                 #     print(f"{k+1}th batch with {cycle_size} samples (domain {d})")
                 re_effects = np.random.normal(
-                    scale=(sigma2u * (1 - gamma_dr)) ** 0.5, size=cycle_size
+                    scale=(sigma2u * (1 - self.gamma[d])) ** 0.5, size=cycle_size
                 )
                 errors = np.random.normal(
                     scale=scale_dr * (sigma2e ** 0.5), size=(cycle_size, N_dr)
@@ -749,7 +734,6 @@ class EbUnitLevel:
         _, N_d = np.unique(area, return_counts=True)
         scaleboot = np.append(scale_p, self.scale_s[np.isin(self.area_s, areas_p)])
         Xboot = np.append(X_p, self.X_s[np.isin(self.area_s, areas_p)], axis=0)
-        gamma_ps = self.gamma[np.isin(self.areas_s, areas_p)]
 
         k = 0
         bar_length = min(50, number_reps)
@@ -769,15 +753,13 @@ class EbUnitLevel:
                 area_d = area[aread]
                 scaleboot_d = scaleboot[aread]
                 aboot_factor[i] = np.sum(1 / scaleboot_d ** 2)
-                gamma_d = self.gamma[self.areas_s == d]
-                nd = int(self.samp_size[self.areas_s == d])
 
                 Xboot_d = Xboot[aread]
-                re_d = np.random.normal(scale=self.re_std * (1 - gamma_d) ** 0.5)
+                re_d = np.random.normal(scale=self.re_std * (1 - self.gamma[d]) ** 0.5)
                 err_d = np.random.normal(scale=scaleboot_d * self.error_std)
                 yboot_d = Xboot_d @ self.fixed_effects + re_d + err_d
                 # yboot_d = yboot[aread]
-                sample_d = np.random.choice(yboot_d.size, size=nd, replace=False)
+                sample_d = np.random.choice(yboot_d.size, size=self.samp_size[d], replace=False)
 
                 if i == 0:
                     areaboot_s = area_d[sample_d]
