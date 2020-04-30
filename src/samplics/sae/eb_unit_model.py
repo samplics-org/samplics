@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, Callable
 
 import numpy as np
 import pandas as pd
@@ -25,7 +25,7 @@ class EblupUnitLevel:
     ):
         # Setting
         self.method: str = method.upper()
-        self.boxcox: Dict[str, Optional(float)] = {"lambda": None}
+        self.boxcox: Dict[str, Optional[float]] = {"lambda": None}
 
         # Sample data
         self.scale_s: np.ndarray = np.array([])
@@ -38,7 +38,7 @@ class EblupUnitLevel:
         self.xbar_s: np.ndarray = np.array([])
 
         # Fitted data
-        self.fitted: boolean = False
+        self.fitted: bool = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
@@ -86,6 +86,8 @@ class EblupUnitLevel:
         y: np.ndarray,
         X: np.ndarray,
         area: np.ndarray,
+        error_std: float,
+        re_std: float,
         samp_weight: Optional[np.ndarray],
         # a_factor: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -109,7 +111,7 @@ class EblupUnitLevel:
             y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
             Xw_d = X[sample_d, :] * aw_factor_d[:, None]
             X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
-            gamma[k] = (self.re_std ** 2) / (self.re_std ** 2 + (self.error_std ** 2) * delta_d)
+            gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
             samp_size[k] = np.sum(sample_d)
 
         return y_mean, X_mean, gamma, samp_size.astype(int)
@@ -152,9 +154,6 @@ class EblupUnitLevel:
     def _split_data(
         self, area: np.ndarray, X: np.ndarray, Xmean: np.ndarray, samp_weight: np.ndarray
     ) -> Tuple[
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
         np.ndarray,
         np.ndarray,
         np.ndarray,
@@ -273,7 +272,9 @@ class EblupUnitLevel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ybar_s, self.xbar_s, gamma, samp_size = self._area_stats(y, X, area, samp_weight)
+        self.ybar_s, self.xbar_s, gamma, samp_size = self._area_stats(
+            y, X, area, self.error_std, self.re_std, samp_weight
+        )
         self.random_effects = gamma * (self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects))
         self.gamma = dict(zip(self.areas_s, gamma))
         self.samp_size = dict(zip(self.areas_s, samp_size))
@@ -290,7 +291,9 @@ class EblupUnitLevel:
     ) -> None:
 
         if not self.fitted:
-            raise ("The model must be fitted first with .fit() before running the prediction.")
+            raise Exception(
+                "The model must be fitted first with .fit() before running the prediction."
+            )
 
         Xmean = formats.numpy_array(Xmean)
         if intercept:
@@ -382,9 +385,9 @@ class EblupUnitLevel:
             samp_weight = formats.numpy_array(samp_weight)
 
         if isinstance(scale, (float, int)):
-            scale = np.ones(X.shape[0]) * scale
+            scale_p = np.ones(X.shape[0]) * scale
         else:
-            scale = formats.numpy_array(scale)
+            scale_p = formats.numpy_array(scale)
 
         (
             ps,
@@ -395,14 +398,12 @@ class EblupUnitLevel:
             Xmean_ps,
             Xmean_pr,
             xbar_ps,
-            a_factor_ps,
-            samp_size_ps,
-            gamma_ps,
             samp_weight_ps,
         ) = self._split_data(area, X, Xmean, samp_weight)
 
+        samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
         X_ps_sorted = X_ps[np.argsort(area_ps)]
-        scale_ps_ordered = scale[ps]
+        scale_ps_ordered = scale_p[ps]
         if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
             scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
         nb_areas = areas_ps.shape[0]
@@ -436,13 +437,7 @@ class EblupUnitLevel:
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ybar_s, boot_xbar_s, boot_gamma, _ = self._area_stats(
-                y_ps_boot[k, :],
-                X_ps_sorted,
-                area_ps,
-                boot_error_std,
-                boot_re_std,
-                samp_weight_ps,
-                scale_ps_ordered,
+                y_ps_boot[k, :], X_ps_sorted, area_ps, boot_error_std, boot_re_std, samp_weight_ps,
             )
             boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
             boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
@@ -475,10 +470,7 @@ class EbUnitLevel:
         self.indicator = indicator
         self.constant = constant
         self.number_samples: Optional[int] = None
-        if boxcox is None:
-            self.boxcox = {"lambda": None}
-        else:
-            self.boxcox = {"lambda": boxcox}
+        self.boxcox = {"lambda": boxcox}
 
         # Sample data
         self.scale_s: np.ndarray = np.array([])
@@ -491,7 +483,7 @@ class EbUnitLevel:
         self.xbar_s: np.ndarray = np.array([])
 
         # Fitted data
-        self.fitted: boolean = False
+        self.fitted: bool = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
@@ -511,15 +503,17 @@ class EbUnitLevel:
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
 
-    def _transformation(self, y):
-        if self.boxcox is not None and self.boxcox["lambda"] == 0:
+    def _transformation(self, y: np.ndarray) -> np.ndarray:
+        if self.boxcox["lambda"] is None:
+            pass
+        elif self.boxcox["lambda"] == 0.0:
             y_min = np.min(y)
             if y_min <= 0 and self.constant <= -y_min:
                 y = y + (0.25 - y_min)  # to make the series positive for log-transformation
             else:
                 y = y + self.constant
             y = np.log(y)
-        elif self.boxcox["lambda"] is not None and self.boxcox["lambda"] != 0:
+        elif self.boxcox["lambda"] != 0.0:
             y = np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
         return y
 
@@ -562,22 +556,22 @@ class EbUnitLevel:
 
     def _predict_indicator(
         self,
-        number_samples,
-        y_s,
-        X_s,
-        area_s,
-        X_r,
-        area_r,
-        areas_r,
-        fixed_effects,
-        gamma,
-        sigma2e,
-        sigma2u,
-        scale,
-        max_array_length,
-        indicator,
-        *args,
-    ):
+        number_samples: int,
+        y_s: np.ndarray,
+        X_s: np.ndarray,
+        area_s: np.ndarray,
+        X_r: np.ndarray,
+        area_r: np.ndarray,
+        areas_r: np.ndarray,
+        fixed_effects: np.ndarray,
+        gamma: np.ndarray,
+        sigma2e: float,
+        sigma2u: float,
+        scale: np.ndarray,
+        max_array_length: int,
+        indicator: Callable[..., np.ndarray],
+        *args: Any,
+    ) -> np.ndarray:
         nb_areas_r = len(areas_r)
         mu_r = X_r @ fixed_effects
 
@@ -638,19 +632,21 @@ class EbUnitLevel:
 
     def predict(
         self,
-        number_samples,
-        indicator,
-        X,
-        area,
-        samp_weight=None,
-        scale=1,
-        intercept=True,
-        max_array_length=100e6,
-        *args,
-    ):
+        number_samples: int,
+        indicator: Callable[..., np.ndarray],
+        X: np.ndarray,
+        area: np.ndarray,
+        samp_weight: Optional[np.ndarray] = None,
+        scale: np.ndarray = 1,
+        intercept: bool = True,
+        max_array_length: int = int(100e6),
+        *args: Any,
+    ) -> None:
 
         if not self.fitted:
-            raise ("The model must be fitted first with .fit() before running the prediction.")
+            raise Exception(
+                "The model must be fitted first with .fit() before running the prediction."
+            )
 
         self.number_samples = int(number_samples)
 
@@ -705,15 +701,15 @@ class EbUnitLevel:
     def bootstrap_mse(
         self,
         number_reps: int,
-        indicator,
+        indicator: Callable[..., np.ndarray],
         X: np.ndarray,
         area: np.ndarray,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
         tol: float = 1e-4,
         maxiter: int = 200,
-        max_array_length=100e6,
-        *args,
+        max_array_length: int = int(100e6),
+        *args: Any,
     ) -> np.ndarray:
 
         X_p = formats.numpy_array(X)
@@ -820,7 +816,7 @@ class EbUnitLevel:
                     end="",
                 )
 
-        return yboot_ds
+        return np.ones(3)
 
 
 class EllUnitLevel:

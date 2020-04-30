@@ -369,7 +369,7 @@ class EblupAreaLevel:
         maxiter: int = 100,
         abstol: float = 1.0e-4,
         reltol: float = 0.0,
-    ) -> Tuple[Dict[Any, float], Dict[Any, float]]:
+    ) -> None:
 
         if isinstance(b_const, (int, float)):
             b_const = np.ones(area_s.size) * b_const
