@@ -12,6 +12,41 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
+def area_stats(
+    y: np.ndarray,
+    X: np.ndarray,
+    area: np.ndarray,
+    error_std: float,
+    re_std: float,
+    a_factor: Dict[Any, float],
+    samp_weight: Optional[np.ndarray],
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+
+    areas = np.unique(area)
+    y_mean = np.zeros(areas.size)
+    X_mean = np.zeros((areas.size, X.shape[1]))
+    gamma = np.zeros(areas.size)
+    samp_size = np.zeros(areas.size)
+    for k, d in enumerate(areas):
+        sample_d = area == d
+        a_factor_d = a_factor[d]
+        if samp_weight is None:
+            weight_d = np.ones(np.sum(sample_d))
+            delta_d = 1 / np.sum(a_factor_d)
+        else:
+            weight_d = samp_weight[sample_d]
+            delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
+        aw_factor_d = weight_d * a_factor_d
+        yw_d = y[sample_d] * a_factor_d
+        y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
+        Xw_d = X[sample_d, :] * aw_factor_d[:, None]
+        X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
+        gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
+        samp_size[k] = np.sum(sample_d)
+
+    return y_mean, X_mean, gamma, samp_size.astype(int)
+
+
 def fixed_coefficients(
     area: np.ndarray,
     y: np.ndarray,

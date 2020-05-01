@@ -1,0 +1,24 @@
+rule infer
+  command = /Users/msdiallo/.pyenv/versions/3.7.6/bin/python -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --no-report-errors --nofail --quick $in
+  description = infer $module
+rule check
+  command = /Users/msdiallo/.pyenv/versions/3.7.6/bin/python -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --analyze-annotated --nofail --quick $in
+  description = check $module
+build /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi: infer /Users/msdiallo/Dev/survey-methods/samplics/src/samplics/utils/types.py
+  imports = /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/samplics.utils.types.imports
+  module = samplics.utils.types
+build /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/formats.pyi: infer /Users/msdiallo/Dev/survey-methods/samplics/src/samplics/utils/formats.py | /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi
+  imports = /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/samplics.utils.formats.imports
+  module = samplics.utils.formats
+build /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/checks.pyi: infer /Users/msdiallo/Dev/survey-methods/samplics/src/samplics/utils/checks.py | /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/formats.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi
+  imports = /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/samplics.utils.checks.imports
+  module = samplics.utils.checks
+build /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/basic_functions.pyi: infer /Users/msdiallo/Dev/survey-methods/samplics/src/samplics/utils/basic_functions.py | /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/checks.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/formats.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi
+  imports = /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/samplics.utils.basic_functions.imports
+  module = samplics.utils.basic_functions
+build /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/sae/sae_core_functions.pyi: infer /Users/msdiallo/Dev/survey-methods/samplics/src/samplics/sae/sae_core_functions.py | /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/checks.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/formats.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi
+  imports = /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/samplics.sae.sae_core_functions.imports
+  module = samplics.sae.sae_core_functions
+build /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/sae/eb_unit_model.pyi: check /Users/msdiallo/Dev/survey-methods/samplics/src/samplics/sae/eb_unit_model.py | /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/checks.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/formats.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/basic_functions.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/sae/sae_core_functions.pyi
+  imports = /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/samplics.sae.eb_unit_model.imports
+  module = samplics.sae.eb_unit_model

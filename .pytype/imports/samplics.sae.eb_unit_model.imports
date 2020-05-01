@@ -1,0 +1,9 @@
+pandas/__init__ /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/default.pyi
+statsmodels/api /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/default.pyi
+scipy/stats/__init__ /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/default.pyi
+samplics/utils/types /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi
+samplics/utils/formats /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/formats.pyi
+samplics/utils/checks /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/checks.pyi
+samplics/utils/basic_functions /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/basic_functions.pyi
+scipy/linalg/__init__ /Users/msdiallo/Dev/survey-methods/samplics/.pytype/imports/default.pyi
+samplics/sae/sae_core_functions /Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/sae/sae_core_functions.pyi

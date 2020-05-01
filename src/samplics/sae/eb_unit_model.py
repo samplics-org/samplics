@@ -12,6 +12,8 @@ from scipy.stats import boxcox, norm as normal
 from samplics.utils import checks, formats, basic_functions
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
+from samplics.sae.sae_core_functions import area_stats
+
 
 # from samplics.sae.core_sae_functions import fixed_coefficients, iterative_fisher_scoring
 
@@ -81,40 +83,6 @@ class EblupUnitLevel:
 
         return beta
 
-    def _area_stats(
-        self,
-        y: np.ndarray,
-        X: np.ndarray,
-        area: np.ndarray,
-        error_std: float,
-        re_std: float,
-        samp_weight: Optional[np.ndarray],
-        # a_factor: np.ndarray,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-
-        areas = np.unique(area)
-        y_mean = np.zeros(areas.size)
-        X_mean = np.zeros((areas.size, X.shape[1]))
-        gamma = np.zeros(areas.size)
-        samp_size = np.zeros(areas.size)
-        for k, d in enumerate(areas):
-            sample_d = area == d
-            a_factor_d = self.a_factor[d]
-            if samp_weight is None:
-                weight_d = np.ones(np.sum(sample_d))
-                delta_d = 1 / np.sum(a_factor_d)
-            else:
-                weight_d = samp_weight[sample_d]
-                delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
-            aw_factor_d = weight_d * a_factor_d
-            yw_d = y[sample_d] * a_factor_d
-            y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
-            Xw_d = X[sample_d, :] * aw_factor_d[:, None]
-            X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
-            gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
-            samp_size[k] = np.sum(sample_d)
-
-        return y_mean, X_mean, gamma, samp_size.astype(int)
 
     def _mse(
         self,
@@ -272,8 +240,8 @@ class EblupUnitLevel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ybar_s, self.xbar_s, gamma, samp_size = self._area_stats(
-            y, X, area, self.error_std, self.re_std, samp_weight
+        self.ybar_s, self.xbar_s, gamma, samp_size = area_stats(
+            y, X, area, self.error_std, self.re_std, self.a_factor, samp_weight
         )
         self.random_effects = gamma * (self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects))
         self.gamma = dict(zip(self.areas_s, gamma))
@@ -436,8 +404,14 @@ class EblupUnitLevel:
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
-            boot_ybar_s, boot_xbar_s, boot_gamma, _ = self._area_stats(
-                y_ps_boot[k, :], X_ps_sorted, area_ps, boot_error_std, boot_re_std, samp_weight_ps,
+            boot_ybar_s, boot_xbar_s, boot_gamma, _ = area_stats(
+                y_ps_boot[k, :],
+                X_ps_sorted,
+                area_ps,
+                boot_error_std,
+                boot_re_std,
+                self.a_factor,
+                samp_weight_ps,
             )
             boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
             boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
@@ -452,6 +426,9 @@ class EblupUnitLevel:
         print("\n")
 
         return np.mean(boot_mse, axis=0)
+
+
+
 
 
 class EbUnitLevel:

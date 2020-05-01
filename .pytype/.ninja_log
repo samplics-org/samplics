@@ -1,0 +1,7 @@
+# ninja log v5
+0	638	1588264455045667950	/Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/types.pyi	3e0ea28fb3d16a5d
+638	1324	1588264455726737467	/Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/formats.pyi	c924d46df506e94d
+1324	2050	1588264456447631367	/Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/checks.pyi	7fadf65ab041c055
+2050	2800	1588264457197030418	/Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/utils/basic_functions.pyi	f26ff494bd984289
+2800	3663	1588264458044885648	/Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/sae/sae_core_functions.pyi	b20a912ffb4f4a34
+0	894	1588264573276564174	/Users/msdiallo/Dev/survey-methods/samplics/.pytype/pyi/samplics/sae/sae_core_functions.pyi	b20a912ffb4f4a34
