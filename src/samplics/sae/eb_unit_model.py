@@ -83,7 +83,6 @@ class EblupUnitLevel:
 
         return beta
 
-
     def _mse(
         self,
         areas: np.ndarray,
@@ -428,9 +427,6 @@ class EblupUnitLevel:
         return np.mean(boot_mse, axis=0)
 
 
-
-
-
 class EbUnitLevel:
     """implements the unit level model"""
 
@@ -480,18 +476,19 @@ class EbUnitLevel:
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
 
-    def _transformation(self, y: np.ndarray) -> np.ndarray:
+    def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
         if self.boxcox["lambda"] is None:
             pass
         elif self.boxcox["lambda"] == 0.0:
-            y_min = np.min(y)
-            if y_min <= 0 and self.constant <= -y_min:
-                y = y + (0.25 - y_min)  # to make the series positive for log-transformation
+            if inverse:
+                z = np.exp(y) - self.constant
             else:
-                y = y + self.constant
-            y = np.log(y)
+                z = np.log(y + self.constant)
         elif self.boxcox["lambda"] != 0.0:
-            y = np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
+            if inverse:
+                z = np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
+            else:
+                z = np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
         return y
 
     def fit(
@@ -506,7 +503,7 @@ class EbUnitLevel:
         maxiter: int = 200,
     ) -> None:
 
-        y = self._transformation(y)
+        y = self._transformation(y, inverse=False)
 
         eblupUL = EblupUnitLevel()
         eblupUL.fit(y, X, area, samp_weight, scale, intercept, tol, maxiter)
@@ -600,7 +597,7 @@ class EbUnitLevel:
                 )
 
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
-            y_d = np.exp(y_d) - self.constant
+            y_d = self._transformation(y_d, inverse=True)
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=y_d, *args)  # *)
 
         print("\n")
