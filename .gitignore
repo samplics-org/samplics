@@ -101,13 +101,12 @@ celerybeat-schedule
 # mkdocs documentation
 /site
 
-# mypy
+# mypy and other type checkers
 .mypy_cache/
 .dmypy.json
 dmypy.json
-
-# Pyre type checker
 .pyre
+.pytype
 
 # IDE and Editors
 .idea
