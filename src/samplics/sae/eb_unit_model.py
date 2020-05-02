@@ -544,14 +544,16 @@ class EbUnitLevel:
         scale: np.ndarray,
         max_array_length: int,
         indicator: Callable[..., np.ndarray],
+        show_progress: bool,
         *args: Any,
     ) -> np.ndarray:
         nb_areas_r = len(areas_r)
         mu_r = X_r @ fixed_effects
 
-        k = 0
-        bar_length = min(50, nb_areas_r)
-        steps = np.linspace(1, nb_areas_r - 1, bar_length).astype(int)
+        if show_progress:
+            k = 0
+            bar_length = min(50, nb_areas_r)
+            steps = np.linspace(1, nb_areas_r - 1, bar_length).astype(int)
 
         print(f"Generating the {number_samples} replicates samples\n")
         eta = np.zeros((number_samples, nb_areas_r)) * np.nan
@@ -589,18 +591,21 @@ class EbUnitLevel:
                 else:
                     y_dr = np.append(y_dr, y_dr_j, axis=0)
 
-            if i in steps:
-                k += 1
-                print(
-                    f"\r[%-{bar_length}s] %d%%" % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
-                    end="",
-                )
+            if show_progress:
+                if i in steps:
+                    k += 1
+                    print(
+                        f"\r[%-{bar_length}s] %d%%"
+                        % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                        end="",
+                    )
 
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
-            y_d = self._transformation(y_d, inverse=True)
-            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=y_d, *args)  # *)
+            z_d = self._transformation(y_d, inverse=True)
+            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)  # *)
 
-        print("\n")
+        if show_progress:
+            print("\n")
 
         return np.mean(eta, axis=0)
 
@@ -614,6 +619,7 @@ class EbUnitLevel:
         scale: np.ndarray = 1,
         intercept: bool = True,
         max_array_length: int = int(100e6),
+        show_progress: bool = True,
         *args: Any,
     ) -> None:
 
@@ -667,6 +673,7 @@ class EbUnitLevel:
             scale,
             max_array_length,
             indicator,
+            show_progress,
             *args,
         )
 
@@ -700,46 +707,59 @@ class EbUnitLevel:
 
         ps = np.isin(area_p, self.areas_s)
         areas_ps = np.unique(area_p[ps])
+        nb_areas_ps = areas_ps.size
         area = np.append(area_p, self.area_s[np.isin(self.area_s, areas_p)])
         _, N_d = np.unique(area, return_counts=True)
         scaleboot = np.append(scale_p, self.scale_s[np.isin(self.area_s, areas_p)])
         Xboot = np.append(X_p, self.X_s[np.isin(self.area_s, areas_p)], axis=0)
 
+        aboot_factor = np.zeros(nb_areas_ps)
+
+        area_dict = {}
+        sample_dict = {}
+        for i, d in enumerate(areas_p):
+            area_dict[d] = area == d
+            sample_dict[d] = np.random.choice(N_d[i], size=self.samp_size[d], replace=False)
+
+        cycle_size = max(int(max_array_length // sum(N_d)), 1)
+        number_cycles = int(number_reps // cycle_size)
+        last_cycle_size = number_reps % cycle_size
+
         k = 0
-        bar_length = min(50, number_reps)
+        bar_length = min(50, (number_cycles + 1) * nb_areas_ps)
         steps = np.linspace(1, number_reps - 1, bar_length).astype(int)
 
-        aboot_factor = np.zeros(areas_ps.size)
-
-        cycles_size = (int(max_array_length // N_dr), 1)
-        number_cycles = int(number_samples // cycle_size)
-        last_cycle_size = number_samples % cycle_size
-                
+        eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
+        eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
         print(f"Generating the {number_reps} bootstrap replicates\n")
-        for b in range(number_reps):
-            yboot_s = np.asarray([])
-            Xboot_s = np.asarray([])
-            Xboot_r = np.asarray([])
-            areaboot_s = np.asarray([])
-            areaboot_r = np.asarray([])
+        for b in range(number_cycles + 1):
+            if b == number_cycles:
+                cycle_size = last_cycle_size
+
             for i, d in enumerate(areas_ps):
-                aread = area == d
+                aread = area_dict[d]
                 area_d = area[aread]
                 scaleboot_d = scaleboot[aread]
                 aboot_factor[i] = np.sum(1 / scaleboot_d ** 2)
+                sample_d = sample_dict[d]
 
                 Xboot_d = Xboot[aread]
-                re_d = np.random.normal(scale=self.re_std * (1 - self.gamma[d]) ** 0.5)
-                err_d = np.random.normal(scale=scaleboot_d * self.error_std)
-                yboot_d = Xboot_d @ self.fixed_effects + re_d + err_d
-                sample_d = np.random.choice(yboot_d.size, size=self.samp_size[d], replace=False)
+                re_d = np.random.normal(
+                    scale=self.re_std * (1 - self.gamma[d]) ** 0.5, size=cycle_size
+                )
+                err_d = np.random.normal(
+                    scale=self.error_std * scaleboot_d, size=(cycle_size, np.sum(aread))
+                )
+                yboot_d = (Xboot_d @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
+                zboot_d = self._transformation(yboot_d, inverse=True)
+                eta_pop_boot[b, i] = indicator(zboot_d, *args)
 
                 if i == 0:
                     yboot = yboot_d
                     areaboot_s = area_d[sample_d]
                     areaboot_r = area_d[~sample_d]
                     scaleboot_r = scaleboot_d[~sample_d]
-                    yboot_s = yboot_d[sample_d]
+                    yboot_s = yboot_d[:, sample_d]
                     Xboot_s = Xboot_d[sample_d]
                     Xboot_r = Xboot_d[~sample_d]
                 else:
@@ -747,18 +767,29 @@ class EbUnitLevel:
                     areaboot_s = np.append(areaboot_s, area_d[sample_d])
                     areaboot_r = np.append(areaboot_r, area_d[~sample_d])
                     scaleboot_r = np.append(scaleboot_r, scaleboot_d[~sample_d])
-                    yboot_s = np.append(yboot_s, yboot_d[sample_d])
+                    yboot_s = np.append(yboot_s, yboot_d[:, sample_d], axis=1)
                     Xboot_s = np.append(Xboot_s, Xboot_d[sample_d], axis=0)
                     Xboot_r = np.append(Xboot_r, Xboot_d[~sample_d], axis=0)
 
+                run_id = b * nb_areas_ps + i
+                if run_id in steps:
+                    k += 1
+                    print(
+                        f"\r[%-{bar_length}s] %d%%"
+                        % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                        end="",
+                    )
+            print("\n")
+
+        for b in range(number_reps):
             reml = True if self.method == "REML" else False
-            beta_ols = sm.OLS(yboot_s, Xboot_s).fit().params
-            resid_ols = yboot_s - np.matmul(Xboot_s, beta_ols)
+            beta_ols = sm.OLS(yboot_s[b, :], Xboot_s).fit().params
+            resid_ols = yboot_s[b, :] - np.matmul(Xboot_s, beta_ols)
             re_ols = basic_functions.sumby(areaboot_s, resid_ols) / basic_functions.sumby(
                 areaboot_s, np.ones(areaboot_s.size)
             )
 
-            boot_model = sm.MixedLM(yboot_s, Xboot_s, areaboot_s)
+            boot_model = sm.MixedLM(yboot_s[b, :], Xboot_s, areaboot_s)
             boot_fit = boot_model.fit(
                 start_params=np.append(beta_ols, np.std(re_ols) ** 2),
                 reml=reml,
@@ -771,9 +802,9 @@ class EbUnitLevel:
                 float(boot_fit.cov_re) + boot_fit.scale * (1 / aboot_factor)
             )
 
-            area_est = self._predict_indicator(
+            eta_samp_boot[b, :] = self._predict_indicator(
                 self.number_samples,
-                yboot_s,
+                yboot_s[b, :],
                 Xboot_s,
                 areaboot_s,
                 Xboot_r,
@@ -786,16 +817,11 @@ class EbUnitLevel:
                 scaleboot_r,
                 max_array_length,
                 indicator,
+                False,
                 *args,
             )
-            if i in steps:
-                k += 1
-                print(
-                    f"\r[%-{bar_length}s] %d%%" % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
-                    end="",
-                )
 
-        return np.ones(3)
+        return mse_boot
 
 
 class EllUnitLevel:
