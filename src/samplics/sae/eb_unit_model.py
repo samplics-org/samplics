@@ -489,7 +489,7 @@ class EbUnitLevel:
                 z = np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
             else:
                 z = np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
-        return y
+        return z
 
     def fit(
         self,
@@ -711,6 +711,10 @@ class EbUnitLevel:
 
         aboot_factor = np.zeros(areas_ps.size)
 
+        cycles_size = (int(max_array_length // N_dr), 1)
+        number_cycles = int(number_samples // cycle_size)
+        last_cycle_size = number_samples % cycle_size
+                
         print(f"Generating the {number_reps} bootstrap replicates\n")
         for b in range(number_reps):
             yboot_s = np.asarray([])
@@ -728,10 +732,10 @@ class EbUnitLevel:
                 re_d = np.random.normal(scale=self.re_std * (1 - self.gamma[d]) ** 0.5)
                 err_d = np.random.normal(scale=scaleboot_d * self.error_std)
                 yboot_d = Xboot_d @ self.fixed_effects + re_d + err_d
-                # yboot_d = yboot[aread]
                 sample_d = np.random.choice(yboot_d.size, size=self.samp_size[d], replace=False)
 
                 if i == 0:
+                    yboot = yboot_d
                     areaboot_s = area_d[sample_d]
                     areaboot_r = area_d[~sample_d]
                     scaleboot_r = scaleboot_d[~sample_d]
@@ -739,6 +743,7 @@ class EbUnitLevel:
                     Xboot_s = Xboot_d[sample_d]
                     Xboot_r = Xboot_d[~sample_d]
                 else:
+                    yboot = np.append(yboot, yboot_d)
                     areaboot_s = np.append(areaboot_s, area_d[sample_d])
                     areaboot_r = np.append(areaboot_r, area_d[~sample_d])
                     scaleboot_r = np.append(scaleboot_r, scaleboot_d[~sample_d])
