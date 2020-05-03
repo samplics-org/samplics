@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
-
+import warnings
 import numpy as np
 import pandas as pd
 
@@ -27,15 +27,15 @@ class EblupUnitLevel:
     ):
         # Setting
         self.method: str = method.upper()
-        self.boxcox: Dict[str, Optional[float]] = {"lambda": None}
 
         # Sample data
         self.scale_s: np.ndarray = np.array([])
+        self.a_factor_s: Dict[Any, float] = {}
         self.y_s: np.ndarray = np.array([])
         self.X_s: np.ndarray = np.array([])
         self.area_s: np.ndarray = np.array([])
         self.areas_s: np.ndarray = np.array([])
-        self.samp_size: Dict[Any, float] = {}
+        self.samp_size: Dict[Any, int] = {}
         self.ybar_s: np.ndarray = np.array([])
         self.xbar_s: np.ndarray = np.array([])
 
@@ -50,7 +50,6 @@ class EblupUnitLevel:
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
         self.gamma: Dict[Any, float] = {}
-        self.a_factor: Dict[Any, float] = {}
 
         # Predict(ion/ed) data
         self.areas_p: np.ndarray = np.array([])
@@ -191,7 +190,7 @@ class EblupUnitLevel:
         self.area_s = area
         self.areas_s = np.unique(area)
 
-        self.a_factor = dict(zip(self.areas_s, basic_functions.sumby(area, scale)))
+        self.a_factor_s = dict(zip(self.areas_s, basic_functions.sumby(area, scale)))
 
         reml = True if self.method == "REML" else False
         beta_ols = sm.OLS(y, X).fit().params
@@ -240,7 +239,7 @@ class EblupUnitLevel:
         self.goodness["BIC"] = bic
 
         self.ybar_s, self.xbar_s, gamma, samp_size = area_stats(
-            y, X, area, self.error_std, self.re_std, self.a_factor, samp_weight
+            y, X, area, self.error_std, self.re_std, self.a_factor_s, samp_weight
         )
         self.random_effects = gamma * (self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects))
         self.gamma = dict(zip(self.areas_s, gamma))
@@ -313,7 +312,7 @@ class EblupUnitLevel:
             ) * np.ones([n_ps_d, n_ps_d])
             A_ps = A_ps + np.matmul(np.matmul(np.transpose(X_ps_d), np.linalg.inv(V_ps_d)), X_ps_d)
 
-        a_factor_ps = np.asarray(list(self.a_factor.values()))[ps_area]
+        a_factor_ps = np.asarray(list(self.a_factor_s.values()))[ps_area]
         mse_ps = self._mse(
             areas_ps,
             self.xbar_s[ps_area],
@@ -409,7 +408,7 @@ class EblupUnitLevel:
                 area_ps,
                 boot_error_std,
                 boot_re_std,
-                self.a_factor,
+                self.a_factor_s,
                 samp_weight_ps,
             )
             boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
@@ -447,11 +446,12 @@ class EbUnitLevel:
 
         # Sample data
         self.scale_s: np.ndarray = np.array([])
+        self.a_factor: Dict[Any, float] = {}
         self.y_s: np.ndarray = np.array([])
         self.X_s: np.ndarray = np.array([])
         self.area_s: np.ndarray = np.array([])
         self.areas_s: np.ndarray = np.array([])
-        self.samp_size: np.ndarray = np.array([])
+        self.samp_size: Dict[Any, int] = {}
         self.ybar_s: np.ndarray = np.array([])
         self.xbar_s: np.ndarray = np.array([])
 
@@ -465,12 +465,11 @@ class EbUnitLevel:
         self.error_std: float = 0
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.gamma: np.ndarray = np.array([])
-        self.a_factor: np.ndarray = np.array([])
+        self.gamma: Dict[Any, float] = {}
 
         # Predict(ion/ed) data
         self.areas_p: np.ndarray = np.array([])
-        self.pop_size: np.ndarray = np.array([])
+        self.pop_size: Dict[Any, float] = {}
         self.Xbar_p: np.ndarray = np.array([])
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
@@ -513,7 +512,7 @@ class EbUnitLevel:
         self.X_s = eblupUL.X_s
         self.area_s = eblupUL.area_s
         self.areas_s = eblupUL.areas_s
-        self.a_factor = eblupUL.a_factor
+        self.a_factor_s = eblupUL.a_factor_s
         self.error_std = eblupUL.error_std
         self.fixed_effects = eblupUL.fixed_effects
         self.fe_std = eblupUL.fe_std
@@ -554,8 +553,8 @@ class EbUnitLevel:
             k = 0
             bar_length = min(50, nb_areas_r)
             steps = np.linspace(1, nb_areas_r - 1, bar_length).astype(int)
+            print(f"Generating the {number_samples} replicates samples")
 
-        print(f"Generating the {number_samples} replicates samples\n")
         eta = np.zeros((number_samples, nb_areas_r)) * np.nan
         for i, d in enumerate(areas_r):
             # print(d)
@@ -709,17 +708,50 @@ class EbUnitLevel:
         areas_ps = np.unique(area_p[ps])
         nb_areas_ps = areas_ps.size
         area = np.append(area_p, self.area_s[np.isin(self.area_s, areas_p)])
+        scale = np.append(scale_p, self.scale_s[np.isin(self.area_s, areas_p)])
         _, N_d = np.unique(area, return_counts=True)
-        scaleboot = np.append(scale_p, self.scale_s[np.isin(self.area_s, areas_p)])
-        Xboot = np.append(X_p, self.X_s[np.isin(self.area_s, areas_p)], axis=0)
+        X = np.append(X_p, self.X_s[np.isin(self.area_s, areas_p)], axis=0)
 
         aboot_factor = np.zeros(nb_areas_ps)
 
+        indice_dict = {}
         area_dict = {}
+        scale_dict = {}
+        scale_s_dict = {}
+        scale_r_dict = {}
+        a_factor_dict = {}
+        sample_size_dict = {}
         sample_dict = {}
+        X_dict = {}
+        X_s_dict = {}
+        X_r_dict = {}
         for i, d in enumerate(areas_p):
-            area_dict[d] = area == d
-            sample_dict[d] = np.random.choice(N_d[i], size=self.samp_size[d], replace=False)
+            indice_dict[d] = area == d
+            area_dict[d] = area[indice_dict[d]]
+            scale_dict[d] = scale[indice_dict[d]]
+            a_factor_dict[d] = self.a_factor_s[d] if d in self.areas_s else 0
+            sample_size_dict[d] = self.samp_size[d] if d in self.areas_s else 0
+            samp_d = np.random.choice(N_d[i], size=sample_size_dict[d], replace=False)
+            sample_dict[d] = np.isin(np.linspace(0, N_d[i] - 1, N_d[i]).astype(int), samp_d)
+            scale_s_dict[d] = scale_dict[d][sample_dict[d]]
+            scale_r_dict[d] = scale_dict[d][~sample_dict[d]]
+            X_dict[d] = X[indice_dict[d]]
+            X_s_dict[d] = X_dict[d][sample_dict[d]]
+            X_r_dict[d] = X_dict[d][~sample_dict[d]]
+            if i == 0:
+                area_s = np.repeat(d, X_s_dict[d].shape[0])
+                area_r = np.repeat(d, X_r_dict[d].shape[0])
+                scale_s = scale_s_dict[d]
+                scale_r = scale_r_dict[d]
+                X_s = X_s_dict[d]
+                X_r = X_r_dict[d]
+            else:
+                area_s = np.append(area_s, np.repeat(d, X_s_dict[d].shape[0]))
+                area_r = np.append(area_r, np.repeat(d, X_r_dict[d].shape[0]))
+                scale_s = np.append(scale_s, scale_s_dict[d])
+                scale_r = np.append(scale_r, scale_r_dict[d])
+                X_s = np.append(X_s, X_s_dict[d], axis=0)
+                X_r = np.append(X_r, X_r_dict[d], axis=0)
 
         cycle_size = max(int(max_array_length // sum(N_d)), 1)
         number_cycles = int(number_reps // cycle_size)
@@ -727,49 +759,34 @@ class EbUnitLevel:
 
         k = 0
         bar_length = min(50, (number_cycles + 1) * nb_areas_ps)
-        steps = np.linspace(1, number_reps - 1, bar_length).astype(int)
+        steps = np.linspace(1, (number_cycles + 1) * nb_areas_ps - 1, bar_length).astype(int)
 
         eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
         eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
-        print(f"Generating the {number_reps} bootstrap replicates\n")
+        y_samp_boot = np.zeros((number_reps, np.sum(list(sample_size_dict.values()))))
+        print(f"Generating the {number_reps} bootstrap replicate populations")
         for b in range(number_cycles + 1):
             if b == number_cycles:
                 cycle_size = last_cycle_size
 
             for i, d in enumerate(areas_ps):
-                aread = area_dict[d]
-                area_d = area[aread]
-                scaleboot_d = scaleboot[aread]
-                aboot_factor[i] = np.sum(1 / scaleboot_d ** 2)
+                aboot_factor[i] = a_factor_dict[d]
                 sample_d = sample_dict[d]
 
-                Xboot_d = Xboot[aread]
                 re_d = np.random.normal(
                     scale=self.re_std * (1 - self.gamma[d]) ** 0.5, size=cycle_size
                 )
                 err_d = np.random.normal(
-                    scale=self.error_std * scaleboot_d, size=(cycle_size, np.sum(aread))
+                    scale=self.error_std * scale_dict[d], size=(cycle_size, np.sum(indice_dict[d]))
                 )
-                yboot_d = (Xboot_d @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
+                yboot_d = (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
                 zboot_d = self._transformation(yboot_d, inverse=True)
                 eta_pop_boot[b, i] = indicator(zboot_d, *args)
 
                 if i == 0:
-                    yboot = yboot_d
-                    areaboot_s = area_d[sample_d]
-                    areaboot_r = area_d[~sample_d]
-                    scaleboot_r = scaleboot_d[~sample_d]
                     yboot_s = yboot_d[:, sample_d]
-                    Xboot_s = Xboot_d[sample_d]
-                    Xboot_r = Xboot_d[~sample_d]
                 else:
-                    yboot = np.append(yboot, yboot_d)
-                    areaboot_s = np.append(areaboot_s, area_d[sample_d])
-                    areaboot_r = np.append(areaboot_r, area_d[~sample_d])
-                    scaleboot_r = np.append(scaleboot_r, scaleboot_d[~sample_d])
                     yboot_s = np.append(yboot_s, yboot_d[:, sample_d], axis=1)
-                    Xboot_s = np.append(Xboot_s, Xboot_d[sample_d], axis=0)
-                    Xboot_r = np.append(Xboot_r, Xboot_d[~sample_d], axis=0)
 
                 run_id = b * nb_areas_ps + i
                 if run_id in steps:
@@ -781,22 +798,44 @@ class EbUnitLevel:
                     )
             print("\n")
 
+            start = b * cycle_size
+            end = (b + 1) * cycle_size
+            y_samp_boot[start:end, :] = yboot_s
+
+        k = 0
+        bar_length = min(50, number_reps)
+        steps = np.linspace(1, number_reps - 1, bar_length).astype(int)
+
+        print(f"Fitting and predicting using each of the {number_reps} bootstrap populations")
         for b in range(number_reps):
             reml = True if self.method == "REML" else False
-            beta_ols = sm.OLS(yboot_s[b, :], Xboot_s).fit().params
-            resid_ols = yboot_s[b, :] - np.matmul(Xboot_s, beta_ols)
-            re_ols = basic_functions.sumby(areaboot_s, resid_ols) / basic_functions.sumby(
-                areaboot_s, np.ones(areaboot_s.size)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore")
+                beta_ols = sm.OLS(y_samp_boot[b, :], X_s).fit().params
+            resid_ols = y_samp_boot[b, :] - np.matmul(X_s, beta_ols)
+            re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
+                area_s, np.ones(area_s.size)
+            )
+        for b in range(number_reps):
+            reml = True if self.method == "REML" else False
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore")
+                beta_ols = sm.OLS(y_samp_boot[b, :], X_s).fit().params
+            resid_ols = y_samp_boot[b, :] - np.matmul(X_s, beta_ols)
+            re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
+                area_s, np.ones(area_s.size)
             )
 
-            boot_model = sm.MixedLM(yboot_s[b, :], Xboot_s, areaboot_s)
-            boot_fit = boot_model.fit(
-                start_params=np.append(beta_ols, np.std(re_ols) ** 2),
-                reml=reml,
-                full_output=True,
-                tol=tol,
-                maxiter=maxiter,
-            )
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore")
+                boot_model = sm.MixedLM(y_samp_boot[b, :], X_s, area_s)
+                boot_fit = boot_model.fit(
+                    start_params=np.append(beta_ols, np.std(re_ols) ** 2),
+                    reml=reml,
+                    full_output=True,
+                    tol=tol,
+                    maxiter=maxiter,
+                )
 
             gammaboot = float(boot_fit.cov_re) / (
                 float(boot_fit.cov_re) + boot_fit.scale * (1 / aboot_factor)
@@ -804,22 +843,32 @@ class EbUnitLevel:
 
             eta_samp_boot[b, :] = self._predict_indicator(
                 self.number_samples,
-                yboot_s[b, :],
-                Xboot_s,
-                areaboot_s,
-                Xboot_r,
-                areaboot_r,
-                np.unique(areaboot_r),
+                y_samp_boot[b, :],
+                X_s,
+                area_s,
+                X_r,
+                area_r,
+                np.unique(area_r),
                 boot_fit.fe_params,
                 gammaboot,
                 boot_fit.scale,
                 float(boot_fit.cov_re),
-                scaleboot_r,
+                scale_r,
                 max_array_length,
                 indicator,
                 False,
                 *args,
             )
+
+            if b in steps:
+                k += 1
+                print(
+                    f"\r[%-{bar_length}s] %d%%" % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                    end="",
+                )
+        print("\n")
+
+        mse_boot = np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
 
         return mse_boot
 
