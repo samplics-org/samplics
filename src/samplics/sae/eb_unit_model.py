@@ -759,7 +759,7 @@ class EbUnitLevel:
 
         k = 0
         bar_length = min(50, (number_cycles + 1) * nb_areas_ps)
-        steps = np.linspace(1, (number_cycles + 1) * nb_areas_ps - 1, bar_length).astype(int)
+        steps = np.linspace(0, (number_cycles + 1) * nb_areas_ps - 1, bar_length).astype(int)
 
         eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
         eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
@@ -790,17 +790,17 @@ class EbUnitLevel:
 
                 run_id = b * nb_areas_ps + i
                 if run_id in steps:
-                    k += 1
                     print(
                         f"\r[%-{bar_length}s] %d%%"
                         % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
                         end="",
                     )
-            print("\n")
+                    k += 1
 
             start = b * cycle_size
             end = (b + 1) * cycle_size
             y_samp_boot[start:end, :] = yboot_s
+        print("\n")
 
         k = 0
         bar_length = min(50, number_reps)
