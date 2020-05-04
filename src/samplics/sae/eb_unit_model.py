@@ -692,25 +692,28 @@ class EbUnitLevel:
         *args: Any,
     ) -> np.ndarray:
 
-        X_p = formats.numpy_array(X)
-        area_p = formats.numpy_array(area)
-        areas_p = np.unique(area_p)
+        X_r = formats.numpy_array(X)
+        area_r = formats.numpy_array(area)
+        areas_r = np.unique(area_r)
 
         if intercept:
-            X_p = np.insert(X_p, 0, 1, axis=1)
+            X_r = np.insert(X_r, 0, 1, axis=1)
 
         if isinstance(scale, (float, int)):
-            scale_p = np.ones(X_p.shape[0]) * scale
+            scale_r = np.ones(X_r.shape[0]) * scale
         else:
-            scale_p = formats.numpy_array(scale)
+            scale_r = formats.numpy_array(scale)
 
-        ps = np.isin(area_p, self.areas_s)
-        areas_ps = np.unique(area_p[ps])
+        ps = np.isin(area_r, self.areas_s)
+        areas_ps = np.unique(area_r[ps])
         nb_areas_ps = areas_ps.size
-        area = np.append(area_p, self.area_s[np.isin(self.area_s, areas_p)])
-        scale = np.append(scale_p, self.scale_s[np.isin(self.area_s, areas_p)])
+        area_s = self.area_s[np.isin(self.area_s, areas_r)]
+        area = np.append(area_r, area_s)
+        scale_s = self.scale_s[np.isin(self.area_s, areas_r)]
+        scale = np.append(scale_r, scale_s)
         _, N_d = np.unique(area, return_counts=True)
-        X = np.append(X_p, self.X_s[np.isin(self.area_s, areas_p)], axis=0)
+        X_s = self.X_s[np.isin(self.area_s, areas_r)]
+        X = np.append(X_r, X_s, axis=0)
 
         aboot_factor = np.zeros(nb_areas_ps)
 
@@ -718,40 +721,21 @@ class EbUnitLevel:
         area_dict = {}
         scale_dict = {}
         scale_s_dict = {}
-        scale_r_dict = {}
         a_factor_dict = {}
         sample_size_dict = {}
         sample_dict = {}
         X_dict = {}
         X_s_dict = {}
-        X_r_dict = {}
-        for i, d in enumerate(areas_p):
+        for i, d in enumerate(areas_r):
+            area_ds = area_s == d
             indice_dict[d] = area == d
             area_dict[d] = area[indice_dict[d]]
             scale_dict[d] = scale[indice_dict[d]]
             a_factor_dict[d] = self.a_factor_s[d] if d in self.areas_s else 0
             sample_size_dict[d] = self.samp_size[d] if d in self.areas_s else 0
-            samp_d = np.random.choice(N_d[i], size=sample_size_dict[d], replace=False)
-            sample_dict[d] = np.isin(np.linspace(0, N_d[i] - 1, N_d[i]).astype(int), samp_d)
-            scale_s_dict[d] = scale_dict[d][sample_dict[d]]
-            scale_r_dict[d] = scale_dict[d][~sample_dict[d]]
+            scale_s_dict[d] = scale_s[area_s == d] if d in self.areas_s else 0
             X_dict[d] = X[indice_dict[d]]
-            X_s_dict[d] = X_dict[d][sample_dict[d]]
-            X_r_dict[d] = X_dict[d][~sample_dict[d]]
-            if i == 0:
-                area_s = np.repeat(d, X_s_dict[d].shape[0])
-                area_r = np.repeat(d, X_r_dict[d].shape[0])
-                scale_s = scale_s_dict[d]
-                scale_r = scale_r_dict[d]
-                X_s = X_s_dict[d]
-                X_r = X_r_dict[d]
-            else:
-                area_s = np.append(area_s, np.repeat(d, X_s_dict[d].shape[0]))
-                area_r = np.append(area_r, np.repeat(d, X_r_dict[d].shape[0]))
-                scale_s = np.append(scale_s, scale_s_dict[d])
-                scale_r = np.append(scale_r, scale_r_dict[d])
-                X_s = np.append(X_s, X_s_dict[d], axis=0)
-                X_r = np.append(X_r, X_r_dict[d], axis=0)
+            X_s_dict[d] = X_s[area_s == d]  # X_dict[d][sample_dict[d]]
 
         cycle_size = max(int(max_array_length // sum(N_d)), 1)
         number_cycles = int(number_reps // cycle_size)
@@ -759,7 +743,7 @@ class EbUnitLevel:
 
         k = 0
         bar_length = min(50, (number_cycles + 1) * nb_areas_ps)
-        steps = np.linspace(0, (number_cycles + 1) * nb_areas_ps - 1, bar_length).astype(int)
+        steps = np.linspace(1, (number_cycles + 1) * nb_areas_ps - 1, bar_length).astype(int)
 
         eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
         eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
@@ -771,7 +755,6 @@ class EbUnitLevel:
 
             for i, d in enumerate(areas_ps):
                 aboot_factor[i] = a_factor_dict[d]
-                sample_d = sample_dict[d]
 
                 re_d = np.random.normal(
                     scale=self.re_std * (1 - self.gamma[d]) ** 0.5, size=cycle_size
@@ -784,22 +767,23 @@ class EbUnitLevel:
                 eta_pop_boot[b, i] = indicator(zboot_d, *args)
 
                 if i == 0:
-                    yboot_s = yboot_d[:, sample_d]
+                    yboot_s = yboot_d[:, -sample_size_dict[d] :]
                 else:
-                    yboot_s = np.append(yboot_s, yboot_d[:, sample_d], axis=1)
+                    yboot_s = np.append(yboot_s, yboot_d[:, -sample_size_dict[d] :], axis=1)
 
                 run_id = b * nb_areas_ps + i
                 if run_id in steps:
+                    k += 1
                     print(
                         f"\r[%-{bar_length}s] %d%%"
                         % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
                         end="",
                     )
-                    k += 1
 
             start = b * cycle_size
             end = (b + 1) * cycle_size
             y_samp_boot[start:end, :] = yboot_s
+
         print("\n")
 
         k = 0
