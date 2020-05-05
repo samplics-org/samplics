@@ -175,12 +175,14 @@ class EblupUnitLevel:
         area = formats.numpy_array(area)
         y = formats.numpy_array(y)
         X = formats.numpy_array(X)
-        if intercept and isinstance(X, np.ndarray):
-            X = np.insert(X, 0, 1, axis=1)
-
+        if intercept:
+            if X.shape[1] is None:
+                n = X.shape[0]
+                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            else:
+                X = np.insert(X, 0, 1, axis=1)
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
-
         if isinstance(scale, (float, int)):
             scale = np.ones(y.shape[0]) * scale
         else:
@@ -265,8 +267,11 @@ class EblupUnitLevel:
 
         Xmean = formats.numpy_array(Xmean)
         if intercept:
-            Xmean = np.insert(Xmean, 0, 1, axis=1)
-
+            if Xmean.shape[1] is None:
+                n = Xmean.shape[0]
+                Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
+            else:
+                Xmean = np.insert(Xmean, 0, 1, axis=1)
         self.Xbar_p = Xmean
 
         area = formats.numpy_array(area)
@@ -275,7 +280,6 @@ class EblupUnitLevel:
         ps = np.isin(area, self.areas_s)
         area_ps = area[ps]
         areas_ps = np.unique(area_ps)
-
         ps_area = np.isin(areas_p, areas_ps)
 
         if Xmean is not None:
@@ -344,11 +348,14 @@ class EblupUnitLevel:
         X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
         area = formats.numpy_array(area)
-
         if intercept:
-            X = np.insert(X, 0, 1, axis=1)
-            Xmean = np.insert(Xmean, 0, 1, axis=1)
-
+            if X.shape[1] is None:
+                n = X.shape[0]
+                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+                Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
+            else:
+                X = np.insert(X, 0, 1, axis=1)
+                Xmean = np.insert(Xmean, 0, 1, axis=1)
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
 
@@ -644,8 +651,11 @@ class EbUnitLevel:
         self.areas_p = np.unique(area)
         X = formats.numpy_array(X)
         if intercept:
-            X = np.insert(X, 0, 1, axis=1)
-
+            if X.shape[1] is None:
+                n = X.shape[0]
+                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            else:
+                X = np.insert(X, 0, 1, axis=1)
         # (
         #     ps,
         #     ps_area,
@@ -701,7 +711,11 @@ class EbUnitLevel:
         areas_r = np.unique(area_r)
 
         if intercept:
-            X_r = np.insert(X_r, 0, 1, axis=1)
+            if X_r.shape[1] is None:
+                n = X_r.shape[0]
+                X_r = np.insert(X_r.reshape(n, 1), 0, 1, axis=1)
+            else:
+                X_r = np.insert(X_r, 0, 1, axis=1)
 
         if isinstance(scale, (float, int)):
             scale_r = np.ones(X_r.shape[0]) * scale
@@ -844,8 +858,7 @@ class EbUnitLevel:
             if b in steps:
                 k += 1
                 print(
-                    f"\r[%-{bar_length}s] %d%%" % ("=" * k , k  * (100 / bar_length)),
-                    end="",
+                    f"\r[%-{bar_length}s] %d%%" % ("=" * k, k * (100 / bar_length)), end="",
                 )
         print("\n")
 
@@ -938,7 +951,43 @@ class EllUnitLevel:
             self.samp_size = eblupUL.samp_size
             self.fitted = eblupUL.fitted
         else:
-            pass
+            y = formats.numpy_array(y)
+            X = formats.numpy_array(X)
+            if intercept:
+                if X.shape[1] is None:
+                    n = X.shape[0]
+                    X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+                else:
+                    X = np.insert(X, 0, 1, axis=1)
+            if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+                samp_weight = formats.numpy_array(samp_weight)
+            if isinstance(scale, (float, int)):
+                scale = np.ones(y.shape[0]) * scale
+            else:
+                scale = formats.numpy_array(scale)
+
+            self.ybar_s, self.xbar_s, _, samp_size = area_stats(
+                y, X, area, 0, 1, self.a_factor_s, samp_weight
+            )
+            self.random_effects = gamma * (
+                self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects)
+            )
+            self.gamma = dict(zip(self.areas_s, gamma))
+            self.samp_size = dict(zip(self.areas_s, samp_size))
+            self.scale_s = scale
+            self.y_s = y
+            self.X_s = X
+            self.area_s = area
+            self.areas_s = np.unique(area)
+            self.a_factor_s = a_factor_s
+            self.error_std = eblupUL.error_std
+            self.fixed_effects = eblupUL.fixed_effects
+            self.fe_std = eblupUL.fe_std
+            self.re_std = eblupUL.re_std
+            self.re_std_cov = eblupUL.re_std_cov
+            self.ybar_s = eblupUL.ybar_s
+            self.xbar_s = eblupUL.xbar_s
+            self.samp_size = eblupUL.samp_size
 
 
 class RobustUnitLevel:
