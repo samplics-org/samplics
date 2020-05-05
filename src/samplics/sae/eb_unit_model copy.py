@@ -27,8 +27,6 @@ class EblupUnitLevel:
     ):
         # Setting
         self.method: str = method.upper()
-        if self.method not in ("REML", "ML"):
-            raise AssertionError("Value provided for method is not valid!")
 
         # Sample data
         self.scale_s: np.ndarray = np.array([])
@@ -441,8 +439,6 @@ class EbUnitLevel:
 
         # Setting
         self.method: str = method.upper()
-        if self.method not in ("REML", "ML"):
-            raise AssertionError("Value provided for method is not valid!")
         self.indicator = indicator
         self.constant = constant
         self.number_samples: Optional[int] = None
@@ -747,20 +743,19 @@ class EbUnitLevel:
         number_cycles = number_cycles + 1 if last_cycle_size > 0 else number_cycles
 
         k = 0
-        bar_length = min(50, number_cycles * nb_areas_ps)
-        steps = np.linspace(1, number_cycles * nb_areas_ps - 1, bar_length).astype(int)
+        bar_length = min(50, (number_cycles + 1) * nb_areas_ps)
+        steps = np.linspace(1, (number_cycles + 1) * nb_areas_ps - 1, bar_length).astype(int)
 
         eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
         eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
         y_samp_boot = np.zeros((number_reps, np.sum(list(sample_size_dict.values()))))
         print(f"Generating the {number_reps} bootstrap replicate populations")
         for b in range(number_cycles):
-            start = b * cycle_size
-            end = (b + 1) * cycle_size
-            if b == number_cycles - 1:
-                end = number_reps
+            if b == number_cycles:
                 cycle_size = last_cycle_size
 
+            start = b * cycle_size
+            end = (b + 1) * cycle_size
             for i, d in enumerate(areas_ps):
                 aboot_factor[i] = a_factor_dict[d]
 
@@ -844,7 +839,7 @@ class EbUnitLevel:
             if b in steps:
                 k += 1
                 print(
-                    f"\r[%-{bar_length}s] %d%%" % ("=" * k , k  * (100 / bar_length)),
+                    f"\r[%-{bar_length}s] %d%%" % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
                     end="",
                 )
         print("\n")
@@ -857,88 +852,7 @@ class EbUnitLevel:
 class EllUnitLevel:
     """implement the ELL unit level model"""
 
-    def __init__(
-        self,
-        method: str = "MOM",
-        boxcox: Optional[float] = None,
-        constant: Number = 0,
-        indicator: Optional[Any] = None,
-    ):
-
-        # Setting
-        self.method: str = method.upper()
-        if self.method not in ("REML", "ML"):
-            raise AssertionError("Value provided for method is not valid!")
-        self.indicator = indicator
-        self.constant = constant
-        self.boxcox = {"lambda": boxcox}
-
-        self.a_factor: Dict[Any, float] = {}
-        self.y_s: np.ndarray = np.array([])
-        self.X_s: np.ndarray = np.array([])
-        self.area_s: np.ndarray = np.array([])
-        self.areas_s: np.ndarray = np.array([])
-        self.samp_size: Dict[Any, int] = {}
-        self.ybar_s: np.ndarray = np.array([])
-        self.xbar_s: np.ndarray = np.array([])
-
-        # Fitted data
-        self.fitted: bool = False
-        self.fixed_effects: np.ndarray = np.array([])
-        self.fe_std: np.ndarray = np.array([])
-        self.random_effects: np.ndarray = np.array([])
-        self.re_std: float = 0
-        self.re_std_cov: float = 0
-        self.error_std: float = 0
-        self.convergence: Dict[str, Union[float, int, bool]] = {}
-        self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.gamma: Dict[Any, float] = {}
-
-        # Predict(ion/ed) data
-        self.areas_p: np.ndarray = np.array([])
-        self.pop_size: Dict[Any, float] = {}
-        self.Xbar_p: np.ndarray = np.array([])
-        self.number_reps: int = 0
-        self.area_est: Dict[Any, float] = {}
-        self.area_mse: Dict[Any, float] = {}
-
-    def fit(
-        self,
-        y: Array,
-        X: Array,
-        area: Array,
-        samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
-        intercept: bool = True,
-        tol: float = 1e-4,
-        maxiter: int = 200,
-    ) -> None:
-
-        y = self._transformation(y, inverse=False)
-
-        if self.method in ("REML", "ML"):
-            eblupUL = EblupUnitLevel()
-            eblupUL.fit(y, X, area, samp_weight, scale, intercept, tol, maxiter)
-            self.scale_s = eblupUL.scale_s
-            self.y_s = eblupUL.y_s
-            self.X_s = eblupUL.X_s
-            self.area_s = eblupUL.area_s
-            self.areas_s = eblupUL.areas_s
-            self.a_factor_s = eblupUL.a_factor_s
-            self.error_std = eblupUL.error_std
-            self.fixed_effects = eblupUL.fixed_effects
-            self.fe_std = eblupUL.fe_std
-            self.re_std = eblupUL.re_std
-            self.re_std_cov = eblupUL.re_std_cov
-            self.convergence = eblupUL.convergence
-            self.goodness = eblupUL.goodness
-            self.ybar_s = eblupUL.ybar_s
-            self.xbar_s = eblupUL.xbar_s
-            self.gamma = eblupUL.gamma
-            self.samp_size = eblupUL.samp_size
-            self.fitted = eblupUL.fitted
-        else:
-            pass
+    pass
 
 
 class RobustUnitLevel:
