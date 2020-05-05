@@ -808,19 +808,19 @@ class EbUnitLevel:
 
         k = 0
         bar_length = min(50, number_reps)
-        steps = np.linspace(1, number_reps - 1, bar_length).astype(int)
+        steps = np.linspace(1, number_reps, bar_length).astype(int)
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")
+            beta_ols = sm.OLS(y_samp_boot[0, :], X_s).fit().params
+        resid_ols = y_samp_boot[0, :] - np.matmul(X_s, beta_ols)
+        re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
+            area_s, np.ones(area_s.size)
+        )
 
         print(f"Fitting and predicting using each of the {number_reps} bootstrap populations")
         for b in range(number_reps):
             reml = True if self.method == "REML" else False
-            with warnings.catch_warnings():
-                warnings.filterwarnings("ignore")
-                beta_ols = sm.OLS(y_samp_boot[b, :], X_s).fit().params
-            resid_ols = y_samp_boot[b, :] - np.matmul(X_s, beta_ols)
-            re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
-                area_s, np.ones(area_s.size)
-            )
-
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore")
                 boot_model = sm.MixedLM(y_samp_boot[b, :], X_s, area_s)
@@ -858,7 +858,8 @@ class EbUnitLevel:
             if b in steps:
                 k += 1
                 print(
-                    f"\r[%-{bar_length}s] %d%%" % ("=" * k, k * (100 / bar_length)), end="",
+                    f"\r[%-{bar_length}s] %d%%" % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                    end="",
                 )
         print("\n")
 
@@ -966,28 +967,101 @@ class EllUnitLevel:
             else:
                 scale = formats.numpy_array(scale)
 
+            self.scale_s = scale
+            self.y_s = y
+            self.X_s = X
+            self.area_s = area
+            self.areas_s = np.unique(area)
+            self.a_factor_s = dict(zip(self.areas_s, basic_functions.sumby(area, scale)))
             self.ybar_s, self.xbar_s, _, samp_size = area_stats(
                 y, X, area, 0, 1, self.a_factor_s, samp_weight
             )
             self.random_effects = gamma * (
                 self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects)
             )
-            self.gamma = dict(zip(self.areas_s, gamma))
             self.samp_size = dict(zip(self.areas_s, samp_size))
-            self.scale_s = scale
-            self.y_s = y
-            self.X_s = X
-            self.area_s = area
-            self.areas_s = np.unique(area)
-            self.a_factor_s = a_factor_s
             self.error_std = eblupUL.error_std
-            self.fixed_effects = eblupUL.fixed_effects
-            self.fe_std = eblupUL.fe_std
-            self.re_std = eblupUL.re_std
-            self.re_std_cov = eblupUL.re_std_cov
-            self.ybar_s = eblupUL.ybar_s
-            self.xbar_s = eblupUL.xbar_s
-            self.samp_size = eblupUL.samp_size
+            ols_fit = sm.OLS(y, X).fit()
+            beta_ols = ols_fit.params
+            resid_ols = y - np.matmul(X, beta_ols)
+            re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
+                area_s, np.ones(area_s.size)
+            )
+            self.fixed_effects = beta_ols
+            # self.fe_std = eblupUL.fe_std
+            # self.re_std = eblupUL.re_std
+            # self.re_std_cov = eblupUL.re_std_cov
+
+    def predict(
+        self,
+        number_samples: int,
+        indicator: Callable[..., np.ndarray],
+        X: np.ndarray,
+        area: np.ndarray,
+        samp_weight: Optional[np.ndarray] = None,
+        scale: np.ndarray = 1,
+        intercept: bool = True,
+        max_array_length: int = int(100e6),
+        show_progress: bool = True,
+        *args: Any,
+    ) -> None:
+
+        if not self.fitted:
+            raise Exception(
+                "The model must be fitted first with .fit() before running the prediction."
+            )
+
+        self.number_samples = int(number_samples)
+        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+            samp_weight = formats.numpy_array(samp_weight)
+        if isinstance(scale, (float, int)):
+            scale = np.ones(X.shape[0]) * scale
+        else:
+            scale = formats.numpy_array(scale)
+        area = formats.numpy_array(area)
+        self.areas_p = np.unique(area)
+        X = formats.numpy_array(X)
+        if intercept:
+            if X.shape[1] is None:
+                n = X.shape[0]
+                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            else:
+                X = np.insert(X, 0, 1, axis=1)
+        # (
+        #     ps,
+        #     ps_area,
+        #     X_ps,
+        #     area_ps,
+        #     areas_ps,
+        #     _,
+        #     _,
+        #     xbar_ps,
+        #     a_factor_ps,
+        #     samp_size_ps,
+        #     gamma_ps,
+        #     samp_weight_ps,
+        # ) = EblupUnitLevel._split_data(area, X, None, samp_weight)
+
+        area_est = self._predict_indicator(
+            self.number_samples,
+            self.y_s,
+            self.X_s,
+            self.area_s,
+            X,
+            area,
+            self.areas_p,
+            self.fixed_effects,
+            self.gamma,
+            self.error_std ** 2,
+            self.re_std ** 2,
+            scale,
+            max_array_length,
+            indicator,
+            show_progress,
+            *args,
+        )
+
+        self.area_est = dict(zip(self.areas_p, area_est))
 
 
 class RobustUnitLevel:
