@@ -7,7 +7,7 @@ import math
 
 import statsmodels.api as sm
 
-from scipy.stats import boxcox, norm as normal
+from scipy.stats import norm as normal
 
 from samplics.utils import checks, formats, basic_functions
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
@@ -176,7 +176,7 @@ class EblupUnitLevel:
         y = formats.numpy_array(y)
         X = formats.numpy_array(X)
         if intercept:
-            if X.shape[1] is None:
+            if X.ndim == 1:
                 n = X.shape[0]
                 X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
             else:
@@ -267,7 +267,7 @@ class EblupUnitLevel:
 
         Xmean = formats.numpy_array(Xmean)
         if intercept:
-            if Xmean.shape[1] is None:
+            if Xmean.ndim == 1:
                 n = Xmean.shape[0]
                 Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
             else:
@@ -308,7 +308,7 @@ class EblupUnitLevel:
         self.area_est = dict(zip(areas_ps, eta_pred))
 
         X_ps = self.X_s[np.isin(self.area_s, area)]
-        A_ps = np.diag(np.zeros(Xmean.shape[1]))
+        A_ps = np.diag(np.zeros(Xmean.shape[1])) if Xmean.ndim >=2 else  np.asarray([0])
         for d in areas_ps:
             areadps = area_ps == d
             n_ps_d = np.sum(areadps)
@@ -349,7 +349,7 @@ class EblupUnitLevel:
         Xmean = formats.numpy_array(Xmean)
         area = formats.numpy_array(area)
         if intercept:
-            if X.shape[1] is None:
+            if X.ndim == 1:
                 n = X.shape[0]
                 X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
                 Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
@@ -488,7 +488,7 @@ class EbUnitLevel:
 
     def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
         if self.boxcox["lambda"] is None:
-            pass
+            z = y
         elif self.boxcox["lambda"] == 0.0:
             if inverse:
                 z = np.exp(y) - self.constant
@@ -513,30 +513,31 @@ class EbUnitLevel:
         maxiter: int = 200,
     ) -> None:
 
-        y = self._transformation(y, inverse=False)
+        y_transformed = basic_functions.transform(
+            y, llambda=self.boxcox["lambda"], constant=self.constant, inverse=False
+        )
 
-        eblupUL = EblupUnitLevel()
-        eblupUL.fit(y, X, area, samp_weight, scale, intercept, tol, maxiter)
+        eblup_ul = EblupUnitLevel()
+        eblup_ul.fit(y_transformed, X, area, samp_weight, scale, intercept, tol, maxiter)
 
-        self.scale_s = eblupUL.scale_s
-        self.y_s = eblupUL.y_s
-        self.X_s = eblupUL.X_s
-        self.area_s = eblupUL.area_s
-        self.areas_s = eblupUL.areas_s
-        self.a_factor_s = eblupUL.a_factor_s
-        self.error_std = eblupUL.error_std
-        self.fixed_effects = eblupUL.fixed_effects
-        self.fe_std = eblupUL.fe_std
-        self.re_std = eblupUL.re_std
-        self.re_std_cov = eblupUL.re_std_cov
-        self.convergence = eblupUL.convergence
-        self.goodness = eblupUL.goodness
-        self.ybar_s = eblupUL.ybar_s
-        self.xbar_s = eblupUL.xbar_s
-        self.gamma = eblupUL.gamma
-        self.samp_size = eblupUL.samp_size
-
-        self.fitted = eblupUL.fitted
+        self.scale_s = eblup_ul.scale_s
+        self.y_s = eblup_ul.y_s
+        self.X_s = eblup_ul.X_s
+        self.area_s = eblup_ul.area_s
+        self.areas_s = eblup_ul.areas_s
+        self.a_factor_s = eblup_ul.a_factor_s
+        self.error_std = eblup_ul.error_std
+        self.fixed_effects = eblup_ul.fixed_effects
+        self.fe_std = eblup_ul.fe_std
+        self.re_std = eblup_ul.re_std
+        self.re_std_cov = eblup_ul.re_std_cov
+        self.convergence = eblup_ul.convergence
+        self.goodness = eblup_ul.goodness
+        self.ybar_s = eblup_ul.ybar_s
+        self.xbar_s = eblup_ul.xbar_s
+        self.gamma = eblup_ul.gamma
+        self.samp_size = eblup_ul.samp_size
+        self.fitted = eblup_ul.fitted
 
     def _predict_indicator(
         self,
@@ -611,7 +612,9 @@ class EbUnitLevel:
                     )
 
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
-            z_d = self._transformation(y_d, inverse=True)
+            z_d = basic_functions.transform(
+                y_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
+            )
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)  # *)
 
         if show_progress:
@@ -651,7 +654,7 @@ class EbUnitLevel:
         self.areas_p = np.unique(area)
         X = formats.numpy_array(X)
         if intercept:
-            if X.shape[1] is None:
+            if X.ndim==1:
                 n = X.shape[0]
                 X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
             else:
@@ -711,7 +714,7 @@ class EbUnitLevel:
         areas_r = np.unique(area_r)
 
         if intercept:
-            if X_r.shape[1] is None:
+            if X_r.ndim == 1:
                 n = X_r.shape[0]
                 X_r = np.insert(X_r.reshape(n, 1), 0, 1, axis=1)
             else:
@@ -785,7 +788,9 @@ class EbUnitLevel:
                     scale=self.error_std * scale_dict[d], size=(cycle_size, np.sum(indice_dict[d]))
                 )
                 yboot_d = (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
-                zboot_d = self._transformation(yboot_d, inverse=True)
+                zboot_d = basic_functions.transform(
+                    yboot_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
+                )
                 eta_pop_boot[start:end, i] = indicator(zboot_d, *args)
 
                 if i == 0:
@@ -881,7 +886,7 @@ class EllUnitLevel:
 
         # Setting
         self.method: str = method.upper()
-        if self.method not in ("REML", "ML"):
+        if self.method not in ("REML", "ML", "MOM"):
             raise AssertionError("Value provided for method is not valid!")
         self.indicator = indicator
         self.constant = constant
@@ -928,45 +933,54 @@ class EllUnitLevel:
         maxiter: int = 200,
     ) -> None:
 
-        y = self._transformation(y, inverse=False)
+        y = formats.numpy_array(y)
+        X = formats.numpy_array(X)
+        if intercept:
+            if X.ndim == 1:
+                n = X.shape[0]
+                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            else:
+                X = np.insert(X, 0, 1, axis=1)
+        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+            samp_weight = formats.numpy_array(samp_weight)
+        if isinstance(scale, (float, int)):
+            scale = np.ones(y.shape[0]) * scale
+        else:
+            scale = formats.numpy_array(scale)
 
         if self.method in ("REML", "ML"):
-            eblupUL = EblupUnitLevel()
-            eblupUL.fit(y, X, area, samp_weight, scale, intercept, tol, maxiter)
-            self.scale_s = eblupUL.scale_s
-            self.y_s = eblupUL.y_s
-            self.X_s = eblupUL.X_s
-            self.area_s = eblupUL.area_s
-            self.areas_s = eblupUL.areas_s
-            self.a_factor_s = eblupUL.a_factor_s
-            self.error_std = eblupUL.error_std
-            self.fixed_effects = eblupUL.fixed_effects
-            self.fe_std = eblupUL.fe_std
-            self.re_std = eblupUL.re_std
-            self.re_std_cov = eblupUL.re_std_cov
-            self.convergence = eblupUL.convergence
-            self.goodness = eblupUL.goodness
-            self.ybar_s = eblupUL.ybar_s
-            self.xbar_s = eblupUL.xbar_s
-            self.gamma = eblupUL.gamma
-            self.samp_size = eblupUL.samp_size
-            self.fitted = eblupUL.fitted
+            eb_ul = EbUnitLevel(
+                method=self.method, boxcox=self.boxcox["lambda"], constant=self.constant
+            )
+            eb_ul.fit(y, X, area, samp_weight, scale, False, tol, maxiter)
+            self.scale_s = eb_ul.scale_s
+            self.y_s = eb_ul.y_s
+            self.X_s = eb_ul.X_s
+            self.area_s = eb_ul.area_s
+            self.areas_s = eb_ul.areas_s
+            self.a_factor_s = eb_ul.a_factor_s
+            self.error_std = eb_ul.error_std
+            self.fixed_effects = eb_ul.fixed_effects
+            self.fe_std = eb_ul.fe_std
+            self.re_std = eb_ul.re_std
+            self.re_std_cov = eb_ul.re_std_cov
+            self.convergence = eb_ul.convergence
+            self.goodness = eb_ul.goodness
+            self.ybar_s = eb_ul.ybar_s
+            self.xbar_s = eb_ul.xbar_s
+            self.gamma = eb_ul.gamma
+            self.samp_size = eb_ul.samp_size
+            self.fitted = eb_ul.fitted
         else:
-            y = formats.numpy_array(y)
-            X = formats.numpy_array(X)
-            if intercept:
-                if X.shape[1] is None:
-                    n = X.shape[0]
-                    X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
-                else:
-                    X = np.insert(X, 0, 1, axis=1)
-            if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-                samp_weight = formats.numpy_array(samp_weight)
-            if isinstance(scale, (float, int)):
-                scale = np.ones(y.shape[0]) * scale
-            else:
-                scale = formats.numpy_array(scale)
-
+            eb_ul = EbUnitLevel(boxcox=self.boxcox["lambda"], constant=self.constant)
+            ols_fit = sm.OLS(y, X).fit()
+            beta_ols = ols_fit.params
+            resid_ols = y - np.matmul(X, beta_ols)
+            re_ols = basic_functions.sumby(self.area_s, resid_ols) / basic_functions.sumby(
+                self.area_s, np.ones(self.area_s.size)
+            )
+            self.error_std = 111
+            self.fixed_effects = beta_ols
             self.scale_s = scale
             self.y_s = y
             self.X_s = X
@@ -976,21 +990,146 @@ class EllUnitLevel:
             self.ybar_s, self.xbar_s, _, samp_size = area_stats(
                 y, X, area, 0, 1, self.a_factor_s, samp_weight
             )
-            self.random_effects = gamma * (
-                self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects)
-            )
             self.samp_size = dict(zip(self.areas_s, samp_size))
-            self.error_std = eblupUL.error_std
-            ols_fit = sm.OLS(y, X).fit()
-            beta_ols = ols_fit.params
-            resid_ols = y - np.matmul(X, beta_ols)
-            re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
-                area_s, np.ones(area_s.size)
-            )
-            self.fixed_effects = beta_ols
             # self.fe_std = eblupUL.fe_std
             # self.re_std = eblupUL.re_std
             # self.re_std_cov = eblupUL.re_std_cov
+            self.fitted = True
+
+    def _predict_indicator_parametric(
+        self,
+        number_samples: int,
+        indicator: Callable[..., np.ndarray],
+        mu: np.ndarray,
+        area: np.ndarray,
+        sigma2u: float,
+        sigma2e: float,
+        scale: np.ndarray,
+        max_array_length: int,
+        show_progress: bool,
+        *args: Any,
+    ) -> Tuple[np.ndarray, np.ndarray]:
+
+        areas = np.unique(area)
+        nb_areas = len(areas)
+        if show_progress:
+            k = 0
+            bar_length = min(50, nb_areas)
+            steps = np.linspace(1, nb_areas - 1, bar_length).astype(int)
+            print(f"Generating the {number_samples} replicates samples")
+
+        eta = np.zeros((number_samples, nb_areas)) * np.nan
+        for i, d in enumerate(areas):
+            aread = area == d
+            mu_d = mu[aread]
+            scale_d = scale[aread]
+            N_d = np.sum(aread)
+            cycle_size = max(int(max_array_length // N_d), 1)
+            number_cycles = int(number_samples // cycle_size)
+            last_cycle_size = number_samples % cycle_size
+
+            for j in range(number_cycles + 1):
+                if j == number_cycles:
+                    cycle_size = last_cycle_size
+                re_effects = np.random.normal(scale=sigma2u ** 0.5, size=cycle_size)
+                errors = np.random.normal(scale=scale_d * (sigma2e ** 0.5), size=(cycle_size, N_d))
+                y_d_j = mu_d[None, :] + re_effects[:, None] + errors
+                if j == 0:
+                    y_d = y_d_j
+                else:
+                    y_d = np.append(y_d, y_d_j, axis=0)
+
+            if show_progress:
+                if i in steps:
+                    k += 1
+                    print(
+                        f"\r[%-{bar_length}s] %d%%"
+                        % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                        end="",
+                    )
+
+            z_d = basic_functions.transform(
+                y_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
+            )
+            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)
+
+        if show_progress:
+            print("\n")
+
+        ell_estimate = np.mean(eta, axis=0)
+        ell_mse = np.mean(np.power(eta - ell_estimate[None, :], 2), axis=0)
+
+        return ell_estimate, ell_mse
+
+    def _predict_indicator_nonparametric(
+        self,
+        number_samples: int,
+        indicator: Callable[..., np.ndarray],
+        mu: np.ndarray,
+        area: np.ndarray,
+        total_residuals: np.ndarray,
+        max_array_length: int,
+        show_progress: bool,
+        *args: Any,
+    ) -> Tuple[np.ndarray, np.ndarray]:
+
+        areas = np.unique(area)
+        nb_areas = len(areas)
+        if show_progress:
+            k = 0
+            bar_length = min(50, nb_areas)
+            steps = np.linspace(1, nb_areas - 1, bar_length).astype(int)
+            print(f"Generating the {number_samples} replicates samples")
+
+        area_effects = basic_functions.averageby(self.area_s, total_residuals)
+        for i, d in enumerate(self.areas_s):
+            total_residuals_d = total_residuals[self.area_s == d]
+            if i == 0:
+                unit_errors = total_residuals_d - area_effects[i]
+            else:
+                unit_errors = np.append(unit_errors, total_residuals_d - area_effects[i])
+
+        eta = np.zeros((number_samples, nb_areas)) * np.nan
+        for i, d in enumerate(areas):
+            aread = area == d
+            mu_d = mu[aread]
+            N_d = np.sum(aread)
+            cycle_size = max(int(max_array_length // N_d), 1)
+            number_cycles = int(number_samples // cycle_size)
+            last_cycle_size = number_samples % cycle_size
+
+            for j in range(number_cycles + 1):
+                if j == number_cycles:
+                    cycle_size = last_cycle_size
+                re_effects = np.random.choice(area_effects, size=cycle_size)
+                errors = np.random.choice(unit_errors, size=(cycle_size, N_d))
+                y_d_j = mu_d[None, :] + re_effects[:, None] + errors
+                if j == 0:
+                    y_d = y_d_j
+                else:
+                    y_d = np.append(y_d, y_d_j, axis=0)
+
+            if show_progress:
+                if i in steps:
+                    k += 1
+                    print(
+                        f"\r[%-{bar_length}s] %d%%"
+                        % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                        end="",
+                    )
+
+            #    z_d = basic_functions.transform(
+            #        y_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
+            # )
+            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=y_d, *args)
+
+        if show_progress:
+            print("\n")
+
+        ell_estimate = np.mean(eta, axis=0)
+        ell_mse = np.mean(np.power(eta - ell_estimate[None, :], 2), axis=0)
+
+        return ell_estimate, ell_mse
 
     def predict(
         self,
@@ -1022,46 +1161,59 @@ class EllUnitLevel:
         self.areas_p = np.unique(area)
         X = formats.numpy_array(X)
         if intercept:
-            if X.shape[1] is None:
+            if X.ndim == 1:
                 n = X.shape[0]
                 X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
             else:
                 X = np.insert(X, 0, 1, axis=1)
-        # (
-        #     ps,
-        #     ps_area,
-        #     X_ps,
-        #     area_ps,
-        #     areas_ps,
-        #     _,
-        #     _,
-        #     xbar_ps,
-        #     a_factor_ps,
-        #     samp_size_ps,
-        #     gamma_ps,
-        #     samp_weight_ps,
-        # ) = EblupUnitLevel._split_data(area, X, None, samp_weight)
+            # (
+            #     ps,
+            #     ps_area,
+            #     X_ps,
+            #     area_ps,
+            #     areas_ps,
+            #     _,
+            #     _,
+            #     xbar_ps,
+            #     a_factor_ps,
+            #     samp_size_ps,
+            #     gamma_ps,
+            #     samp_weight_ps,
+            # ) = EblupUnitLevel._split_data(area, X, None, samp_weight)
+        mu = X @ self.fixed_effects
 
-        area_est = self._predict_indicator(
-            self.number_samples,
-            self.y_s,
-            self.X_s,
-            self.area_s,
-            X,
-            area,
-            self.areas_p,
-            self.fixed_effects,
-            self.gamma,
-            self.error_std ** 2,
-            self.re_std ** 2,
-            scale,
-            max_array_length,
-            indicator,
-            show_progress,
-            *args,
-        )
+        if self.method in ("REML", "ML"):
+            area_est, area_mse = self._predict_indicator_parametric(
+                self.number_samples,
+                indicator,
+                mu,
+                area,
+                self.re_std ** 2,
+                self.error_std ** 2,
+                scale,
+                max_array_length,
+                show_progress,
+                *args,
+            )
+        elif self.method in ("MOM"):
+            # y_transformed_s = basic_functions.transform(
+            #    self.y_s, llambda=self.boxcox["lambda"], inverse=False
+            # )
+            # total_residuals = y_transformed_s - self.X_s @ self.fixed_effects
+            total_residuals = self.y_s - self.X_s @ self.fixed_effects
+            area_est, area_mse = self._predict_indicator_nonparametric(
+                self.number_samples,
+                indicator,
+                mu,
+                area,
+                total_residuals,
+                max_array_length,
+                show_progress,
+                *args,
+            )
 
         self.area_est = dict(zip(self.areas_p, area_est))
+        self.area_mse = dict(zip(self.areas_p, area_mse))
 
 
 class RobustUnitLevel:
