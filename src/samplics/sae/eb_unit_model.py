@@ -168,8 +168,6 @@ class EblupUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
-        tol: float = 1e-4,
-        maxiter: int = 200,
     ) -> None:
 
         area = formats.numpy_array(area)
@@ -197,20 +195,8 @@ class EblupUnitLevel:
         self.a_factor_s = dict(zip(self.areas_s, basic_functions.sumby(area, scale)))
 
         reml = True if self.method == "REML" else False
-        beta_ols = sm.OLS(y, X).fit().params
-        resid_ols = y - np.matmul(X, beta_ols)
-        re_ols = basic_functions.sumby(area, resid_ols) / basic_functions.sumby(
-            area, np.ones(area.size)
-        )
-
         basic_model = sm.MixedLM(y, X, area)
-        basic_fit = basic_model.fit(
-            # start_params=np.append(beta_ols, np.std(re_ols) ** 2),
-            reml=reml,
-            full_output=True,
-            # tol=tol,
-            maxiter=maxiter,
-        )
+        basic_fit = basic_model.fit(reml=reml, full_output=True,)
 
         self.error_std = basic_fit.scale ** 0.5
         self.fixed_effects = basic_fit.fe_params
@@ -252,7 +238,6 @@ class EblupUnitLevel:
         # samp_weight = np.ones(y.size)
         if samp_weight is not None:
             beta_w = self._beta(y, X, area, samp_weight)
-            # print(beta_w)
 
         self.fitted = True
 
@@ -340,8 +325,6 @@ class EblupUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
-        tol: float = 1e-4,
-        maxiter: int = 200,
     ) -> np.ndarray:
 
         X = formats.numpy_array(X)
@@ -401,12 +384,7 @@ class EblupUnitLevel:
         print(f"Running the {number_reps} bootstrap iterations")
         for k in range(y_ps_boot.shape[0]):
             boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
-            boot_fit = boot_model.fit(
-                start_params=np.append(self.fixed_effects, self.re_std ** 2),
-                reml=reml,
-                tol=tol,
-                maxiter=maxiter,
-            )
+            boot_fit = boot_model.fit(reml=reml,)
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
@@ -508,8 +486,6 @@ class EbUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
-        tol: float = 1e-4,
-        maxiter: int = 200,
     ) -> None:
 
         y_transformed = basic_functions.transform(
@@ -517,7 +493,9 @@ class EbUnitLevel:
         )
 
         eblup_ul = EblupUnitLevel()
-        eblup_ul.fit(y_transformed, X, area, samp_weight, scale, intercept, tol, maxiter)
+        eblup_ul.fit(
+            y_transformed, X, area, samp_weight, scale, intercept,
+        )
 
         self.scale_s = eblup_ul.scale_s
         self.y_s = eblup_ul.y_s
@@ -581,14 +559,9 @@ class EbUnitLevel:
             number_cycles = int(number_samples // cycle_size)
             last_cycle_size = number_samples % cycle_size
 
-            # print(
-            #     f"Calculation for the {d}th domain with a total of {number_cycles+1} batch(es)\n"
-            # )
             for j in range(number_cycles + 1):
                 if j == number_cycles:
                     cycle_size = last_cycle_size
-                # if cycle_size > 0:
-                #     print(f"{k+1}th batch with {cycle_size} samples (domain {d})")
                 re_effects = np.random.normal(
                     scale=(sigma2u * (1 - self.gamma[d])) ** 0.5, size=cycle_size
                 )
@@ -702,8 +675,6 @@ class EbUnitLevel:
         area: np.ndarray,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
-        tol: float = 1e-4,
-        maxiter: int = 200,
         max_array_length: int = int(100e6),
         *args: Any,
     ) -> np.ndarray:
@@ -814,6 +785,7 @@ class EbUnitLevel:
         bar_length = min(50, number_reps)
         steps = np.linspace(1, number_reps, bar_length).astype(int)
 
+        reml = True if self.method == "REML" else False
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore")
             beta_ols = sm.OLS(y_samp_boot[0, :], X_s).fit().params
@@ -821,19 +793,15 @@ class EbUnitLevel:
         re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
             area_s, np.ones(area_s.size)
         )
-
         print(f"Fitting and predicting using each of the {number_reps} bootstrap populations")
         for b in range(number_reps):
-            reml = True if self.method == "REML" else False
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore")
                 boot_model = sm.MixedLM(y_samp_boot[b, :], X_s, area_s)
                 boot_fit = boot_model.fit(
-                    start_params=np.append(beta_ols, np.std(re_ols) ** 2),
                     reml=reml,
+                    start_params=np.append(beta_ols, np.std(re_ols) ** 2),
                     full_output=True,
-                    tol=tol,
-                    maxiter=maxiter,
                 )
 
             gammaboot = float(boot_fit.cov_re) / (
@@ -928,8 +896,6 @@ class EllUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
-        tol: float = 1e-4,
-        maxiter: int = 200,
     ) -> None:
 
         y = formats.numpy_array(y)
@@ -951,7 +917,9 @@ class EllUnitLevel:
             eb_ul = EbUnitLevel(
                 method=self.method, boxcox=self.boxcox["lambda"], constant=self.constant
             )
-            eb_ul.fit(y, X, area, samp_weight, scale, False, tol, maxiter)
+            eb_ul.fit(
+                y, X, area, samp_weight, scale, False,
+            )
             self.scale_s = eb_ul.scale_s
             self.y_s = eb_ul.y_s
             self.X_s = eb_ul.X_s
