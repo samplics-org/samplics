@@ -205,10 +205,10 @@ class EblupUnitLevel:
 
         basic_model = sm.MixedLM(y, X, area)
         basic_fit = basic_model.fit(
-            start_params=np.append(beta_ols, np.std(re_ols) ** 2),
+            # start_params=np.append(beta_ols, np.std(re_ols) ** 2),
             reml=reml,
             full_output=True,
-            tol=tol,
+            # tol=tol,
             maxiter=maxiter,
         )
 
@@ -220,7 +220,7 @@ class EblupUnitLevel:
         self.re_std = float(basic_fit.cov_re) ** 0.5
         self.re_std_cov = basic_fit.bse_re
         self.convergence["achieved"] = basic_fit.converged
-        self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"])
+        self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"]) - 1
 
         nb_obs = y.shape[0]
         nb_variance_params = basic_fit.cov_re.shape[0] + 1
@@ -245,7 +245,7 @@ class EblupUnitLevel:
         self.ybar_s, self.xbar_s, gamma, samp_size = area_stats(
             y, X, area, self.error_std, self.re_std, self.a_factor_s, samp_weight
         )
-        self.random_effects = gamma * (self.ybar_s - np.matmul(self.xbar_s, self.fixed_effects))
+        self.random_effects = gamma * (self.ybar_s - self.xbar_s @ self.fixed_effects)
         self.gamma = dict(zip(self.areas_s, gamma))
         self.samp_size = dict(zip(self.areas_s, samp_size))
 
@@ -289,11 +289,10 @@ class EblupUnitLevel:
             Xmean_ps = Xmean_pr = None
 
         gamma_ps = np.asarray(list(self.gamma.values()))[ps_area]
-
+        samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
         if pop_size is not None:
             pop_size = formats.numpy_array(pop_size)
             pop_size_ps = pop_size[ps_area]
-            samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
             samp_rate_ps = samp_size_ps / pop_size_ps
             eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
                 samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
@@ -308,7 +307,7 @@ class EblupUnitLevel:
         self.area_est = dict(zip(areas_ps, eta_pred))
 
         X_ps = self.X_s[np.isin(self.area_s, area)]
-        A_ps = np.diag(np.zeros(Xmean.shape[1])) if Xmean.ndim >=2 else  np.asarray([0])
+        A_ps = np.diag(np.zeros(Xmean.shape[1])) if Xmean.ndim >= 2 else np.asarray([0])
         for d in areas_ps:
             areadps = area_ps == d
             n_ps_d = np.sum(areadps)
@@ -654,7 +653,7 @@ class EbUnitLevel:
         self.areas_p = np.unique(area)
         X = formats.numpy_array(X)
         if intercept:
-            if X.ndim==1:
+            if X.ndim == 1:
                 n = X.shape[0]
                 X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
             else:
