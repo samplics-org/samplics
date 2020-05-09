@@ -47,7 +47,12 @@ extensions = [
 templates_path = ["_templates"]
 
 ### Mardown parser
-source_suffix = {".rst": "restructuredtext", ".md": "markdown", ".txt": "markdown"}
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "markdown",
+    ".txt": "markdown",
+    ".ipynb": "notebook",
+}
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
