@@ -36,7 +36,7 @@ scipy = "^1.4"
 statsmodels = "^0.10"
 matplotlib = "^3.1.3"
 
-[tool.poetry.dev-dependencies]
+[latool.poetry.dev-dependencies]
 mypy = "^0.770"
 pytest = "^5.0.1"
 flake8 = "^3.7.9"
