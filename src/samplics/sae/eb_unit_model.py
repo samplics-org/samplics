@@ -28,7 +28,7 @@ class EblupUnitLevel:
     unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
 
     Setting attributes:
-        - method (str): the fitting method of the model parameters which can take the possible 
+        | - method (str): the fitting method of the model parameters which can take the possible 
         values restricted maximum likelihood (REML) or maximum likelihood (ML). If not specified, 
         "REML" is used as default.  
     
@@ -43,18 +43,18 @@ class EblupUnitLevel:
         - ybar_s (array): sample area means of the output variable. 
         - xbar_s (ndarray): sample area means of the auxiliary variables.
 
-    Model fitting attributes:
-        - fitted (boolean): indicates whether the model has been fitted or not. 
-        - fe_std (array): the standard errors of the fixed effects. 
-        - random_effects (array): linear mixed model random effects, there are the random effects 
-        associated with the small areas. 
-        - re_std (number): standard error of the random effects. 
-        - error_std (number): standard error of the unit level residuals. 
-        - convergence (dict): a dictionnary holding the convergence status and the number of 
-        - iterations from the model fitting algorithm. 
-        - goodness (dict): a dictionarry holding the log-likelihood, AIC, and BIC.
-        - gamma (dict): ratio of the between-area variability (re_std**2) to the total variability 
-        (re_std**2 + error_std**2 / a_factor). 
+    Modelfitting attributes:
+        | fitted (boolean): indicates whether the model has been fitted or not. 
+        | fe_std (array): the standard errors of the fixed effects. 
+        | random_effects (array): linear mixed model random effects, there are the random effects 
+        | associated with the small areas. 
+        | re_std (number): standard error of the random effects. 
+        | error_std (number): standard error of the unit level residuals. 
+        | convergence (dict): a dictionnary holding the convergence status and the number of 
+        | iterations from the model fitting algorithm. 
+        | goodness (dict): a dictionarry holding the log-likelihood, AIC, and BIC.
+        | gamma (dict): ratio of the between-area variability (re_std**2) to the total 
+        | variability (re_std**2 + error_std**2 / a_factor). 
 
     Prediction related attributes:
         - areas_p (array): the list of areas for the prediction. 
