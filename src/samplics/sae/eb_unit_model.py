@@ -1,7 +1,8 @@
 """EB(BLUP) Unit Models
 
 This module implements the basic EBLUP and EB unit level models. It also provides the ELL model. 
-These functionalities are organized in classes. Each class has three main methods: *fit()*, *predict()* and **bootstrap_mse()**. The EblupUnitLevel class provides the 
+These functionalities are organized in classes. Each class has three main methods: *fit()*, 
+*predict()* and **bootstrap_mse()**. The EblupUnitLevel class provides the 
 
 
 """
