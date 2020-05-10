@@ -1,3 +1,11 @@
+"""EB(BLUP) Unit Models
+
+This module implements the basic EBLUP and EB unit level models. It also provides the ELL model. 
+These functionalities are organized in classes. Each class has three main methods: *fit()*, *predict()* and **bootstrap_mse()**. The EblupUnitLevel class provides the 
+
+
+"""
+
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
 import warnings
 import numpy as np
@@ -67,6 +75,10 @@ class EblupUnitLevel:
 
 
     Methods:
+        | fit(): fits the model parameters using REMl or ML methods. 
+        | predict(): predicts the area level estimates which includes both the point estimates and 
+        | the taylor MSE estimate. 
+        | bootstrap_mse(): computes the area level bootstrap MSE estimates.
 
 
     """

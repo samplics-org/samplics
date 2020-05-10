@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-SAMPLICS: sample analytics using Python
-=======================================
+SAMPLICS: sample analytics
+==========================
 |Build Status| |Coverage Status| |Code Climate|
 
 *samplics* is a python python for analyzing sample data.
