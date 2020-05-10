@@ -1,12 +1,15 @@
-"""EBLUP and EB basic Unit Models
+"""EBLUP and EB Unit Models
 
 This module implements the basic EBLUP and EB unit level models. It also provides the ELL model. 
 These functionalities are organized in classes. Each class has three main methods: *fit()*, 
 *predict()* and *bootstrap_mse()*. 
 
 The EblupUnitLevel class implementes the unit level method initially developed by Battese, G.E., 
-Harter, R.M., and Fuller, W.A. (1988) [#bhf1988]_.
-
+Harter, R.M., and Fuller, W.A. (1988) [#bhf1988]_. The model parameters can fitted using
+restricted maximum likelihood (REML) and maximum likelihood (ML). The normality assumption of the
+errors is not necesary to predict the point estimates but is required for the taylor MSE 
+estimation. The predictions takes into account sampling rates. A bootstrap MSE estimation method 
+is also implemted for this class. 
 
 .. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for 
    prediction of county crop areas using survey and satellite data, *Journal of the American 
@@ -58,7 +61,7 @@ class EblupUnitLevel:
         | ybar_s (array): sample area means of the output variable. 
         | xbar_s (ndarray): sample area means of the auxiliary variables.
 
-    Modelfitting attributes:
+    Model fitting attributes:
         | fitted (boolean): indicates whether the model has been fitted or not. 
         | fe_std (array): the standard errors of the fixed effects. 
         | random_effects (array): linear mixed model random effects, there are the random effects 
@@ -386,9 +389,9 @@ class EblupUnitLevel:
     def bootstrap_mse(
         self,
         number_reps: int,
-        X: np.ndarray,
+        X: Array,
         Xmean: Array,
-        area: np.ndarray,
+        area: Array,
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
@@ -662,11 +665,11 @@ class EbUnitLevel:
     def predict(
         self,
         number_samples: int,
-        indicator: Callable[..., np.ndarray],
-        X: np.ndarray,
-        area: np.ndarray,
-        samp_weight: Optional[np.ndarray] = None,
-        scale: np.ndarray = 1,
+        indicator: Callable[..., Array],
+        X: Array,
+        area: Array,
+        samp_weight: Optional[Array] = None,
+        scale: Array,
         intercept: bool = True,
         max_array_length: int = int(100e6),
         show_progress: bool = True,
@@ -735,9 +738,9 @@ class EbUnitLevel:
     def bootstrap_mse(
         self,
         number_reps: int,
-        indicator: Callable[..., np.ndarray],
-        X: np.ndarray,
-        area: np.ndarray,
+        indicator: Callable[..., Array],
+        X: Array,
+        area: Array,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
         max_array_length: int = int(100e6),
@@ -1028,12 +1031,12 @@ class EllUnitLevel:
     def _predict_indicator_parametric(
         self,
         number_samples: int,
-        indicator: Callable[..., np.ndarray],
-        mu: np.ndarray,
-        area: np.ndarray,
-        sigma2u: float,
-        sigma2e: float,
-        scale: np.ndarray,
+        indicator: Callable[..., Array],
+        mu: Array,
+        area: Array,
+        sigma2u: Number,
+        sigma2e: Number,
+        scale: Array,
         max_array_length: int,
         show_progress: bool,
         *args: Any,
@@ -1163,11 +1166,11 @@ class EllUnitLevel:
     def predict(
         self,
         number_samples: int,
-        indicator: Callable[..., np.ndarray],
-        X: np.ndarray,
-        area: np.ndarray,
-        samp_weight: Optional[np.ndarray] = None,
-        scale: np.ndarray = 1,
+        indicator: Callable[..., Array],
+        X: Array,
+        area: Array,
+        samp_weight: Optional[Array] = None,
+        scale: Array= 1,
         intercept: bool = True,
         max_array_length: int = int(100e6),
         show_progress: bool = True,
