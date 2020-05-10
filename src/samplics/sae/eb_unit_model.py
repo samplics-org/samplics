@@ -21,41 +21,61 @@ from samplics.sae.sae_core_functions import area_stats
 class EblupUnitLevel:
     """EblupUnitLevel implements the basic Unit level model.
 
-    EblupUnitLevel takes the sample data as input and fits the basic linear mixed model. The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) to fit the model parameters. Also, EblupUnitLevel predicts the areas means and provides the point and Mean squared error (MSE) estimates of the empirical Bayes linear unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
+    EblupUnitLevel takes the sample data as input and fits the basic 
+    linear mixed model. The user can pick between restricted maximum 
+    likelihood (REML) or maximum likelihood (ML) to fit the model 
+    parameters. Also, EblupUnitLevel predicts the areas means and 
+    provides the point and Mean squared error (MSE) estimates of the 
+    empirical Bayes linear unbiased (EBLUP). User can also obtain 
+    the bootstrap mse estimates of the MSE.
 
     Setting attributes:
-        method (str): the fitting method of the model parameters which can take the possible values 
+        method (str): the fitting method of the model parameters 
+        which can take the possible values restricted maximum 
+        likelihood (REML) or maximum likelihood (ML). If not 
+        specified, "REML" is used as default. 
     
     Sample related attributes:
-        restricted maximum likelihood (REML) or maximum likelihood (ML). If not specified, "REML" is used as default. 
         y_s (array): the output sample values. 
         X_s (ndarray): the auxiliary information. 
-        scale_s (array): an array of scaling parameters for the unit levels errors. 
+        scale_s (array): an array of scaling parameters for the 
+        unit levels errors. 
         a_factor (array): 
-        area_s (array): the full vector of small areas from the sample data.
+        area_s (array): the full vector of small areas from the sample 
+        data.
         areas_s (array): the list of small areas from the sample data.
-        samp_size (dict): the sample size per small areas from the sample. 
+        samp_size (dict): the sample size per small areas from the 
+        sample. 
         ybar_s (array): sample area means of the output variable. 
         xbar_s (ndarray): sample area means of the auxiliary variables.
 
     Model fitting attributes:
-        fitted (boolean): indicates whether the model has been fitted or not. 
+        fitted (boolean): indicates whether the model has been fitted 
+        or not. 
         fe_std (array): the standard errors of the fixed effects. 
-        random_effects (array): linear mixed model random effects, there are the random effects associated with the small areas. 
+        random_effects (array): linear mixed model random effects, 
+        there are the random effects associated with the small areas. 
         re_std (number): standard error of the random effects. 
         error_std (number): standard error of the unit level residuals. 
-        convergence (dict): a dictionnary holding the convergence status and the number of iterations from the model fitting algorithm. 
-        goodness (dict): a dictionarry holding the log-likelihood, AIC, and BIC.
-        gamma (dict): ratio of the between-area variability (re_std**2) to the total variability (re_std**2 + error_std**2 / a_factor). 
+        convergence (dict): a dictionnary holding the convergence 
+        status and the number of iterations from the model fitting 
+        algorithm. 
+        goodness (dict): a dictionarry holding the log-likelihood, 
+        AIC, and BIC.
+        gamma (dict): teh ratio of the between-area variability 
+        (re_std**2) to the total variability 
+        (re_std**2 + error_std**2 / a_factor). 
 
     Prediction related attributes:
         areas_p (array): the list of areas for the prediction. 
         pop_size (dict): area level population sizes. 
         Xbar_p (array): population means of the auxiliary variables. 
-        number_reps (int): number of replicates for the bootstrap MSE estimation. 
+        number_reps (int): number of replicates for the bootstrap 
+        MSE estimation. 
         area_est (array): area level EBLUP estimates. 
         area_mse (array): area level taylor estimation of the MSE. 
-        area_mse_boot (array): area level bootstrap estimation of the MSE.
+        area_mse_boot (array): area level bootstrap estimation of 
+        the MSE.
 
 
     Methods:
