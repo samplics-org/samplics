@@ -28,20 +28,20 @@ class EblupUnitLevel:
     unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
 
     Setting attributes:
-        | - method (str): the fitting method of the model parameters which can take the possible 
-        values restricted maximum likelihood (REML) or maximum likelihood (ML). If not specified, 
-        "REML" is used as default.  
+        | method (str): the fitting method of the model parameters which can take the possible 
+        | values restricted maximum likelihood (REML) or maximum likelihood (ML). If notspecified, 
+        | "REML" is used as default.  
     
     Sample related attributes:
-        - y_s (array): the output sample values. 
-        - X_s (ndarray): the auxiliary information. 
-        - scale_s (array): an array of scaling parameters for the unit levels errors.
-        - a_factor (array): sume of the inverse squared of scale.
-        - area_s (array): the full vector of small areas from the sample data.  
-        - areas_s (array): the list of small areas from the sample data.
-        - samp_size (dict): the sample size per small areas from the sample. 
-        - ybar_s (array): sample area means of the output variable. 
-        - xbar_s (ndarray): sample area means of the auxiliary variables.
+        | y_s (array): the output sample values. 
+        | X_s (ndarray): the auxiliary information. 
+        | scale_s (array): an array of scaling parameters for the unit levels errors.
+        | a_factor (array): sume of the inverse squared of scale.
+        | area_s (array): the full vector of small areas from the sample data.  
+        | areas_s (array): the list of small areas from the sample data.
+        | samp_size (dict): the sample size per small areas from the sample. 
+        | ybar_s (array): sample area means of the output variable. 
+        | xbar_s (ndarray): sample area means of the auxiliary variables.
 
     Modelfitting attributes:
         | fitted (boolean): indicates whether the model has been fitted or not. 
@@ -57,13 +57,13 @@ class EblupUnitLevel:
         | variability (re_std**2 + error_std**2 / a_factor). 
 
     Prediction related attributes:
-        - areas_p (array): the list of areas for the prediction. 
-        - pop_size (dict): area level population sizes. 
-        - Xbar_p (array): population means of the auxiliary variables. 
-        - number_reps (int): number of replicates for the bootstrap MSE estimation. 
-        - area_est (array): area level EBLUP estimates. 
-        - area_mse (array): area level taylor estimation of the MSE. 
-        - area_mse_boot (array): area level bootstrap estimation of the MSE.
+        | areas_p (array): the list of areas for the prediction. 
+        | pop_size (dict): area level population sizes. 
+        | Xbar_p (array): population means of the auxiliary variables. 
+        | number_reps (int): number of replicates for the bootstrap MSE estimation. 
+        | area_est (array): area level EBLUP estimates. 
+        | area_mse (array): area level taylor estimation of the MSE. 
+        | area_mse_boot (array): area level bootstrap estimation of the MSE.
 
 
     Methods:
