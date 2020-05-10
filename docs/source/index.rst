@@ -5,9 +5,11 @@
 
 SAMPLICS: sample analytics using Python
 =======================================
+|Build Status| |Coverage Status| |Code Climate|
 
-*samplics* is a
+*samplics* is a python python for analyzing sample data.
 
+`Source code <https://github.com/survey-methods/samplics>`_
 
 samplics's modules
 ------------------
@@ -16,14 +18,13 @@ samplics's modules
    :maxdepth: 1
 
    gettingstarted
-   stable/index
-   dev/index
-   examples/index
+   tutorial
+   usecases
 
-   modules
+   samplics 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
