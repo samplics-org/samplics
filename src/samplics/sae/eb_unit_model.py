@@ -1,16 +1,16 @@
-"""EB(BLUP) Unit Models
+"""EBLUP and EB basic Unit Models
 
 This module implements the basic EBLUP and EB unit level models. It also provides the ELL model. 
 These functionalities are organized in classes. Each class has three main methods: *fit()*, 
-*predict()* and **bootstrap_mse()**. 
+*predict()* and *bootstrap_mse()*. 
 
 The EblupUnitLevel class implementes the unit level method initially developed by Battese, G.E., 
 Harter, R.M., and Fuller, W.A. (1988) [#bhf1988]_.
 
 
 .. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for 
-prediction of county crop areas using survey and satellite data, *Journal of the American 
-Statistical Association*, **83**, 28-36.
+   prediction of county crop areas using survey and satellite data, *Journal of the American 
+   Statistical Association*, **83**, 28-36.
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
