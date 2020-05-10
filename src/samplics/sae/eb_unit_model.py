@@ -8,7 +8,9 @@ The EblupUnitLevel class implementes the unit level method initially developed b
 Harter, R.M., and Fuller, W.A. (1988) [#bhf1988]_.
 
 
-.. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for prediction of county crop areas using survey and satellite data, *Journal of the American Statistical Association*, **83**, 28-36.
+.. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for 
+prediction of county crop areas using survey and satellite data, *Journal of the American 
+Statistical Association*, **83**, 28-36.
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
