@@ -21,10 +21,16 @@ from samplics.sae.sae_core_functions import area_stats
 class EblupUnitLevel:
     """EblupUnitLevel implements the basic Unit level model.
 
-    EblupUnitLevel takes the sample data as input and fits the basic linear mixed model. The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) to fit the model parameters. Also, EblupUnitLevel predicts the areas means and provides the point and mean squared error (MSE) estimates of the empirical Bayes linear unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
+    EblupUnitLevel takes the sample data as input and fits the basic linear mixed model. 
+    The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) 
+    to fit the model parameters. Also, EblupUnitLevel predicts the areas means and provides 
+    the point and mean squared error (MSE) estimates of the empirical Bayes linear 
+    unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
 
     Setting attributes:
-        - method (str): the fitting method of the model parameters which can take the possible values restricted maximum likelihood (REML) or maximum likelihood (ML). If not specified, "REML" is used as default.  
+        - method (str): the fitting method of the model parameters which can take the possible 
+        values restricted maximum likelihood (REML) or maximum likelihood (ML). If not specified, 
+        "REML" is used as default.  
     
     Sample related attributes:
         - y_s (array): the output sample values. 
