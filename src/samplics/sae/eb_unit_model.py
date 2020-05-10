@@ -21,9 +21,11 @@ other nonlinear paramaters. The class fits the model parameters using REML or ML
 area level indicators estimates, a Monte Carlo (MC) approach is used. MSE estimation is achieved 
 using a bootstrap procedure.  
 
-The EllUnitLevel class implements the model Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003) [#ell2003]_. This method is nonparametric at its core, hence does not require normality 
+The EllUnitLevel class implements the model Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003) 
+[#ell2003]_. This method is nonparametric at its core, hence does not require normality 
 assumption nor any other parametric distribution. This implementation a semiparametric and 
-nonparametric are provided. In the semiparametric, the normal distribution is used to fit the parameters and to draw the fixed-effects. 
+nonparametric are provided. In the semiparametric, the normal distribution is used to fit the
+parameters and to draw the fixed-effects. 
 
 .. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for 
    prediction of county crop areas using survey and satellite data, *Journal of the American 
