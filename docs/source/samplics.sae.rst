@@ -1,7 +1,7 @@
 Small Area Estimation
 =====================
 
-EBLUP Unit Level Model
+samplics.sae.eb_area_model
 -----------------------------
 
 .. automodule:: samplics.sae.eb_area_model
@@ -9,7 +9,7 @@ EBLUP Unit Level Model
    :undoc-members:
    :show-inheritance:
 
-EB Unit level Model
+samplics.sae.eb_unit_model
 -----------------------------
 
 .. automodule:: samplics.sae.eb_unit_model

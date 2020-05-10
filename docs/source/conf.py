@@ -42,7 +42,9 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "nbsphinx",
+    "recommonmark",
 ]
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -85,8 +87,10 @@ html_static_path = ["_static"]
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-# html_sidebars = {}
 
+html_sidebars = {
+    "**": ["about.html", "navigation.html", "relations.html", "searchbox.html", "donate.html",]
+}
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -157,10 +161,32 @@ epub_title = project
 epub_exclude_files = ["search.html"]
 
 # -- Extension configuration -------------------------------------------------
-
+autodoc_default_options = {
+    "member-order": "bysource",
+    "undoc-members": True,
+}
 # (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
 # Path should be relative to the ``_static`` files directory.
-html_logo = "_static/samplics_logo.png"
+# html_logo = "_static/samplics_logo.png"
+html_theme_options = {
+    "logo": "samplics_logo.png",
+    "logo_name": True,
+    "description": "Sample Analytics in Python",
+    "github_user": "survey-methods",
+    "github_repo": "samplics",
+    "github_banner": True,
+    "github_button": False,
+    "travis_button": False,
+    "codecov_button": False,
+    "analytics_id": False,  # TODO
+    "font_family": "'Roboto', Georgia, sans",
+    "head_font_family": "'Roboto', Georgia, serif",
+    "code_font_family": "'Roboto Mono', 'Consolas', monospace",
+    "anchor": "#CCFFCC",
+    "footnote_bg": "#CCE6FF",
+    "pre_bg": "#433e56",
+    "page_width": "1024px",  # default is 940px
+}
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.
