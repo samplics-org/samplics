@@ -19,7 +19,48 @@ from samplics.sae.sae_core_functions import area_stats
 
 
 class EblupUnitLevel:
-    """implements BHL model
+    """EblupUnitLevel implements the basic Unit level model.
+
+    EblupUnitLevel takes the sample data as input and fits the basic linear mixed model. The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) to fit the model parameters. Also, EblupUnitLevel predicts the areas means and provides the point and Mean squared error (MSE) estimates of the empirical Bayes linear unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
+
+    Setting attributes:
+        method (str): the fitting method of the model parameters which can take the possible values 
+    
+    Sample related attributes:
+        restricted maximum likelihood (REML) or maximum likelihood (ML). If not specified, "REML" is used as default. 
+        y_s (array): the output sample values. 
+        X_s (ndarray): the auxiliary information. 
+        scale_s (array): an array of scaling parameters for the unit levels errors. 
+        a_factor (array): 
+        area_s (array): the full vector of small areas from the sample data.
+        areas_s (array): the list of small areas from the sample data.
+        samp_size (dict): the sample size per small areas from the sample. 
+        ybar_s (array): sample area means of the output variable. 
+        xbar_s (ndarray): sample area means of the auxiliary variables.
+
+    Model fitting attributes:
+        fitted (boolean): indicates whether the model has been fitted or not. 
+        fe_std (array): the standard errors of the fixed effects. 
+        random_effects (array): linear mixed model random effects, there are the random effects associated with the small areas. 
+        re_std (number): standard error of the random effects. 
+        error_std (number): standard error of the unit level residuals. 
+        convergence (dict): a dictionnary holding the convergence status and the number of iterations from the model fitting algorithm. 
+        goodness (dict): a dictionarry holding the log-likelihood, AIC, and BIC.
+        gamma (dict): ratio of the between-area variability (re_std**2) to the total variability (re_std**2 + error_std**2 / a_factor). 
+
+    Prediction related attributes:
+        areas_p (array): the list of areas for the prediction. 
+        pop_size (dict): area level population sizes. 
+        Xbar_p (array): population means of the auxiliary variables. 
+        number_reps (int): number of replicates for the bootstrap MSE estimation. 
+        area_est (array): area level EBLUP estimates. 
+        area_mse (array): area level taylor estimation of the MSE. 
+        area_mse_boot (array): area level bootstrap estimation of the MSE.
+
+
+    Methods:
+
+
     """
 
     def __init__(
@@ -47,7 +88,6 @@ class EblupUnitLevel:
         self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
         self.re_std: float = 0
-        self.re_std_cov: float = 0
         self.error_std: float = 0
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
@@ -60,6 +100,7 @@ class EblupUnitLevel:
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
+        self.area_mse_boot: Dict[Any, float] = {}
 
     def _beta(
         self, y: np.ndarray, X: np.ndarray, area: np.ndarray, weight: np.ndarray,
@@ -204,7 +245,6 @@ class EblupUnitLevel:
 
         self.fe_std = basic_fit.bse_fe
         self.re_std = float(basic_fit.cov_re) ** 0.5
-        self.re_std_cov = basic_fit.bse_re
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"]) - 1
 
@@ -325,7 +365,7 @@ class EblupUnitLevel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
-    ) -> np.ndarray:
+    ) -> None:
 
         X = formats.numpy_array(X)
         Xmean = formats.numpy_array(Xmean)
@@ -409,7 +449,7 @@ class EblupUnitLevel:
                 )
         print("\n")
 
-        return np.mean(boot_mse, axis=0)
+        self.area_mse_boot = dict(zip(area_ps, np.mean(boot_mse, axis=0)))
 
 
 class EbUnitLevel:
@@ -449,7 +489,6 @@ class EbUnitLevel:
         self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
         self.re_std: float = 0
-        self.re_std_cov: float = 0
         self.error_std: float = 0
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
@@ -507,7 +546,6 @@ class EbUnitLevel:
         self.fixed_effects = eblup_ul.fixed_effects
         self.fe_std = eblup_ul.fe_std
         self.re_std = eblup_ul.re_std
-        self.re_std_cov = eblup_ul.re_std_cov
         self.convergence = eblup_ul.convergence
         self.goodness = eblup_ul.goodness
         self.ybar_s = eblup_ul.ybar_s
@@ -874,7 +912,6 @@ class EllUnitLevel:
         self.fe_std: np.ndarray = np.array([])
         self.random_effects: np.ndarray = np.array([])
         self.re_std: float = 0
-        self.re_std_cov: float = 0
         self.error_std: float = 0
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
@@ -930,7 +967,6 @@ class EllUnitLevel:
             self.fixed_effects = eb_ul.fixed_effects
             self.fe_std = eb_ul.fe_std
             self.re_std = eb_ul.re_std
-            self.re_std_cov = eb_ul.re_std_cov
             self.convergence = eb_ul.convergence
             self.goodness = eb_ul.goodness
             self.ybar_s = eb_ul.ybar_s
@@ -960,7 +996,6 @@ class EllUnitLevel:
             self.samp_size = dict(zip(self.areas_s, samp_size))
             # self.fe_std = eblupUL.fe_std
             # self.re_std = eblupUL.re_std
-            # self.re_std_cov = eblupUL.re_std_cov
             self.fitted = True
 
     def _predict_indicator_parametric(
