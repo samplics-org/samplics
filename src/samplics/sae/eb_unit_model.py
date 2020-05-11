@@ -7,14 +7,14 @@ framework used to model the hierarchical nature of the small area estimation (SA
 implemented in this module, see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more 
 details on LMM.
 
-The EblupUnitLevel class implementes the model developed by Battese, G.E., Harter, R.M., and 
+The EblupUnitLevel class implements the model developed by Battese, G.E., Harter, R.M., and 
 Fuller, W.A. (1988) [#bhf1988]_. The model parameters can fitted using restricted maximum 
 likelihood (REML) and maximum likelihood (ML). The normality assumption of the errors is not 
-necesary to predict the point estimates but is required for the taylor MSE estimation. The 
+necessary to predict the point estimates but is required for the taylor MSE estimation. The 
 predictions takes into account sampling rates. A bootstrap MSE estimation method is also implemted 
 for this class. 
 
-The EbUnitLevel class implementes the model developed by Molina, I. and Rao, J.N.K. (2010)
+The EbUnitLevel class implements the model developed by Molina, I. and Rao, J.N.K. (2010)
 [#mr2010]_. So far, only the basic approach requiring the normal distribution of the errors is 
 implemented. This approach allows estimating complex indicators such as poverty indices and 
 other nonlinear paramaters. The class fits the model parameters using REML or ML. To predict the 
@@ -59,7 +59,7 @@ from samplics.sae.sae_core_functions import area_stats
 
 
 class EblupUnitLevel:
-    """EblupUnitLevel implements the basic Unit level model.
+    """EblupUnitLevel implements the basic Unit level model for means (a linear indicator).
 
     EblupUnitLevel takes the sample data as input and fits the basic linear mixed model. 
     The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) 
@@ -76,7 +76,7 @@ class EblupUnitLevel:
         | ys (array): the output sample observations. 
         | Xs (ndarray): the auxiliary information. 
         | scales (array): an array of scaling parameters for the unit levels errors.
-        | afactors (array): sume of the inverse squared of scale.
+        | afactors (array): sum of the inverse squared of scale.
         | areas (array): the full vector of small areas from the sample data.  
         | areas_list (array): the list of small areas from the sample data.
         | samp_size (dict): the sample size per small areas from the sample. 
@@ -92,7 +92,7 @@ class EblupUnitLevel:
         | error_std (number): standard error of the unit level residuals. 
         | convergence (dict): a dictionnary holding the convergence status and the number of 
         |   iterations from the model fitting algorithm. 
-        | goodness (dict): a dictionarry holding the log-likelihood, AIC, and BIC.
+        | goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.
         | gamma (dict): ratio of the between-area variability (re_std**2) to the total 
         |   variability (re_std**2 + error_std**2 / a_factor). 
 
@@ -108,9 +108,9 @@ class EblupUnitLevel:
     Main methods
         | fit(): fits the linear mixed model to estimate the model parameters using REMl or ML
         |   methods. 
-        | predict(): predicts the area level estimates which includes both the point estimates and 
-        |   the taylor MSE estimate. 
-        | bootstrap_mse(): computes the area level bootstrap MSE estimates.
+        | predict(): predicts the area level mean estimates which includes both the point   | | 
+        |   estimates and the taylor MSE estimate. 
+        | bootstrap_mse(): computes the area level bootstrap MSE estimates of the mean.
     """
 
     def __init__(
@@ -267,7 +267,7 @@ class EblupUnitLevel:
 
         Args:
             ys (Array): An array of the output sample observations. 
-            Xs (Array): An multi-dimentional array of the auxiliary information. 
+            Xs (Array): An multi-dimensional array of the auxiliary information. 
             areas (Array): An array of the sampled area provided at the unit level. 
             samp_weight (Optional[Array], optional): An array of the sample weights. 
                 Defaults to None.
@@ -350,6 +350,20 @@ class EblupUnitLevel:
     def predict(
         self, Xmean: Array, area: Array, pop_size: Optional[Array] = None, intercept: bool = True,
     ) -> None:
+        """Predicts the area level means and provides the taylor MSE estimation of the estimated
+        area means. 
+
+        Args:
+            Xmean (Array): a multi-dimensional array of the population means of the auxiliary   
+                variables. 
+            area (Array): An array of the areas in the same order as Xmean and Popsize. 
+            pop_size (Optional[Array], optional): An array of the population size for the same 
+                areas as in Xmean and area and in the same order. Defaults to None.
+            intercept (bool, optional): [description]. Defaults to True.
+
+        Raises:
+            Exception: when predict() is called before fitting the model. 
+        """
 
         if not self.fitted:
             raise Exception(
@@ -424,31 +438,48 @@ class EblupUnitLevel:
 
     def bootstrap_mse(
         self,
-        number_reps: int,
-        X: Array,
         Xmean: Array,
         area: Array,
+        number_reps: int = 500,
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
+        """Computes the MSE bootstrap estimates of the area level mean estimates. 
 
-        X = formats.numpy_array(X)
+        Args:
+            Xmean (Array): a multi-dimensional array of the population means of the auxiliary   
+                variables. 
+            area (Array): An array of the areas in the same order as Xmean. 
+            number_reps (int): Number of replicates for the bootstrap method.. Defaults to 500.
+            samp_weight (Optional[Array], optional): [description]. Defaults to None.
+            scale (Union[Array, Number], optional): [description]. Defaults to 1.
+            intercept (bool, optional): [description]. Defaults to True.
+
+        Raises:
+            Exception: when bootstrap_mse() is called before fitting the model. 
+        """
+
+        if not self.fitted:
+            raise Exception(
+                "The model must be fitted first with .fit() before running the prediction."
+            )
+
         Xmean = formats.numpy_array(Xmean)
         area = formats.numpy_array(area)
         if intercept:
-            if X.ndim == 1:
-                n = X.shape[0]
-                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            if self.Xs.ndim == 1:
+                n = self.Xs.shape[0]
+                Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
                 Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
             else:
-                X = np.insert(X, 0, 1, axis=1)
+                Xs = np.insert(Xs, 0, 1, axis=1)
                 Xmean = np.insert(Xmean, 0, 1, axis=1)
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
 
         if isinstance(scale, (float, int)):
-            scale_p = np.ones(X.shape[0]) * scale
+            scale_p = np.ones(Xs.shape[0]) * scale
         else:
             scale_p = formats.numpy_array(scale)
 
@@ -462,7 +493,7 @@ class EblupUnitLevel:
             Xmean_pr,
             xbar_ps,
             samp_weight_ps,
-        ) = self._split_data(area, X, Xmean, samp_weight)
+        ) = self._split_data(area, Xs, Xmean, samp_weight)
 
         samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
         X_ps_sorted = X_ps[np.argsort(area_ps)]
@@ -519,7 +550,70 @@ class EblupUnitLevel:
 
 
 class EbUnitLevel:
-    """implements the unit level model"""
+    """EbUnitLevel implements the basic Unit level model for complex indicators.
+
+    EbUnitLevel takes the sample data as input and fits the basic linear mixed model. 
+    The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) 
+    to fit the model parameters. Also, EbUnitLevel predicts the areas means and provides 
+    the point and mean squared error (MSE) estimates of the empirical Bayes linear 
+    unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
+
+    EbUnitLevel requires the user to provide the indicator function. The indicator function is 
+    expected to take the array of output sample observations as input and possibly some additional 
+    parameters needed to compute the indicator. The indicator function outputs an aggregated value.
+    For example, the poverty gap indicator can have the following signature 
+    pov_gap(y: array, pov_line: float) -> float. If the indicator function different outputs by 
+    area then the self.area_list can be used to incorporate different logics across areas.
+
+    Also, EbUnitLevel can use Boxcox to transform the output sample values in order to reduce the 
+    asymmetry in the datawhen fitting the linear mixed model. 
+
+    Setting attributes
+        | method (str): the fitting method of the model parameters which can take the possible 
+        |   values restricted maximum likelihood (REML) or maximum likelihood (ML). 
+        |   If not specified, "REML" is used as default.  
+        | indicator (function): a user defined function to compute the indicator. 
+        | boxcox (dict): contains the *lambda* parameter of the Boxcox and a constant for the 
+        | log-transformation of the Boxcox.  
+    
+    Sample related attributes
+        | ys (array): the output sample observations. 
+        | Xs (ndarray): the auxiliary information. 
+        | scales (array): an array of scaling parameters for the unit levels errors.
+        | afactors (array): sum of the inverse squared of scale.
+        | areas (array): the full vector of small areas from the sample data.  
+        | areas_list (array): the list of small areas from the sample data.
+        | samp_size (dict): the sample size per small areas from the sample. 
+        | ys_mean (array): sample area means of the output variable. 
+        | Xs_mean (ndarray): sample area means of the auxiliary variables.
+
+    Model fitting attributes
+        | fitted (boolean): indicates whether the model has been fitted or not. 
+        | fe_std (array): the standard errors of the fixed effects. 
+        | random_effects (array): linear mixed model random effects, there are the random effects 
+        |   associated with the small areas. 
+        | re_std (number): standard error of the random effects. 
+        | error_std (number): standard error of the unit level residuals. 
+        | convergence (dict): a dictionnary holding the convergence status and the number of 
+        |   iterations from the model fitting algorithm. 
+        | goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.
+        | gamma (dict): ratio of the between-area variability (re_std**2) to the total 
+        |   variability (re_std**2 + error_std**2 / a_factor). 
+
+    Prediction related attributes
+        | areap (array): the list of areas for the prediction. 
+        | number_reps (int): number of replicates for the bootstrap MSE estimation. 
+        | area_est (array): area level EBLUP estimates. 
+        | area_mse (array): area level taylor estimation of the MSE. 
+        | area_mse_boot (array): area level bootstrap estimation of the MSE.
+
+    Main methods
+        | fit(): fits the linear mixed model to estimate the model parameters using REMl or ML
+        |   methods. 
+        | predict(): predicts the area level indicator estimates which includes both the point 
+        |   estimates and the taylor MSE estimate. 
+        | bootstrap_mse(): computes the area level bootstrap MSE estimates of the indicator.
+    """
 
     def __init__(
         self,
@@ -534,9 +628,8 @@ class EbUnitLevel:
         if self.method not in ("REML", "ML"):
             raise AssertionError("Value provided for method is not valid!")
         self.indicator = indicator
-        self.constant = constant
         self.number_samples: Optional[int] = None
-        self.boxcox = {"lambda": boxcox}
+        self.boxcox = {"lambda": boxcox, "constant": constant}
 
         # Sample data
         self.scales: np.ndarray = np.array([])
@@ -561,21 +654,19 @@ class EbUnitLevel:
         self.gamma: Dict[Any, float] = {}
 
         # Predict(ion/ed) data
-        self.areap_list: np.ndarray = np.array([])
-        self.pop_size: Dict[Any, float] = {}
-        self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
+        self.area_mse_boot: Dit[Any, float] = {}
 
     def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
         if self.boxcox["lambda"] is None:
             z = y
         elif self.boxcox["lambda"] == 0.0:
             if inverse:
-                z = np.exp(y) - self.constant
+                z = np.exp(y) - self.boxcox["constant"]
             else:
-                z = np.log(y + self.constant)
+                z = np.log(y + self.boxcox["constant"])
         elif self.boxcox["lambda"] != 0.0:
             if inverse:
                 z = np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
@@ -594,7 +685,7 @@ class EbUnitLevel:
     ) -> None:
 
         ys_transformed = basic_functions.transform(
-            ys, llambda=self.boxcox["lambda"], constant=self.constant, inverse=False
+            ys, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=False
         )
 
         eblup_ul = EblupUnitLevel()
@@ -689,7 +780,7 @@ class EbUnitLevel:
 
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
             z_d = basic_functions.transform(
-                y_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
+                y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True
             )
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)  # *)
 
@@ -763,7 +854,7 @@ class EbUnitLevel:
         intercept: bool = True,
         max_array_length: int = int(100e6),
         *args: Any,
-    ) -> np.ndarray:
+    ) -> None:
 
         X_r = formats.numpy_array(Xr)
         area_r = formats.numpy_array(arear)
@@ -845,7 +936,10 @@ class EbUnitLevel:
                 )
                 yboot_d = (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
                 zboot_d = basic_functions.transform(
-                    yboot_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
+                    yboot_d,
+                    llambda=self.boxcox["lambda"],
+                    constant=self.boxcox["constant"],
+                    inverse=True,
                 )
                 eta_pop_boot[start:end, i] = indicator(zboot_d, *args)
 
@@ -922,8 +1016,7 @@ class EbUnitLevel:
         print("\n")
 
         mse_boot = np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
-
-        return mse_boot
+        self.area_mse_boot = dict(zip(self.arear_list, area_mse_boot))
 
 
 class EllUnitLevel:
@@ -942,8 +1035,7 @@ class EllUnitLevel:
         if self.method not in ("REML", "ML", "MOM"):
             raise AssertionError("Value provided for method is not valid!")
         self.indicator = indicator
-        self.constant = constant
-        self.boxcox = {"lambda": boxcox}
+        self.boxcox = {"lambda": boxcox, "constant": constant}
 
         # Sample data
         self.scales: np.ndarray = np.array([])
@@ -968,7 +1060,7 @@ class EllUnitLevel:
         self.gamma: Dict[Any, float] = {}
 
         # Predict(ion/ed) data
-        self.areas_p: np.ndarray = np.array([])
+        self.areap: np.ndarray = np.array([])
         self.pop_size: Dict[Any, float] = {}
         self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
@@ -1002,7 +1094,7 @@ class EllUnitLevel:
 
         if self.method in ("REML", "ML"):
             eb_ul = EbUnitLevel(
-                method=self.method, boxcox=self.boxcox["lambda"], constant=self.constant
+                method=self.method, boxcox=self.boxcox["lambda"], constant=self.boxcox["constant"]
             )
             eb_ul.fit(
                 ys, Xs, areas, samp_weight, scales, False,
@@ -1025,7 +1117,7 @@ class EllUnitLevel:
             self.samp_size = eb_ul.samp_size
             self.fitted = eb_ul.fitted
         else:
-            eb_ul = EbUnitLevel(boxcox=self.boxcox["lambda"], constant=self.constant)
+            eb_ul = EbUnitLevel(boxcox=self.boxcox["lambda"], constant=self.boxcox["constant"])
             ols_fit = sm.OLS(ys, Xs).fit()
             beta_ols = ols_fit.params
             resid_ols = ys - np.matmul(Xs, beta_ols)
@@ -1101,7 +1193,7 @@ class EllUnitLevel:
                     )
 
             z_d = basic_functions.transform(
-                y_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
+                y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True
             )
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)
 
@@ -1169,11 +1261,6 @@ class EllUnitLevel:
                         % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
                         end="",
                     )
-
-            #    z_d = basic_functions.transform(
-            #        y_d, llambda=self.boxcox["lambda"], constant=self.constant, inverse=True
-            # )
-            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=y_d, *args)
 
         if show_progress:
             print("\n")
