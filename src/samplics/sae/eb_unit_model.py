@@ -27,6 +27,8 @@ assumption nor any other parametric distribution. This implementation a semipara
 nonparametric are provided. In the semiparametric, the normal distribution is used to fit the
 parameters and to draw the fixed-effects. 
 
+.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*, 
+   New York: John Wiley & Sons, Inc.
 .. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for 
    prediction of county crop areas using survey and satellite data, *Journal of the American 
    Statistical Association*, **83**, 28-36.
@@ -34,8 +36,6 @@ parameters and to draw the fixed-effects.
    *Canadian Journal of Statistics*, **38**, 369-385.
 .. [#ell2003] Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003), Micro-Level Estimation of Poverty
    and Inequality. *Econometrica*, **71**, 355-364.
-.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*, 
-   New York: John Wiley & Sons, Inc.
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
@@ -67,52 +67,50 @@ class EblupUnitLevel:
     the point and mean squared error (MSE) estimates of the empirical Bayes linear 
     unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
 
-    Setting attributes:
+    Setting attributes
         | method (str): the fitting method of the model parameters which can take the possible 
-        | values restricted maximum likelihood (REML) or maximum likelihood (ML). If notspecified, 
-        | "REML" is used as default.  
+        |   values restricted maximum likelihood (REML) or maximum likelihood (ML). 
+        |   If not specified, "REML" is used as default.  
     
-    Sample related attributes:
-        | y_s (array): the output sample values. 
-        | X_s (ndarray): the auxiliary information. 
-        | scale_s (array): an array of scaling parameters for the unit levels errors.
-        | a_factor (array): sume of the inverse squared of scale.
-        | area_s (array): the full vector of small areas from the sample data.  
-        | areas_s (array): the list of small areas from the sample data.
+    Sample related attributes
+        | ys (array): the output sample observations. 
+        | Xs (ndarray): the auxiliary information. 
+        | scales (array): an array of scaling parameters for the unit levels errors.
+        | afactors (array): sume of the inverse squared of scale.
+        | areas (array): the full vector of small areas from the sample data.  
+        | areas_list (array): the list of small areas from the sample data.
         | samp_size (dict): the sample size per small areas from the sample. 
-        | ybar_s (array): sample area means of the output variable. 
-        | xbar_s (ndarray): sample area means of the auxiliary variables.
+        | ys_mean (array): sample area means of the output variable. 
+        | Xs_mean (ndarray): sample area means of the auxiliary variables.
 
-    Model fitting attributes:
+    Model fitting attributes
         | fitted (boolean): indicates whether the model has been fitted or not. 
         | fe_std (array): the standard errors of the fixed effects. 
         | random_effects (array): linear mixed model random effects, there are the random effects 
-        | associated with the small areas. 
+        |   associated with the small areas. 
         | re_std (number): standard error of the random effects. 
         | error_std (number): standard error of the unit level residuals. 
         | convergence (dict): a dictionnary holding the convergence status and the number of 
-        | iterations from the model fitting algorithm. 
+        |   iterations from the model fitting algorithm. 
         | goodness (dict): a dictionarry holding the log-likelihood, AIC, and BIC.
         | gamma (dict): ratio of the between-area variability (re_std**2) to the total 
-        | variability (re_std**2 + error_std**2 / a_factor). 
+        |   variability (re_std**2 + error_std**2 / a_factor). 
 
-    Prediction related attributes:
-        | areas_p (array): the list of areas for the prediction. 
+    Prediction related attributes
+        | areap (array): the list of areas for the prediction. 
         | pop_size (dict): area level population sizes. 
-        | Xbar_p (array): population means of the auxiliary variables. 
+        | Xbar (array): population means of the auxiliary variables. 
         | number_reps (int): number of replicates for the bootstrap MSE estimation. 
         | area_est (array): area level EBLUP estimates. 
         | area_mse (array): area level taylor estimation of the MSE. 
         | area_mse_boot (array): area level bootstrap estimation of the MSE.
 
-
-    Methods:
-        | fit(): fits the model parameters using REMl or ML methods. 
+    Main methods
+        | fit(): fits the linear mixed model to estimate the model parameters using REMl or ML
+        |   methods. 
         | predict(): predicts the area level estimates which includes both the point estimates and 
-        | the taylor MSE estimate. 
+        |   the taylor MSE estimate. 
         | bootstrap_mse(): computes the area level bootstrap MSE estimates.
-
-
     """
 
     def __init__(
@@ -124,15 +122,15 @@ class EblupUnitLevel:
             raise AssertionError("Value provided for method is not valid!")
 
         # Sample data
-        self.scale_s: np.ndarray = np.array([])
-        self.a_factor_s: Dict[Any, float] = {}
-        self.y_s: np.ndarray = np.array([])
-        self.X_s: np.ndarray = np.array([])
-        self.area_s: np.ndarray = np.array([])
-        self.areas_s: np.ndarray = np.array([])
+        self.scales: np.ndarray = np.array([])
+        self.afactors: Dict[Any, float] = {}
+        self.ys: np.ndarray = np.array([])
+        self.Xs: np.ndarray = np.array([])
+        self.areas: np.ndarray = np.array([])
+        self.areas_list: np.ndarray = np.array([])
         self.samp_size: Dict[Any, int] = {}
-        self.ybar_s: np.ndarray = np.array([])
-        self.xbar_s: np.ndarray = np.array([])
+        self.ys_mean: np.ndarray = np.array([])
+        self.Xs_mean: np.ndarray = np.array([])
 
         # Fitted data
         self.fitted: bool = False
@@ -146,9 +144,9 @@ class EblupUnitLevel:
         self.gamma: Dict[Any, float] = {}
 
         # Predict(ion/ed) data
-        self.areas_p: np.ndarray = np.array([])
+        self.areap_list: np.ndarray = np.array([])
         self.pop_size: Dict[Any, float] = {}
-        self.Xbar_p: np.ndarray = np.array([])
+        self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
@@ -238,7 +236,7 @@ class EblupUnitLevel:
             Xmean_pr = Xmean[~ps_area]
         else:
             Xmean_ps = Xmean_pr = None
-        xbar_ps = self.xbar_s[ps_area]
+        Xp_means = self.Xs_mean[ps_area]
         samp_weight_ps = samp_weight[ps] if samp_weight is not None else None
 
         return (
@@ -255,40 +253,56 @@ class EblupUnitLevel:
 
     def fit(
         self,
-        y: Array,
-        X: Array,
-        area: Array,
+        ys: Array,
+        Xs: Array,
+        areas: Array,
         samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
+        scales: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
+        """Fits the linear mixed models to estimate the model parameters that is the fixed
+        effects, the random effects standard error and the unit level residuals' standard error. 
+        In addition, the method provides statistics related to the model fitting e.g. convergence 
+        status, log-likelihood, AIC, BIC, and more.  
 
-        area = formats.numpy_array(area)
-        y = formats.numpy_array(y)
-        X = formats.numpy_array(X)
+        Args:
+            ys (Array): An array of the output sample observations. 
+            Xs (Array): An multi-dimentional array of the auxiliary information. 
+            areas (Array): An array of the sampled area provided at the unit level. 
+            samp_weight (Optional[Array], optional): An array of the sample weights. 
+                Defaults to None.
+            scales (Union[Array, Number], optional): The scale factor for the unit level errors. 
+                If a single number of provided, the same number will be applied to all observations. Defaults to 1.
+            intercept (bool, optional): An boolean to indicate whether an intercept need to be 
+                added to X. Defaults to True.
+        """
+
+        areas = formats.numpy_array(areas)
+        ys = formats.numpy_array(ys)
+        Xs = formats.numpy_array(Xs)
         if intercept:
-            if X.ndim == 1:
-                n = X.shape[0]
-                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            if Xs.ndim == 1:
+                n = Xs.shape[0]
+                Xs = np.insert(Xs.reshape(n, 1), 0, 1, axis=1)
             else:
-                X = np.insert(X, 0, 1, axis=1)
+                Xs = np.insert(Xs, 0, 1, axis=1)
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
-        if isinstance(scale, (float, int)):
-            scale = np.ones(y.shape[0]) * scale
+        if isinstance(scales, (float, int)):
+            scales = np.ones(ys.shape[0]) * scales
         else:
-            scale = formats.numpy_array(scale)
+            scales = formats.numpy_array(scales)
 
-        self.scale_s = scale
-        self.y_s = y
-        self.X_s = X
-        self.area_s = area
-        self.areas_s = np.unique(area)
+        self.scales = scales
+        self.ys = ys
+        self.Xs = Xs
+        self.areas = areas
+        self.areas_list = np.unique(areas)
 
-        self.a_factor_s = dict(zip(self.areas_s, basic_functions.sumby(area, scale)))
+        self.afactors = dict(zip(self.areas_list, basic_functions.sumby(areas, scales)))
 
         reml = True if self.method == "REML" else False
-        basic_model = sm.MixedLM(y, X, area)
+        basic_model = sm.MixedLM(ys, Xs, areas)
         basic_fit = basic_model.fit(reml=reml, full_output=True,)
 
         self.error_std = basic_fit.scale ** 0.5
@@ -300,7 +314,7 @@ class EblupUnitLevel:
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"]) - 1
 
-        nb_obs = y.shape[0]
+        nb_obs = ys.shape[0]
         nb_variance_params = basic_fit.cov_re.shape[0] + 1
         if self.method == "REML":  # page 111 - Rao and Molina (2015)
             aic = -2 * basic_fit.llf + 2 * nb_variance_params
@@ -320,16 +334,16 @@ class EblupUnitLevel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ybar_s, self.xbar_s, gamma, samp_size = area_stats(
-            y, X, area, self.error_std, self.re_std, self.a_factor_s, samp_weight
+        self.ys_mean, self.Xs_mean, gamma, samp_size = area_stats(
+            ys, Xs, areas, self.error_std, self.re_std, self.afactors, samp_weight
         )
-        self.random_effects = gamma * (self.ybar_s - self.xbar_s @ self.fixed_effects)
-        self.gamma = dict(zip(self.areas_s, gamma))
-        self.samp_size = dict(zip(self.areas_s, samp_size))
+        self.random_effects = gamma * (self.ys_mean - self.Xs_mean @ self.fixed_effects)
+        self.gamma = dict(zip(self.areas_list, gamma))
+        self.samp_size = dict(zip(self.areas_list, samp_size))
 
         # samp_weight = np.ones(y.size)
         if samp_weight is not None:
-            beta_w = self._beta(y, X, area, samp_weight)
+            beta_w = self._beta(ys, Xs, areas, samp_weight)
 
         self.fitted = True
 
@@ -354,7 +368,7 @@ class EblupUnitLevel:
         area = formats.numpy_array(area)
         areas_p = np.unique(area)
 
-        ps = np.isin(area, self.areas_s)
+        ps = np.isin(area, self.areas_list)
         area_ps = area[ps]
         areas_ps = np.unique(area_ps)
         ps_area = np.isin(areas_p, areas_ps)
@@ -373,7 +387,7 @@ class EblupUnitLevel:
             samp_rate_ps = samp_size_ps / pop_size_ps
             eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
                 samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
-            ) * (self.ybar_s[ps_area] - np.matmul(self.xbar_s[ps_area], self.fixed_effects))
+            ) * (self.ys_mean[ps_area] - np.matmul(self.Xs_mean[ps_area], self.fixed_effects))
         elif pop_size is None:
             eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
 
@@ -383,7 +397,7 @@ class EblupUnitLevel:
 
         self.area_est = dict(zip(areas_ps, eta_pred))
 
-        X_ps = self.X_s[np.isin(self.area_s, area)]
+        X_ps = self.Xs[np.isin(self.areas, area)]
         A_ps = np.diag(np.zeros(Xmean.shape[1])) if Xmean.ndim >= 2 else np.asarray([0])
         for d in areas_ps:
             areadps = area_ps == d
@@ -394,10 +408,10 @@ class EblupUnitLevel:
             ) * np.ones([n_ps_d, n_ps_d])
             A_ps = A_ps + np.matmul(np.matmul(np.transpose(X_ps_d), np.linalg.inv(V_ps_d)), X_ps_d)
 
-        a_factor_ps = np.asarray(list(self.a_factor_s.values()))[ps_area]
+        a_factor_ps = np.asarray(list(self.afactors.values()))[ps_area]
         mse_ps = self._mse(
             areas_ps,
-            self.xbar_s[ps_area],
+            self.Xs_mean[ps_area],
             Xmean_ps,
             gamma_ps,
             samp_size_ps,
@@ -480,7 +494,7 @@ class EblupUnitLevel:
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
-            boot_ybar_s, boot_xbar_s, boot_gamma, _ = area_stats(
+            boot_ys_mean, boot_Xs_mean, boot_gamma, _ = area_stats(
                 y_ps_boot[k, :],
                 X_ps_sorted,
                 area_ps,
@@ -489,7 +503,7 @@ class EblupUnitLevel:
                 self.a_factor_s,
                 samp_weight_ps,
             )
-            boot_re = boot_gamma * (boot_ybar_s - np.matmul(boot_xbar_s, boot_fe))
+            boot_re = boot_gamma * (boot_ys_mean - np.matmul(boot_Xs_mean, boot_fe))
             boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
             boot_mu_h = np.matmul(Xmean_ps, boot_fe) + boot_re
             boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
@@ -525,15 +539,15 @@ class EbUnitLevel:
         self.boxcox = {"lambda": boxcox}
 
         # Sample data
-        self.scale_s: np.ndarray = np.array([])
-        self.a_factor: Dict[Any, float] = {}
-        self.y_s: np.ndarray = np.array([])
-        self.X_s: np.ndarray = np.array([])
-        self.area_s: np.ndarray = np.array([])
-        self.areas_s: np.ndarray = np.array([])
+        self.scales: np.ndarray = np.array([])
+        self.afactors: Dict[Any, float] = {}
+        self.ys: np.ndarray = np.array([])
+        self.Xs: np.ndarray = np.array([])
+        self.areas: np.ndarray = np.array([])
+        self.areas_list: np.ndarray = np.array([])
         self.samp_size: Dict[Any, int] = {}
-        self.ybar_s: np.ndarray = np.array([])
-        self.xbar_s: np.ndarray = np.array([])
+        self.ys_mean: np.ndarray = np.array([])
+        self.Xs_mean: np.ndarray = np.array([])
 
         # Fitted data
         self.fitted: bool = False
@@ -547,9 +561,9 @@ class EbUnitLevel:
         self.gamma: Dict[Any, float] = {}
 
         # Predict(ion/ed) data
-        self.areas_p: np.ndarray = np.array([])
+        self.areap_list: np.ndarray = np.array([])
         self.pop_size: Dict[Any, float] = {}
-        self.Xbar_p: np.ndarray = np.array([])
+        self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
@@ -571,37 +585,37 @@ class EbUnitLevel:
 
     def fit(
         self,
-        y: Array,
-        X: Array,
-        area: Array,
+        ys: Array,
+        Xs: Array,
+        areas: Array,
         samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
+        scales: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
 
-        y_transformed = basic_functions.transform(
-            y, llambda=self.boxcox["lambda"], constant=self.constant, inverse=False
+        ys_transformed = basic_functions.transform(
+            ys, llambda=self.boxcox["lambda"], constant=self.constant, inverse=False
         )
 
         eblup_ul = EblupUnitLevel()
         eblup_ul.fit(
-            y_transformed, X, area, samp_weight, scale, intercept,
+            ys_transformed, Xs, areas, samp_weight, scales, intercept,
         )
 
-        self.scale_s = eblup_ul.scale_s
-        self.y_s = eblup_ul.y_s
-        self.X_s = eblup_ul.X_s
-        self.area_s = eblup_ul.area_s
-        self.areas_s = eblup_ul.areas_s
-        self.a_factor_s = eblup_ul.a_factor_s
+        self.scales = eblup_ul.scales
+        self.ys = eblup_ul.ys
+        self.Xs = eblup_ul.Xs
+        self.areas = eblup_ul.areas
+        self.areas_list = eblup_ul.areas_list
+        self.afactors = eblup_ul.afactors
         self.error_std = eblup_ul.error_std
         self.fixed_effects = eblup_ul.fixed_effects
         self.fe_std = eblup_ul.fe_std
         self.re_std = eblup_ul.re_std
         self.convergence = eblup_ul.convergence
         self.goodness = eblup_ul.goodness
-        self.ybar_s = eblup_ul.ybar_s
-        self.xbar_s = eblup_ul.xbar_s
+        self.ys_mean = eblup_ul.ys_mean
+        self.Xs_mean = eblup_ul.Xs_mean
         self.gamma = eblup_ul.gamma
         self.samp_size = eblup_ul.samp_size
         self.fitted = eblup_ul.fitted
@@ -614,7 +628,7 @@ class EbUnitLevel:
         area_s: np.ndarray,
         X_r: np.ndarray,
         area_r: np.ndarray,
-        areas_r: np.ndarray,
+        arear_list: np.ndarray,
         fixed_effects: np.ndarray,
         gamma: np.ndarray,
         sigma2e: float,
@@ -625,23 +639,23 @@ class EbUnitLevel:
         show_progress: bool,
         *args: Any,
     ) -> np.ndarray:
-        nb_areas_r = len(areas_r)
+        nb_arear = len(arear_list)
         mu_r = X_r @ fixed_effects
 
         if show_progress:
             k = 0
-            bar_length = min(50, nb_areas_r)
-            steps = np.linspace(1, nb_areas_r - 1, bar_length).astype(int)
+            bar_length = min(50, nb_arear)
+            steps = np.linspace(1, nb_arear - 1, bar_length).astype(int)
             print(f"Generating the {number_samples} replicates samples")
 
-        eta = np.zeros((number_samples, nb_areas_r)) * np.nan
-        for i, d in enumerate(areas_r):
+        eta = np.zeros((number_samples, nb_arear)) * np.nan
+        for i, d in enumerate(arear_list):
             # print(d)
             oos = area_r == d
             mu_dr = mu_r[oos]
             ss = self.areas_s == d
-            ybar_d = self.ybar_s[ss]
-            xbar_d = self.xbar_s[ss]
+            ybar_d = self.ys_mean[ss]
+            xbar_d = self.Xs_mean[ss]
             mu_bias_dr = self.gamma[d] * (ybar_d - xbar_d @ fixed_effects)
             scale_dr = scale[oos]
             N_dr = np.sum(oos)
@@ -688,10 +702,9 @@ class EbUnitLevel:
         self,
         number_samples: int,
         indicator: Callable[..., Array],
-        X: Array,
-        area: Array,
-        samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
+        Xr: Array,
+        arear: Array,
+        scaler: Union[Array, Number] = 1,
         intercept: bool = True,
         max_array_length: int = int(100e6),
         show_progress: bool = True,
@@ -705,73 +718,56 @@ class EbUnitLevel:
 
         self.number_samples = int(number_samples)
 
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-            samp_weight = formats.numpy_array(samp_weight)
-
-        if isinstance(scale, (float, int)):
-            scale = np.ones(X.shape[0]) * scale
+        if isinstance(scaler, (float, int)):
+            scaler = np.ones(Xr.shape[0]) * scaler
         else:
-            scale = formats.numpy_array(scale)
-        area = formats.numpy_array(area)
-        self.areas_p = np.unique(area)
-        X = formats.numpy_array(X)
+            scale = formats.numpy_array(scaler)
+        area = formats.numpy_array(arear)
+        self.arear_list = np.unique(arear)
+        Xr = formats.numpy_array(Xr)
         if intercept:
-            if X.ndim == 1:
-                n = X.shape[0]
-                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            if Xr.ndim == 1:
+                n = Xr.shape[0]
+                Xr = np.insert(Xr.reshape(n, 1), 0, 1, axis=1)
             else:
-                X = np.insert(X, 0, 1, axis=1)
-        # (
-        #     ps,
-        #     ps_area,
-        #     X_ps,
-        #     area_ps,
-        #     areas_ps,
-        #     _,
-        #     _,
-        #     xbar_ps,
-        #     a_factor_ps,
-        #     samp_size_ps,
-        #     gamma_ps,
-        #     samp_weight_ps,
-        # ) = EblupUnitLevel._split_data(area, X, None, samp_weight)
+                Xr = np.insert(Xr, 0, 1, axis=1)
 
         area_est = self._predict_indicator(
             self.number_samples,
-            self.y_s,
-            self.X_s,
-            self.area_s,
-            X,
-            area,
-            self.areas_p,
+            self.ys,
+            self.Xs,
+            self.areas,
+            Xr,
+            arear,
+            self.arear_list,
             self.fixed_effects,
             self.gamma,
             self.error_std ** 2,
             self.re_std ** 2,
-            scale,
+            scaler,
             max_array_length,
             indicator,
             show_progress,
             *args,
         )
 
-        self.area_est = dict(zip(self.areas_p, area_est))
+        self.area_est = dict(zip(self.arear_list, area_est))
 
     def bootstrap_mse(
         self,
         number_reps: int,
         indicator: Callable[..., Array],
-        X: Array,
-        area: Array,
-        scale: Union[Array, Number] = 1,
+        Xr: Array,
+        arear: Array,
+        scaler: Union[Array, Number] = 1,
         intercept: bool = True,
         max_array_length: int = int(100e6),
         *args: Any,
     ) -> np.ndarray:
 
-        X_r = formats.numpy_array(X)
-        area_r = formats.numpy_array(area)
-        areas_r = np.unique(area_r)
+        X_r = formats.numpy_array(Xr)
+        area_r = formats.numpy_array(arear)
+        arear_list = np.unique(area_r)
 
         if intercept:
             if X_r.ndim == 1:
@@ -785,15 +781,15 @@ class EbUnitLevel:
         else:
             scale_r = formats.numpy_array(scale)
 
-        ps = np.isin(area_r, self.areas_s)
+        ps = np.isin(area_r, self.areas_list)
         areas_ps = np.unique(area_r[ps])
         nb_areas_ps = areas_ps.size
-        area_s = self.area_s[np.isin(self.area_s, areas_r)]
+        area_s = self.areas[np.isin(self.areas, arear_list)]
         area = np.append(area_r, area_s)
-        scale_s = self.scale_s[np.isin(self.area_s, areas_r)]
+        scale_s = self.scales[np.isin(self.areas, arear_list)]
         scale = np.append(scale_r, scale_s)
         _, N_d = np.unique(area, return_counts=True)
-        X_s = self.X_s[np.isin(self.area_s, areas_r)]
+        X_s = self.Xs[np.isin(self.areas, arear_list)]
         X = np.append(X_r, X_s, axis=0)
 
         aboot_factor = np.zeros(nb_areas_ps)
@@ -807,7 +803,7 @@ class EbUnitLevel:
         sample_dict = {}
         X_dict = {}
         X_s_dict = {}
-        for i, d in enumerate(areas_r):
+        for i, d in enumerate(arear_list):
             area_ds = area_s == d
             indice_dict[d] = area == d
             area_dict[d] = area[indice_dict[d]]
@@ -949,14 +945,16 @@ class EllUnitLevel:
         self.constant = constant
         self.boxcox = {"lambda": boxcox}
 
-        self.a_factor: Dict[Any, float] = {}
-        self.y_s: np.ndarray = np.array([])
-        self.X_s: np.ndarray = np.array([])
-        self.area_s: np.ndarray = np.array([])
-        self.areas_s: np.ndarray = np.array([])
+        # Sample data
+        self.scales: np.ndarray = np.array([])
+        self.afactors: Dict[Any, float] = {}
+        self.ys: np.ndarray = np.array([])
+        self.Xs: np.ndarray = np.array([])
+        self.areas: np.ndarray = np.array([])
+        self.areas_list: np.ndarray = np.array([])
         self.samp_size: Dict[Any, int] = {}
-        self.ybar_s: np.ndarray = np.array([])
-        self.xbar_s: np.ndarray = np.array([])
+        self.ys_mean: np.ndarray = np.array([])
+        self.Xs_mean: np.ndarray = np.array([])
 
         # Fitted data
         self.fitted: bool = False
@@ -972,80 +970,80 @@ class EllUnitLevel:
         # Predict(ion/ed) data
         self.areas_p: np.ndarray = np.array([])
         self.pop_size: Dict[Any, float] = {}
-        self.Xbar_p: np.ndarray = np.array([])
+        self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
 
     def fit(
         self,
-        y: Array,
-        X: Array,
-        area: Array,
+        ys: Array,
+        Xs: Array,
+        areas: Array,
         samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
+        scales: Union[Array, Number] = 1,
         intercept: bool = True,
     ) -> None:
 
-        y = formats.numpy_array(y)
-        X = formats.numpy_array(X)
+        ys = formats.numpy_array(ys)
+        Xs = formats.numpy_array(Xs)
         if intercept:
-            if X.ndim == 1:
-                n = X.shape[0]
-                X = np.insert(X.reshape(n, 1), 0, 1, axis=1)
+            if Xs.ndim == 1:
+                n = Xs.shape[0]
+                Xs = np.insert(Xs.reshape(n, 1), 0, 1, axis=1)
             else:
-                X = np.insert(X, 0, 1, axis=1)
+                Xs = np.insert(Xs, 0, 1, axis=1)
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
         if isinstance(scale, (float, int)):
-            scale = np.ones(y.shape[0]) * scale
+            scales = np.ones(ys.shape[0]) * scales
         else:
-            scale = formats.numpy_array(scale)
+            scales = formats.numpy_array(scales)
 
         if self.method in ("REML", "ML"):
             eb_ul = EbUnitLevel(
                 method=self.method, boxcox=self.boxcox["lambda"], constant=self.constant
             )
             eb_ul.fit(
-                y, X, area, samp_weight, scale, False,
+                ys, Xs, areas, samp_weight, scales, False,
             )
-            self.scale_s = eb_ul.scale_s
-            self.y_s = eb_ul.y_s
-            self.X_s = eb_ul.X_s
-            self.area_s = eb_ul.area_s
-            self.areas_s = eb_ul.areas_s
-            self.a_factor_s = eb_ul.a_factor_s
+            self.scales = eb_ul.scales
+            self.afactors = eb_ul.afactors
+            self.ys = eb_ul.ys
+            self.Xs = eb_ul.Xs
+            self.areas = eb_ul.areas
+            self.areas_list = eb_ul.areas_list
             self.error_std = eb_ul.error_std
             self.fixed_effects = eb_ul.fixed_effects
             self.fe_std = eb_ul.fe_std
             self.re_std = eb_ul.re_std
             self.convergence = eb_ul.convergence
             self.goodness = eb_ul.goodness
-            self.ybar_s = eb_ul.ybar_s
-            self.xbar_s = eb_ul.xbar_s
+            self.ys_mean = eb_ul.ys_mean
+            self.Xs_mean = eb_ul.Xs_mean
             self.gamma = eb_ul.gamma
             self.samp_size = eb_ul.samp_size
             self.fitted = eb_ul.fitted
         else:
             eb_ul = EbUnitLevel(boxcox=self.boxcox["lambda"], constant=self.constant)
-            ols_fit = sm.OLS(y, X).fit()
+            ols_fit = sm.OLS(ys, Xs).fit()
             beta_ols = ols_fit.params
-            resid_ols = y - np.matmul(X, beta_ols)
+            resid_ols = ys - np.matmul(Xs, beta_ols)
             re_ols = basic_functions.sumby(self.area_s, resid_ols) / basic_functions.sumby(
-                self.area_s, np.ones(self.area_s.size)
+                self.areas, np.ones(self.areas.size)
             )
             self.error_std = 111
             self.fixed_effects = beta_ols
-            self.scale_s = scale
-            self.y_s = y
-            self.X_s = X
-            self.area_s = area
-            self.areas_s = np.unique(area)
-            self.a_factor_s = dict(zip(self.areas_s, basic_functions.sumby(area, scale)))
-            self.ybar_s, self.xbar_s, _, samp_size = area_stats(
-                y, X, area, 0, 1, self.a_factor_s, samp_weight
+            self.scales = scales
+            self.ys = ys
+            self.Xs = Xs
+            self.areas = areas
+            self.areas_list = np.unique(areas)
+            self.afactors = dict(zip(self.areas_list, basic_functions.sumby(areas, scales)))
+            self.ys_mean, self.Xs_mean, _, samp_size = area_stats(
+                ys, Xs, area, 0, 1, self.afactors, samp_weight
             )
-            self.samp_size = dict(zip(self.areas_s, samp_size))
+            self.samp_size = dict(zip(self.areas_list, samp_size))
             # self.fe_std = eblupUL.fe_std
             # self.re_std = eblupUL.re_std
             self.fitted = True
@@ -1191,7 +1189,6 @@ class EllUnitLevel:
         indicator: Callable[..., Array],
         X: Array,
         area: Array,
-        samp_weight: Optional[Array] = None,
         scale: Array = 1,
         intercept: bool = True,
         max_array_length: int = int(100e6),
@@ -1205,8 +1202,6 @@ class EllUnitLevel:
             )
 
         self.number_samples = int(number_samples)
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-            samp_weight = formats.numpy_array(samp_weight)
         if isinstance(scale, (float, int)):
             scale = np.ones(X.shape[0]) * scale
         else:
@@ -1228,7 +1223,7 @@ class EllUnitLevel:
             #     areas_ps,
             #     _,
             #     _,
-            #     xbar_ps,
+            #     Xp_means,
             #     a_factor_ps,
             #     samp_size_ps,
             #     gamma_ps,
@@ -1268,9 +1263,3 @@ class EllUnitLevel:
 
         self.area_est = dict(zip(self.areas_p, area_est))
         self.area_mse = dict(zip(self.areas_p, area_mse))
-
-
-class RobustUnitLevel:
-    """implement the robust unit level model"""
-
-    pass

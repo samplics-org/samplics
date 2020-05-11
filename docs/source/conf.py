@@ -69,10 +69,10 @@ pygments_style = "sphinx"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-# import sphinx_bootstrap_theme
+import sphinx_bootstrap_theme
 
-html_theme = "alabaster"
-# html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme = "bootstrap"
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -88,13 +88,12 @@ html_static_path = ["_static"]
 # 'searchbox.html']``.
 #
 
-html_sidebars = {
-    "**": ["about.html", "navigation.html", "relations.html", "searchbox.html", "donate.html",]
-}
+html_sidebars = {"sidebar": ["localtoc.html", "sourcelink.html", "searchbox.html"]}
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = project + "docs"
+html_show_sourcelink = False
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -167,77 +166,83 @@ autodoc_default_options = {
 }
 # (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
 # Path should be relative to the ``_static`` files directory.
-# html_logo = "_static/samplics_logo.png"
-html_theme_options = {
-    "logo": "samplics_logo.png",
-    "logo_name": True,
-    "description": "Sample Analytics in Python",
-    "github_user": "survey-methods",
-    "github_repo": "samplics",
-    "github_banner": True,
-    "github_button": False,
-    "travis_button": False,
-    "codecov_button": False,
-    "analytics_id": False,  # TODO
-    "font_family": "'Roboto', Georgia, sans",
-    "head_font_family": "'Roboto', Georgia, serif",
-    "code_font_family": "'Roboto Mono', 'Consolas', monospace",
-    "anchor": "#CCFFCC",
-    "footnote_bg": "#CCE6FF",
-    "pre_bg": "#433e56",
-    "page_width": "1024px",  # default is 940px
-}
+html_logo = "_static/samplics_logo.png"
+# html_theme_options = {
+#     "logo": "samplics_logo.png",
+#     "logo_name": True,
+#     "description": "Sample Analytics in Python",
+#     "github_user": "survey-methods",
+#     "github_repo": "samplics",
+#     "github_banner": True,
+#     "github_button": False,
+#     "travis_button": False,
+#     "codecov_button": False,
+#     "analytics_id": False,  # TODO
+#     "font_family": "'Roboto', Georgia, sans",
+#     "head_font_family": "'Roboto', Georgia, serif",
+#     "code_font_family": "'Roboto Mono', 'Consolas', monospace",
+#     "anchor": "#CCFFCC",
+#     # "footnote_bg": "#CCE6FF",
+#     # "pre_bg": "#433e56",
+#     "page_width": "1024px",  # default is 940px
+# }
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.
-# html_theme_options = {
-#     # Navigation bar title. (Default: ``project`` value)
-#     "navbar_title": "samplics",
-#     # Tab name for entire site. (Default: "Site")
-#     "navbar_site_name": "API Reference",
-#     # A list of tuples containing pages or urls to link to.
-#     # Valid tuples should be in the following forms:
-#     #    (name, page)                 # a link to a page
-#     #    (name, "/aa/bb", 1)          # a link to an arbitrary relative url
-#     #    (name, "http://example.com", True) # arbitrary absolute url
-#     # Note the "1" or "True" value above as the third argument to indicate
-#     # an arbitrary url.
-#     "navbar_links": [
-#         ("Getting started", "getting_started.html"),
-#         ("Github", "https://github.com/survey-methods/samplics", True),
-#     ],
-#     # Render the next and previous page links in navbar. (Default: true)
-#     "navbar_sidebarrel": True,
-#     # Render the current pages TOC in the navbar. (Default: true)
-#     "navbar_pagenav": True,
-#     # Tab name for the current pages TOC. (Default: "Page")
-#     "navbar_pagenav_name": "Contents",
-#     # Global TOC depth for "site" navbar tab. (Default: 1)
-#     # Switching to -1 shows all levels.
-#     "globaltoc_depth": 2,
-#     # Include hidden TOCs in Site navbar?
-#     #
-#     # Note: If this is "false", you cannot have mixed ``:hidden:`` and
-#     # non-hidden ``toctree`` directives in the same page, or else the build
-#     # will break.
-#     #
-#     # Values: "true" (default) or "false"
-#     "globaltoc_includehidden": "true",
-#     # HTML navbar class (Default: "navbar") to attach to <div> element.
-#     # For black navbar, do "navbar navbar-inverse"
-#     "navbar_class": "navbar",
-#     # Fix navigation bar to top of page?
-#     # Values: "true" (default) or "false"
-#     "navbar_fixed_top": "true",
-#     # Location of link to source.
-#     # Options are "nav" (default), "footer" or anything else to exclude.
-#     "source_link_position": "nav",
-#     # Bootswatch (http://bootswatch.com/) theme.
-#     #
-#     # Options are nothing (default) or the name of a valid theme
-#     # such as "cosmo" or "sandstone".
-#     "bootswatch_theme": "flatly",
-#     # Choose Bootstrap version.
-#     # Values: "3" (default) or "2" (in quotes)
-#     "bootstrap_version": "3",
-# }
+html_theme_options = {
+    # Navigation bar title. (Default: ``project`` value)
+    "navbar_title": "samplics",
+    # Tab name for entire site. (Default: "Site")
+    "navbar_site_name": "API Reference",
+    # A list of tuples containing pages or urls to link to.
+    # Valid tuples should be in the following forms:
+    #    (name, page)                 # a link to a page
+    #    (name, "/aa/bb", 1)          # a link to an arbitrary relative url
+    #    (name, "http://example.com", True) # arbitrary absolute url
+    # Note the "1" or "True" value above as the third argument to indicate
+    # an arbitrary url.
+    "navbar_links": [
+        ("Getting started", "getting_started.html"),
+        ("Github", "https://github.com/survey-methods/samplics", True),
+    ],
+    # Render the next and previous page links in navbar. (Default: true)
+    "navbar_sidebarrel": True,
+    # Render the current pages TOC in the navbar. (Default: true)
+    "navbar_pagenav": True,
+    # Tab name for the current pages TOC. (Default: "Page")
+    "navbar_pagenav_name": "Page",
+    # Global TOC depth for "site" navbar tab. (Default: 1)
+    # Switching to -1 shows all levels.
+    "globaltoc_depth": 2,
+    # Include hidden TOCs in Site navbar?
+    #
+    # Note: If this is "false", you cannot have mixed ``:hidden:`` and
+    # non-hidden ``toctree`` directives in the same page, or else the build
+    # will break.
+    #
+    # Values: "true" (default) or "false"
+    "globaltoc_includehidden": "true",
+    # HTML navbar class (Default: "navbar") to attach to <div> element.
+    # For black navbar, do "navbar navbar-inverse"
+    "navbar_class": "navbar",
+    # Fix navigation bar to top of page?
+    # Values: "true" (default) or "false"
+    "navbar_fixed_top": "true",
+    # Location of link to source.
+    # Options are "nav" (default), "footer" or anything else to exclude.
+    "source_link_position": "nav",
+    # Bootswatch (http://bootswatch.com/) theme.
+    #
+    # Options are nothing (default) or the name of a valid theme
+    # such as "cosmo" or "sandstone".
+    "bootswatch_theme": "flatly",
+    # Choose Bootstrap version.
+    # Values: "3" (default) or "2" (in quotes)
+    "bootstrap_version": "3",
+    "content_width": "1024px",
+}
+
+# To add customized css
+def setup(app):
+    app.add_stylesheet("_source/samplics_style.css")
+    app.add_stylesheet("samplics_style.css")
