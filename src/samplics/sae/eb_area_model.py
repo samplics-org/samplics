@@ -13,7 +13,7 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
-class EblupAreaLevel:
+class EblupAreaModel:
     """implement the area level model"""
 
     # Other option for method are spatial (SP), temporal (TP), spatial-temporal (ST)

@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from samplics.sae.eb_unit_model import EblupUnitLevel
+from samplics.sae.eb_unit_model import EblupUnitModel
 
 
 cornsoybean = pd.read_csv("./tests/sae/cornsoybean.csv")
@@ -21,7 +21,7 @@ samp_size = np.array([1, 1, 1, 2, 3, 3, 3, 3, 4, 5, 5, 6])
 pop_size = np.array([545, 566, 394, 424, 564, 570, 402, 567, 687, 569, 965, 556])
 
 """REML Method"""
-eblup_bhf_reml = EblupUnitLevel()
+eblup_bhf_reml = EblupUnitModel()
 eblup_bhf_reml.fit(
     y_s, X_s, area_s,
 )
@@ -139,7 +139,7 @@ def test_area_mse_bhf_reml():
     ).all()
 
 
-eblup_bhf_reml_fpc = EblupUnitLevel()
+eblup_bhf_reml_fpc = EblupUnitModel()
 eblup_bhf_reml_fpc.fit(y_s, X_s, area_s)
 
 eblup_bhf_reml_fpc.predict(X_smean, area_s, pop_size)
@@ -169,7 +169,7 @@ def test_y_predicted_bhf_reml_fpc():
 
 
 """ML Method"""
-eblup_bhf_ml = EblupUnitLevel(method="ml")
+eblup_bhf_ml = EblupUnitModel(method="ml")
 eblup_bhf_ml.fit(y_s, X_s, area_s)
 
 eblup_bhf_ml.predict(X_smean, area_s)
@@ -279,7 +279,7 @@ def test_area_mse_bhf_ml():
     ).all()
 
 
-eblup_bhf_ml_fpc = EblupUnitLevel(method="ML")
+eblup_bhf_ml_fpc = EblupUnitModel(method="ML")
 eblup_bhf_ml_fpc.fit(y_s, X_s, area_s)
 
 eblup_bhf_ml_fpc.predict(X_smean, area_s, pop_size)
