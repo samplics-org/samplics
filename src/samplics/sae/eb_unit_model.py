@@ -224,7 +224,7 @@ class EblupUnitModel:
         np.ndarray,
     ]:
 
-        ps = np.isin(area, self.area_s)
+        ps = np.isin(area, self.areas)
         area_ps = area[ps]
         areas = np.unique(area)
         areas_ps = np.unique(area_ps)
@@ -247,7 +247,7 @@ class EblupUnitModel:
             areas_ps,
             Xmean_ps,
             Xmean_pr,
-            xbar_ps,
+            Xp_means,
             samp_weight_ps,
         )
 
@@ -531,7 +531,7 @@ class EblupUnitModel:
                 area_ps,
                 boot_error_std,
                 boot_re_std,
-                self.a_factor_s,
+                self.afactors,
                 samp_weight_ps,
             )
             boot_re = boot_gamma * (boot_ys_mean - np.matmul(boot_Xs_mean, boot_fe))
@@ -658,7 +658,7 @@ class EbUnitModel:
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
-        self.area_mse_boot: Dit[Any, float] = {}
+        self.area_mse_boot: Dict[Any, float] = {}
 
     def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
         if self.boxcox["lambda"] is None:
@@ -761,7 +761,7 @@ class EbUnitModel:
             # print(d)
             oos = area_r == d
             mu_dr = mu_r[oos]
-            ss = self.areas_s == d
+            ss = self.areas == d
             ybar_d = self.ys_mean[ss]
             xbar_d = self.Xs_mean[ss]
             mu_bias_dr = self.gamma[d] * (ybar_d - xbar_d @ fixed_effects)
@@ -919,10 +919,10 @@ class EbUnitModel:
             else:
                 X_r = np.insert(X_r, 0, 1, axis=1)
 
-        if isinstance(scale, (float, int)):
-            scale_r = np.ones(X_r.shape[0]) * scale
+        if isinstance(scaler, (float, int)):
+            scale_r = np.ones(X_r.shape[0]) * scaler
         else:
-            scale_r = formats.numpy_array(scale)
+            scale_r = formats.numpy_array(scaler)
 
         ps = np.isin(area_r, self.areas_list)
         areas_ps = np.unique(area_r[ps])
@@ -943,7 +943,6 @@ class EbUnitModel:
         scale_s_dict = {}
         a_factor_dict = {}
         sample_size_dict = {}
-        sample_dict = {}
         X_dict = {}
         X_s_dict = {}
         for i, d in enumerate(arear_list):
@@ -951,11 +950,11 @@ class EbUnitModel:
             indice_dict[d] = area == d
             area_dict[d] = area[indice_dict[d]]
             scale_dict[d] = scale[indice_dict[d]]
-            a_factor_dict[d] = self.a_factor_s[d] if d in self.areas_s else 0
-            sample_size_dict[d] = self.samp_size[d] if d in self.areas_s else 0
-            scale_s_dict[d] = scale_s[area_s == d] if d in self.areas_s else 0
+            a_factor_dict[d] = self.afactors[d] if d in self.areas_list else 0
+            sample_size_dict[d] = self.samp_size[d] if d in self.areas_list else 0
+            scale_s_dict[d] = scale_s[area_s == d] if d in self.areas_list else 0
             X_dict[d] = X[indice_dict[d]]
-            X_s_dict[d] = X_s[area_s == d]  # X_dict[d][sample_dict[d]]
+            X_s_dict[d] = X_s[area_s == d]
 
         cycle_size = max(int(max_array_length // sum(N_d)), 1)
         number_cycles = int(number_reps // cycle_size)
@@ -1068,7 +1067,7 @@ class EbUnitModel:
         print("\n")
 
         mse_boot = np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
-        self.area_mse_boot = dict(zip(self.arear_list, area_mse_boot))
+        self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
 
 class EllUnitModel:
@@ -1205,6 +1204,7 @@ class EllUnitModel:
                 added to Xs. Defaults to True.
         """
 
+        areas = formats.numpy_array(areas)
         ys = formats.numpy_array(ys)
         Xs = formats.numpy_array(Xs)
         if intercept:
@@ -1215,7 +1215,7 @@ class EllUnitModel:
                 Xs = np.insert(Xs, 0, 1, axis=1)
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
-        if isinstance(scale, (float, int)):
+        if isinstance(scales, (float, int)):
             scales = np.ones(ys.shape[0]) * scales
         else:
             scales = formats.numpy_array(scales)
@@ -1249,7 +1249,7 @@ class EllUnitModel:
             ols_fit = sm.OLS(ys, Xs).fit()
             beta_ols = ols_fit.params
             resid_ols = ys - np.matmul(Xs, beta_ols)
-            re_ols = basic_functions.sumby(self.area_s, resid_ols) / basic_functions.sumby(
+            re_ols = basic_functions.sumby(self.areas, resid_ols) / basic_functions.sumby(
                 self.areas, np.ones(self.areas.size)
             )
             self.error_std = 111
@@ -1261,7 +1261,7 @@ class EllUnitModel:
             self.areas_list = np.unique(areas)
             self.afactors = dict(zip(self.areas_list, basic_functions.sumby(areas, scales)))
             self.ys_mean, self.Xs_mean, _, samp_size = area_stats(
-                ys, Xs, area, 0, 1, self.afactors, samp_weight
+                ys, Xs, areas, 0, 1, self.afactors, samp_weight
             )
             self.samp_size = dict(zip(self.areas_list, samp_size))
             # self.fe_std = eblupUL.fe_std
@@ -1270,12 +1270,12 @@ class EllUnitModel:
 
     def _predict_indicator_parametric(
         self,
+        number_samples: int,
+        indicator: Callable[..., Array],
         mu: Array,
         area: Array,
         sigma2u: Number,
         sigma2e: Number,
-        indicator: Callable[..., Array],
-        number_samples: int,
         scale: Array,
         max_array_length: int,
         show_progress: bool,
@@ -1353,9 +1353,9 @@ class EllUnitModel:
             steps = np.linspace(1, nb_areas - 1, bar_length).astype(int)
             print(f"Generating the {number_samples} replicates samples")
 
-        area_effects = basic_functions.averageby(self.area_s, total_residuals)
-        for i, d in enumerate(self.areas_s):
-            total_residuals_d = total_residuals[self.area_s == d]
+        area_effects = basic_functions.averageby(self.areas, total_residuals)
+        for i, d in enumerate(self.areas_list):
+            total_residuals_d = total_residuals[self.areas == d]
             if i == 0:
                 unit_errors = total_residuals_d - area_effects[i]
             else:
@@ -1486,7 +1486,7 @@ class EllUnitModel:
             #    self.y_s, llambda=self.boxcox["lambda"], inverse=False
             # )
             # total_residuals = y_transformed_s - self.X_s @ self.fixed_effects
-            total_residuals = self.y_s - self.X_s @ self.fixed_effects
+            total_residuals = self.ys - self.Xs @ self.fixed_effects
             area_est, area_mse = self._predict_indicator_nonparametric(
                 self.number_samples,
                 indicator,

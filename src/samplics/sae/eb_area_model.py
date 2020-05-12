@@ -110,14 +110,14 @@ class EblupAreaModel:
 
         estimation = pd.DataFrame()
         estimation["area"] = self.area
-        estimation["estimate"] = self.point_est
-        estimation["mse"] = self.mse
+        estimation["estimate"] = self.area_est
+        estimation["mse"] = self.area_est
 
         fit = pd.DataFrame()
         fit["beta_coef"] = self.fixed_effects
         fit["beta_stderr"] = np.diag(self.fe_std)
 
-        return f"""\n\n{self.model} Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_std**2}\n\n"""
+        return f"""\n\nFH Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_std**2}\n\n"""
 
     def __repr__(self) -> str:
         return self.__str__()

@@ -3,8 +3,6 @@ language: python
 before_install:
   - pip install poetry
   - pip install nox
-# install:
-#   - poetry install
 
 jobs:
   include:

@@ -54,7 +54,7 @@ def fixed_coefficients(
     sigma2e: float,
     sigma2u: float,
     scale: np.ndarray,
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> np.ndarray:  # Tuple[np.ndarray, np.ndarray]:
 
     """[summary]    Arguments:
 

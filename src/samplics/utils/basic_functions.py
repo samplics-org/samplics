@@ -69,7 +69,13 @@ def kurtosis(y: Array) -> float:
     return kurtosis
 
 
-def _plot_measure(y, coef_min=-5, coef_max=5, nb_points=100, measure="skewness") -> None:
+def _plot_measure(
+    y: np.ndarray,
+    coef_min: Number = -5,
+    coef_max: Number = 5,
+    nb_points: int = 100,
+    measure: str = "skewness",
+) -> None:
     y = formats.numpy_array(y)
     lambda_range = np.linspace(coef_min, coef_max, num=nb_points)
     coefs = np.zeros(lambda_range.size)
@@ -98,13 +104,17 @@ def _plot_measure(y, coef_min=-5, coef_max=5, nb_points=100, measure="skewness")
     plt.show()
 
 
-def plot_skewness(y, coef_min=-5, coef_max=5, nb_points=100) -> None:
+def plot_skewness(
+    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100
+) -> None:
     _plot_measure(
         y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="skewness"
     )
 
 
-def plot_kurtosis(y, coef_min=-5, coef_max=5, nb_points=100) -> None:
+def plot_kurtosis(
+    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100
+) -> None:
     _plot_measure(
         y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="kurtosis"
     )
