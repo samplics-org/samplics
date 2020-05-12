@@ -1,3 +1,20 @@
+"""EBLUP Area Model
+
+This module implements the basic EBLUP area level model initially developed by Fay, R.E. and 
+Herriot, R.A. (1979) [#fh1979]_ and explicitly (mathematically) formulated in Rao, J.N.K. and 
+Molina, I. (2015) [#rm2015]_. The functionalities are organized in one class *EblupAreaModel* with 
+two main methods: *fit()* and *predict()*. The unit level standard error is assume known and the 
+model only estimate the fixed effects and the standard error of the random effects. The model 
+parameters can be fitted using restricted maximum likelihood (REML), maximum likelihood (ML) or 
+Fay-Herriot (FH). The method *predict()* provides both the mean and the MSE estimates at the area 
+level.
+
+.. [#fh1979] Fay, R.E. and Herriot, R.A. (1979), Estimation of Income from Small Places: An
+   Application of James-Stein Procedures to Census Data. *Journal of the American Statistical Association*, **74**, 269-277.
+.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
+   John Wiley & Sons, Hoboken, New Jersey.
+"""
+
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -14,7 +31,7 @@ from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class EblupAreaModel:
-    """implement the area level model"""
+    """*EblupAreaModel* implements the basic area level model"""
 
     # Other option for method are spatial (SP), temporal (TP), spatial-temporal (ST)
     def __init__(self, method: str = "REML") -> None:
@@ -25,17 +42,25 @@ class EblupAreaModel:
         else:
             self.method = method.upper()
 
-        self.fe_coef: np.ndarray = np.array([])
+        # Sample data
+        self.yhat: np.ndarray = np.array([])
+        self.X: np.ndarray = np.array([])
+        self.area: np.ndarray = np.array([])
+
+        # Fitting stats
+        self.fitted: bool = False
+        self.fixed_effects: np.ndarray = np.array([])
         self.fe_cov: np.ndarray = np.array([])
-        self.re_coef: np.ndarray = np.array([])
-        self.re_cov: np.ndarray = np.array([])
+        self.re_std: np.ndarray = np.array([])
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.point_est: Dict[Any, float] = {}
-        self.mse: Dict[Any, float] = {}
-        self.mse_as1: Dict[Any, float] = {}
-        self.mse_as2: Dict[Any, float] = {}
-        self.mse_terms: Dict[str, Dict[Any, float]] = {}
+
+        # Predict(ino/ed) data
+        self.area_est: Dict[Any, float] = {}
+        self.area_mse: Dict[Any, float] = {}
+        self.area_mse_as1: Dict[Any, float] = {}
+        self.area_mse_as2: Dict[Any, float] = {}
+        self.area_mse_terms: Dict[str, Dict[Any, float]] = {}
 
     def __str__(self) -> str:
 
@@ -45,10 +70,10 @@ class EblupAreaModel:
         estimation["mse"] = self.mse
 
         fit = pd.DataFrame()
-        fit["beta_coef"] = self.fe_coef
+        fit["beta_coef"] = self.fixed_effects
         fit["beta_stderr"] = np.diag(self.fe_cov) ** (1 / 2)
 
-        return f"""\n\n{self.model} Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_coef}\n\n"""
+        return f"""\n\n{self.model} Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_std**2}\n\n"""
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -215,7 +240,6 @@ class EblupAreaModel:
 
     def _eb_estimates(
         self,
-        yhat: np.ndarray,
         X: np.ndarray,
         beta: np.ndarray,
         area: np.ndarray,
@@ -234,12 +258,12 @@ class EblupAreaModel:
         np.dtype,
     ]:
 
-        m = yhat.size
+        m = self.yhat.size
         v_i = sigma2_e + sigma2_v * (b_const ** 2)
         V = np.diag(v_i)
         V_inv = np.diag(1 / v_i)
         mu = np.dot(X, beta)
-        resid = yhat - mu
+        resid = self.yhat - mu
         G = np.diag(np.ones(m) * sigma2_v)
 
         Z = np.diag(b_const)
@@ -254,13 +278,13 @@ class EblupAreaModel:
         b_term_ml2 = np.matmul(np.matmul(np.transpose(X), np.diag(b_term_ml2_diag)), X)
         b_term_ml = np.trace(np.matmul(b_term_ml1, b_term_ml2))
 
-        estimates = np.array(yhat) * np.nan
-        g1 = np.array(yhat) * np.nan
-        g2 = np.array(yhat) * np.nan
-        g3 = np.array(yhat) * np.nan
-        g3_star = np.array(yhat) * np.nan
+        estimates = np.array(self.yhat) * np.nan
+        g1 = np.array(self.yhat) * np.nan
+        g2 = np.array(self.yhat) * np.nan
+        g3 = np.array(self.yhat) * np.nan
+        g3_star = np.array(self.yhat) * np.nan
 
-        g1_partial = np.array(yhat) * np.nan
+        g1_partial = np.array(self.yhat) * np.nan
 
         sum_inv_vi2 = np.sum(1 / (v_i ** 2))
         if self.method == "REML":
@@ -278,7 +302,7 @@ class EblupAreaModel:
             b_d = b_const[area == d]
             phi_d = sigma2_e[area == d]
             X_d = X[area == d]
-            yhat_d = yhat[area == d]
+            yhat_d = self.yhat[area == d]
             mu_d = np.matmul(X_d, beta)
             resid_d = yhat_d - mu_d
             variance_d = sigma2_v * (b_d ** 2) + phi_d
@@ -307,13 +331,21 @@ class EblupAreaModel:
         yhat: Array,
         X: Array,
         area: Array,
-        sigma2_e: Array,
-        sigma2_v_start: float,
-        b_const: np.array,
-        maxiter: int,
-        abstol: float,
-        reltol: float,
+        error_std: Array,
+        re_std_start: float = 0.001,
+        b_const: Union[np.array, Number] = 1.0,
+        maxiter: int = 100,
+        abstol: float = 1.0e-4,
+        reltol: float = 0.0,
     ) -> None:
+
+        if isinstance(b_const, (int, float)):
+            b_const = np.ones(area.size) * b_const
+        else:
+            b_const = formats.numpy_array(b_const)
+
+        area = formats.numpy_array(area)
+        X = formats.numpy_array(X)
 
         (
             sigma2_v,
@@ -325,23 +357,26 @@ class EblupAreaModel:
             area=area,
             yhat=yhat,
             X=X,
-            sigma2_e=sigma2_e,
+            sigma2_e=error_std ** 2,
             b_const=b_const,
-            sigma2_v_start=sigma2_v_start,
+            sigma2_v_start=re_std_start ** 2,
             maxiter=maxiter,
             abstol=abstol,
             reltol=reltol,
         )
 
         beta, beta_cov = self._fixed_coefficients(
-            area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
+            area=area, yhat=yhat, X=X, sigma2_e=error_std ** 2, sigma2_v=sigma2_v, b_const=b_const
         )
 
-        self.fe_coef = beta
+        self.yhat = yhat
+        self.X = X
+        self.area = area
+        self.fixed_effects = beta
         self.fe_cov = beta_cov
 
-        self.re_coef = sigma2_v
-        self.re_cov = sigma2_v_cov
+        self.re_std = sigma2_v ** (1 / 2)
+        self.re_std_cov = sigma2_v_cov
 
         self.convergence["achieved"] = convergence
         self.convergence["iterations"] = iterations
@@ -350,36 +385,37 @@ class EblupAreaModel:
         m = yhat.size
         p = X.shape[1] + 1
         Z_b2_Z = np.ones(shape=(m, m))
-        V = np.diag(sigma2_e) + sigma2_v * Z_b2_Z
-        logllike = self._log_likelihood(yhat, X=X, beta=self.fe_coef, V=V)
+        V = np.diag(error_std ** 2) + sigma2_v * Z_b2_Z
+        logllike = self._log_likelihood(yhat, X=X, beta=self.fixed_effects, V=V)
         self.goodness["loglike"] = logllike
         self.goodness["AIC"] = -2 * logllike + 2 * (p + 1)
         self.goodness["BIC"] = -2 * logllike + math.log(m) * (p + 1)
 
+        self.fitted = True
+
     def predict(
         self,
-        yhat_s: Array,
-        X_s: Array,
-        X_r: Array,
-        area_s: Array,
-        area_r: Array,
-        sigma2_e: Array,
-        sigma2_v_start: float = 0.001,
-        b_const: Union[np.array, float, int] = 1.0,
+        X: Array,
+        area: Array,
+        error_std: Array,
+        b_const: Union[np.array, Number] = 1.0,
         maxiter: int = 100,
         abstol: float = 1.0e-4,
         reltol: float = 0.0,
     ) -> None:
 
-        if isinstance(b_const, (int, float)):
-            b_const = np.ones(area_s.size) * b_const
+        if not self.fitted:
+            raise Exception(
+                "The model must be fitted first with .fit() before running the prediction."
+            )
 
-        area_s = formats.numpy_array(area_s)
-        area_r = formats.numpy_array(area_r)
-        yhat_s = formats.numpy_array(yhat_s)
-        X_s = formats.numpy_array(X_s)
-        X_r = formats.numpy_array(X_r)
-        b_const = formats.numpy_array(b_const)
+        if isinstance(b_const, (int, float)):
+            b_const = np.ones(area.size) * b_const
+        else:
+            b_const = formats.numpy_array(b_const)
+
+        area = formats.numpy_array(area)
+        X = formats.numpy_array(X)
 
         if abstol <= 0.0 and reltol <= 0.0:
             AssertionError("At least one tolerance parameters must be positive.")
@@ -387,29 +423,15 @@ class EblupAreaModel:
             abstol = max(abstol, 0)
             reltol = max(reltol, 0)
 
-        self.fit(
-            yhat=yhat_s,
-            X=X_s,
-            area=area_s,
-            sigma2_e=sigma2_e,
-            sigma2_v_start=sigma2_v_start,
-            b_const=b_const,
-            maxiter=maxiter,
-            abstol=abstol,
-            reltol=reltol,
-        )
-
         point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
-            yhat=yhat_s,
-            X=X_s,
-            area=area_s,
-            beta=self.fe_coef,
-            sigma2_e=sigma2_e,
-            sigma2_v=self.re_coef,
-            sigma2_v_cov=self.re_cov,
+            X=X,
+            area=area,
+            beta=self.fixed_effects,
+            sigma2_e=error_std ** 2,
+            sigma2_v=self.re_std ** 2,
+            sigma2_v_cov=self.re_std_cov,
             b_const=b_const,
         )
 
-        self.point_est = point_est
-        self.mse = mse
-        self.area = area_s
+        self.area_est = dict(zip(area, point_est))
+        self.area_mse = dict(zip(area, mse))

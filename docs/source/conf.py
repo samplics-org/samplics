@@ -239,7 +239,6 @@ html_theme_options = {
     # Choose Bootstrap version.
     # Values: "3" (default) or "2" (in quotes)
     "bootstrap_version": "3",
-    "content_width": "1024px",
 }
 
 # To add customized css

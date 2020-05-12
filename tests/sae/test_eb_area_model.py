@@ -11,41 +11,48 @@ area = milk["SmallArea"]
 yhat = milk["yi"]
 X = pd.get_dummies(milk["MajorArea"])
 X.loc[:, 1] = 1
-sigma2_e = milk["SD"] ** 2
+print(X)
+sigma_e = milk["SD"]
 
 ## REML method
 fh_model_reml = EblupAreaModel(method="REML")
+fh_model_reml.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
+)
 fh_model_reml.predict(
-    yhat_s=yhat, X_s=X, X_r=None, area_s=area, area_r=None, sigma2_e=sigma2_e, abstol=1e-4,
+    X=X, area=area, error_std=sigma_e,
 )
 
 
 def test_fay_herriot_REML_convergence():
     assert fh_model_reml.convergence["achieved"] == True
-    assert fh_model_reml.convergence["iterations"] == 4
+    assert fh_model_reml.convergence["iterations"] == 3
     assert fh_model_reml.convergence["precision"] <= 1e-4
 
 
 def test_fay_herriot_REML_goodness():
-    assert np.isclose(fh_model_reml.goodness["loglike"], -9.4034611881, atol=1e-6)
-    assert np.isclose(fh_model_reml.goodness["AIC"], 30.806922376, atol=1e-6)
-    assert np.isclose(fh_model_reml.goodness["BIC"], 41.3741230705, atol=1e-6)
+    assert np.isclose(fh_model_reml.goodness["loglike"], -9.4034611881, atol=1e-4)
+    assert np.isclose(fh_model_reml.goodness["AIC"], 30.806922376, atol=1e-4)
+    assert np.isclose(fh_model_reml.goodness["BIC"], 41.3741230705, atol=1e-4)
 
 
 def test_fay_herriot_REML_fixed_effect():
     assert np.isclose(
-        fh_model_reml.fe_coef, np.array([0.9681890, 0.1327801, 0.2269462, -0.2413011]), atol=1e-6
+        fh_model_reml.fixed_effects,
+        np.array([0.9681890, 0.1327801, 0.2269462, -0.2413011]),
+        atol=1e-4,
     ).all()
     assert np.isclose(
         np.diag(fh_model_reml.fe_cov),
         np.array([0.06936208 ** 2, 0.10300072 ** 2, 0.09232981 ** 2, 0.08161707 ** 2]),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 
-def test_fay_herriot_REML_point_est():
+def test_fay_herriot_REML_area_est():
+    area_est = np.array(list(fh_model_reml.area_est.values()))
     assert np.isclose(
-        fh_model_reml.point_est,
+        area_est,
         np.array(
             [
                 1.0219703,
@@ -93,13 +100,14 @@ def test_fay_herriot_REML_point_est():
                 0.6810870,
             ]
         ),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 
 def test_fay_herriot_REML_mse():
+    area_mse = np.array(list(fh_model_reml.area_mse.values()))
     assert np.isclose(
-        fh_model_reml.mse,
+        area_mse,
         np.array(
             [
                 0.013460220,
@@ -147,14 +155,17 @@ def test_fay_herriot_REML_mse():
                 0.009903626,
             ]
         ),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 
 ## ML method
 fh_model_ml = EblupAreaModel(method="ML")
+fh_model_ml.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
+)
 fh_model_ml.predict(
-    yhat_s=yhat, X_s=X, X_r=None, area_s=area, area_r=None, sigma2_e=sigma2_e, abstol=1e-4,
+    X=X, area=area, error_std=sigma_e, abstol=1e-4,
 )
 
 
@@ -165,25 +176,28 @@ def test_fay_herriot_ML_convergence():
 
 
 def test_fay_herriot_ML_goodness():
-    assert np.isclose(fh_model_ml.goodness["loglike"], 1.817033876, atol=1e-6)
-    assert np.isclose(fh_model_ml.goodness["AIC"], 8.365932247, atol=1e-6)
-    assert np.isclose(fh_model_ml.goodness["BIC"], 18.9331329415, atol=1e-6)
+    assert np.isclose(fh_model_ml.goodness["loglike"], 1.817033876, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["AIC"], 8.365932247, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["BIC"], 18.9331329415, atol=1e-4)
 
 
 def test_fay_herriot_ML_fixed_effect():
     assert np.isclose(
-        fh_model_ml.fe_coef, np.array([0.9677986, 0.1278756, 0.2266909, -0.2425804]), atol=1e-6
+        fh_model_ml.fixed_effects,
+        np.array([0.9677986, 0.1278756, 0.2266909, -0.2425804]),
+        atol=1e-4,
     ).all()
     assert np.isclose(
         np.diag(fh_model_ml.fe_cov),
         np.array([0.06590747 ** 2, 0.09840939 ** 2, 0.08813973 ** 2, 0.07753875 ** 2]),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 
-def test_fay_herriot_ML_point_est():
+def test_fay_herriot_ML_area_est():
+    area_est = np.array(list(fh_model_ml.area_est.values()))
     assert np.isclose(
-        fh_model_ml.point_est,
+        area_est,
         np.array(
             [
                 1.0161733,
@@ -231,13 +245,14 @@ def test_fay_herriot_ML_point_est():
                 0.6840976,
             ]
         ),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 
 def test_fay_herriot_ML_mse():
+    area_mse = np.array(list(fh_model_ml.area_mse.values()))
     assert np.isclose(
-        fh_model_ml.mse,
+        area_mse,
         np.array(
             [
                 0.013579953,
@@ -285,15 +300,18 @@ def test_fay_herriot_ML_mse():
                 0.010037140,
             ]
         ),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 
 ## FH method
 
 fh_model_fh = EblupAreaModel(method="FH")
+fh_model_fh.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
+)
 fh_model_fh.predict(
-    yhat_s=yhat, X_s=X, X_r=None, area_s=area, area_r=None, sigma2_e=sigma2_e, abstol=1e-4,
+    X=X, area=area, error_std=sigma_e, abstol=1e-4,
 )
 
 
@@ -304,14 +322,15 @@ def test_fay_herriot_FH_convergence():
 
 
 def test_fay_herriot_ML_goodness():
-    assert np.isclose(fh_model_fh.goodness["loglike"], 1.76370010, atol=1e-6)
-    assert np.isclose(fh_model_fh.goodness["AIC"], 8.472599789, atol=1e-6)
-    assert np.isclose(fh_model_fh.goodness["BIC"], 19.039800483, atol=1e-6)  # a
+    assert np.isclose(fh_model_fh.goodness["loglike"], 1.76370010, atol=1e-4)
+    assert np.isclose(fh_model_fh.goodness["AIC"], 8.472599789, atol=1e-4)
+    assert np.isclose(fh_model_fh.goodness["BIC"], 19.039800483, atol=1e-4)  # a
 
 
-def test_fay_herriot_FH_point_est():
+def test_fay_herriot_FH_area_est():
+    area_est = np.array(list(fh_model_fh.area_est.values()))
     assert np.isclose(
-        fh_model_fh.point_est,
+        area_est,
         np.array(
             [
                 1.017975,
@@ -359,13 +378,14 @@ def test_fay_herriot_FH_point_est():
                 0.683160,
             ]
         ),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 
 def test_fay_herriot_FH_mse():
+    area_mse = np.array(list(fh_model_fh.area_mse.values()))
     assert np.isclose(
-        fh_model_fh.mse,
+        area_mse,
         np.array(
             [
                 0.012757016,
@@ -413,7 +433,7 @@ def test_fay_herriot_FH_mse():
                 0.009484220,
             ]
         ),
-        atol=1e-6,
+        atol=1e-4,
     ).all()
 
 

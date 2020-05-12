@@ -1,27 +1,27 @@
 """EBLUP and EB Unit Models
 
 This module implements the basic EBLUP and EB unit level models. It also provides the ELL model. 
-These functionalities are organized in classes. Each class has three main methods: *fit()*, 
+The functionalities are organized in classes. Each class has three main methods: *fit()*, 
 *predict()* and *bootstrap_mse()*. Linear Mixed Models (LMM) are the core underlying statistical
 framework used to model the hierarchical nature of the small area estimation (SAE) techniques 
 implemented in this module, see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more 
 details on LMM.
 
-The EblupUnitModel class implements the model developed by Battese, G.E., Harter, R.M., and 
+The *EblupUnitModel* class implements the model developed by Battese, G.E., Harter, R.M., and 
 Fuller, W.A. (1988) [#bhf1988]_. The model parameters can fitted using restricted maximum 
 likelihood (REML) and maximum likelihood (ML). The normality assumption of the errors is not 
 necessary to predict the point estimates but is required for the taylor MSE estimation. The 
 predictions takes into account sampling rates. A bootstrap MSE estimation method is also implemted 
 for this class. 
 
-The EbUnitModel class implements the model developed by Molina, I. and Rao, J.N.K. (2010)
+The *EbUnitModel* class implements the model developed by Molina, I. and Rao, J.N.K. (2010)
 [#mr2010]_. So far, only the basic approach requiring the normal distribution of the errors is 
 implemented. This approach allows estimating complex indicators such as poverty indices and 
 other nonlinear paramaters. The class fits the model parameters using REML or ML. To predict the 
 area level indicators estimates, a Monte Carlo (MC) approach is used. MSE estimation is achieved 
 using a bootstrap procedure.  
 
-The EllUnitModel class implements the model Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003) 
+The *EllUnitModel* class implements the model Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003) 
 [#ell2003]_. This method is nonparametric at its core, hence does not require normality 
 assumption nor any other parametric distribution. This implementation a semiparametric and 
 nonparametric are provided. In the semiparametric, the normal distribution is used to fit the
@@ -59,9 +59,9 @@ from samplics.sae.sae_core_functions import area_stats
 
 
 class EblupUnitModel:
-    """EblupUnitModel implements the basic Unit level model for means (a linear indicator).
+    """*EblupUnitModel* implements the basic unit level model for means (a linear indicator).
 
-    EblupUnitModel takes the sample data as input and fits the basic linear mixed model. 
+    *EblupUnitModel* takes the sample data as input and fits the basic linear mixed model. 
     The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) 
     to fit the model parameters. Also, EblupUnitModel predicts the areas means and provides 
     the point and mean squared error (MSE) estimates of the empirical Bayes linear 
@@ -132,7 +132,7 @@ class EblupUnitModel:
         self.ys_mean: np.ndarray = np.array([])
         self.Xs_mean: np.ndarray = np.array([])
 
-        # Fitted data
+        # Fitting stats
         self.fitted: bool = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
@@ -550,23 +550,23 @@ class EblupUnitModel:
 
 
 class EbUnitModel:
-    """EbUnitModel implements the basic Unit level model for complex indicators.
+    """*EbUnitModel* implements the basic Unit level model for complex indicators.
 
-    EbUnitModel takes the sample data as input and fits the basic linear mixed model. 
+    *EbUnitModel* takes the sample data as input and fits the basic linear mixed model. 
     The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) 
     to fit the model parameters. Also, EbUnitModel predicts the areas means and provides 
     the point and mean squared error (MSE) estimates of the empirical Bayes linear 
     unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
 
-    EbUnitModel requires the user to provide the indicator function. The indicator function is 
+    *EbUnitModel* requires the user to provide the indicator function. The indicator function is 
     expected to take the array of output sample observations as input and possibly some additional 
     parameters needed to compute the indicator. The indicator function outputs an aggregated value.
     For example, the poverty gap indicator can have the following signature 
     pov_gap(y: array, pov_line: float) -> float. If the indicator function different outputs by 
     area then the self.area_list can be used to incorporate different logics across areas.
 
-    Also, EbUnitModel can use Boxcox to transform the output sample values in order to reduce the 
-    asymmetry in the datawhen fitting the linear mixed model. 
+    Also, *EbUnitModel* can use Boxcox to transform the output sample values in order to reduce 
+    the asymmetry in the datawhen fitting the linear mixed model. 
 
     Setting attributes
         | method (str): the fitting method of the model parameters which can take the possible 
