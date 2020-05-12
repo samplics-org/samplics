@@ -10,7 +10,8 @@ Fay-Herriot (FH). The method *predict()* provides both the mean and the MSE esti
 level.
 
 .. [#fh1979] Fay, R.E. and Herriot, R.A. (1979), Estimation of Income from Small Places: An
-   Application of James-Stein Procedures to Census Data. *Journal of the American Statistical Association*, **74**, 269-277.
+   Application of James-Stein Procedures to Census Data. *Journal of the American Statistical 
+   Association*, **74**, 269-277.
 .. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
    John Wiley & Sons, Hoboken, New Jersey.
 """

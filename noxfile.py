@@ -1,12 +1,11 @@
 import nox
 
-LINT_FILES = "docs", "src", "tests", "noxfile.py"
-
 
 @nox.session(python=["3.6", "3.7", "3.8"])
 def tests(session):
+    session.run("poetry", "shell")
+    session.run("poetry", "install")
     session.install("pytest")
-    session.install("-e", ".")
     session.run("pytest", "-v", "tests")
 
 
@@ -27,15 +26,10 @@ def docs(session):
 
 
 @nox.session
-def format(session):
-    session.install("black")
-    session.run("black", *LINT_FILES)
-
-
-@nox.session
 def lint(session):
+    lint_files = ["docs", "src", "tests", "noxfile.py"]
     session.install("black", "mypy")
-    session.run("black", "--diff", "--check", *LINT_FILES)
+    session.run("black", "--diff", "--check", *lint_files)
     session.run("mypy", "--strict", "--ignore-missing-imports", "src")
 
 

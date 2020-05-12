@@ -1,0 +1,17 @@
+language: python
+
+matrix:
+  include:
+    - python: "3.6"
+      env: NOXSESSION="tests-3.6"
+    - python: "3.7"
+      env: NOXSESSION="tests-3.7"
+    - python: "3.8"
+      env: NOXSESSION="tests-3.8"
+    - python: "3.8"
+      env: NOXSESSION="lint"
+    - python: "3.8"
+      env: NOXSESSION="docs"
+
+notifications:
+  email: msdiallo@quantifyafrica.org

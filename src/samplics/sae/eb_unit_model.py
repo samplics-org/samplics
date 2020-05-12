@@ -1,4 +1,4 @@
-"""EBLUP and EB Unit Models
+"""EBLUP and EB Unit Models.
 
 This module implements the basic EBLUP and EB unit level models. It also provides the ELL model. 
 The functionalities are organized in classes. Each class has three main methods: *fit()*, 
@@ -826,7 +826,8 @@ class EbUnitModel:
             arear (Array): provides the area of the out of sample units.
             indicator (Callable[..., Array]): a user defined function which computes the area level
                 indicators. The function should take y (output variable) as the first parameters, 
-                additional parameters can be used. Use *args to transfer the additional parameters.
+                additional parameters can be used. Use *args* to transfer the additional 
+                parameters.
             number_samples (int): number of replicates for the Monte-Carlo (MC) algorithm.  
             scaler (Union[Array, Number], optional): the scale factor for the unit level errors. 
                 If a single number of provided, the same number will be applied to all observations. Defaults to 1.
@@ -1071,14 +1072,14 @@ class EbUnitModel:
 
 
 class EllUnitModel:
-    """EllUnitModel implements the basic Unit level model for complex indicators.
+    """*EllUnitModel* implements the basic Unit level model for complex indicators.
 
-    EllUnitModel takes the sample data as input and fits the basic linear mixed model. 
+    *EllUnitModel* takes the sample data as input and fits the basic linear mixed model. 
     The user can pick between restricted maximum likelihood (REML), maximum likelihood (ML), 
     and method of moments (MOM) to fit the model parameters. Also, EllUnitModel predicts the areas means and provides the point and mean squared error (MSE) estimates of the empirical Bayes 
     linear unbiased (EBLUP). 
 
-    EllUnitModel requires the user to provide the indicator function. The indicator function is 
+    *EllUnitModel* requires the user to provide the indicator function. The indicator function is 
     expected to take the array of output sample observations as input and possibly some additional 
     parameters needed to compute the indicator. The indicator function outputs an aggregated value.
     For example, the poverty gap indicator can have the following signature 
@@ -1416,7 +1417,8 @@ class EllUnitModel:
             area (Array): provides the area of the population units.
             indicator (Callable[..., Array]): a user defined function which computes the area level
                 indicators. The function should take y (output variable) as the first parameters, 
-                additional parameters can be used. Use *args to transfer the additional parameters.
+                additional parameters can be used. Use *args* to transfer the additional 
+                parameters.
             number_samples (int): [description]
             scale (Array, optional): [description]. Defaults to 1.
             intercept (bool, optional): An boolean to indicate whether an intercept need to be 
