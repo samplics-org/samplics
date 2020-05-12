@@ -11,29 +11,25 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os, sys
+import samplics
 
 sys.path.insert(0, os.path.abspath("../.."))
 
 
 # -- Project information -----------------------------------------------------
 project = "samplics"
-copyright = "2020, SAMPLICS"
+copyright = "2019-2020, samplics"
 author = "Mamadou S. Diallo"
 
 # The master toctree document.
 master_doc = "index"
 
-# The short X.Y version
-version = ""
-# The full version, including alpha/beta/rc tags
+version = samplics.__version__
 release = "__version__"
 
 
 # -- General configuration ---------------------------------------------------
 
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
@@ -166,7 +162,6 @@ autodoc_default_options = {
 }
 # (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
 # Path should be relative to the ``_static`` files directory.
-html_logo = "_static/samplics_logo.png"
 # html_theme_options = {
 #     "logo": "samplics_logo.png",
 #     "logo_name": True,
@@ -189,55 +184,23 @@ html_logo = "_static/samplics_logo.png"
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.
+html_logo = "_static/samplics_logo3.png"
 html_theme_options = {
-    # Navigation bar title. (Default: ``project`` value)
-    "navbar_title": "samplics",
-    # Tab name for entire site. (Default: "Site")
-    "navbar_site_name": "API Reference",
-    # A list of tuples containing pages or urls to link to.
-    # Valid tuples should be in the following forms:
-    #    (name, page)                 # a link to a page
-    #    (name, "/aa/bb", 1)          # a link to an arbitrary relative url
-    #    (name, "http://example.com", True) # arbitrary absolute url
-    # Note the "1" or "True" value above as the third argument to indicate
-    # an arbitrary url.
+    "navbar_title": "Sample Analytics",
     "navbar_links": [
         ("Getting started", "getting_started.html"),
-        ("Github", "https://github.com/survey-methods/samplics", True),
+        ("Github", "https://github.com/survey-methods/samplics"),
     ],
-    # Render the next and previous page links in navbar. (Default: true)
     "navbar_sidebarrel": True,
-    # Render the current pages TOC in the navbar. (Default: true)
-    "navbar_pagenav": True,
-    # Tab name for the current pages TOC. (Default: "Page")
-    "navbar_pagenav_name": "Page",
-    # Global TOC depth for "site" navbar tab. (Default: 1)
-    # Switching to -1 shows all levels.
-    "globaltoc_depth": 2,
-    # Include hidden TOCs in Site navbar?
-    #
-    # Note: If this is "false", you cannot have mixed ``:hidden:`` and
-    # non-hidden ``toctree`` directives in the same page, or else the build
-    # will break.
-    #
-    # Values: "true" (default) or "false"
+    "navbar_site_name": "Documentation",
+    "navbar_pagenav": False,
+    "navbar_pagenav_name": "Pages",
+    "globaltoc_depth": 3,
     "globaltoc_includehidden": "true",
-    # HTML navbar class (Default: "navbar") to attach to <div> element.
-    # For black navbar, do "navbar navbar-inverse"
     "navbar_class": "navbar",
-    # Fix navigation bar to top of page?
-    # Values: "true" (default) or "false"
     "navbar_fixed_top": "true",
-    # Location of link to source.
-    # Options are "nav" (default), "footer" or anything else to exclude.
     "source_link_position": "nav",
-    # Bootswatch (http://bootswatch.com/) theme.
-    #
-    # Options are nothing (default) or the name of a valid theme
-    # such as "cosmo" or "sandstone".
-    "bootswatch_theme": "flatly",
-    # Choose Bootstrap version.
-    # Values: "3" (default) or "2" (in quotes)
+    "bootswatch_theme": "paper",
     "bootstrap_version": "3",
 }
 

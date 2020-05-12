@@ -11,8 +11,8 @@ SAMPLICS: sample analytics
 
 `Source code <https://github.com/survey-methods/samplics>`_
 
-samplics's modules
-------------------
+samplics's documentation
+########################
 
 .. toctree::
    :maxdepth: 1
@@ -24,7 +24,7 @@ samplics's modules
    samplics 
 
 Indices and tables
-------------------
+##################
 
 * :ref:`genindex`
 * :ref:`modindex`
