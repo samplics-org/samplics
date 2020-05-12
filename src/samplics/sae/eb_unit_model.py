@@ -85,11 +85,11 @@ class EblupUnitModel:
 
     Model fitting attributes
         | fitted (boolean): indicates whether the model has been fitted or not. 
-        | fe_std (array): the standard errors of the fixed effects. 
-        | random_effects (array): linear mixed model random effects, there are the random effects 
-        |   associated with the small areas. 
-        | re_std (number): standard error of the random effects. 
-        | error_std (number): standard error of the unit level residuals. 
+        | fixed_effects (array): the estimated fixed effects of the regression model. 
+        | fe_std (array): the estimated standard errors of the fixed effects. 
+        | random_effects (array): the estimated area level random effects.
+        | re_std (number): the estimated standard error of the random effects. 
+        | error_std (number): the estimated standard error of the unit level residuals. 
         | convergence (dict): a dictionnary holding the convergence status and the number of 
         |   iterations from the model fitting algorithm. 
         | goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.
@@ -589,10 +589,11 @@ class EbUnitModel:
 
     Model fitting attributes
         | fitted (boolean): indicates whether the model has been fitted or not. 
-        | fe_std (array): the standard errors of the fixed effects. 
-        | random_effects (array): linear mixed model random effects, there are the random effects 
+        | fixed_effects (array): the estimated fixed effects of the regression model. 
+        | fe_std (array): the estimated standard errors of the fixed effects. 
+        | random_effects (array): the estimated area level random effects.
         |   associated with the small areas. 
-        | re_std (number): standard error of the random effects. 
+        | re_std (number): the estimated standard error of the random effects. 
         | error_std (number): standard error of the unit level residuals. 
         | convergence (dict): a dictionnary holding the convergence status and the number of 
         |   iterations from the model fitting algorithm. 
@@ -1108,11 +1109,11 @@ class EllUnitModel:
 
     Model fitting attributes
         | fitted (boolean): indicates whether the model has been fitted or not. 
-        | fe_std (array): the standard errors of the fixed effects. 
-        | random_effects (array): linear mixed model random effects, there are the random effects 
-        |   associated with the small areas. 
-        | re_std (number): standard error of the random effects. 
-        | error_std (number): standard error of the unit level residuals. 
+        | fixed_effects (array): the estimated fixed effects of the regression model. 
+        | fe_std (array): the estimated standard errors of the fixed effects. 
+        | random_effects (array): the estimated area level random effects
+        | re_std (number): the estimated standard error of the random effects. 
+        | error_std (number): the estimated standard error of the unit level residuals. 
         | convergence (dict): a dictionnary holding the convergence status and the number of 
         |   iterations from the model fitting algorithm. 
         | goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.
@@ -1192,8 +1193,8 @@ class EllUnitModel:
         status, log-likelihood, AIC, BIC, and more.
 
         Args:
-            ys (Array):  An array of the output sample observations. 
-            Xs (Array): An multi-dimensional array of the sample auxiliary information.
+            ys (Array):  an array of the output sample observations. 
+            Xs (Array): an multi-dimensional array of the sample auxiliary information.
             areas (Array): provides the area of the sampled observations. 
             samp_weight (Optional[Array], optional): An array of the sample weights. 
                 Defaults to None.

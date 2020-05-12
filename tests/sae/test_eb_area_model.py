@@ -20,7 +20,7 @@ fh_model_reml.fit(
     yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
 )
 fh_model_reml.predict(
-    X=X, area=area, error_std=sigma_e,
+    X=X, area=area,
 )
 
 
@@ -43,7 +43,7 @@ def test_fay_herriot_REML_fixed_effect():
         atol=1e-4,
     ).all()
     assert np.isclose(
-        np.diag(fh_model_reml.fe_cov),
+        np.diag(fh_model_reml.fe_std ** 2),
         np.array([0.06936208 ** 2, 0.10300072 ** 2, 0.09232981 ** 2, 0.08161707 ** 2]),
         atol=1e-4,
     ).all()
@@ -165,7 +165,7 @@ fh_model_ml.fit(
     yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
 )
 fh_model_ml.predict(
-    X=X, area=area, error_std=sigma_e, abstol=1e-4,
+    X=X, area=area,
 )
 
 
@@ -188,7 +188,7 @@ def test_fay_herriot_ML_fixed_effect():
         atol=1e-4,
     ).all()
     assert np.isclose(
-        np.diag(fh_model_ml.fe_cov),
+        np.diag(fh_model_ml.fe_std ** 2),
         np.array([0.06590747 ** 2, 0.09840939 ** 2, 0.08813973 ** 2, 0.07753875 ** 2]),
         atol=1e-4,
     ).all()
@@ -311,7 +311,7 @@ fh_model_fh.fit(
     yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
 )
 fh_model_fh.predict(
-    X=X, area=area, error_std=sigma_e, abstol=1e-4,
+    X=X, area=area,
 )
 
 

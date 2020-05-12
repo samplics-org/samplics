@@ -31,11 +31,53 @@ from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class EblupAreaModel:
-    """*EblupAreaModel* implements the basic area level model"""
+    """*EblupAreaModel* implements the basic area level model. 
 
-    # Other option for method are spatial (SP), temporal (TP), spatial-temporal (ST)
+    *EblupAreaModel* takes the unstable survey estimates as input and model them to produce the 
+    small area estimates. The standard error of the unit level residuals are assumed known and 
+    usually correspond to the survey estimates standard error. In some cases, the survey standard 
+    errors (or variances) are modelled to reduce their variability and the modelled standard errors
+    are them used for the computes the small area estimates. The user can pick between REML, ML and
+    FH to estimate the model parameters. EblupAreaModel provides both the area level point estimates and the taylor approximation of the MSEs. 
+
+    Setting attributes
+        | method (str): the fitting method of the model parameters which can take the possible 
+        |   values restricted maximum likelihood (REML), maximum likelihood (ML), and 
+        |   Fay-Herriot (FH). If not specified, "REML" is used as default.  
+    
+    Sample related attributes
+        | yhat (array): the survey output area level estimates. This is also referred to as the 
+        | direct estimates. 
+        | error_std (number): the estimated standard error of the direct estimates. 
+        | X (ndarray): the auxiliary information. 
+        | b_const (array): an array of scaling parameters for the area random effects.
+        | area (array): the area of the survey output estimates.  
+        | samp_size (dict): the sample size per small areas from the sample. 
+        | ys_mean (array): sample area means of the output variable. 
+        | Xs_mean (ndarray): sample area means of the auxiliary variables.
+
+    Model fitting attributes
+        | fitted (boolean): indicates whether the model has been fitted or not. 
+        | fixed_effects (array): the estimated fixed effects of the regression model. 
+        | fe_std (array): the estimated standard errors of the fixed effects. 
+        | random_effects (array): the estimated standard errors of the fixed effects.
+        | re_std (number): the estimated area level standard error of the random effects.
+        | convergence (dict): a dictionnary holding the convergence status and the number of 
+        |   iterations from the model fitting algorithm. 
+        | goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.
+
+    Prediction related attributes
+        | area_est (array): area level modelled estimates. 
+        | area_mse (array): area level taylor estimation of the MSE. 
+
+    Main methods
+        | fit(): fits the linear mixed model to estimate the model parameters using REMl or ML
+        |   methods. 
+        | predict(): predicts the area level mean estimates which includes both the point   | | 
+        |   estimates and the taylor MSE estimate. 
+    """
+
     def __init__(self, method: str = "REML") -> None:
-        self.model: str = "FH"
 
         if method.upper() not in ("FH", "ML", "REML"):
             raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'.")
@@ -44,13 +86,14 @@ class EblupAreaModel:
 
         # Sample data
         self.yhat: np.ndarray = np.array([])
+        self.error_std: np.ndarray = np.array([])
         self.X: np.ndarray = np.array([])
         self.area: np.ndarray = np.array([])
 
         # Fitting stats
         self.fitted: bool = False
         self.fixed_effects: np.ndarray = np.array([])
-        self.fe_cov: np.ndarray = np.array([])
+        self.fe_std: np.ndarray = np.array([])
         self.re_std: np.ndarray = np.array([])
         self.convergence: Dict[str, Union[float, int, bool]] = {}
         self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
@@ -71,7 +114,7 @@ class EblupAreaModel:
 
         fit = pd.DataFrame()
         fit["beta_coef"] = self.fixed_effects
-        fit["beta_stderr"] = np.diag(self.fe_cov) ** (1 / 2)
+        fit["beta_stderr"] = np.diag(self.fe_std)
 
         return f"""\n\n{self.model} Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_std**2}\n\n"""
 
@@ -87,19 +130,6 @@ class EblupAreaModel:
         sigma2_v: float,
         b_const: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """[summary]
-        
-        Arguments:
-            area {np.ndarray} -- [description]
-            yhat {np.ndarray} -- [description]
-            X {np.ndarray} -- [description]
-            sigma2_e {np.ndarray} -- [description]
-            sigma2_v {float} -- [description]
-            b_const {np.ndarray} -- [description]
-        
-        Returns:
-            Tuple[np.ndarray, np.ndarray] -- [description]
-        """
 
         V = np.diag(sigma2_v * (b_const ** 2) + sigma2_e)
         V_inv = np.linalg.inv(V)
@@ -338,6 +368,24 @@ class EblupAreaModel:
         abstol: float = 1.0e-4,
         reltol: float = 0.0,
     ) -> None:
+        """Fits the linear mixed models to estimate the fixed effects and the standard error of 
+        the random effects. In addition, the method provides statistics related to the model 
+        fitting e.g. convergence status, log-likelihood, and more.  
+
+        Args:
+            yhat (Array): an array of the estimated area level survey estimates also called 
+            the direct estimates. 
+            X (Array): an multi-dimensional array of the auxiliary information associated to 
+            the sampled areas. 
+            area (Array): provides the areas associated to the direct estimates. 
+            error_std (Array): [description]
+            re_std_start (float, optional): [description]. Defaults to 0.001.
+            b_const (Union[np.array, Number], optional): [description]. Defaults to 1.0.
+            maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
+            Defaults to 100.
+            abstol (float, optional): absolute tolerance. Defaults to 1.0e-4.
+            reltol (float, optional): relative tolerance. Defaults to 0.0.
+        """
 
         if isinstance(b_const, (int, float)):
             b_const = np.ones(area.size) * b_const
@@ -370,10 +418,11 @@ class EblupAreaModel:
         )
 
         self.yhat = yhat
+        self.error_std = error_std
         self.X = X
         self.area = area
         self.fixed_effects = beta
-        self.fe_cov = beta_cov
+        self.fe_std = beta_cov ** (1 / 2)
 
         self.re_std = sigma2_v ** (1 / 2)
         self.re_std_cov = sigma2_v_cov
@@ -393,16 +442,22 @@ class EblupAreaModel:
 
         self.fitted = True
 
-    def predict(
-        self,
-        X: Array,
-        area: Array,
-        error_std: Array,
-        b_const: Union[np.array, Number] = 1.0,
-        maxiter: int = 100,
-        abstol: float = 1.0e-4,
-        reltol: float = 0.0,
-    ) -> None:
+    def predict(self, X: Array, area: Array, b_const: Union[np.array, Number] = 1.0,) -> None:
+        """Provides the modelled area levels estimates and their MSE estimates. 
+
+        Args:
+            X (Array): an multi-dimensional array of the auxiliary variables associated to 
+            areas to predict. 
+            area (Array): provides the areas for the prediction. 
+            error_std (Array): 
+            b_const (Union[np.array, Number], optional): [description]. Defaults to 1.0.
+            maxiter (int, optional): [description]. Defaults to 100.
+            abstol (float, optional): [description]. Defaults to 1.0e-4.
+            reltol (float, optional): [description]. Defaults to 0.0.
+
+        Raises:
+            Exception: [description]
+        """
 
         if not self.fitted:
             raise Exception(
@@ -417,17 +472,11 @@ class EblupAreaModel:
         area = formats.numpy_array(area)
         X = formats.numpy_array(X)
 
-        if abstol <= 0.0 and reltol <= 0.0:
-            AssertionError("At least one tolerance parameters must be positive.")
-        else:
-            abstol = max(abstol, 0)
-            reltol = max(reltol, 0)
-
         point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
             X=X,
             area=area,
             beta=self.fixed_effects,
-            sigma2_e=error_std ** 2,
+            sigma2_e=self.error_std ** 2,
             sigma2_v=self.re_std ** 2,
             sigma2_v_cov=self.re_std_cov,
             b_const=b_const,
