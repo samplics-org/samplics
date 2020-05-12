@@ -10,7 +10,9 @@ def tests(session):
 @nox.session
 def docs(session):
     session.install(".")
-    session.install("sphinx", "sphinx-autobuild", "sphinx_bootstrap_theme", "nbsphinx")
+    session.install(
+        "sphinx", "sphinx-autobuild", "sphinx_bootstrap_theme", "nbsphinx", "recommonmark",
+    )
     session.chdir("docs")
     # session.run("rm", "-rf", "build/", external=True)
     session.run("make", "clean")
