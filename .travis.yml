@@ -2,6 +2,7 @@ language: python
 
 before_install:
   - pip install poetry
+  - pip install nox
 # install:
 #   - poetry install
 
@@ -17,6 +18,8 @@ jobs:
       env: NOXSESSION="lint"
     - python: "3.8"
       env: NOXSESSION="docs"
+
+script: nox --non-interactive --session "$NOXSESSION"
 
 notifications:
   email: msdiallo@quantifyafrica.org
