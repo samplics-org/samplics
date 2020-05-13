@@ -16,7 +16,7 @@ jobs:
     #   env: NOXSESSION="lint"
     # - python: "3.8"
     #   env: NOXSESSION="docs"
-    script: nox --non-interactive --session "$NOXSESSION"
+script: nox --non-interactive --session "$NOXSESSION"
 
 before-deploy:
   - poetry install
