@@ -63,7 +63,7 @@ class ReplicateEstimator(_SurveyEstimator):
             )
 
     def _bias(
-        self, y: np.ndarray, samp_weight: np.ndarray, rep_weights: np.ndarray, x: np.ndarray
+        self, y: np.ndarray, samp_weight: np.ndarray, rep_weights: np.ndarray, x: np.ndarray,
     ) -> float:
 
         estimate = self._get_point(y, samp_weight, x).get("__none__")
@@ -111,7 +111,7 @@ class ReplicateEstimator(_SurveyEstimator):
                 variance = float(
                     np.sum(
                         rep_coefs
-                        * pow((pseudo_estimates - np.mean(pseudo_estimates)) / (jk_factor - 1), 2)
+                        * pow((pseudo_estimates - np.mean(pseudo_estimates)) / (jk_factor - 1), 2,)
                     )
                 )
         else:
@@ -194,7 +194,7 @@ class ReplicateEstimator(_SurveyEstimator):
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._bias(
-                                    y_dummies_d[:, k], samp_weight_d, rep_weights, None
+                                    y_dummies_d[:, k], samp_weight_d, rep_weights, None,
                                 )
                             }
                         )
@@ -298,7 +298,7 @@ class ReplicateEstimator(_SurveyEstimator):
                     y_d = y * (domain == d)
                     estimate_d = self._get_point(y_d, samp_weight_d, x_d).get("__none__")
                     variance[d] = self._variance(
-                        y_d, rep_weights_d, rep_coefs, x_d, estimate_d, conservative
+                        y_d, rep_weights_d, rep_coefs, x_d, estimate_d, conservative,
                     )
 
         return variance
@@ -346,7 +346,7 @@ class ReplicateEstimator(_SurveyEstimator):
 
     @staticmethod
     def _get_coefvar(
-        parameter: str, estimate: Dict[StringNumber, Any], variance: Dict[StringNumber, Any]
+        parameter: str, estimate: Dict[StringNumber, Any], variance: Dict[StringNumber, Any],
     ) -> Dict[StringNumber, Any]:
         """Computes the coefficient of variation
 

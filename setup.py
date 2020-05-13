@@ -13,7 +13,12 @@ AUTHOR = "Mamadou S Diallo"
 AUTHOR_EMAIL = "msdiallo@QuantifyAfrica.org"
 URL = "https://github.com/MamadouSDiallo/samplics"
 REQUIRES_PYTHON = ">=3.6"
-REQUIRED = ["scipy>=1.4.0", "numpy>=1.15.0", "pandas>=0.25.0", "statsmodels>=0.10.0"]
+REQUIRED = [
+    "scipy>=1.4.0",
+    "numpy>=1.15.0",
+    "pandas>=0.25.0",
+    "statsmodels>=0.10.0",
+]
 DEV_PACKAGES = ["pytest>=5.3.2", "black>=19.10", "mypy>=0.761"]
 VERSION = "0.0.4"
 

@@ -34,13 +34,13 @@ def test_eblup_bhf_reml():
 
 def test_fixed_effects_bhf_reml():
     assert np.isclose(
-        eblup_bhf_reml.fixed_effects, np.array([17.96398, 0.3663352, -0.0303638]), atol=1e-6
+        eblup_bhf_reml.fixed_effects, np.array([17.96398, 0.3663352, -0.0303638]), atol=1e-6,
     ).all()
 
 
 def test_fe_std_bhf_reml():
     assert np.isclose(
-        eblup_bhf_reml.fe_std, np.array([30.986801, 0.065101, 0.067583]), atol=1e-6
+        eblup_bhf_reml.fe_std, np.array([30.986801, 0.065101, 0.067583]), atol=1e-6,
     ).all()
 
 
@@ -180,13 +180,13 @@ def test_eblup_bhf_ml():
 
 def test_fixed_effects_bhf_ml():
     assert np.isclose(
-        eblup_bhf_ml.fixed_effects, np.array([18.08888, 0.36566, -0.03017]), atol=1e-5
+        eblup_bhf_ml.fixed_effects, np.array([18.08888, 0.36566, -0.03017]), atol=1e-5,
     ).all()
 
 
 def test_fe_std_bhf_ml():
     assert np.isclose(
-        eblup_bhf_ml.fe_std, np.array([29.82724469, 0.06262676, 0.06506189]), atol=1e-5
+        eblup_bhf_ml.fe_std, np.array([29.82724469, 0.06262676, 0.06506189]), atol=1e-5,
     ).all()
 
 

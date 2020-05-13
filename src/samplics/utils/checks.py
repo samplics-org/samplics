@@ -33,7 +33,7 @@ def check_sample_unit(all_units: Array) -> np.ndarray:
 
 
 def check_sample_size_dict(
-    sample_size: Union[Dict[Any, int], int], stratification: bool, stratum: Array
+    sample_size: Union[Dict[Any, int], int], stratification: bool, stratum: Array,
 ) -> Dict[Any, int]:
     if not isinstance(sample_size, Dict) and stratification:
         strata = np.unique(stratum)

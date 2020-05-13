@@ -35,6 +35,7 @@ def lint(session):
 
 @nox.session
 def publish(session):
+    session.run("poetry", "install")
     session.run("rm", "-rf", "dist", "build", "*.egg-info")
     session.run("poetry", "build")
     session.run("poetry", "publish")

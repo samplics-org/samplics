@@ -105,16 +105,16 @@ def _plot_measure(
 
 
 def plot_skewness(
-    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100
+    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100,
 ) -> None:
     _plot_measure(
-        y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="skewness"
+        y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="skewness",
     )
 
 
 def plot_kurtosis(
-    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100
+    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100,
 ) -> None:
     _plot_measure(
-        y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="kurtosis"
+        y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="kurtosis",
     )

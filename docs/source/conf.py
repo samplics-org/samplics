@@ -112,7 +112,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "samplics.tex", "samplics Documentation", "Mamadou S Diallo", "manual")
+    (master_doc, "samplics.tex", "samplics Documentation", "Mamadou S Diallo", "manual",)
 ]
 
 # -- Options for manual page output ------------------------------------------

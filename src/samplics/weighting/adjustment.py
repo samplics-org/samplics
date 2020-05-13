@@ -78,7 +78,7 @@ class SampleWeight:
 
     @staticmethod
     def _norm_adjustment(
-        samp_weight: np.ndarray, control: Union[Dict[StringNumber, Number], Number]
+        samp_weight: np.ndarray, control: Union[Dict[StringNumber, Number], Number],
     ) -> Tuple[np.ndarray, np.ndarray]:
 
         sum_weights = np.sum(samp_weight)
@@ -182,7 +182,7 @@ class SampleWeight:
         adjusted_weight = np.ones(samp_weight.size) * np.nan
 
         if adjust_class is None:
-            adjust_factor, self.adjust_factor["__none__"] = self._adjust_factor(
+            (adjust_factor, self.adjust_factor["__none__"],) = self._adjust_factor(
                 samp_weight, resp_code, unknown_to_inelig
             )
             adjusted_weight = adjust_factor * samp_weight
@@ -224,7 +224,7 @@ class SampleWeight:
             core_factor = (x_control - x_weighted_total) / core_matrix
         else:
             core_factor = np.matmul(
-                np.transpose(x_control - x_weighted_total), np.linalg.inv(core_matrix)
+                np.transpose(x_control - x_weighted_total), np.linalg.inv(core_matrix),
             )
 
         return core_factor
@@ -271,7 +271,7 @@ class SampleWeight:
                 elif isinstance(control, (float, int)):
                     levels[k] = control
 
-                (norm_weight[domain == key], self.norm_factor[key]) = self._norm_adjustment(
+                (norm_weight[domain == key], self.norm_factor[key],) = self._norm_adjustment(
                     weight_k, levels[k]
                 )
                 self.control[key] = levels[k]
@@ -339,7 +339,7 @@ class SampleWeight:
 
     @staticmethod
     def _calib_covariates(
-        data: pd.DataFrame, x_cat: Optional[List[str]] = None, x_cont: Optional[List[str]] = None
+        data: pd.DataFrame, x_cat: Optional[List[str]] = None, x_cont: Optional[List[str]] = None,
     ) -> Tuple[np.ndarray, Dict[StringNumber, Number]]:
 
         if not isinstance(data, pd.DataFrame) or data is None:
@@ -390,7 +390,7 @@ class SampleWeight:
         else:
             x_array = np.zeros((data.shape[0], nb_cols))
             for d in np.unique(data[domain].values):
-                x_array[data[domain] == d, :], x_dict[d] = self._calib_covariates(
+                (x_array[data[domain] == d, :], x_dict[d],) = self._calib_covariates(
                     data[data[domain] == d], x_cat, x_cont
                 )
                 for key in x_dict[d]:

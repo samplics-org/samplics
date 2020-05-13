@@ -106,10 +106,18 @@ class _SurveyEstimator:
             ssu = formats.numpy_array(ssu)
             ssu = ssu[~excluded_units]
 
-        return (y[~excluded_units], samp_weight[~excluded_units], x, stratum, domain, psu, ssu)
+        return (
+            y[~excluded_units],
+            samp_weight[~excluded_units],
+            x,
+            stratum,
+            domain,
+            psu,
+            ssu,
+        )
 
     def _degree_of_freedom(
-        self, samp_weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None
+        self, samp_weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None,
     ) -> None:
 
         stratum = formats.numpy_array(stratum)
@@ -264,7 +272,7 @@ class TaylorEstimator(_SurveyEstimator):
 
     @staticmethod
     def _variance_stratum_within(
-        y_score_s: np.ndarray, number_psus_in_s: int, psu_s: np.ndarray, ssu_s: np.ndarray
+        y_score_s: np.ndarray, number_psus_in_s: int, psu_s: np.ndarray, ssu_s: np.ndarray,
     ) -> np.float64:
 
         variance = 0.0

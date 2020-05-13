@@ -265,4 +265,10 @@ def iterative_fisher_scoring(
         else:
             iterations += 1
 
-    return sigma2, np.linalg.inv(info_matrix), iterations, tolerance, convergence
+    return (
+        sigma2,
+        np.linalg.inv(info_matrix),
+        iterations,
+        tolerance,
+        convergence,
+    )

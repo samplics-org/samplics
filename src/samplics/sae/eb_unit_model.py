@@ -211,7 +211,7 @@ class EblupUnitModel:
         return g1 + g2 + 2 * g3
 
     def _split_data(
-        self, area: np.ndarray, X: np.ndarray, Xmean: np.ndarray, samp_weight: np.ndarray
+        self, area: np.ndarray, X: np.ndarray, Xmean: np.ndarray, samp_weight: np.ndarray,
     ) -> Tuple[
         np.ndarray,
         np.ndarray,
@@ -335,7 +335,7 @@ class EblupUnitModel:
         self.goodness["BIC"] = bic
 
         self.ys_mean, self.Xs_mean, gamma, samp_size = area_stats(
-            ys, Xs, areas, self.error_std, self.re_std, self.afactors, samp_weight
+            ys, Xs, areas, self.error_std, self.re_std, self.afactors, samp_weight,
         )
         self.random_effects = gamma * (self.ys_mean - self.Xs_mean @ self.fixed_effects)
         self.gamma = dict(zip(self.areas_list, gamma))
@@ -702,7 +702,7 @@ class EbUnitModel:
         """
 
         ys_transformed = basic_functions.transform(
-            ys, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=False
+            ys, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=False,
         )
 
         eblup_ul = EblupUnitModel()
@@ -775,7 +775,7 @@ class EbUnitModel:
                 if j == number_cycles:
                     cycle_size = last_cycle_size
                 re_effects = np.random.normal(
-                    scale=(sigma2u * (1 - self.gamma[d])) ** 0.5, size=cycle_size
+                    scale=(sigma2u * (1 - self.gamma[d])) ** 0.5, size=cycle_size,
                 )
                 errors = np.random.normal(
                     scale=scale_dr * (sigma2e ** 0.5), size=(cycle_size, N_dr)
@@ -797,7 +797,7 @@ class EbUnitModel:
 
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
             z_d = basic_functions.transform(
-                y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True
+                y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True,
             )
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)  # *)
 
@@ -980,10 +980,11 @@ class EbUnitModel:
                 aboot_factor[i] = a_factor_dict[d]
 
                 re_d = np.random.normal(
-                    scale=self.re_std * (1 - self.gamma[d]) ** 0.5, size=cycle_size
+                    scale=self.re_std * (1 - self.gamma[d]) ** 0.5, size=cycle_size,
                 )
                 err_d = np.random.normal(
-                    scale=self.error_std * scale_dict[d], size=(cycle_size, np.sum(indice_dict[d]))
+                    scale=self.error_std * scale_dict[d],
+                    size=(cycle_size, np.sum(indice_dict[d])),
                 )
                 yboot_d = (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
                 zboot_d = basic_functions.transform(
@@ -1222,7 +1223,7 @@ class EllUnitModel:
 
         if self.method in ("REML", "ML"):
             eb_ul = EbUnitModel(
-                method=self.method, boxcox=self.boxcox["lambda"], constant=self.boxcox["constant"]
+                method=self.method, boxcox=self.boxcox["lambda"], constant=self.boxcox["constant"],
             )
             eb_ul.fit(
                 ys, Xs, areas, samp_weight, scales, False,
@@ -1321,7 +1322,7 @@ class EllUnitModel:
                     )
 
             z_d = basic_functions.transform(
-                y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True
+                y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True,
             )
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)
 

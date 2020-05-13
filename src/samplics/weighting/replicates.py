@@ -73,7 +73,7 @@ class ReplicateWeight:
         return rep_prefix
 
     def _degree_of_freedom(
-        self, weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None
+        self, weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None,
     ) -> None:
 
         stratum = formats.numpy_array(stratum)
@@ -90,7 +90,7 @@ class ReplicateWeight:
     # Bootstrap methods
     @staticmethod
     def _boot_psus_replicates(
-        number_psus: int, number_reps: int, samp_rate: Number = 0, size_gap: int = 1
+        number_psus: int, number_reps: int, samp_rate: Number = 0, size_gap: int = 1,
     ) -> np.ndarray:
         """Creates the bootstrap replicates structure"""
 
@@ -111,7 +111,7 @@ class ReplicateWeight:
         return boot_coefs
 
     def _boot_replicates(
-        self, psu: np.ndarray, stratum: np.ndarray, samp_rate: Number = 0, size_gap: int = 1
+        self, psu: np.ndarray, stratum: np.ndarray, samp_rate: Number = 0, size_gap: int = 1,
     ) -> np.ndarray:
 
         if stratum is None:
@@ -176,9 +176,15 @@ class ReplicateWeight:
                 start = 2 * h
                 end = start + 2
                 if brr_coefs[r, start] == 1.0:
-                    brr_coefs[r, start:end] = [self.fay_coef, 2 - self.fay_coef]
+                    brr_coefs[r, start:end] = [
+                        self.fay_coef,
+                        2 - self.fay_coef,
+                    ]
                 else:  # brr_coefs[r, 2 * h] == -1:
-                    brr_coefs[r, start:end] = [2 - self.fay_coef, self.fay_coef]
+                    brr_coefs[r, start:end] = [
+                        2 - self.fay_coef,
+                        self.fay_coef,
+                    ]
 
         return brr_coefs.T
 

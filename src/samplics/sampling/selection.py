@@ -18,7 +18,7 @@ class Sample:
     """
 
     def __init__(
-        self, method: str, stratification: bool = False, with_replacement: bool = True
+        self, method: str, stratification: bool = False, with_replacement: bool = True,
     ) -> None:
         if method.lower() in (
             "srs",
@@ -80,7 +80,7 @@ class Sample:
         return df
 
     def _calculate_fpc(
-        self, samp_unit: np.ndarray, samp_size: Union[Dict[Any, int], int], stratum: np.ndarray
+        self, samp_unit: np.ndarray, samp_size: Union[Dict[Any, int], int], stratum: np.ndarray,
     ) -> None:
 
         samp_unit = checks.check_sample_unit(samp_unit)
@@ -138,14 +138,17 @@ class Sample:
                 stratum_units = stratum == s
                 probs_s = probs[stratum_units] / np.sum(probs[stratum_units])
                 sampled_indices_s = np.random.choice(
-                    all_indices[stratum_units], samp_size[s], self.with_replacement, probs_s
+                    all_indices[stratum_units], samp_size[s], self.with_replacement, probs_s,
                 )
                 sampled_indices_list.append(sampled_indices_s)
                 sampled_indices = [val for sublist in sampled_indices_list for val in sublist]
             sampled_indices = np.array(sampled_indices).flatten()
         else:
             sampled_indices = np.random.choice(
-                samp_unit.size, samp_size["__none__"], self.with_replacement, probs / np.sum(probs)
+                samp_unit.size,
+                samp_size["__none__"],
+                self.with_replacement,
+                probs / np.sum(probs),
             )
 
         indices_s, hits_s = np.unique(sampled_indices, return_counts=True)
@@ -156,7 +159,7 @@ class Sample:
 
     @staticmethod
     def _anycertainty(
-        samp_size: Dict[StringNumber, int], stratum: np.ndarray, mos: np.ndarray
+        samp_size: Dict[StringNumber, int], stratum: np.ndarray, mos: np.ndarray,
     ) -> bool:
 
         if stratum is not None:
@@ -310,7 +313,7 @@ class Sample:
         p_denominator = (
             s
             + np.linspace(
-                1, pop_size - samp_size + selected_i + 1, pop_size - samp_size + selected_i + 1
+                1, pop_size - samp_size + selected_i + 1, pop_size - samp_size + selected_i + 1,
             )
             * probs_sorted[pop_size - samp_size]
         )
@@ -468,24 +471,24 @@ class Sample:
             for s in np.unique(stratum):
                 stratum_units = stratum == s
                 if self.method in "pps-sys":  # systematic
-                    (sample[stratum_units], hits[stratum_units]) = self._pps_sys_select(
-                        samp_unit[stratum_units], samp_size[s], mos[stratum_units]
+                    (sample[stratum_units], hits[stratum_units],) = self._pps_sys_select(
+                        samp_unit[stratum_units], samp_size[s], mos[stratum_units],
                     )
                 elif self.method in "pps-hv":  # "hanurav-vijayan"
-                    (sample[stratum_units], hits[stratum_units]) = self._pps_hv_select(
-                        samp_unit[stratum_units], samp_size[s], mos[stratum_units]
+                    (sample[stratum_units], hits[stratum_units],) = self._pps_hv_select(
+                        samp_unit[stratum_units], samp_size[s], mos[stratum_units],
                     )
                 elif self.method in "pps-brewer":
-                    (sample[stratum_units], hits[stratum_units]) = self._pps_brewer_select(
-                        samp_unit[stratum_units], samp_size[s], mos[stratum_units]
+                    (sample[stratum_units], hits[stratum_units],) = self._pps_brewer_select(
+                        samp_unit[stratum_units], samp_size[s], mos[stratum_units],
                     )
                 elif self.method in "pps-murphy":
-                    (sample[stratum_units], hits[stratum_units]) = self._pps_murphy_select(
-                        samp_unit[stratum_units], samp_size[s], mos[stratum_units]
+                    (sample[stratum_units], hits[stratum_units],) = self._pps_murphy_select(
+                        samp_unit[stratum_units], samp_size[s], mos[stratum_units],
                     )
                 elif self.method in "pps-sampford":
-                    (sample[stratum_units], hits[stratum_units]) = self._pps_sampford_select(
-                        samp_unit[stratum_units], samp_size[s], mos[stratum_units]
+                    (sample[stratum_units], hits[stratum_units],) = self._pps_sampford_select(
+                        samp_unit[stratum_units], samp_size[s], mos[stratum_units],
                     )
         else:
             if self.method in "pps-sys":  # systematic
@@ -597,7 +600,7 @@ class Sample:
                 samp_size_s = None if samp_size is None else samp_size[s]
                 samp_rate_s = None if samp_rate is None else samp_rate[s]
                 stratum_units = stratum == s
-                (sample[stratum_units], hits[stratum_units]) = self._sys_selection_method(
+                (sample[stratum_units], hits[stratum_units],) = self._sys_selection_method(
                     samp_unit[stratum_units], samp_size_s, samp_rate_s
                 )
         else:
@@ -656,7 +659,7 @@ class Sample:
 
         if self.method == "srs":
             incl_probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum)
-        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-sampford", "pps-sys"):
+        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-sampford", "pps-sys",):
             if self._anycertainty(samp_size, stratum, mos):
                 raise AssertionError("Some clusters are certainties.")
             incl_probs = self._pps_inclusion_probs(samp_unit, samp_size, mos, stratum)
@@ -746,7 +749,7 @@ class Sample:
         if self.method == "srs":
             probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum=stratum)
             sample, hits = self._grs_select(probs, samp_unit, samp_size, stratum)
-        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-sampford", "pps-sys"):
+        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-sampford", "pps-sys",):
             if self._anycertainty(samp_size, stratum, mos):
                 raise AssertionError("Some clusters are certainties.")
             probs = self.inclusion_probs(samp_unit, samp_size, stratum, mos)

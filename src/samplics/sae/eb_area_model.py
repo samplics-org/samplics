@@ -176,7 +176,7 @@ class EblupAreaModel:
 
         if self.method == "ML":
             beta, beta_cov = self._fixed_coefficients(
-                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
+                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
             )
             deriv_sigma = 0.0
             info_sigma = 0.0
@@ -208,7 +208,7 @@ class EblupAreaModel:
             info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
         elif self.method == "FH":  # Fay-Herriot approximation
             beta, beta_cov = self._fixed_coefficients(
-                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const
+                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
             )
             deriv_sigma = 0.0
             info_sigma = 0.0
@@ -355,7 +355,16 @@ class EblupAreaModel:
             mse1_area_specific = g1 - g1_partial + g2 + 2 * g3_star
             mse2_area_specific = g1 - g1_partial + g2 + g3 + g3_star
 
-        return (estimates, mse, mse1_area_specific, mse2_area_specific, g1, g2, g3, g3_star)
+        return (
+            estimates,
+            mse,
+            mse1_area_specific,
+            mse2_area_specific,
+            g1,
+            g2,
+            g3,
+            g3_star,
+        )
 
     def fit(
         self,
@@ -415,7 +424,7 @@ class EblupAreaModel:
         )
 
         beta, beta_cov = self._fixed_coefficients(
-            area=area, yhat=yhat, X=X, sigma2_e=error_std ** 2, sigma2_v=sigma2_v, b_const=b_const
+            area=area, yhat=yhat, X=X, sigma2_e=error_std ** 2, sigma2_v=sigma2_v, b_const=b_const,
         )
 
         self.yhat = yhat

@@ -60,7 +60,7 @@ def test_srswor_select():
 """Stratified simple random sampling"""
 continent = countries_population["continent"]
 sample_sizes = dict(
-    {"Africa": 10, "Asia": 7, "Europe": 5, "North America": 3, "South America": 3, "Oceanie": 1}
+    {"Africa": 10, "Asia": 7, "Europe": 5, "North America": 3, "South America": 3, "Oceanie": 1,}
 )
 
 str_srswr_design = Sample(method="srs", stratification=True)
@@ -180,7 +180,7 @@ def test_ppswor_murphy_select():
 # """Stratified PPS sampling"""
 mos[mos > np.mean(mos)] = mos[mos > np.mean(mos)] * 0.1
 sample_sizes_pps = dict(
-    {"Africa": 5, "Asia": 4, "Europe": 3, "North America": 2, "South America": 2, "Oceanie": 1}
+    {"Africa": 5, "Asia": 4, "Europe": 3, "North America": 2, "South America": 2, "Oceanie": 1,}
 )
 
 str_ppswr_sys_design = Sample(method="pps-sys", stratification=True)
@@ -199,7 +199,7 @@ def test_stratified_ppswr_sys_probs():
 
 
 def test_stratified_ppswr_sys_select():
-    str_ppswr_sys_sample, str_ppswr_sys_number_hits, _ = str_ppswr_sys_design.select(
+    (str_ppswr_sys_sample, str_ppswr_sys_number_hits, _,) = str_ppswr_sys_design.select(
         countries, sample_sizes_pps, continent, mos=mos
     )
     strata = np.unique(continent)
@@ -225,7 +225,7 @@ def test_stratified_ppswr_hv_probs():
 
 
 def test_stratified_ppswr_hv_select():
-    str_ppswr_hv_sample, str_ppswr_hv_number_hits, _ = str_ppswr_hv_design.select(
+    (str_ppswr_hv_sample, str_ppswr_hv_number_hits, _,) = str_ppswr_hv_design.select(
         countries, sample_sizes_pps, continent, mos=mos
     )
     strata = np.unique(continent)
@@ -251,7 +251,7 @@ def test_stratified_ppswr_brewer_probs():
 
 
 def test_stratified_ppswr_brewer_select():
-    (str_ppswr_brewer_sample, str_ppswr_brewer_number_hits, _) = str_ppswr_brewer_design.select(
+    (str_ppswr_brewer_sample, str_ppswr_brewer_number_hits, _,) = str_ppswr_brewer_design.select(
         countries, sample_sizes_pps, continent, mos=mos
     )
     strata = np.unique(continent)
@@ -271,7 +271,7 @@ mos_murphy[mos_murphy > np.mean(mos_murphy)] = mos_murphy[mos_murphy > np.mean(m
 sample_size_murphy = int(np.rint(countries_murphy.size / 40))
 continent_murphy = countries_population_murphy["continent"]
 sample_sizes_murphy = dict(
-    {"Africa": 2, "Asia": 2, "Europe": 2, "North America": 2, "South America": 2}
+    {"Africa": 2, "Asia": 2, "Europe": 2, "North America": 2, "South America": 2,}
 )
 
 str_ppswr_murphy_design = Sample(method="pps-murphy", stratification=True)
@@ -290,7 +290,7 @@ def test_stratified_ppswr_murphy_probs():
 
 
 def test_stratified_ppswr_murphy_select():
-    (str_ppswr_murphy_sample, str_ppswr_murphy_number_hits, _) = str_ppswr_murphy_design.select(
+    (str_ppswr_murphy_sample, str_ppswr_murphy_number_hits, _,) = str_ppswr_murphy_design.select(
         countries_murphy, sample_sizes_murphy, continent_murphy, mos=mos_murphy
     )
     strata = np.unique(continent_murphy)

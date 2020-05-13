@@ -30,7 +30,7 @@ design_wgt = income_sample["design_wgt"]
 sample_wgt_nr_without = SampleWeight()
 
 nr_wgt_without_adj_class = sample_wgt_nr_without.adjust(
-    design_wgt, None, resp_status=response_code, resp_dict=response_map, unknown_to_inelig=False
+    design_wgt, None, resp_status=response_code, resp_dict=response_map, unknown_to_inelig=False,
 )
 
 

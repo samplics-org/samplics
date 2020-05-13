@@ -44,7 +44,7 @@ def test_fay_herriot_REML_fixed_effect():
     ).all()
     assert np.isclose(
         np.diag(fh_model_reml.fe_std ** 2),
-        np.array([0.06936208 ** 2, 0.10300072 ** 2, 0.09232981 ** 2, 0.08161707 ** 2]),
+        np.array([0.06936208 ** 2, 0.10300072 ** 2, 0.09232981 ** 2, 0.08161707 ** 2,]),
         atol=1e-4,
     ).all()
 
@@ -189,7 +189,7 @@ def test_fay_herriot_ML_fixed_effect():
     ).all()
     assert np.isclose(
         np.diag(fh_model_ml.fe_std ** 2),
-        np.array([0.06590747 ** 2, 0.09840939 ** 2, 0.08813973 ** 2, 0.07753875 ** 2]),
+        np.array([0.06590747 ** 2, 0.09840939 ** 2, 0.08813973 ** 2, 0.07753875 ** 2,]),
         atol=1e-4,
     ).all()
 
