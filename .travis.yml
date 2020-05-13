@@ -9,16 +9,18 @@ jobs:
     - python: "3.6"
       env: NOXSESSION="tests-3.6"
     - python: "3.7"
-      env: NOXSESSION="tests-3.7"
-    - python: "3.8"
-      env: NOXSESSION="tests-3.8"
-    - python: "3.8"
-      env: NOXSESSION="lint"
-    - python: "3.8"
-      env: NOXSESSION="docs"
-script: nox --non-interactive --session "$NOXSESSION"
+    #   env: NOXSESSION="tests-3.7"
+    # - python: "3.8"
+    #   env: NOXSESSION="tests-3.8"
+    # - python: "3.8"
+    #   env: NOXSESSION="lint"
+    # - python: "3.8"
+    #   env: NOXSESSION="docs"
+    script: nox --non-interactive --session "$NOXSESSION"
 
 before-deploy:
+  - poetry install
+  - rm -rf dist build .egg-info
   - poetry build
 
 deploy:
