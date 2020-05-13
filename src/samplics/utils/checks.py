@@ -6,7 +6,6 @@ Functions:
     | *assert_not_unique()* return an assertion error if the array has non unique values. 
     | *assert_response_status()* checks that the response values are in ("in", "rr", "nr", "uk").
     | *assert_brr_number_psus()* checks that the number of psus is a multiple of 2. 
-
 """
 
 from typing import TypeVar, Type, Any, Dict, Optional, Tuple, Union

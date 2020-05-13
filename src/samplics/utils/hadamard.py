@@ -1,10 +1,12 @@
+"""computes Hadamard matrices
+
+"""
+
 import numpy as np
 
 import math
 
 from scipy.linalg import hadamard as hdd
-
-# from numba import njit
 
 
 def hadamard(n: int) -> np.ndarray:
@@ -25,7 +27,6 @@ def _hadamard2() -> np.ndarray:
     return hadamard2
 
 
-# @njit
 def _hadamard12() -> np.ndarray:
 
     hadamard12 = np.ones((12, 12))
@@ -56,7 +57,6 @@ def _hadamard12() -> np.ndarray:
     return hadamard12
 
 
-# @njit
 def _hadamard20() -> np.ndarray:
 
     hadamard20 = np.ones((20, 20))
@@ -73,7 +73,6 @@ def _hadamard20() -> np.ndarray:
     return hadamard20
 
 
-# @njit
 def _hadamard24() -> np.ndarray:
 
     hadamard24 = np.ones((24, 24))
@@ -118,7 +117,6 @@ def _hadamard24() -> np.ndarray:
     return hadamard24
 
 
-# @njit
 def _hadamard28() -> np.ndarray:
 
     hadamard28 = np.ones((28, 28))
