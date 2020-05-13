@@ -1,4 +1,16 @@
-"""computes Hadamard matrices
+"""computes Hadamard matrices. 
+A Hadamard matrix is a square matrix whose entries are either +1 or −1 and whose rows are mutually orthogonal.The Hadamard matrix is used to derive the BRR replicate weights. It is conjectured that 
+a Hadamard matrix exist for all n divisible by 4. However, the *hadarmard(n)* functions from 
+*scipy.linalg* only provides the matrix for n that are power of 2. Hence, in this module, 
+additional Hadamard matrices are implemented. For example, *scipy.linalg.hadamard()* can provide a matrix for n = 4, 8, 16, 32, 64, 128, etc. The module add Hadamard matrices for n = 12, 20, 24, 28, and some additional to come. 
+
+In appendix A, Wolter, K. M. (1985) [#w1985]_ provides a list of Hadamard matrices for all 
+n multiple of 4 up to 100 which should be sufficient for most applications. Above that, 
+the scipy function can be used.
+
+.. [#w1985] Wolter., K. M. (1985), *Introduction to variance Estimation*, Springer-Verlag New York, Inc
+
+Todo: implements Hadamard matrices of order higher than 28. 
 
 """
 
