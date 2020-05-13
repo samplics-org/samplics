@@ -1,12 +1,12 @@
 """This module provides basic functions used across multiple classes and modules. 
 
 Functions:
-* *sumby()* sums numpy arrays by some grouping. 
-* *averageby()* average numpy arrays by some grouping.
-* *transform()* implements the Boxcox tranformation.
-* *skewness()* computes the Pearson's moment coefficient of skewness (assymetry measure). 
-* *kurtosis()* computes the fourth standardized moment, a measure of assymetry.
-* *plot_skewness()* and *plot_kurtosis()* visualise the skewness and kurtosis coefficients 
+    | *sumby()* sums numpy arrays by some grouping. 
+    | *averageby()* average numpy arrays by some grouping.
+    | *transform()* implements the Boxcox tranformation.
+    | *skewness()* computes the Pearson's moment coefficient of skewness (assymetry measure). 
+    | *kurtosis()* computes the fourth standardized moment, a measure of assymetry.
+    | *plot_skewness()* and *plot_kurtosis()* visualise the skewness and kurtosis coefficients 
 respectively. 
 
 """
