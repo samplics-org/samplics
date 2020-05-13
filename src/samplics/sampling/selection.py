@@ -83,8 +83,8 @@ class Sample:
         self, samp_unit: np.ndarray, samp_size: Union[Dict[Any, int], int], stratum: np.ndarray,
     ) -> None:
 
-        samp_unit = checks.check_sample_unit(samp_unit)
-        samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
+        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
         self.fpc = dict()
         if self.stratification:
@@ -128,7 +128,7 @@ class Sample:
             number of hits.
         """
 
-        samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
+        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
         sample = hits = np.zeros(samp_unit.size).astype("int")
         self._calculate_fpc(samp_unit, samp_size, stratum)
         if self.stratification:
@@ -203,8 +203,8 @@ class Sample:
             A array of the inclusion probabilities
         """
 
-        samp_unit = checks.check_sample_unit(samp_unit)
-        samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
+        samp_unit = formats.sample_units(samp_unit)
+        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
         number_units = samp_unit.size
         if self.stratification:
@@ -250,8 +250,8 @@ class Sample:
             A array of the inclusion probabilities
         """
 
-        samp_unit = checks.check_sample_unit(samp_unit)
-        samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
+        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
         if self.stratification:
             number_units = samp_unit.size
@@ -463,8 +463,8 @@ class Sample:
             number  of hits.
         """
 
-        samp_unit = checks.check_sample_unit(samp_unit)
-        samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
+        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
         sample = hits = np.zeros(samp_unit.size).astype("int")
         if self.stratification:
@@ -643,14 +643,14 @@ class Sample:
         out: array
             A array of the inclusion probabilities
         """
-        samp_unit = checks.check_sample_unit(samp_unit)
+        samp_unit = formats.sample_units(samp_unit, unique=True)
 
         if stratum is not None:
             stratum = formats.numpy_array(stratum)
         if mos is not None:
             mos = formats.numpy_array(mos)
 
-        samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
+        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
         if samp_size is not None:
             samp_size = self._convert_to_dict(samp_size, int)
@@ -718,7 +718,7 @@ class Sample:
             A tuple of two arrays: the first array indicates the selected sample and the second array provides the number of hits.
         """
 
-        samp_unit = checks.check_sample_unit(samp_unit)
+        samp_unit = formats.sample_units(samp_unit, unique=True)
 
         if stratum is not None:
             stratum = formats.numpy_array(stratum)
@@ -733,7 +733,7 @@ class Sample:
             )
 
         if samp_size is not None:
-            samp_size = checks.check_sample_size_dict(samp_size, self.stratification, stratum)
+            samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
             samp_size = self._convert_to_dict(samp_size, int)
         if samp_rate is not None:
             samp_rate = self._convert_to_dict(samp_rate, float)

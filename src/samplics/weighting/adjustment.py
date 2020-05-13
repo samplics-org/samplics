@@ -91,7 +91,7 @@ class SampleWeight:
     def _response(resp_status: np.ndarray, resp_dict: np.ndarray) -> np.ndarray:
 
         resp_status = formats.numpy_array(resp_status)
-        checks.check_response_status(resp_status, resp_dict)
+        checks.assert_response_status(resp_status, resp_dict)
 
         if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any():
             resp_code = np.repeat("  ", resp_status.size).astype(str)

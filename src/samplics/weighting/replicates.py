@@ -257,7 +257,7 @@ class ReplicateWeight:
             key = [str_varname, psu_varname]
         elif self.method == "brr":
             _, str_index = np.unique(psu, return_index=True)
-            checks._check_brr_number_psus(str_index)
+            checks.assert_brr_number_psus(str_index)
             psus = psu[np.sort(str_index)]
             strata = np.repeat(range(1, psus.size // 2 + 1), 2)
             stratum_psu = pd.DataFrame({str_varname: strata, psu_varname: psus})

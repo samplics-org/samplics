@@ -12,6 +12,8 @@ from typing import Any, Dict, Union
 import numpy as np
 import pandas as pd
 
+from samplics.utils import checks
+
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
@@ -87,3 +89,23 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
     x_array.rename(columns="_array", inplace=True)
 
     return x_array
+
+
+def sample_size_dict(
+    sample_size: Union[Dict[Any, int], int], stratification: bool, stratum: Array,
+) -> Dict[Any, int]:
+    if not isinstance(sample_size, Dict) and stratification:
+        strata = np.unique(stratum)
+        return dict(zip(strata, np.repeat(sample_size, strata.size)))
+    if not isinstance(sample_size, Dict) and not stratification:
+        return {"__none__": sample_size}
+    elif isinstance(sample_size, Dict):
+        return sample_size
+
+
+def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
+    all_units = numpy_array(all_units)
+    if unique:
+        checks.assert_not_unique(all_units)
+
+    return all_units
