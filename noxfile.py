@@ -14,7 +14,6 @@ def docs(session):
         "sphinx", "sphinx-autobuild", "sphinx_bootstrap_theme", "nbsphinx", "recommonmark",
     )
     session.chdir("docs")
-    # session.run("rm", "-rf", "build/", external=True)
     session.run("make", "clean")
     session.run("sphinx-apidoc", "-o", "source", "../src/samplics")
     sphinx_args = ["-b", "html", "source", "build"]

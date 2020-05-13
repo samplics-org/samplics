@@ -1,7 +1,9 @@
 language: python
+
 before_install:
   - pip install poetry
   - pip install nox
+
 jobs:
   include:
     - python: "3.6"
@@ -15,6 +17,7 @@ jobs:
     - python: "3.8"
       env: NOXSESSION="docs"
 script: nox --non-interactive --session "$NOXSESSION"
+
 deploy:
   provider: pypi
   user: __token__
