@@ -1,3 +1,6 @@
+"""Provides the custom types used throughout the modules.
+"""
+
 from typing import Any, Dict, Union
 
 import numpy as np
