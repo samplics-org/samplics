@@ -384,19 +384,25 @@ class SampleWeight:
         x_cont: Optional[List[str]] = None,
         domain: Optional[List[str]] = None,
     ) -> Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]:
-        """[summary]
+        """A utility function that creates an array of the calibration groups/domains and
+        a dictionary pairing the domains with the control values. 
 
         Args:
-            data (pd.DataFrame): [description]
-            x_cat (Optional[List[str]], optional): [description]. Defaults to None.
-            x_cont (Optional[List[str]], optional): [description]. Defaults to None.
-            domain (Optional[List[str]], optional): [description]. Defaults to None.
+            data (pd.DataFrame): input pandas dataframe with the calibration's control data.
+            x_cat (Optional[List[str]], optional): List of the names of the categorical control
+                variables. Defaults to None.
+            x_cont (Optional[List[str]], optional): List of the names of the continuous control
+                variables. Defaults to None.
+            domain (Optional[List[str]], optional): list of the names of the variables defining 
+                the normalization classes for each sample unit. Defaults to None.
 
         Raises:
-            AssertionError: [description]
+            AssertionError: raises an assertion error if input data is not a pandas dataframe.
 
         Returns:
-            Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]: [description]
+            Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]: a tuple of 
+            an array of the calibration domains and a dictionary pairing the domains with the
+            control values.
         """
 
         if not isinstance(data, (pd.DataFrame, pd.Series)):
