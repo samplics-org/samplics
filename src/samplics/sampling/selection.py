@@ -5,7 +5,7 @@ and associated probability of selection. All the samping techniques implemented 
 are discussed in the following reference book: Cochran, W.G. (1977) [#c1977]_, 
 Kish, L. (1965) [#k1965]_, and Lohr, S.L. (2010) [#l2010]_. Furthermore, Brewer, K.R.W. and 
 Hanif, M. (1983) [#bh1983]_ provides comprehensive and detailed descriptions of these complex 
-sampling algorithms. 
+sampling algorithms.
 
 .. [#c1977] Cochran, W.G. (1977), *Sampling Techniques, 3rd edn.*, Jonh Wiley & Sons, Inc.
 .. [#k1965] Kish, L. (1965), *Survey Sampling*, Jonh Wiley & Sons, Inc.

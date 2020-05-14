@@ -1,4 +1,4 @@
-"""Runs checks on the data to help capture some error faster and provide better error messages. 
+"""Runs checks on the data to help capture some errors faster and provides better error messages. 
 
 Functions:
     | *assert_probabilities()* ensures that probability values are between 0 and 1. 

@@ -5,8 +5,10 @@ a Hadamard matrix exist for all n divisible by 4. However, the *hadarmard(n)* fu
 additional Hadamard matrices are implemented. For example, *scipy.linalg.hadamard()* can provide a matrix for n = 4, 8, 16, 32, 64, 128, etc. The module add Hadamard matrices for n = 12, 20, 24, 28, and some additional to come. 
 
 In appendix A, Wolter, K. M. (1985) [#w1985]_ provides a list of Hadamard matrices for all 
-n multiple of 4 up to 100 which should be sufficient for most applications. Above that, 
-the scipy function can be used.
+n multiple of 4 up to 100 which should be sufficient for most applications. Note that this is
+this reference is for the first edition of the book which explicitly provides the hadamard 
+matrices. Above that, the scipy function can be used. Also, more Hadamard matrices can be 
+found at: http://neilsloane.com/hadamard/
 
 .. [#w1985] Wolter., K. M. (1985), *Introduction to variance Estimation*, Springer-Verlag New York, Inc
 
