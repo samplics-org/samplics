@@ -10,7 +10,7 @@ the scipy function can be used.
 
 .. [#w1985] Wolter., K. M. (1985), *Introduction to variance Estimation*, Springer-Verlag New York, Inc
 
-Todo: implements Hadamard matrices of order higher than 28. 
+TODO: implements Hadamard matrices of order higher than 28. 
 
 """
 

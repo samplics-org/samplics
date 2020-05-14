@@ -81,7 +81,7 @@ class EblupUnitModel:
         | areas_list (array): the list of small areas from the sample data.
         | samp_size (dict): the sample size per small areas from the sample. 
         | ys_mean (array): sample area means of the output variable. 
-        | Xs_mean (ndarray): sample area means of the auxiliary variables.
+        | Xs_mean (ndarray): sample area means of the auxiliary variables.}}}}}
 
     Model fitting attributes
         | fitted (boolean): indicates whether the model has been fitted or not. 

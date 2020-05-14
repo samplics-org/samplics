@@ -12,6 +12,7 @@ sampling algorithms.
 .. [#l2010] Lohr, S.L. (2010), *Sampling: Design and Analysis, 2nd edn.*, Cengage Learning, Inc.
 .. [#bh1983] Brewer, K.R.W. and Hanif, M. (1983), *Sampling With Unequal Probabilities*,  
    Springer-Verlag New York, Inc
+
 """
 
 from typing import Any, Dict, Tuple, Union, Optional
@@ -34,20 +35,9 @@ class Sample:
 
     Attributes of the class:
         | method (str): a string specifying the sampling algorithm. The available 
-        |   sampling algorithms are: simple random sampling (srs), systematic selection (sys),
-        |   Brewer's procedure (pps-brewer), Hanurav-Vijayan procedure (pps-hv), 
-        |   Murphy's procedure (pps-murphy), Rao-Sampford procedure (pps-rs), systematic 
-        |   pps (pps-sys), and a generic selection from arbitrary probabilities using 
-        |   *numpy.random.choice()* method. 
-        | stratification (bool): indicates if the sampling procedure is stratified or not. 
-        | with_replacement (bool): indicates whether the selection is with replacement. 
+        |   sampling algorithmse
 
-    Main functions:
-        | inclusion_probs(): provides the inclusion probabilities. 
-        | joint_inclusion_probs(): provides the joint probalities of selection.
-        | select(): indicates the selected sample. 
-
-    TODO: handling of certainties and implementation of joint_inclusion_probs().
+    
     """
 
     def __init__(
@@ -59,14 +49,14 @@ class Sample:
             "pps-brewer",
             "pps-hv",  # Hanurav-Vijayan
             "pps-murphy",
-            "pps-rs",
+            "pps-sampford",
             "pps-sys",
             "grs",
         ):
             self.method = method.lower()  # grs for generic random selection
         else:
             raise ValueError(
-                "method must be in ('srs', 'sys', 'pps-brewer', 'pps-hv', 'pps-murphy', 'pps-rs, 'pps-sys', 'grs')"
+                "method must be: 'srs', 'sys', 'pps-brewer', 'pps-hv', 'pps-murphy', 'pps-sampford, 'pps-sys' or 'grs'"
             )
         self.stratification = True if stratification else False
         self.with_replacement = with_replacement
@@ -137,6 +127,29 @@ class Sample:
         samp_size: Union[Dict[Any, int], int],
         stratum: Optional[np.ndarray] = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        select a sample. 
+
+        Args:
+            samp_unit (array) : Array of the units from the sampling 
+            frame. This vector should contains unique values.   
+
+            probs (integer) : Array of the inclusion probabilities.   
+
+            samp_size (int or dictionary) : The number of units from
+            the frame to select in the sample. For stratified designs, 
+            a dictionary providing the pairing between strata and 
+            sample sizes will be expected.     
+
+            stratum (array) : An array indicating the stratification 
+            for all the units in the sampling frame. This vector has
+            the same length as samp_unit.
+
+        Returns:
+            A tuple of two arrays: the first array indicates the 
+            selected sample and the second array provides the 
+            number of hits.
+        """
 
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
         sample = hits = np.zeros(samp_unit.size).astype("int")
@@ -192,6 +205,26 @@ class Sample:
         samp_size: Union[Dict[Any, int], int],
         stratum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
+        """
+        The inclusion probabilities based on the simple random 
+        selection (SRS) sampling approach
+
+        Args:
+            samp_unit (array) : Array of the units from the sampling 
+            frame. This vector should contains unique values.      
+
+            samp_size (integer or dictionary) : The size of the 
+            sample to be selected from the sampling frame. 
+            For stratified design, samp_size is a dictionary 
+            providing the sample sizes for the strata.       
+
+            stratum (array) : An array indicating the stratification 
+            for all the units in the sampling frame. This vector has 
+            the same length as samp_unit.
+        
+        Returns:
+            A array of the inclusion probabilities
+        """
 
         samp_unit = formats.sample_units(samp_unit)
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
@@ -216,6 +249,29 @@ class Sample:
         mos: np.ndarray,
         stratum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
+        """
+        The inclusion probabilities based on the simple random 
+        selection (SRS) sampling approach
+
+        Args: 
+            samp_unit (array) : Array of the units from the sampling 
+            frame. This vector should contains unique values.      
+
+            samp_size (int or dictionary) : The number of units from 
+            the frame to select in the sample. For stratified designs, 
+            a dictionary providing the pairing between strata and 
+            sample sizes will be expected.              
+
+            mos (array) : The size associated to each sampling 
+            unit in the frame. 
+
+            stratum (array) : An array indicating the stratification 
+            for all the units in the sampling frame. This vector has 
+            the same length as samp_unit.
+
+        Returns: 
+            A array of the inclusion probabilities
+        """
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
@@ -364,7 +420,7 @@ class Sample:
         return sample, hits
 
     @staticmethod
-    def _pps_rs_select(samp_unit: Array, samp_size: int, mos: Array) -> Tuple[Array, Array]:
+    def _pps_sampford_select(samp_unit: Array, samp_size: int, mos: Array) -> Tuple[Array, Array]:
 
         all_indices = np.arange(samp_unit.size)
         all_probs = mos / np.sum(mos)
@@ -397,6 +453,38 @@ class Sample:
         stratum: np.ndarray,
         mos: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        select a sample. 
+
+        Args:
+            samp_unit (array) : Array of the units from the sampling 
+            frame. This vector should contains unique values.        
+
+            mos (array) : The size associated to each sampling 
+            unit in the frame.       
+
+            stratum (array) : An array indicating the stratification 
+            for all the units in the sampling frame. This vector has 
+            the same length as samp_unit.     
+
+            samp_size (int or dictionary) : The number of units from 
+            the frame to select in the sample. For stratified designs, 
+            a dictionary providing the pairing between strata and sample 
+            sizes will be expected.    
+
+            method (string): A string indicating the selection method. 
+            The possible selection methods are: systematic selection 
+            (sys or systematic), hanurav-vijayan algorithm (h-v or 
+            hanurav-vijayan), Brewer's method (brw or brewer), Murphy's 
+            method (mpy or murphy). The methods h-v, brw, and mpy are 
+            without replacement algorithms. The default option is None 
+            which implements the generic numpy.random.choice algorithm. 
+        
+        Returns:
+            A tuple of two arrays: the first array indicates the 
+            selected sample and the second array provides the 
+            number  of hits.
+        """
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
@@ -421,8 +509,8 @@ class Sample:
                     (sample[stratum_units], hits[stratum_units],) = self._pps_murphy_select(
                         samp_unit[stratum_units], samp_size[s], mos[stratum_units],
                     )
-                elif self.method in "pps-rs":
-                    (sample[stratum_units], hits[stratum_units],) = self._pps_rs_select(
+                elif self.method in "pps-sampford":
+                    (sample[stratum_units], hits[stratum_units],) = self._pps_sampford_select(
                         samp_unit[stratum_units], samp_size[s], mos[stratum_units],
                     )
         else:
@@ -434,8 +522,8 @@ class Sample:
                 sample, hits = self._pps_brewer_select(samp_unit, samp_size["__none__"], mos)
             elif self.method in "pps-murphy":
                 sample, hits = self._pps_murphy_select(samp_unit, samp_size["__none__"], mos)
-            elif self.method in "pps-rs":
-                sample, hits = self._pps_rs_select(samp_unit, samp_size["__none__"], mos)
+            elif self.method in "pps-sampford":
+                sample, hits = self._pps_sampford_select(samp_unit, samp_size["__none__"], mos)
 
         return sample, hits
 
@@ -448,6 +536,29 @@ class Sample:
         stratum: np.ndarray = None,
         samp_rate: Union[Dict[Any, float], float, None] = None,
     ) -> np.ndarray:
+        """
+        The inclusion probabilities based on the simple random 
+        selection (SRS) sampling approach
+
+        Parameters
+        ----------
+            samp_unit: array
+                Array of the units from the sampling frame. This vector should contains unique values.
+
+            samp_size:  int or dictionary
+                The number of units from the frame to select in the sample. For stratified designs, a dictionary providing the pairing between strata and sample sizes will be expected. 
+
+            stratum : array
+                An array indicating the stratification for all the units in the sampling frame. This vector has the same length as samp_unit.
+
+            samp_rate : dictionary or float
+                The rate at which the sample is selected from the frame. For stratified design, samp_rate is a dictionary providing the rates for the strata.
+
+        Returns
+        -------
+            out: array
+                A array of the inclusion probabilities
+        """
 
         pass
 
@@ -480,6 +591,31 @@ class Sample:
         stratum: np.ndarray,
         samp_rate: Dict[Any, float],
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        The inclusion probabilities based on the simple random 
+        selection (SRS) sampling approach
+
+        Args:
+            samp_unit (array) : Array of the units from the sampling 
+            frame. This vector should contains unique values.
+
+            samp_size (int or dictionary) : The number of units from 
+            the frame to select in the sample. For stratified designs, 
+            a dictionary providing the pairing between strata and sample 
+            sizes will be expected. 
+
+            stratum (array) : An array indicating the stratification 
+            for all the units in the sampling frame. This vector has 
+            the same length as samp_unit.
+
+            samp_rate (dictionary or float) : The rate at which 
+            the sample is selected from the frame. For stratified 
+            design, samp_rate is a dictionary providing the rates 
+            for the strata.
+
+        Returns: 
+            A array of the inclusion probabilities
+        """
 
         sample = hits = np.zeros(samp_unit.size).astype("int")
         if self.stratification:
@@ -507,24 +643,28 @@ class Sample:
         mos: Optional[Array] = None,
         samp_rate: Union[Dict[Any, float], float, None] = None,
     ) -> np.ndarray:
-        """Computes the inclusion probabilities according to the sampling scheme. 
+        """
+        The inclusion probabilities based on the simple random 
+        selection (SRS) sampling approach
 
-        Args:
-            samp_unit (Array): an array of all the observations in the target population. 
-            samp_size (Union[Dict[Any, int], int, None], optional): the dictionary of sample 
-            sizes by stratum, if applicable. Defaults to None.
-            stratum (Optional[Array], optional): array of the strata associated to the 
-                population units. Defaults to None.
-            mos (Optional[Array], optional): array of the measure of size associated to the 
-                population units. Defaults to None.
-            samp_rate (Union[Dict[Any, float], float, None], optional): sampling rate provided  
-                by stratum if applicable. Defaults to None.
+        Parameters
+        ----------
+        samp_unit: array
+            Array of the units from the sampling frame. This vector should contains unique values.
 
-        Raises:
-            AssertionError: raises an assertion error if some of the clusters are certainties. 
+        samp_size:  int or dictionary
+            The number of units from the frame to select in the sample. For stratified designs, a dictionary providing the pairing between strata and sample sizes will be expected. 
 
-        Returns:
-            np.ndarray: an array of the probabilities of inclusion. 
+        stratum : array
+            An array indicating the stratification for all the units in the sampling frame. This vector has the same length as samp_unit.
+
+        samp_rate : dictionary or float
+            The rate at which the sample is selected from the frame. For stratified design, samp_rate is a dictionary providing the rates for the strata.
+
+        Returns
+        -------
+        out: array
+            A array of the inclusion probabilities
         """
         samp_unit = formats.sample_units(samp_unit, unique=True)
 
@@ -542,7 +682,7 @@ class Sample:
 
         if self.method == "srs":
             incl_probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum)
-        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-rs", "pps-sys",):
+        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-sampford", "pps-sys",):
             if self._anycertainty(samp_size, stratum, mos):
                 raise AssertionError("Some clusters are certainties.")
             incl_probs = self._pps_inclusion_probs(samp_unit, samp_size, mos, stratum)
@@ -552,6 +692,26 @@ class Sample:
         return incl_probs
 
     def joint_inclusion_probs(self) -> None:
+        """
+        The inclusion probabilities based on the simple random 
+        selection (SRS) sampling approach
+
+        :arg samp_unit: Array of the units from the sampling frame. This vector should contains unique values.
+        :type samp_unit: array
+
+        :arg samp_size: The number of units from the frame to select in the sample. For stratified designs, a dictionary providing the pairing between strata and sample sizes will be expected. 
+        :type samp_size: int or dictionary
+
+        :arg stratum: An array indicating the stratification for all the units in the sampling frame. This vector has the same length as samp_unit.
+        :type stratum: array
+
+        :arg samp_rate: The rate at which the sample is selected from the frame. For stratified design, samp_rate is a dictionary providing the rates for the strata.
+        :type samp_rate: dictionary or float
+
+        :returns: A array of the inclusion probabilities.
+        :rtype: array
+                
+        """
         pass
 
     def select(
@@ -566,33 +726,19 @@ class Sample:
         to_dataframe: bool = False,
         sample_only: bool = False,
     ) -> Union[pd.DataFrame, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
-        """Selects the random sample. 
+        """
+        select a sample. 
 
         Args:
-            samp_unit (Array): an array of all the observations in the target population. 
-            samp_size (Union[Dict[Any, int], int, None], optional): the dictionary of sample 
-            sizes by stratum, if applicable. Defaults to None.
-            stratum (Optional[Array], optional): array of the strata associated to the 
-                population units. Defaults to None.
-            mos (Optional[Array], optional): array of the measure of size associated to the 
-                population units. Defaults to None.
-            samp_rate (Union[Dict[Any, float], float, None], optional): sampling rate provided  
-                by stratum if applicable. Defaults to None.
-            probs (Optional[Array], optional): array of the probability of selection associated to  the population units. Defaults to None.
-            shuffle (bool, optional): indicates whether to shuffle the data prior to running the 
-                selection algorithm. Defaults to False.
-            to_dataframe (bool, optional): indicates whether to convert the output to a pandas 
-                dataframe. Defaults to False.
-            sample_only (bool, optional): indicates whether to return only the sample without
-                the out of sample units. Defaults to False.
-
-        Raises:
-            AssertionError: raises an assertion error if both samp_size and samp_rate is 
-                provided as input.
-            AssertionError: raises an assertion error if some of the clusters are certainties. 
-
+            samp_unit (array) : Array of the units from the sampling frame. This vector should contains unique values. 
+            probs (integer) : Array of the inclusion probabilities.
+            samp_size (int or dictionary) : The number of units from the frame to select in the sample. For stratified designs, a dictionary providing the pairing between strata and 
+            sample sizes will be expected.
+            stratum (array) : An array indicating the stratification for all the units in the sampling frame. This vector has the same length as samp_unit.
+            samp_rate (float or dictionary) : The rate to sample from the frame. For stratified designs, a dictionary providing the pairing between strata and selection rates will be expected.  
+        
         Returns:
-            Union[pd.DataFrame, Tuple[np.ndarray, np.ndarray, np.ndarray]]: [description]
+            A tuple of two arrays: the first array indicates the selected sample and the second array provides the number of hits.
         """
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
@@ -626,7 +772,7 @@ class Sample:
         if self.method == "srs":
             probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum=stratum)
             sample, hits = self._grs_select(probs, samp_unit, samp_size, stratum)
-        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-rs", "pps-sys",):
+        elif self.method in ("pps-brewer", "pps-hv", "pps-murphy", "pps-sampford", "pps-sys",):
             if self._anycertainty(samp_size, stratum, mos):
                 raise AssertionError("Some clusters are certainties.")
             probs = self.inclusion_probs(samp_unit, samp_size, stratum, mos)
