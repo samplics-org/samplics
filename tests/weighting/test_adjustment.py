@@ -192,16 +192,3 @@ def test_ps_wgt_with_class():
         response_code_r = response_code[region_id == region]
         respondents_r = response_code_r == np.ones(response_code_r.size)
         assert np.isclose(np.sum(ps_wgt_wih_class_r), control_with[region])
-
-
-"""Trim - TODO """
-threshold_without = 50000
-sample_wgt_trim_without = SampleWeight()
-
-trim_wgt_wih_class = sample_wgt_trim_without.trim(
-    nr_wgt_without_adj_class, "median", threshold_without
-)
-
-
-# def test_trim_todo():
-#     assert trim_wgt_wih_class

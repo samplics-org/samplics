@@ -18,15 +18,13 @@ from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class SampleWeight:
-    """*SampleWeight* implements several adjustments to sample weights. 
+    """*SampleWeight* implements several adjustments to sample weights. The class does not computes design sample weights. It is expected at this point some initial weights are 
+    available e.g. design sample weights or some other sample weights. Using this module, 
+    the user will be able to adjust sample weights to account for nonresponse, normalize 
+    sample weights so that they sum to some control value(s), poststratify, and calibrate 
+    based on auxiliary information. 
 
-    *SampleWeight* provides methods to adjust the sample weights. The class does not computes 
-    design sample weights. It is expected at this point some initial weights are available e.g. 
-    design sample weights or some other sample weights. Using this module, the user will be able
-    to adjust sample weights to account for nonresponse, normalize sample weights so that they
-    sum to some control value(s), poststratify, and calibrate based on auxiliary information. 
-
-    Class attributes:
+    Attributes:
         | adjust_method (dict): adjustment method. Possible values are "nonresponse", | 
         |   "normalization", "poststratification", "calibration". 
         | number_units (dict): number of units per domain. 
@@ -34,7 +32,7 @@ class SampleWeight:
         | adjust_factor (dict): normalizing adjustment factor per domain.
         | control (dict): control values per domain.
 
-    Functions:
+    Methods:
         | deff_weight():
         | adjust():
         | normalize():
@@ -589,7 +587,7 @@ class SampleWeight:
 
     def trim(self,) -> np.ndarray:
 
-        pass:weight
+        pass
 
     def rake(self,) -> np.ndarray:
 

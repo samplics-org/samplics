@@ -24,7 +24,24 @@ from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class ReplicateWeight:
-    """
+    """*ReplicateWeight* implements Boostrap, Jackknife and BRR to derive replicate weights. 
+    When possible design weights should be used as the input weights for creating the replicate
+    weights, hence the weight adjustments can be applied to the replicates. 
+
+    Attributes:
+        | method (str): replicate method. 
+        | fay_coef (float): Fay coefficient when implementing BRR-Fay.
+        | number_reps (int): number of replicates. 
+        | rep_coefs (np.ndarray): coefficients associated to the replicates. 
+        | stratification (bool): stratification indicator.
+        | number_psus (int): number of primary sampling units.
+        | number_strata (int): number of strata. 
+        | random_seed (int): random seed. 
+
+
+    Methods:
+        | replicate(): computes the replicate weights. 
+
     """
 
     def __init__(
@@ -242,14 +259,29 @@ class ReplicateWeight:
         psu_varname: str = "_psu",
         str_varname: str = "_stratum",
     ) -> pd.DataFrame:
-        """
-        select a sample. 
+        """Computes replicate sample weights. 
 
         Args:
-            number_reps (integer) : Number of replicate sample weights.   
-        
+            samp_weight (Array): array of sample weights. To incorporate the weights adjustment 
+                in the replicate weights, first replicate the design sample weights then apply 
+                the adjustments to the replicates. 
+            psu (Array): 
+            stratum (Array, optional): array of the strata. Defaults to None.
+            rep_coefs (Union[Array, Number], optional): coefficients associated to the replicates.
+                Defaults to False.
+            rep_prefix (str, optional): prefix to apply to the replicate weights names. 
+                Defaults to None.
+            psu_varname (str, optional): name of the psu variable in the output dataframe. 
+                Defaults to "_psu".
+            str_varname (str, optional): name of the stratum variable in the output dataframe. 
+                Defaults to "_stratum".
+
+        Raises:
+            AssertionError: raises an assertion error when stratum is None for a stratified design.
+            AssertionError: raises an assertion error when the replication method is not valid.
+
         Returns:
-            A ndarray (matrix): .
+            pd.DataFrame: a dataframe of the replicates sample weights.
         """
 
         samp_weight = formats.numpy_array(samp_weight)
