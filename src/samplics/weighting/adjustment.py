@@ -1,3 +1,13 @@
+"""Sample weighting module
+
+*SampleWeight* is the main class in this module which implements weight adjustments to account for 
+nonresponse, calibrate to auxiliary information, normalize weights, and trim extreme weights. Valliant, R. and Dever, J. A. (2018) [#vd2018]_ provides a step-by-step guide on calculating 
+sample weights. 
+
+.. [#vd2018] Valliant, R. and Dever, J. A. (2018), *Survey Weights: A Step-by-Step Guide to       
+   Calculation*, Stata Press.
+"""
+
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -8,19 +18,40 @@ from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class SampleWeight:
-    """Sample weight 
+    """*SampleWeight* implements several adjustments to sample weights. The class does not computes design sample weights. It is expected at this point some initial weights are 
+    available e.g. design sample weights or some other sample weights. Using this module, 
+    the user will be able to adjust sample weights to account for nonresponse, normalize 
+    sample weights so that they sum to some control value(s), poststratify, and calibrate 
+    based on auxiliary information. 
+
+    Attributes
+        | adjust_method (str): adjustment method. Possible values are nonresponse,
+        |   normalization, poststratification, calibration. 
+        | number_units (dict): number of units per domain. 
+        | deff_wgt (dict): design effect due to unequal weights per domain.
+        | adjust_factor (dict): normalizing adjustment factor per domain.
+        | control (dict): control values per domain.
+
+    Methods
+        | deff_weight(): computes the design effect due to weighting.
+        | adjust(): adjust the sample weights to account for nonresponse.
+        | normalize(): normalize the sample weights to ensure they sum to a control value. 
+        | poststratify(): poststratify the sample weights.
+        | calib_covariables(): covert a dataframe to a tuple of an array and a dictionary. 
+        | The array corresponds to the calibration domains. The dictionary maps the array 
+        | elements with their corresponding control values.
+        | calibrate(): calibrate the sample weights. 
+
+    TODO: trim(), rake()
     """
 
     def __init__(self) -> None:
 
-        self.number_scale_d = 1
+        self.adjust_method: str = ""
         self.number_units: Dict[StringNumber, int] = {}
         self.deff_wgt: Dict[StringNumber, Number] = {}
-        self.norm_factor: Dict[StringNumber, Number] = {}
-        self.control: Dict[StringNumber, Number] = {}
         self.adjust_factor: Dict[StringNumber, Number] = {}
-        self.trim_method = ""
-        self.calib_factor = ""
+        self.control: Dict[StringNumber, Number] = {}
 
     def __repr__(self) -> None:
         pass
@@ -49,22 +80,22 @@ class SampleWeight:
         return float(deff_w)
 
     def deff_weight(
-        self, samp_weight: np.ndarray, domain: Optional[np.ndarray] = None
+        self, samp_weight: Array, domain: Optional[np.ndarray] = None
     ) -> Dict[StringNumber, Number]:
-        """compute the design effect due to unequal weights across estimation scale_d.  
+        """Computes the design effect due to unequal weights.
 
         Args:
-            samp_weight (array) : Array of the pre-adjsutment sample 
-            weight. This vector should contains numeric values.   
+            samp_weight (Array):  array of the pre-adjustment sample weight. This vector 
+                should contains numeric values. 
+            domain (Optional[np.ndarray], optional): array indicating the normalization class
+                for each sample unit. Defaults to None. Defaults to None.
 
-            domain (array) : Array indicating the scale_d of interest 
-            for the calculation of the design effect due to weighting.
-
-        
         Returns:
-            A dictionary: the mapping of the scale_d with associated 
-            design effect due to weighting.
+            Dict[StringNumber, Number]: dictionnary pairing the domains to the design effects due 
+                unequal weights.
         """
+
+        samp_weight = formats.numpy_array(samp_weight)
 
         deff_w: Dict[StringNumber, Number] = {}
         if domain is None:
@@ -82,16 +113,16 @@ class SampleWeight:
     ) -> Tuple[np.ndarray, np.ndarray]:
 
         sum_weights = np.sum(samp_weight)
-        norm_factor = control / sum_weights
-        norm_weight = samp_weight * norm_factor
+        adjust_factor = control / sum_weights
+        norm_weight = samp_weight * adjust_factor
 
-        return norm_weight, norm_factor
+        return norm_weight, adjust_factor
 
     @staticmethod
     def _response(resp_status: np.ndarray, resp_dict: np.ndarray) -> np.ndarray:
 
         resp_status = formats.numpy_array(resp_status)
-        checks.check_response_status(resp_status, resp_dict)
+        checks.assert_response_status(resp_status, resp_dict)
 
         if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any():
             resp_code = np.repeat("  ", resp_status.size).astype(str)
@@ -142,39 +173,28 @@ class SampleWeight:
         resp_dict: Union[Dict[str, StringNumber], None] = None,
         unknown_to_inelig: bool = True,
     ) -> np.ndarray:
-        """
-        adjust sample weight to account for non-response. 
+        """adjusts sample weight to account for non-response. 
 
         Args:
-            samp_weight (array) : Array of the pre-adjsutment sample 
-            weight. This vector should contains numeric values.   
+            samp_weight (np.ndarray): array of the pre-adjustment sample weight. This vector 
+                should contains numeric values. 
+            adjust_class (np.ndarray): array indicating the adjustment class for each sample unit. 
+                The sample weight adjustments will be performed within the classes defined by this 
+                parameter.
+            resp_status (np.ndarray): array indicating the eligibility and response status of the 
+                sample unit. Values of resp_status should inform on ineligible (in), respondent (rr), nonrespondent (nr), not known / unknown (uk). If the values of the parameter are not in ("in", "rr", "nr", "uk") then the resp_dict is required.
+            resp_dict (Union[Dict[str, StringNumber], None], optional): dictionnary providing the 
+                mapping between the values of resp_status and the ["in", "rr", "nr", "uk"]. 
+                For example, if the response status are: 0 for ineligible, 1 for respondent, 
+                2 for nonrespondent, and 9 for unknown. Then the dictionary will be {"in": 0, "rr": 1, "nr": 2, "uk": 9}. If the response status variable has only values in ("in", "rr", "nr", "uk") then the dictionary is not needed. Optional parameter. Defaults to None.
+            unknown_to_inelig (bool, optional): [description]. Defaults to True.
 
-            adjust_class (array) : Array indicating the adjustment 
-            class for each sample unit. The sample weight adjustments 
-            will be performed within the classes defined by this 
-            parameter.
+        Raises:
+            AssertionError: raises an assertion error if adjust_class is not a list, numpy array, 
+            or pandas dataframe/series. 
 
-            resp_status (array) : Array indicating the eligibility 
-            and response status of the sample unit. Values of 
-            resp_status should inform on ineligible (in), 
-            respondent (rr), nonrespondent (nr), 
-            not known / unknown (uk). If the values of the paramter 
-            are not in ("in", "rr", "nr", "uk") then the resp_dict 
-            is required.
-
-            resp_dict (dictionary) : Dictionnary providing the 
-            mapping between the values of resp_status and the 
-            ["in", "rr", "nr", "uk"]. For example, if the response 
-            status are: 0 for ineligible, 1 for respondent, 
-            2 for nonrespondent, and 9 for unknown. Then the dictionary 
-            will be {"in": 0, "rr": 1, "nr": 2, "uk": 9}. 
-            If the response status variable has only values in 
-            ("in", "rr", "nr", "uk") then the dictionary is not needed. 
-            Optional parameter.
-
-        
         Returns:
-            An array: the adjsuted sample weight.
+            np.ndarray: array of the adjusted sample weights.
         """
 
         resp_code = self._response(resp_status, resp_dict)
@@ -193,7 +213,7 @@ class SampleWeight:
                 adjust_class = pd.DataFrame(adjust_class)
             elif not isinstance(adjust_class, (pd.Series, pd.DataFrame)):
                 raise AssertionError(
-                    "adjsut_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
+                    "adjust_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
                 )
 
             adjust_array = formats.dataframe_to_array(adjust_class)
@@ -205,7 +225,9 @@ class SampleWeight:
                     samp_weight_c, resp_code_c, unknown_to_inelig
                 )
                 adjusted_weight[adjust_array == c] = adjust_factor_c * samp_weight_c
+
         self.deff_wgt = self.deff_weight(adjusted_weight)
+        self.adjust_method = "nonresponse"
 
         return adjusted_weight
 
@@ -235,21 +257,16 @@ class SampleWeight:
         control: Union[Dict[StringNumber, Number], Number, None] = None,
         domain: Optional[Array] = None,
     ) -> np.ndarray:
-        """
-        normalize the sample weights to sum to a known constants or 
-        levels. 
+        """normalizes the sample weights to sum to a known constants or levels. 
 
         Args:
-            samp_weight (array) : Array of the pre-adjsutment sample 
-            weight. This vector should contains numeric values.   
-
-            control (int, float, dictionary) : A number or array of 
-            the level to calibrate the sum of the weights. Default is 
-            number of units by domain key or overall if 
-            domain is None. 
-
-            domain (array) : Array indicating the normalization 
-            class for each sample unit.
+            samp_weight (array) : array of the pre-adjustment sample weight. This vector should 
+                contains numeric values.   
+            control (int, float, dictionary) : a number or array of the level to calibrate the 
+                sum of the weights. Default is number of units by domain key or overall if domain 
+                is None. Defaults to None.
+            domain (Optional[Array], optional) : array indicating the normalization class for each 
+                sample unit. Defaults to None.
         
         Returns:
             An arrays: the normalized sample weight.
@@ -271,7 +288,7 @@ class SampleWeight:
                 elif isinstance(control, (float, int)):
                     levels[k] = control
 
-                (norm_weight[domain == key], self.norm_factor[key],) = self._norm_adjustment(
+                (norm_weight[domain == key], self.adjust_factor[key],) = self._norm_adjustment(
                     weight_k, levels[k]
                 )
                 self.control[key] = levels[k]
@@ -281,31 +298,52 @@ class SampleWeight:
             elif isinstance(control, (int, float)):
                 control = {"__none__": control}
 
-            norm_weight, self.norm_factor["__none__"] = self._norm_adjustment(
+            norm_weight, self.adjust_factor["__none__"] = self._norm_adjustment(
                 samp_weight, control["__none__"]
             )
             self.control["__none__"] = control["__none__"]
+
+        self.adjust_method = "normalization"
 
         return norm_weight
 
     def poststratify(
         self,
         samp_weight: Array,
-        control: Union[Dict[StringNumber, Number], None] = None,
-        factor: Union[Dict[StringNumber, Number], None] = None,
+        control: Union[Dict[StringNumber, Number], Number, None] = None,
+        factor: Union[Dict[StringNumber, Number], float, None] = None,
         domain: Optional[Array] = None,
     ) -> np.ndarray:
+        """[summary]
+
+        Args:
+            samp_weight (Array): [description]
+            control (Union[Dict[StringNumber, Number], Number, None], optional): a number or 
+                array of the level to calibrate the sum of the weights. Defaults to None.
+            factor (Union[Dict[StringNumber, Number], float, None], optional): adjustment factor. 
+                Defaults to None.
+            domain (Optional[Array], optional): array indicating the normalization class for each 
+                sample unit. Defaults to None.
+
+        Raises:
+            AssertionError: raises an assertion error if both control and factor are not provided.
+            ValueError: raises an error is control dictionary keys do not match domain's values.
+            ValueError: raises an error is factor dictionary keys do not match domain's values.
+
+        Returns:
+            np.ndarray:  array of poststratified sample weights.
+        """
 
         if control is None and factor is None:
             raise AssertionError("control or factor must be specified.")
 
         if isinstance(control, dict):
             if (np.unique(domain) != np.unique(list(control.keys()))).any():
-                raise ValueError("control dictionary keys do not much domain values.")
+                raise ValueError("control dictionary keys do not match domain values.")
 
         if control is None and domain is not None:
             if (np.unique(domain) != np.unique(list(factor.keys()))).any():
-                raise ValueError("factor dictionary keys do not much domain values.")
+                raise ValueError("factor dictionary keys do not match domain values.")
 
             sum_weight = np.sum(samp_weight)
             if isinstance(factor, dict):
@@ -315,7 +353,10 @@ class SampleWeight:
             elif isinstance(factor, float):
                 control = sum_weight * factor
 
-        return self.normalize(samp_weight, control, domain)
+        ps_weight = self.normalize(samp_weight, control, domain)
+        self.adjust_method = "poststratification"
+
+        return ps_weight
 
     def _raked_wgt(
         self,
@@ -371,6 +412,26 @@ class SampleWeight:
         x_cont: Optional[List[str]] = None,
         domain: Optional[List[str]] = None,
     ) -> Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]:
+        """A utility function that creates an array of the calibration groups/domains and
+        a dictionary pairing the domains with the control values. 
+
+        Args:
+            data (pd.DataFrame): input pandas dataframe with the calibration's control data.
+            x_cat (Optional[List[str]], optional): List of the names of the categorical control
+                variables. Defaults to None.
+            x_cont (Optional[List[str]], optional): List of the names of the continuous control
+                variables. Defaults to None.
+            domain (Optional[List[str]], optional): list of the names of the variables defining 
+                the normalization classes for each sample unit. Defaults to None.
+
+        Raises:
+            AssertionError: raises an assertion error if input data is not a pandas dataframe.
+
+        Returns:
+            Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]: a tuple of 
+            an array of the calibration domains and a dictionary pairing the domains with the
+            control values.
+        """
 
         if not isinstance(data, (pd.DataFrame, pd.Series)):
             raise AssertionError("data must be a pandas dataframe.")
@@ -416,27 +477,40 @@ class SampleWeight:
 
     def calibrate(
         self,
-        samp_weight: np.ndarray,
-        aux_vars: np.ndarray,
+        samp_weight: Array,
+        aux_vars: Array,
         control: Union[Dict[StringNumber, Union[DictStrNum, Number]], None] = None,
-        domain: Optional[np.ndarray] = None,
-        scale: Union[np.ndarray, Number] = 1,
+        domain: Optional[Array] = None,
+        scale: Union[Array, Number] = 1,
         bounded: bool = False,
         additive: bool = False,
     ) -> np.ndarray:
+        """Calibrates the sample weights.
+
+        Args:
+            samp_weight (Array): array of sample weights.
+            aux_vars (Array): array of auxiliary variables. 
+            control (Union[Dict[StringNumber, Union[DictStrNum, Number]], None], optional):     
+                provides the controls by domain if applicable. Defaults to None.
+            domain (Optional[Array], optional): Array indicating the normalization class for each 
+                sample unit. Defaults to None.
+            scale (Union[Array, Number], optional): [description]. Defaults to 1.
+            bounded (bool, optional): [description]. Defaults to False.
+            additive (bool, optional): [description]. Defaults to False.
+
+        Returns:
+            np.ndarray: an array of the calibrated sample weights.
+        """
 
         samp_size = samp_weight.size
 
-        if not isinstance(samp_weight, np.ndarray):
-            samp_weight = formats.numpy_array(samp_weight)
-        if not isinstance(aux_vars, np.ndarray):
-            aux_vars = formats.numpy_array(aux_vars)
-        if domain is not None and not isinstance(domain, np.ndarray):
+        samp_weight = formats.numpy_array(samp_weight)
+        aux_vars = formats.numpy_array(aux_vars)
+        if domain is not None:
             domain = formats.numpy_array(domain)
         if isinstance(scale, (float, int)):
             scale = np.repeat(scale, samp_size)
-
-        if aux_vars.shape == (samp_size,):  # one dimentional array
+        if aux_vars.shape == (samp_size,):
             x_w = aux_vars * samp_weight
             one_dimension = True
         else:
@@ -471,7 +545,7 @@ class SampleWeight:
 
                 x_d = aux_vars[domain == d]
                 samp_weight_d = samp_weight[domain == d]
-                if one_dimension:  # one dimentional array
+                if one_dimension:
                     x_w_total_d = np.sum(x_w[domain == d])
                 else:
                     x_w_total_d = np.sum(np.transpose(x_w)[domain == d], axis=0)
@@ -503,43 +577,20 @@ class SampleWeight:
                         scale=scale_d,
                     )
                     adjust_factor[domain == d] = 1 + self._calib_wgt(x_d, core_factor_d) / scale_d
-                # adjust_factor = np.append(adjust_factor, adjust_factor_d)
 
         if additive:
             calib_weight = np.transpose(np.transpose(adjust_factor) * samp_weight)
         else:
             calib_weight = samp_weight * adjust_factor
 
+        self.adjust_method = "calibration"
+
         return calib_weight
 
-    def trim(
-        self,
-        samp_weight: Array,
-        method: str,
-        threshold: Union[Dict[StringNumber, Union[DictStrNum, Number]], None],
-        domain: Optional[Array] = None,
-    ) -> np.ndarray:
-        """
-        trim sample weight to reduce the influence of extreme weights. 
+    def trim(self,) -> np.ndarray:
 
-        Args:
-            samp_weight (array) : Array of the pre-adjsutment sample 
-            weight. This vector should contains numeric values.   
+        pass
 
-            method (string) : Name of the trimming method. 
-            Possible values are: "threshold", "interquartile", and "?"
-
-            threshold (int, float, dictionary) : A number defining 
-            the threshold or a dictionnary mapping triming classes 
-            to trimming thresholds. Depending on the trimming method, 
-            this parameter may provide the 
-
-            domain (array) : Array indicating the trimming class 
-            for each sample unit.
-
-        
-        Returns:
-            An array: the trimmed sample weight.
-        """
+    def rake(self,) -> np.ndarray:
 
         pass

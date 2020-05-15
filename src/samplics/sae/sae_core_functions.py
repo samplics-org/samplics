@@ -1,3 +1,16 @@
+"""Core functions for fitting the small area models. 
+
+Functions:
+   | *area_stats()* computes a several aggregates at the area level. 
+   | *fixed_coefficients()* computes the fixed effects of the regression models. 
+   | *covariance()* computes the covariance matrix of the linear mixed model. 
+   | *inverse_covariance()* computes the inverse of the covariance matrix.  
+   | *log_det_covariance()* computes the logarithm of the determinant of the covariance matrix.
+   | *log_likelihood()* computes the log-likelihood of the linear mixed model. 
+   | *partial_Derivatives()* computes the partial derivatives and the information matrix. 
+   | *iterative_fisher_scoring()* implements the Fisher scoring algorithm. 
+"""
+
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -18,9 +31,23 @@ def area_stats(
     area: np.ndarray,
     error_std: float,
     re_std: float,
-    a_factor: Dict[Any, float],
+    afactor: Dict[Any, float],
     samp_weight: Optional[np.ndarray],
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Computes area level aggregated statistics. 
+
+    Args:
+        y (np.ndarray): an array of the variable of interest. 
+        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        area (np.ndarray): an array of the areas associated with each observation.
+        error_std (float): standard error of the unit level residuals. 
+        re_std (float): standard error of the area level random errors. 
+        afactor (Dict[Any, float]): 
+        samp_weight (Optional[np.ndarray]): [description]
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: [description]
+    """
 
     areas = np.unique(area)
     y_mean = np.zeros(areas.size)
@@ -29,15 +56,15 @@ def area_stats(
     samp_size = np.zeros(areas.size)
     for k, d in enumerate(areas):
         sample_d = area == d
-        a_factor_d = a_factor[d]
+        afactor_d = afactor[d]
         if samp_weight is None:
             weight_d = np.ones(np.sum(sample_d))
-            delta_d = 1 / np.sum(a_factor_d)
+            delta_d = 1 / np.sum(afactor_d)
         else:
             weight_d = samp_weight[sample_d]
             delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
-        aw_factor_d = weight_d * a_factor_d
-        yw_d = y[sample_d] * a_factor_d
+        aw_factor_d = weight_d * afactor_d
+        yw_d = y[sample_d] * afactor_d
         y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
         Xw_d = X[sample_d, :] * aw_factor_d[:, None]
         X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
@@ -48,26 +75,28 @@ def area_stats(
 
 
 def fixed_coefficients(
-    area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    sigma2e: float,
-    sigma2u: float,
+    area: np.ndarray,
+    error_std: float,
+    re_std: float,
     scale: np.ndarray,
 ) -> np.ndarray:  # Tuple[np.ndarray, np.ndarray]:
+    """Computes the fixed effects of the linear mixed model. 
 
-    """[summary]    Arguments:
+    Args:
+        y (np.ndarray): an array of the variable of interest. 
+        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        area (np.ndarray): an array of the areas associated with each observation.
+        error_std (float): standard error of the unit level residuals. 
+        re_std (float): standard error of the area level random errors. 
+        scale (np.ndarray): scaling factor for the unit level errors. 
 
-        area {np.ndarray} -- [description]
-        y {np.ndarray} -- [description]
-        X {np.ndarray} -- [description]
-        sigma2e {np.ndarray} -- [description]
-        sigma2u {float} -- [description]
-        scale {np.ndarray} -- [description]
     Returns:
-        Tuple[np.ndarray, np.ndarray] -- [description]
+        np.ndarray: array of the fixed effect coefficients. 
     """
-    V_inv = inverse_covariance(area, sigma2e, sigma2u, scale)
+
+    V_inv = inverse_covariance(area, error_std, re_std, scale)
     x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
     x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
     beta_hat = np.matmul(x_v_x_inv_x, y)
@@ -76,26 +105,52 @@ def fixed_coefficients(
     return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
 
 
-def covariance(area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray,) -> np.ndarray:
+def covariance(
+    area: np.ndarray, error_std: float, re_std: float, scale: np.ndarray,
+) -> np.ndarray:
+    """Computes the covariance matrix.
+
+    Args:
+        area (np.ndarray): an array of the areas associated with each observation.
+        error_std (float): standard error of the unit level residuals. 
+        re_std (float): standard error of the area level random errors. 
+        scale (np.ndarray): scaling factor for the unit level errors. 
+
+    Returns:
+        np.ndarray: covariance matrix
+    """
 
     n = area.shape[0]
     areas, areas_size = np.unique(area, return_counts=True)
     V = np.zeros((n, n))
     for i, d in enumerate(areas):
         nd, scale_d = areas_size[i], scale[area == d]
-        Rd = sigma2e * np.diag(scale_d)
+        Rd = (error_std ** 2) * np.diag(scale_d)
         Zd = np.ones((nd, nd))
         start = 0 if i == 0 else sum(areas_size[:i])
         end = n if i == areas.size - 1 else sum(areas_size[: (i + 1)])
-        V[start:end, start:end] = Rd + sigma2u * Zd
+        V[start:end, start:end] = Rd + (re_std ** 2) * Zd
 
     return V
 
 
 def inverse_covariance(
-    area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray,
+    area: np.ndarray, error_std: float, re_std: float, scale: np.ndarray,
 ) -> np.ndarray:
+    """Computes the inverse of the covariance matrix.
 
+    Args:
+        area (np.ndarray): an array of the areas associated with each observation.
+        error_std (float): standard error of the unit level residuals. 
+        re_std (float): standard error of the area level random errors. 
+        scale (np.ndarray): scaling factor for the unit level errors. 
+
+    Returns:
+        np.ndarray: inverse of the covariance matrix
+    """
+
+    sigma2e = error_std ** 2
+    sigma2u = re_std ** 2
     n = area.shape[0]
     areas, areas_size = np.unique(area, return_counts=True)
     V_inv = np.zeros((n, n))
@@ -116,9 +171,22 @@ def inverse_covariance(
 
 
 def log_det_covariance(
-    area: np.ndarray, sigma2e: float, sigma2u: float, scale: np.ndarray
+    area: np.ndarray, error_std: float, re_std: float, scale: np.ndarray
 ) -> float:
+    """Computes the logarithm of the determinant of the covariance matrix.
 
+    Args:
+        area (np.ndarray): an array of the areas associated with each observation.
+        error_std (float): standard error of the unit level residuals. 
+        re_std (float): standard error of the area level random errors. 
+        scale (np.ndarray): scaling factor for the unit level errors. 
+
+    Returns:
+        float: logarithm of the determinant of the covariance matrix.
+    """
+
+    sigma2e = error_std ** 2
+    sigma2u = re_std ** 2
     det = 0
     for d in np.unique(area):
         nd = np.sum(area == d)
@@ -135,6 +203,22 @@ def log_likelihood(
     inv_covariance: np.ndarray,
     log_det_covariance: float,
 ) -> float:
+    """Computes the logarithm of the log-likelihood. 
+
+    Args:
+        method (str): fitting method used to computes the objective log-likelihood function. 
+        y (np.ndarray): an array of the variable of interest. 
+        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        beta (np.ndarray): array of fixed effect coefficients.
+        inv_covariance (np.ndarray): [description]
+        log_det_covariance (float): [description]
+
+    Raises:
+        AssertionError: return an exception of the fitting method is not REML nor ML.
+
+    Returns:
+        float: logarithm of the log-likelihood. 
+    """
 
     n = y.size
     const = n * np.log(2 * np.pi)
@@ -161,16 +245,32 @@ def partial_derivatives(
     y: np.ndarray,
     X: np.ndarray,
     # beta: np.ndarray,
-    sigma2e: float,
-    sigma2u: float,
+    error_std: float,
+    re_std: float,
     scale: np.ndarray,
 ) -> Tuple[np.ndarray, np.ndarray]:
+    """Computes the partial derivatives.
+
+    Args:
+        method (str): fitting method used to computes the objective log-likelihood function. 
+        y (np.ndarray): an array of the variable of interest. 
+        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        error_std (float): standard error of the unit level residuals. 
+        re_std (float): standard error of the area level random errors. 
+        scale (np.ndarray): scaling factor for the unit level errors. 
+
+    Raises:
+        AssertionError: return an exception of the fitting method is not REML nor ML.
+
+    Returns:
+        float: logarithm of the log-likelihood. 
+    """
 
     derivatives = np.zeros(2)
     info_matrix = np.zeros((2, 2))
 
     if method == "ML":
-        beta = fixed_coefficients(area, y, X, sigma2e, sigma2u, scale)
+        beta = fixed_coefficients(y, X, area, error_std, error_std, scale)
         for d in np.unique(area):
             aread = area == d
             area_d = area[aread]
@@ -178,7 +278,7 @@ def partial_derivatives(
             X_d = X[aread]
             scale_d = scale[aread]
             nd = np.sum(aread)
-            V_inv = inverse_covariance(area_d, sigma2e, sigma2u, scale_d)
+            V_inv = inverse_covariance(area_d, error_std, re_std, scale_d)
             V_e = np.diag((scale_d ** 2))
             V_u = np.ones((nd, nd))
             V_inv_e = -np.matmul(V_inv @ V_e, V_inv)
@@ -210,7 +310,7 @@ def partial_derivatives(
 
     elif method == "REML":
         n = y.shape[0]
-        V_inv = inverse_covariance(area, sigma2e, sigma2u, scale)
+        V_inv = inverse_covariance(area, error_std, re_std, scale)
         V_e = np.diag((scale ** 2))
         V_u = np.ones((n, n))
         x_vinv_x = np.transpose(X) @ V_inv @ X
@@ -233,14 +333,30 @@ def iterative_fisher_scoring(
     area: np.ndarray,
     y: np.ndarray,
     X: np.ndarray,
-    sigma2e: float,
-    sigma2u: float,
+    error_std: float,
+    re_std: float,
     scale: np.ndarray,
     abstol: float,
     reltol: float,
     maxiter: int,
 ) -> Tuple[float, float, int, float, bool]:  # May not need variance
-    """ Fisher-scroring algorithm for estimation of variance component"""
+    """ Fisher-scroring algorithm for estimating variance components.
+
+    Args:
+        method (str): fitting method used to computes the objective log-likelihood function. 
+        y (np.ndarray): an array of the variable of interest. 
+        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        error_std (float): standard error of the unit level residuals. 
+        re_std (float): standard error of the area level random errors. 
+        scale (np.ndarray): scaling factor for the unit level errors. 
+        abstol (float): absolute precision required. 
+        reltol (float): relative precision required.
+        maxiter (int): maximun number of iterations. 
+    
+    return:
+        Tuple[float, float, int, float, bool]: a tuple of variance components, covariance of 
+        variance components, number of iterations, tolerance, and convergence.
+    """
 
     iterations = 0
     tolerance, tol = 1, 0.9
@@ -248,7 +364,7 @@ def iterative_fisher_scoring(
     sigma2_previous = np.asarray([0, 0])
     while tolerance > tol:
         derivatives, info_matrix = partial_derivatives(
-            method, area=area, y=y, X=X, sigma2e=sigma2e, sigma2u=sigma2u, scale=scale,
+            method, area=area, y=y, X=X, error_std=error_std, re_std=re_std, scale=scale,
         )
 
         # print(np.matmul(np.linalg.inv(info_matrix), derivatives))

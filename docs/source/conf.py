@@ -55,7 +55,7 @@ source_suffix = [
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "**.ipynb_checkpoints", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
@@ -172,7 +172,7 @@ autodoc_default_options = {
 #     "github_button": False,
 #     "travis_button": False,
 #     "codecov_button": False,
-#     "analytics_id": False,  # TODO
+#     "analytics_id": False,
 #     "font_family": "'Roboto', Georgia, sans",
 #     "head_font_family": "'Roboto', Georgia, serif",
 #     "code_font_family": "'Roboto Mono', 'Consolas', monospace",
@@ -188,7 +188,7 @@ html_logo = "_static/samplics_logo3.png"
 html_theme_options = {
     "navbar_title": "Sample Analytics",
     "navbar_links": [
-        ("Getting started", "getting_started.html"),
+        ("Getting started", "gettingstarted"),
         ("Github", "https://github.com/survey-methods/samplics"),
     ],
     "navbar_sidebarrel": True,

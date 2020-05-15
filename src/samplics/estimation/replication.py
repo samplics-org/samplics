@@ -18,8 +18,34 @@ TypeRepEst = TypeVar("TypeRepEst", bound="ReplicateEstimator")
 
 
 class ReplicateEstimator(_SurveyEstimator):
-    """
-    Functions to compute replicate-based uncertainty
+    """*ReplicateEstimator* implements replicate-based variance approximations.
+
+
+    Attributes
+        | point_est (dict): point estimate of the parameter of interest.
+        | variance (dict): variance estimate of the parameter of interest.
+        | stderror (dict): standard error of the parameter of interest.
+        | coef_var (dict): estimate of the coefficient of variation.  
+        | deff (dict): estimate of the design effect due to weighting.
+        | lower_ci (dict): estimate of the lower bound of the confidence interval. 
+        | upper_ci (dict): estimate of the upper bound of the confidence interval. 
+        | degree_of_freedom (int): degree of freedom for the confidence interval.
+        | alpha (float): significant level for the confidence interval
+        | strata (list): list of the strata in the sample.
+        | domains (list): list of the domains in the sample. 
+        | method (str): variance estimation method. 
+        | parameter (str): the parameter of the population to estimate e.g. total. 
+        | number_strata (int): number of strata.
+        | number_psus (int): number of primary sampling units (psus).
+        | conservative (bool): indicate whether to produce conservative variance estimates. 
+        | number_reps (int): number of replicate weights.
+        | rep_coefs (array): coefficients associated to the replicate weights. 
+        | fay_coef (float): Fay coefficient for the the BRR-Fay algorithm.
+        | random_seed (int): random seed for reproducibility. 
+
+    Methods
+        | estimate(): produces the point estimate of the parameter of interest with the associated
+        |   measures of precision. 
     """
 
     def __init__(
@@ -31,7 +57,6 @@ class ReplicateEstimator(_SurveyEstimator):
         alpha: float = 0.05,
         random_seed: Optional[int] = None,
     ) -> None:
-        """Initializes the instance """
 
         if method.lower() not in ("bootstrap", "brr", "jackknife"):
             raise ValueError("method must be 'bootstrap', 'brr', or 'jackknife'")
@@ -40,6 +65,7 @@ class ReplicateEstimator(_SurveyEstimator):
         self.method = method.lower()
         self.conservative = False
         self.degree_of_freedom: Optional[int] = None
+        self.number_reps: Optional[int] = None
         self.rep_coefs: Optional[np.ndarray] = None
         if method == "brr" and fay_coef is not None:
             self.fay_coef = fay_coef
@@ -132,21 +158,6 @@ class ReplicateEstimator(_SurveyEstimator):
         domain: np.ndarray = None,
         remove_nan: bool = False,
     ) -> Dict[StringNumber, Any]:
-        """
-        estimate bias using replication methods. 
-
-        Args:
-            y (array) : 
-
-            samp_weight (array):
-
-            re_weights (array):
-
-            domain (array):    
-        
-        Returns:
-            A dictionary: .
-        """
 
         if remove_nan:
             if self.parameter == "ratio":
@@ -217,23 +228,6 @@ class ReplicateEstimator(_SurveyEstimator):
         conservative: bool = False,
         remove_nan: bool = False,
     ) -> Dict[StringNumber, Any]:
-        """
-        estimate variance using replication methods. 
-
-        Args:
-            y (array) : 
-
-            samp_weight (array):
-
-            rep_weights (array):
-
-            rep_coefs (array):
-
-            domain (array):    
-        
-        Returns:
-            A dictionary: .
-        """
 
         if self.parameter == "proportion":
             y_dummies = pd.get_dummies(y)
@@ -310,16 +304,6 @@ class ReplicateEstimator(_SurveyEstimator):
         variance: Dict[StringNumber, Any],
         quantile: float,
     ) -> Tuple[Dict[StringNumber, Any], Dict[StringNumber, Any]]:
-        """
-        estimate variance using replication methods. 
-
-        Args:
-            paremeter: 
-
-        
-        Returns:
-            A dictionary: .
-        """
 
         lower_ci: Dict[StringNumber, Any] = {}
         upper_ci: Dict[StringNumber, Any] = {}
@@ -348,16 +332,6 @@ class ReplicateEstimator(_SurveyEstimator):
     def _get_coefvar(
         parameter: str, estimate: Dict[StringNumber, Any], variance: Dict[StringNumber, Any],
     ) -> Dict[StringNumber, Any]:
-        """Computes the coefficient of variation
-
-        Args:
-
-        parameter:
-
-        Returns:
-        A float or dictionnary: 
-
-        """
 
         coef_var = {}
         for key in variance:
@@ -383,21 +357,24 @@ class ReplicateEstimator(_SurveyEstimator):
         deff: bool = False,  # Todo
         remove_nan: bool = False,
     ) -> TypeRepEst:
-        """Computes the parameter point estimates
+        """[summary]
 
         Args:
+            self (TypeRepEst): [description]
+            y (Array): [description]
+            samp_weight (Array): [description]
+            rep_weights (Union[np.ndarray, pd.DataFrame]): [description]
+            x (Union[np.ndarray, pd.DataFrame, None], optional): [description]. Defaults to None.
+            rep_coefs (Union[float, np.ndarray, None], optional): [description]. Defaults to None.
+            domain (Optional[np.ndarray], optional): [description]. Defaults to None.
+            conservative (bool, optional): [description]. Defaults to False.
+            deff (bool, optional): [description]. Defaults to False.
 
-            y:
-
-            samp_weights:
-
-            rep_weights: 
-
-            domain:
+        Raises:
+            AssertionError: [description]
 
         Returns:
-        A ..
-
+            TypeRepEst: [description]
         """
 
         if self.parameter == "ratio" and x is None:

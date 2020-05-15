@@ -1,3 +1,16 @@
+"""Replicate weights module.
+
+The module has one main class called *ReplicateWeight* which implements three replication 
+techniques: Bootstrap, Jackknife, and balanced repeated replication (BRR). For reference, 
+users can consultant Efron, B. and Tibshirani, R.J. (1994) [#et1994]_, Valliant, R. and 
+Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more details. 
+
+.. [#et1994] Efron, B. and Tibshirani, R.J. (1994), *An Introduction to the Boostrap*, 
+   Chapman & Hall/CRC.
+.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, 
+   Springer-Verlag New York, Inc
+"""
+
 from typing import Any, Dict, Optional, Tuple, Union, List
 
 import numpy as np
@@ -11,10 +24,24 @@ from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 class ReplicateWeight:
-    """
-    Fors SRS, the units can be replicate directly.
-    Replication is done at the PSU level for the multi-stage design.
-    Replication methods: Jackknife, BRR, Bootstrap
+    """*ReplicateWeight* implements Boostrap, Jackknife and BRR to derive replicate weights. 
+    When possible design weights should be used as the input weights for creating the replicate
+    weights, hence the weight adjustments can be applied to the replicates. 
+
+    Attributes:
+        | method (str): replicate method. 
+        | fay_coef (float): Fay coefficient when implementing BRR-Fay.
+        | number_reps (int): number of replicates. 
+        | rep_coefs (np.ndarray): coefficients associated to the replicates. 
+        | stratification (bool): stratification indicator.
+        | number_psus (int): number of primary sampling units.
+        | number_strata (int): number of strata. 
+        | random_seed (int): random seed. 
+
+
+    Methods:
+        | replicate(): computes the replicate weights. 
+
     """
 
     def __init__(
@@ -232,14 +259,29 @@ class ReplicateWeight:
         psu_varname: str = "_psu",
         str_varname: str = "_stratum",
     ) -> pd.DataFrame:
-        """
-        select a sample. 
+        """Computes replicate sample weights. 
 
         Args:
-            number_reps (integer) : Number of replicate sample weights.   
-        
+            samp_weight (Array): array of sample weights. To incorporate the weights adjustment 
+                in the replicate weights, first replicate the design sample weights then apply 
+                the adjustments to the replicates. 
+            psu (Array): 
+            stratum (Array, optional): array of the strata. Defaults to None.
+            rep_coefs (Union[Array, Number], optional): coefficients associated to the replicates.
+                Defaults to False.
+            rep_prefix (str, optional): prefix to apply to the replicate weights names. 
+                Defaults to None.
+            psu_varname (str, optional): name of the psu variable in the output dataframe. 
+                Defaults to "_psu".
+            str_varname (str, optional): name of the stratum variable in the output dataframe. 
+                Defaults to "_stratum".
+
+        Raises:
+            AssertionError: raises an assertion error when stratum is None for a stratified design.
+            AssertionError: raises an assertion error when the replication method is not valid.
+
         Returns:
-            A ndarray (matrix): .
+            pd.DataFrame: a dataframe of the replicates sample weights.
         """
 
         samp_weight = formats.numpy_array(samp_weight)
@@ -257,7 +299,7 @@ class ReplicateWeight:
             key = [str_varname, psu_varname]
         elif self.method == "brr":
             _, str_index = np.unique(psu, return_index=True)
-            checks._check_brr_number_psus(str_index)
+            checks.assert_brr_number_psus(str_index)
             psus = psu[np.sort(str_index)]
             strata = np.repeat(range(1, psus.size // 2 + 1), 2)
             stratum_psu = pd.DataFrame({str_varname: strata, psu_varname: psus})

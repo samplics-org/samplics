@@ -1,3 +1,17 @@
+"""Expansion module 
+
+The module implements the taylor-based variance estimation methods. There are several good books
+that provide the the taylor-based approximations of the sample variance. Some of these reference 
+books are Cochran, W.G. (1977) [#c1977]_, Kish, L. (1965) [#k1965]_, Lohr, S.L. (2010) [#l2010]_, 
+and Wolter, K.M. (2007) [#w2007]_. 
+
+.. [#c1977] Cochran, W.G. (1977), *Sampling Techniques, 3rd edn.*, Jonh Wiley & Sons, Inc.
+.. [#k1965] Kish, L. (1965), *Survey Sampling*, Jonh Wiley & Sons, Inc.
+.. [#l2010] Lohr, S.L. (2010), *Sampling: Design and Analysis, 2nd edn.*, Cengage Learning, Inc.
+.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, 
+   Springer-Verlag New York, Inc
+"""
+
 from typing import TypeVar, Type, Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -16,7 +30,7 @@ TypeTaylorEst = TypeVar("TypeTaylorEst", bound="TaylorEstimator")
 
 
 class _SurveyEstimator:
-    """ General approach for sample estimation of linear parameters
+    """ General approach for sample estimation of linear parameters. 
     """
 
     def __init__(self, parameter: str, alpha: float = 0.05, random_seed: int = None) -> None:
@@ -47,8 +61,6 @@ class _SurveyEstimator:
         self.number_psus: Optional[int] = None
         self.degree_of_freedom: Optional[int] = None
         self.alpha: float = alpha
-        self.number_reps: Optional[int] = None
-        self.rep_coefs: Optional[int] = None
 
     def __str__(self) -> Any:
         print(f"SAMPLICS - Estimation of {self.parameter.title()}\n")
@@ -217,8 +229,28 @@ class _SurveyEstimator:
 
 
 class TaylorEstimator(_SurveyEstimator):
-    """
-    Taylor method to estimate uncertainty
+    """*TaylorEstimate* implements taylor-based variance approximations. 
+
+    Attributes
+        | point_est (dict): point estimate of the parameter of interest.
+        | variance (dict): variance estimate of the parameter of interest.
+        | stderror (dict): standard error of the parameter of interest.
+        | coef_var (dict): estimate of the coefficient of variation.  
+        | deff (dict): estimate of the design effect due to weighting.
+        | lower_ci (dict): estimate of the lower bound of the confidence interval. 
+        | upper_ci (dict): estimate of the upper bound of the confidence interval. 
+        | degree_of_freedom (int): degree of freedom for the confidence interval.
+        | alpha (float): significant level for the confidence interval
+        | strata (list): list of the strata in the sample.
+        | domains (list): list of the domains in the sample. 
+        | method (str): variance estimation method. 
+        | parameter (str): the parameter of the population to estimate e.g. total. 
+        | number_strata (int): number of strata.
+        | number_psus (int): number of primary sampling units (psus)
+
+    Methods
+        | estimate(): produces the point estimate of the parameter of interest with the associated
+        |   measures of precision. 
     """
 
     def __init__(
@@ -337,20 +369,6 @@ class TaylorEstimator(_SurveyEstimator):
         domain: Optional[Array] = None,
         remove_nan: bool = False,
     ) -> Dict[StringNumber, Any]:
-        """Computes the variance
-
-        Args:
-
-        y:
-
-        samp_weight:
-
-        domains:
-
-        Returns:
-        A dictionary
-
-        """
 
         if self.parameter == "ratio" and x is None:
             raise AssertionError("Parameter x must be provided for ratio estimation.")
@@ -421,19 +439,26 @@ class TaylorEstimator(_SurveyEstimator):
         coef_variation: bool = False,
         remove_nan: bool = False,
     ) -> TypeTaylorEst:
-        """Computes the parameter point estimates
+        """[summary]
 
         Args:
+            self (TypeTaylorEst): [description]
+            y (Array): [description]
+            samp_weight (Array): [description]
+            x (Optional[Array], optional): [description]. Defaults to None.
+            stratum (Optional[Array], optional): [description]. Defaults to None.
+            psu (Optional[Array], optional): [description]. Defaults to None.
+            ssu (Optional[Array], optional): [description]. Defaults to None.
+            domain (Optional[Array], optional): [description]. Defaults to None.
+            deff (bool, optional): [description]. Defaults to False.
+            coef_variation (bool, optional): [description]. Defaults to False.
+            remove_nan (bool, optional): [description]. Defaults to False.
 
-        y:
-
-        weights:
-
-        domains:
+        Raises:
+            AssertionError: [description]
 
         Returns:
-        A tupple (estimate, variance or stderror, coef_var?, lower_ci, upper_ci)
-
+            TypeTaylorEst: [description]
         """
 
         if self.parameter == "ratio" and x is None:

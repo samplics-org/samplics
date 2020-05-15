@@ -1,10 +1,26 @@
+"""computes Hadamard matrices. 
+A Hadamard matrix is a square matrix whose entries are either +1 or −1 and whose rows are mutually orthogonal.The Hadamard matrix is used to derive the BRR replicate weights. It is conjectured that 
+a Hadamard matrix exist for all n divisible by 4. However, the *hadarmard(n)* functions from 
+*scipy.linalg* only provides the matrix for n that are power of 2. Hence, in this module, 
+additional Hadamard matrices are implemented. For example, *scipy.linalg.hadamard()* can provide a matrix for n = 4, 8, 16, 32, 64, 128, etc. The module add Hadamard matrices for n = 12, 20, 24, 28, and some additional to come. 
+
+In appendix A, Wolter, K. M. (1985) [#w1985]_ provides a list of Hadamard matrices for all 
+n multiple of 4 up to 100 which should be sufficient for most applications. Note that this is
+this reference is for the first edition of the book which explicitly provides the hadamard 
+matrices. Above that, the scipy function can be used. Also, more Hadamard matrices can be 
+found at: http://neilsloane.com/hadamard/
+
+.. [#w1985] Wolter., K. M. (1985), *Introduction to variance Estimation*, Springer-Verlag New York, Inc
+
+TODO: implements Hadamard matrices of order higher than 28. 
+
+"""
+
 import numpy as np
 
 import math
 
 from scipy.linalg import hadamard as hdd
-
-# from numba import njit
 
 
 def hadamard(n: int) -> np.ndarray:
@@ -25,7 +41,6 @@ def _hadamard2() -> np.ndarray:
     return hadamard2
 
 
-# @njit
 def _hadamard12() -> np.ndarray:
 
     hadamard12 = np.ones((12, 12))
@@ -56,7 +71,6 @@ def _hadamard12() -> np.ndarray:
     return hadamard12
 
 
-# @njit
 def _hadamard20() -> np.ndarray:
 
     hadamard20 = np.ones((20, 20))
@@ -73,7 +87,6 @@ def _hadamard20() -> np.ndarray:
     return hadamard20
 
 
-# @njit
 def _hadamard24() -> np.ndarray:
 
     hadamard24 = np.ones((24, 24))
@@ -118,7 +131,6 @@ def _hadamard24() -> np.ndarray:
     return hadamard24
 
 
-# @njit
 def _hadamard28() -> np.ndarray:
 
     hadamard28 = np.ones((28, 28))
