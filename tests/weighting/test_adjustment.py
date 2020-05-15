@@ -34,6 +34,10 @@ nr_wgt_without_adj_class = sample_wgt_nr_without.adjust(
 )
 
 
+def test_nr_adjust_method():
+    assert sample_wgt_nr_without.adjust_method == "nonresponse"
+
+
 def test_sum_of_weights_without_adj_class():
     assert np.sum(nr_wgt_without_adj_class) == np.sum(design_wgt)
 
@@ -106,6 +110,10 @@ norm_wgt_wihout_class1 = sample_wgt_norm_without.normalize(
 )
 
 
+def test_norm_without_adjust_method():
+    assert sample_wgt_norm_without.adjust_method == "normalization"
+
+
 def test_norm_wgt_without_class1():
     assert np.isclose(np.sum(norm_wgt_wihout_class1), level1_without)
 
@@ -127,6 +135,10 @@ norm_wgt_wih_class1 = sample_wgt_norm_with.normalize(
 )
 
 
+def test_norm_with_adjust_method():
+    assert sample_wgt_norm_with.adjust_method == "normalization"
+
+
 def test_norm_wgt_with_class1():
     for region in region_ids:
         norm_wgt_wih_class_r = norm_wgt_wih_class1[region_id == region]
@@ -145,18 +157,22 @@ def test_norm_wgt_with_class2():
         assert np.isclose(np.sum(norm_wgt_wih_class_r), response_code_r.size)
 
 
-"""Postratification adjustment WITHOUT normalization class"""
+"""Postratification adjustment WITHOUT poststratification class"""
 control_without = 50000
 sample_wgt_ps_without = SampleWeight()
 
 ps_wgt_wihout_class = sample_wgt_ps_without.poststratify(nr_wgt_without_adj_class, control_without)
 
 
+def test_ps_without_adjust_method():
+    assert sample_wgt_ps_without.adjust_method == "poststratification"
+
+
 def test_poststratification_wgt_without_class():
     assert np.isclose(np.sum(ps_wgt_wihout_class), control_without)
 
 
-"""Poststratification adjustment WITH normalization class"""
+"""Poststratification adjustment WITH poststratification class"""
 region_ids = np.unique(region_id)
 control_with = dict(zip(region_ids, np.repeat(5000, region_ids.size)))
 sample_wgt_ps_with = SampleWeight()
@@ -166,22 +182,13 @@ ps_wgt_wih_class = sample_wgt_ps_with.poststratify(
 )
 
 
+def test_ps_with_adjust_method():
+    assert sample_wgt_ps_with.adjust_method == "poststratification"
+
+
 def test_ps_wgt_with_class():
     for region in region_ids:
         ps_wgt_wih_class_r = ps_wgt_wih_class[region_id == region]
         response_code_r = response_code[region_id == region]
         respondents_r = response_code_r == np.ones(response_code_r.size)
         assert np.isclose(np.sum(ps_wgt_wih_class_r), control_with[region])
-
-
-"""Trim - TODO """
-threshold_without = 50000
-sample_wgt_trim_without = SampleWeight()
-
-trim_wgt_wih_class = sample_wgt_trim_without.trim(
-    nr_wgt_without_adj_class, "median", threshold_without
-)
-
-
-# def test_trim_todo():
-#     assert trim_wgt_wih_class

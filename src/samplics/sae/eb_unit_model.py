@@ -27,6 +27,9 @@ assumption nor any other parametric distribution. This implementation a semipara
 nonparametric are provided. In the semiparametric, the normal distribution is used to fit the
 parameters and to draw the fixed-effects. 
 
+For a comprehensive review of the small area estimation models and its applications, 
+see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
+
 .. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*, 
    New York: John Wiley & Sons, Inc.
 .. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for 
@@ -36,6 +39,8 @@ parameters and to draw the fixed-effects.
    *Canadian Journal of Statistics*, **38**, 369-385.
 .. [#ell2003] Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003), Micro-Level Estimation of Poverty
    and Inequality. *Econometrica*, **71**, 355-364.
+.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
+   John Wiley & Sons, Hoboken, New Jersey.
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
@@ -81,7 +86,7 @@ class EblupUnitModel:
         | areas_list (array): the list of small areas from the sample data.
         | samp_size (dict): the sample size per small areas from the sample. 
         | ys_mean (array): sample area means of the output variable. 
-        | Xs_mean (ndarray): sample area means of the auxiliary variables.
+        | Xs_mean (ndarray): sample area means of the auxiliary variables.}}}}}
 
     Model fitting attributes
         | fitted (boolean): indicates whether the model has been fitted or not. 
