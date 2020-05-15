@@ -24,21 +24,23 @@ class SampleWeight:
     sample weights so that they sum to some control value(s), poststratify, and calibrate 
     based on auxiliary information. 
 
-    Attributes:
-        | adjust_method (dict): adjustment method. Possible values are "nonresponse", | 
-        |   "normalization", "poststratification", "calibration". 
+    Attributes
+        | adjust_method (str): adjustment method. Possible values are nonresponse,
+        |   normalization, poststratification, calibration. 
         | number_units (dict): number of units per domain. 
         | deff_wgt (dict): design effect due to unequal weights per domain.
         | adjust_factor (dict): normalizing adjustment factor per domain.
         | control (dict): control values per domain.
 
-    Methods:
-        | deff_weight():
-        | adjust():
-        | normalize():
-        | poststratify():
-        | calib_covariables():
-        | calibrate(): 
+    Methods
+        | deff_weight(): computes the design effect due to weighting.
+        | adjust(): adjust the sample weights to account for nonresponse.
+        | normalize(): normalize the sample weights to ensure they sum to a control value. 
+        | poststratify(): poststratify the sample weights.
+        | calib_covariables(): covert a dataframe to a tuple of an array and a dictionary. 
+        | The array corresponds to the calibration domains. The dictionary maps the array 
+        | elements with their corresponding control values.
+        | calibrate(): calibrate the sample weights. 
 
     TODO: trim(), rake()
     """

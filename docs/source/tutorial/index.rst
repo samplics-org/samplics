@@ -1,15 +1,21 @@
+
 Tutorial
 ========
 
+This is a tutorial on samplics
 
-Sample selection
-----------------
+Sampling
+--------
 
+Bref intro to sampling 
 
-
-Sample weighting
-----------------
-
+.. toctree::
+   :maxdepth: 1
+   
+   sampling
+    
+Weighting
+---------
 
 Replicate weights
 -----------------
@@ -21,6 +27,7 @@ Estimation
 
 SAE: area level model
 ---------------------
+
 
 SAE: unit level model
 ---------------------

@@ -1,6 +1,6 @@
 """EBLUP Area Model
 
-This module implements the basic EBLUP area level model initially developed by Fay, R.E. and 
+The module implements the basic EBLUP area level model initially developed by Fay, R.E. and 
 Herriot, R.A. (1979) [#fh1979]_ and explicitly (mathematically) formulated in Rao, J.N.K. and 
 Molina, I. (2015) [#rm2015]_. The functionalities are organized in one class *EblupAreaModel* with 
 two main methods: *fit()* and *predict()*. The unit level standard error is assume known and the 
@@ -12,8 +12,6 @@ level.
 .. [#fh1979] Fay, R.E. and Herriot, R.A. (1979), Estimation of Income from Small Places: An
    Application of James-Stein Procedures to Census Data. *Journal of the American Statistical 
    Association*, **74**, 269-277.
-.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
-   John Wiley & Sons, Hoboken, New Jersey.
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union
