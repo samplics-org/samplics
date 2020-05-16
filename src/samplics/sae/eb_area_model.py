@@ -234,34 +234,25 @@ class EblupAreaModel:
         sigma2_e: np.ndarray,
         b_const: np.ndarray,
         sigma2_v_start: float,
+        tol: float,
         maxiter: int,
-        abstol: float,
-        reltol: float,
     ) -> Tuple[float, float, int, float, bool]:  # May not need variance
         """ Fisher-scroring algorithm for estimation of variance component"""
 
         iterations = 0
-
-        tolerance = abstol + 1.0
-        tol = 0.9 * tolerance
+        tolerance = tol + 1.0
         sigma2_v = sigma2_v_start
-        while tolerance > tol:
+        while iterations < maxiter and tolerance > tol:
             sigma2_v_previous = sigma2_v
             deriv_sigma, info_sigma = self._partial_derivatives(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
             )
-
             sigma2_v += deriv_sigma / info_sigma
             sigma2_v_cov = 1 / info_sigma
 
             tolerance = abs(sigma2_v - sigma2_v_previous)
-            tol = max(abstol, reltol * abs(sigma2_v))
             convergence = tolerance <= tol
-
-            if iterations == maxiter:
-                break
-            else:
-                iterations += 1
+            iterations += 1
 
         sigma2_v = float(max(sigma2_v, 0))
 
@@ -373,8 +364,7 @@ class EblupAreaModel:
         re_std_start: float = 0.001,
         b_const: Union[np.array, Number] = 1.0,
         intercept: bool = True,
-        abstol: float = 1.0e-4,
-        reltol: float = 0.0,
+        tol: float = 1e-8,
         maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the fixed effects and the standard error of 
@@ -390,10 +380,9 @@ class EblupAreaModel:
             error_std (Array): [description]
             re_std_start (float, optional): [description]. Defaults to 0.001.
             b_const (Union[np.array, Number], optional): [description]. Defaults to 1.0.
+            tol (float, optional): tolerance used for convergence criteria. Defaults to 1.0e-4.
             maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
             Defaults to 100.
-            abstol (float, optional): absolute tolerance. Defaults to 1.0e-4.
-            reltol (float, optional): relative tolerance. Defaults to 0.0.
         """
 
         if isinstance(b_const, (int, float)):
@@ -420,8 +409,7 @@ class EblupAreaModel:
             sigma2_e=error_std ** 2,
             b_const=b_const,
             sigma2_v_start=re_std_start ** 2,
-            abstol=abstol,
-            reltol=reltol,
+            tol=tol,
             maxiter=maxiter,
         )
 
@@ -434,8 +422,7 @@ class EblupAreaModel:
         self.X = X
         self.area = area
         self.fixed_effects = beta
-        self.fe_std = beta_cov ** (1 / 2)
-
+        self.fe_std = np.diag(beta_cov) ** (1 / 2)
         self.re_std = sigma2_v ** (1 / 2)
         self.re_std_cov = sigma2_v_cov
 

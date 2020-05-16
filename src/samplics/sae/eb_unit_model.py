@@ -264,6 +264,8 @@ class EblupUnitModel:
         samp_weight: Optional[Array] = None,
         scales: Union[Array, Number] = 1,
         intercept: bool = True,
+        tol: float = 1e-6,
+        maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the model parameters that is the fixed
         effects, the random effects standard error and the unit level residuals' standard error. 
@@ -280,6 +282,9 @@ class EblupUnitModel:
                 If a single number of provided, the same number will be applied to all observations. Defaults to 1.
             intercept (bool, optional): An boolean to indicate whether an intercept need to be 
                 added to X. Defaults to True.
+            tol (float, optional): tolerance used for convergence criteria. Defaults to 1.0e-4.
+            maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
+            Defaults to 100.
         """
 
         areas = formats.numpy_array(areas)
@@ -308,7 +313,14 @@ class EblupUnitModel:
 
         reml = True if self.method == "REML" else False
         basic_model = sm.MixedLM(ys, Xs, areas)
-        basic_fit = basic_model.fit(reml=reml, full_output=True,)
+        fit_kwargs = {
+            "tol": tol,
+            "gtol": tol,
+            "pgtol": tol,
+            "maxiter": maxiter,
+        }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
+        basic_fit = basic_model.fit(reml=reml, full_output=True, **fit_kwargs)
+        # print(basic_fit.summary())
 
         self.error_std = basic_fit.scale ** 0.5
         self.fixed_effects = basic_fit.fe_params
@@ -449,6 +461,8 @@ class EblupUnitModel:
         samp_weight: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         intercept: bool = True,
+        tol: float = 1.0e-6,
+        maxiter: int = 100,
     ) -> None:
         """Computes the MSE bootstrap estimates of the area level mean estimates. 
 
@@ -460,6 +474,8 @@ class EblupUnitModel:
             samp_weight (Optional[Array], optional): [description]. Defaults to None.
             scale (Union[Array, Number], optional): [description]. Defaults to 1.
             intercept (bool, optional): [description]. Defaults to True.
+            tol: float = 1.0e-4,
+            maxiter: int = 100,
 
         Raises:
             Exception: when bootstrap_mse() is called before fitting the model. 
@@ -521,12 +537,18 @@ class EblupUnitModel:
         steps = np.linspace(0, number_reps, bar_length).astype(int)
         i = 0
 
+        fit_kwargs = {
+            "tol": tol,
+            "gtol": tol,
+            "pgtol": tol,
+            "maxiter": maxiter,
+        }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         reml = True if self.method == "REML" else False
         boot_mse = np.zeros((number_reps, nb_areas))
         print(f"Running the {number_reps} bootstrap iterations")
         for k in range(y_ps_boot.shape[0]):
             boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
-            boot_fit = boot_model.fit(reml=reml,)
+            boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
@@ -688,6 +710,8 @@ class EbUnitModel:
         samp_weight: Optional[Array] = None,
         scales: Union[Array, Number] = 1,
         intercept: bool = True,
+        tol: float = 1e-6,
+        maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the model parameters that is the fixed
         effects, the random effects standard error and the unit level residuals' standard error. 
@@ -704,6 +728,9 @@ class EbUnitModel:
                 If a single number of provided, the same number will be applied to all observations. Defaults to 1.
             intercept (bool, optional): An boolean to indicate whether an intercept need to be 
                 added to Xs. Defaults to True
+            tol (float, optional): tolerance used for convergence criteria. Defaults to 1.0e-4.
+            maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
+            Defaults to 100.
         """
 
         ys_transformed = basic_functions.transform(
@@ -712,7 +739,7 @@ class EbUnitModel:
 
         eblup_ul = EblupUnitModel()
         eblup_ul.fit(
-            ys_transformed, Xs, areas, samp_weight, scales, intercept,
+            ys_transformed, Xs, areas, samp_weight, scales, intercept, tol=tol, maxiter=maxiter
         )
 
         self.scales = eblup_ul.scales
@@ -898,6 +925,8 @@ class EbUnitModel:
         arear: Array,
         scaler: Union[Array, Number] = 1,
         intercept: bool = True,
+        tol: float = 1e-6,
+        maxiter: int = 100,
         max_array_length: int = int(100e6),
         *args: Any,
     ) -> None:
@@ -910,6 +939,9 @@ class EbUnitModel:
             number_reps (int): [description]
             scaler (Union[Array, Number], optional): [description]. Defaults to 1.
             intercept (bool, optional): [description]. Defaults to True.
+            tol (float, optional): tolerance used for convergence criteria. Defaults to 1.0e-4.
+            maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
+            Defaults to 100.
             max_array_length (int, optional): [description]. Defaults to int(100e6).
         """
 
@@ -1030,6 +1062,12 @@ class EbUnitModel:
         re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
             area_s, np.ones(area_s.size)
         )
+        fit_kwargs = {
+            "tol": tol,
+            "gtol": tol,
+            "pgtol": tol,
+            "maxiter": maxiter,
+        }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         print(f"Fitting and predicting using each of the {number_reps} bootstrap populations")
         for b in range(number_reps):
             with warnings.catch_warnings():
@@ -1039,6 +1077,7 @@ class EbUnitModel:
                     reml=reml,
                     start_params=np.append(beta_ols, np.std(re_ols) ** 2),
                     full_output=True,
+                    **fit_kwargs,
                 )
 
             gammaboot = float(boot_fit.cov_re) / (
@@ -1192,6 +1231,8 @@ class EllUnitModel:
         samp_weight: Optional[Array] = None,
         scales: Union[Array, Number] = 1,
         intercept: bool = True,
+        tol: float = 1e-6,
+        maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the model parameters that is the fixed
         effects, the random effects standard error and the unit level residuals' standard error.
@@ -1230,9 +1271,7 @@ class EllUnitModel:
             eb_ul = EbUnitModel(
                 method=self.method, boxcox=self.boxcox["lambda"], constant=self.boxcox["constant"],
             )
-            eb_ul.fit(
-                ys, Xs, areas, samp_weight, scales, False,
-            )
+            eb_ul.fit(ys, Xs, areas, samp_weight, scales, False, tol=tol, maxiter=maxiter)
             self.scales = eb_ul.scales
             self.afactors = eb_ul.afactors
             self.ys = eb_ul.ys
