@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-get_ipython().getoutput("pip3 install --upgrade samplics")
+
 import samplics
 from samplics.sampling import Sample
 
@@ -83,9 +83,3 @@ psu_sample_sampford = stage1_sampford.select(
     )
 
 psu_sample_sampford.head(15)
-
-
-
-
-
-

@@ -11,17 +11,14 @@ area = milk["SmallArea"]
 yhat = milk["yi"]
 X = pd.get_dummies(milk["MajorArea"])
 X.loc[:, 1] = 1
-print(X)
 sigma_e = milk["SD"]
 
 ## REML method
 fh_model_reml = EblupAreaModel(method="REML")
 fh_model_reml.fit(
-    yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
+    yhat=yhat, X=X, area=area, intercept=False, error_std=sigma_e, abstol=1e-4,
 )
-fh_model_reml.predict(
-    X=X, area=area,
-)
+fh_model_reml.predict(X=X, area=area, intercept=False)
 
 
 def test_fay_herriot_REML_convergence():
@@ -160,6 +157,8 @@ def test_fay_herriot_REML_mse():
 
 
 ## ML method
+X = pd.get_dummies(milk["MajorArea"], drop_first=False)
+X = np.delete(X.to_numpy(), 0, axis=1)
 fh_model_ml = EblupAreaModel(method="ML")
 fh_model_ml.fit(
     yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
@@ -305,14 +304,13 @@ def test_fay_herriot_ML_mse():
 
 
 ## FH method
-
+X = pd.get_dummies(milk["MajorArea"], drop_first=True)
+# X = np.delete(X.to_numpy(), 0, axis=1)
 fh_model_fh = EblupAreaModel(method="FH")
 fh_model_fh.fit(
-    yhat=yhat, X=X, area=area, error_std=sigma_e, abstol=1e-4,
+    yhat=yhat, X=X, area=area, intercept=True, error_std=sigma_e, abstol=1e-4,
 )
-fh_model_fh.predict(
-    X=X, area=area,
-)
+fh_model_fh.predict(X=X, area=area, intercept=True)
 
 
 def test_fay_herriot_FH_convergence():

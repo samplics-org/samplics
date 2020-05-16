@@ -372,9 +372,10 @@ class EblupAreaModel:
         error_std: Array,
         re_std_start: float = 0.001,
         b_const: Union[np.array, Number] = 1.0,
-        maxiter: int = 100,
+        intercept: bool = True,
         abstol: float = 1.0e-4,
         reltol: float = 0.0,
+        maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the fixed effects and the standard error of 
         the random effects. In addition, the method provides statistics related to the model 
@@ -401,7 +402,10 @@ class EblupAreaModel:
             b_const = formats.numpy_array(b_const)
 
         area = formats.numpy_array(area)
+        yhat = formats.numpy_array(yhat)
         X = formats.numpy_array(X)
+        if intercept and isinstance(X, np.ndarray):
+            X = np.insert(X, 0, 1, axis=1)
 
         (
             sigma2_v,
@@ -416,9 +420,9 @@ class EblupAreaModel:
             sigma2_e=error_std ** 2,
             b_const=b_const,
             sigma2_v_start=re_std_start ** 2,
-            maxiter=maxiter,
             abstol=abstol,
             reltol=reltol,
+            maxiter=maxiter,
         )
 
         beta, beta_cov = self._fixed_coefficients(
@@ -450,7 +454,9 @@ class EblupAreaModel:
 
         self.fitted = True
 
-    def predict(self, X: Array, area: Array, b_const: Union[np.array, Number] = 1.0,) -> None:
+    def predict(
+        self, X: Array, area: Array, b_const: Union[np.array, Number] = 1.0, intercept: bool = True
+    ) -> None:
         """Provides the modelled area levels estimates and their MSE estimates. 
 
         Args:
@@ -459,9 +465,6 @@ class EblupAreaModel:
             area (Array): provides the areas for the prediction. 
             error_std (Array): 
             b_const (Union[np.array, Number], optional): [description]. Defaults to 1.0.
-            maxiter (int, optional): [description]. Defaults to 100.
-            abstol (float, optional): [description]. Defaults to 1.0e-4.
-            reltol (float, optional): [description]. Defaults to 0.0.
 
         Raises:
             Exception: [description]
@@ -479,6 +482,8 @@ class EblupAreaModel:
 
         area = formats.numpy_array(area)
         X = formats.numpy_array(X)
+        if intercept and isinstance(X, np.ndarray):
+            X = np.insert(X, 0, 1, axis=1)
 
         point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
             X=X,
