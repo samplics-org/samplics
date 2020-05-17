@@ -575,6 +575,27 @@ class EblupUnitModel:
 
         self.area_mse_boot = dict(zip(area_ps, np.mean(boot_mse, axis=0)))
 
+    def to_dataframe(self, col_names=["_area", "_estimate", "_mse", "_mse_boot"]) -> pd.DataFrame:
+        """Returns a pandas dataframe from dictionaries with same keys and one value per key.
+
+        Args:
+            col_names (list, optional): list of string to be used for the dataframe columns names. 
+                Defaults to ["_area", "_estimate", "_mse", "_mse_boot"].
+
+        Returns:
+            [pd.DataFrame]: a pandas dataframe 
+        """
+
+        if self.area_mse_boot != {}:
+            col_names.pop()  # remove the last element same as .pop(-1)
+            area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse)
+        else:
+            area_df = formats.dict_to_dataframe(
+                col_names, self.area_est, self.area_mse, self.area_mse_boot
+            )
+
+        return area_df
+
 
 class EbUnitModel:
     """*EbUnitModel* implements the basic Unit level model for complex indicators.
@@ -793,7 +814,7 @@ class EbUnitModel:
             # print(d)
             oos = area_r == d
             mu_dr = mu_r[oos]
-            ss = self.areas == d
+            ss = self.areas_list == d
             ybar_d = self.ys_mean[ss]
             xbar_d = self.Xs_mean[ss]
             mu_bias_dr = self.gamma[d] * (ybar_d - xbar_d @ fixed_effects)
@@ -919,10 +940,10 @@ class EbUnitModel:
 
     def bootstrap_mse(
         self,
-        number_reps: int,
-        indicator: Callable[..., Array],
         Xr: Array,
         arear: Array,
+        indicator: Callable[..., Array],
+        number_reps: int,
         scaler: Union[Array, Number] = 1,
         intercept: bool = True,
         tol: float = 1e-6,
@@ -1113,6 +1134,20 @@ class EbUnitModel:
 
         mse_boot = np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
+
+    def to_dataframe(self, col_names=["_area", "_estimate", "_mse", "_mse_boot"]) -> pd.DataFrame:
+        """Returns a pandas dataframe from dictionaries with same keys and one value per key.
+
+        Args:
+            col_names (list, optional): list of string to be used for the dataframe columns names. 
+                Defaults to ["_area", "_estimate", "_mse", "_mse_boot"].
+
+        Returns:
+            [pd.DataFrame]: a pandas dataframe 
+        """
+
+        area_df = EblupAreaModel().to_dataframe(self, col_names)
+        return area_df
 
 
 class EllUnitModel:

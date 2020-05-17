@@ -484,3 +484,16 @@ class EblupAreaModel:
 
         self.area_est = dict(zip(area, point_est))
         self.area_mse = dict(zip(area, mse))
+
+    def to_dataframe(self, col_names=["_area", "_estimate", "_mse"]):
+        """Returns a pandas dataframe from dictionaries with same keys and one value per key.
+
+        Args:
+            col_names (list, optional): list of string to be used for the dataframe columns names. 
+                Defaults to ["_area", "_estimate", "_mse"].
+
+        Returns:
+            [type]: a pandas dataframe 
+        """
+
+        return formats.dict_to_dataframe(col_names, self.area_est, self.area_mse)

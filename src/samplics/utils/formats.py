@@ -109,3 +109,19 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
         checks.assert_not_unique(all_units)
 
     return all_units
+
+
+def dict_to_dataframe(col_names: list, *args) -> pd.DataFrame:
+
+    values = []
+    for k, arg in enumerate(args):
+        if not isinstance(arg, dict):
+            raise AssertionError("All input parameters must be dictionaries with the same keys.")
+
+        values.append(list(arg.values()))
+
+    values_df = pd.DataFrame(values,).T
+    values_df.insert(0, "0", list(args[0].keys()))
+    values_df.columns = col_names
+
+    return values_df
