@@ -155,7 +155,7 @@ class EblupUnitModel:
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
-        self.area_mse_boot: Dict[Any, float] = {}
+        self.area_mse_boot: Optional[Dict[Any, float]] = None
 
     def _beta(
         self, y: np.ndarray, X: np.ndarray, area: np.ndarray, weight: np.ndarray,
@@ -316,7 +316,7 @@ class EblupUnitModel:
         fit_kwargs = {
             "tol": tol,
             "gtol": tol,
-            "pgtol": tol,
+            # "pgtol": tol,
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         basic_fit = basic_model.fit(reml=reml, full_output=True, **fit_kwargs)
@@ -540,7 +540,7 @@ class EblupUnitModel:
         fit_kwargs = {
             "tol": tol,
             "gtol": tol,
-            "pgtol": tol,
+            # "pgtol": tol,
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         reml = True if self.method == "REML" else False
@@ -586,7 +586,7 @@ class EblupUnitModel:
             [pd.DataFrame]: a pandas dataframe 
         """
 
-        if self.area_mse_boot != {}:
+        if self.area_mse_boot is None:
             col_names.pop()  # remove the last element same as .pop(-1)
             area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse)
         else:
@@ -706,7 +706,7 @@ class EbUnitModel:
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
         self.area_mse: Dict[Any, float] = {}
-        self.area_mse_boot: Dict[Any, float] = {}
+        self.area_mse_boot: Optional[Dict[Any, float]] = None
 
     def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
         if self.boxcox["lambda"] is None:
@@ -1086,7 +1086,7 @@ class EbUnitModel:
         fit_kwargs = {
             "tol": tol,
             "gtol": tol,
-            "pgtol": tol,
+            # "pgtol": tol,
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         print(f"Fitting and predicting using each of the {number_reps} bootstrap populations")
