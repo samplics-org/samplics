@@ -37,5 +37,40 @@ import pprint
 pprint.pprint(fh_model_reml.area_est)
 
 
-milk_est = fh_model_reml.to_dataframe(col_names = ["small_area", "eblup_estimate", "eblup_mse"])
-print(f"\nThe dataframe version of the area level estimates:\n\n {milk_est}")
+milk_est_reml = fh_model_reml.to_dataframe(col_names = ["small_area", "eblup_estimate", "eblup_mse"])
+print(f"\nThe dataframe version of the area level estimates:\n\n {milk_est_reml}")
+
+
+## ML method
+fh_model_ml = EblupAreaModel(method="ML")
+fh_model_ml.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, intercept=True, tol=1e-8,
+)
+
+milk_est_ml = fh_model_ml.predict(
+    X=X, area=area, intercept=True
+)
+
+milk_est_ml = fh_model_ml.to_dataframe(col_names = ["small_area", "eblup_estimate", "eblup_mse"])
+
+
+print(f"\nThe dataframe version of the ML area level estimates:\n\n {milk_est_ml}")
+
+
+## FH method
+fh_model_fh = EblupAreaModel(method="FH")
+fh_model_fh.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, intercept=True, tol=1e-8,
+)
+
+milk_est_fh = fh_model_fh.predict(
+    X=X, area=area, intercept=True
+)
+
+milk_est_fh = fh_model_fh.to_dataframe(col_names = ["small_area", "eblup_estimate", "eblup_mse"])
+
+
+print(f"\nThe dataframe version of the ML area level estimates:\n\n {milk_est_fh}")
+
+
+

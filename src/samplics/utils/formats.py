@@ -24,7 +24,7 @@ def numpy_array(arr: Any) -> np.ndarray:
         arr (Any): array-like input data.
 
     Returns:
-        np.ndarray: an numoy array
+        np.ndarray: an numpy array
     """
 
     if not isinstance(arr, np.ndarray):
@@ -113,15 +113,21 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
 
 def dict_to_dataframe(col_names: list, *args) -> pd.DataFrame:
 
+    keys = list(args[0].keys())
+    number_keys = len(keys)
     values = []
     for k, arg in enumerate(args):
-        if not isinstance(arg, dict):
+        if (
+            not isinstance(arg, dict)
+            or (keys != args[k]).any()
+            or number_keys != len(list(args[k].values()))
+        ):
             raise AssertionError("All input parameters must be dictionaries with the same keys.")
 
         values.append(list(arg.values()))
 
     values_df = pd.DataFrame(values,).T
-    values_df.insert(0, "0", list(args[0].keys()))
+    values_df.insert(0, "0", keys)
     values_df.columns = col_names
 
     return values_df
