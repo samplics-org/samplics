@@ -9,12 +9,14 @@ cornsoybean_mean = pd.read_csv("./tests/sae/cornsoybeanmeans.csv")
 
 cornsoybean = cornsoybean.sample(frac=1)
 
-area_s = cornsoybean["County"]
+areas = cornsoybean["County"]
+areas_list = np.unique(areas)
 
-y_s = cornsoybean["CornHec"]
-X_s = cornsoybean[["CornPix", "SoyBeansPix"]]
+ys = cornsoybean["CornHec"]
+Xs = cornsoybean[["CornPix", "SoyBeansPix"]]
 
-X_smean = cornsoybean_mean[["MeanCornPixPerSeg", "MeanSoyBeansPixPerSeg"]]
+Xmean = cornsoybean_mean[["MeanCornPixPerSeg", "MeanSoyBeansPixPerSeg"]]
+
 
 samp_size = np.array([1, 1, 1, 2, 3, 3, 3, 3, 4, 5, 5, 6])
 pop_size = np.array([545, 566, 394, 424, 564, 570, 402, 567, 687, 569, 965, 556])
@@ -22,10 +24,10 @@ pop_size = np.array([545, 566, 394, 424, 564, 570, 402, 567, 687, 569, 965, 556]
 """REML Method"""
 eblup_bhf_reml = EblupUnitModel()
 eblup_bhf_reml.fit(
-    y_s, X_s, area_s,
+    ys, Xs, areas,
 )
 
-eblup_bhf_reml.predict(X_smean, area_s)
+eblup_bhf_reml.predict(Xmean, areas_list)
 
 
 def test_eblup_bhf_reml():
@@ -139,9 +141,9 @@ def test_area_mse_bhf_reml():
 
 
 eblup_bhf_reml_fpc = EblupUnitModel()
-eblup_bhf_reml_fpc.fit(y_s, X_s, area_s)
+eblup_bhf_reml_fpc.fit(ys, Xs, areas)
 
-eblup_bhf_reml_fpc.predict(X_smean, area_s, pop_size)
+eblup_bhf_reml_fpc.predict(Xmean, areas, pop_size)
 
 
 def test_y_predicted_bhf_reml_fpc():
@@ -167,11 +169,50 @@ def test_y_predicted_bhf_reml_fpc():
     ).all()
 
 
+def test_bhf_reml_to_dataframe_default():
+    df = eblup_bhf_reml.to_dataframe()
+    assert df.shape[1] == 3
+    assert (df.columns == ["_area", "_estimate", "_mse"]).all()
+
+
+def test_bhf_reml_to_dataframe_not_default():
+    df = eblup_bhf_reml.to_dataframe(col_names=["small_area", "modelled_estimate", "taylor_mse"])
+    assert df.shape[1] == 3
+    assert (df.columns == ["small_area", "modelled_estimate", "taylor_mse"]).all()
+
+
+## Bootstrap with REML
+eblup_bhf_reml_boot = EblupUnitModel()
+eblup_bhf_reml_boot.fit(
+    ys, Xs, areas,
+)
+eblup_bhf_reml_boot.predict(Xmean, areas)
+eblup_bhf_reml_boot.bootstrap_mse(Xmean, areas_list, number_reps=5)
+
+
+def test_area_mse_boot_bhf_reml():
+    assert False == True
+
+
+def test_bhf_reml_to_dataframe_boot_default():
+    df = eblup_bhf_reml_boot.to_dataframe()
+    assert df.shape[1] == 4
+    assert (df.columns == ["_area", "_estimate", "_mse", "_mse_boot"]).all()
+
+
+def test_bhf_reml_to_dataframe_boot_not_default():
+    df = eblup_bhf_reml_boot.to_dataframe(
+        col_names=["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+    )
+    assert df.shape[1] == 4
+    assert (df.columns == ["small_area", "modelled_estimate", "taylor_mse"]).all()
+
+
 """ML Method"""
 eblup_bhf_ml = EblupUnitModel(method="ml")
-eblup_bhf_ml.fit(y_s, X_s, area_s)
+eblup_bhf_ml.fit(ys, Xs, areas)
 
-eblup_bhf_ml.predict(X_smean, area_s)
+eblup_bhf_ml.predict(Xmean, areas)
 
 
 def test_eblup_bhf_ml():
@@ -279,9 +320,9 @@ def test_area_mse_bhf_ml():
 
 
 eblup_bhf_ml_fpc = EblupUnitModel(method="ML")
-eblup_bhf_ml_fpc.fit(y_s, X_s, area_s)
+eblup_bhf_ml_fpc.fit(ys, Xs, areas)
 
-eblup_bhf_ml_fpc.predict(X_smean, area_s, pop_size)
+eblup_bhf_ml_fpc.predict(Xmean, areas, pop_size)
 
 
 def test_area_est_bhf_ml_fpc():
