@@ -153,8 +153,8 @@ class EblupUnitModel:
         self.pop_size: Dict[Any, float] = {}
         self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
-        self.area_est: Dict[Any, float] = {}
-        self.area_mse: Dict[Any, float] = {}
+        self.area_est: Dict[Any, float] = None
+        self.area_mse: Dict[Any, float] = None
         self.area_mse_boot: Optional[Dict[Any, float]] = None
 
     def _beta(
@@ -229,12 +229,11 @@ class EblupUnitModel:
         np.ndarray,
     ]:
 
-        ps = np.isin(area, self.areas)
-        area_ps = area[ps]
+        ps = np.isin(self.areas, area)
+        area_ps = self.areas[ps]
         areas = np.unique(area)
         areas_ps = np.unique(area_ps)
 
-        X_ps = X[ps]
         ps_area = np.isin(areas, areas_ps)
         if Xmean is not None:
             Xmean_ps = Xmean[ps_area]
@@ -247,7 +246,7 @@ class EblupUnitModel:
         return (
             ps,
             ps_area,
-            X_ps,
+            X[ps],
             area_ps,
             areas_ps,
             Xmean_ps,
@@ -290,6 +289,7 @@ class EblupUnitModel:
         areas = formats.numpy_array(areas)
         ys = formats.numpy_array(ys)
         Xs = formats.numpy_array(Xs)
+
         if intercept:
             if Xs.ndim == 1:
                 n = Xs.shape[0]
@@ -428,10 +428,11 @@ class EblupUnitModel:
 
         self.area_est = dict(zip(areas_ps, eta_pred))
 
-        X_ps = self.Xs[np.isin(self.areas, area)]
+        s_in_p = np.isin(self.areas, area)
+        X_ps = self.Xs[s_in_p]
         A_ps = np.diag(np.zeros(Xmean.shape[1])) if Xmean.ndim >= 2 else np.asarray([0])
         for d in areas_ps:
-            areadps = area_ps == d
+            areadps = s_in_p == d
             n_ps_d = np.sum(areadps)
             X_ps_d = X_ps[areadps]
             V_ps_d = (self.error_std ** 2) * np.diag(np.ones(n_ps_d)) + (
@@ -459,7 +460,6 @@ class EblupUnitModel:
         area: Array,
         number_reps: int = 500,
         samp_weight: Optional[Array] = None,
-        scale: Union[Array, Number] = 1,
         intercept: bool = True,
         tol: float = 1.0e-6,
         maxiter: int = 100,
@@ -489,20 +489,15 @@ class EblupUnitModel:
         Xmean = formats.numpy_array(Xmean)
         area = formats.numpy_array(area)
         if intercept:
-            if self.Xs.ndim == 1:
-                n = self.Xs.shape[0]
-                Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
+            if Xmean.ndim == 1:
+                n = Xmean.shape[0]
+                # Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
                 Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
             else:
-                Xs = np.insert(Xs, 0, 1, axis=1)
+                # Xs = np.insert(self.Xs, 0, 1, axis=1)
                 Xmean = np.insert(Xmean, 0, 1, axis=1)
         if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
             samp_weight = formats.numpy_array(samp_weight)
-
-        if isinstance(scale, (float, int)):
-            scale_p = np.ones(Xs.shape[0]) * scale
-        else:
-            scale_p = formats.numpy_array(scale)
 
         (
             ps,
@@ -514,19 +509,19 @@ class EblupUnitModel:
             Xmean_pr,
             xbar_ps,
             samp_weight_ps,
-        ) = self._split_data(area, Xs, Xmean, samp_weight)
+        ) = self._split_data(area, self.Xs, Xmean, samp_weight)
 
         samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
-        X_ps_sorted = X_ps[np.argsort(area_ps)]
-        scale_ps_ordered = scale_p[ps]
+        s_in_p = np.isin(self.areas, area)
+        scale_ps_ordered = self.scales[s_in_p]
         if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
             scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
         nb_areas = areas_ps.shape[0]
         error = np.abs(scale_ps_ordered) * np.random.normal(
-            scale=self.error_std, size=(number_reps, area_ps.shape[0])
+            scale=self.error_std, size=(number_reps, np.sum(s_in_p))
         )
         re = np.random.normal(scale=self.re_std, size=(number_reps, nb_areas))
-        mu = X_ps_sorted @ self.fixed_effects
+        mu = X_ps @ self.fixed_effects
         y_ps_boot = (
             np.repeat(mu[None, :], number_reps, axis=0)
             + np.repeat(re, samp_size_ps, axis=1)
@@ -547,14 +542,14 @@ class EblupUnitModel:
         boot_mse = np.zeros((number_reps, nb_areas))
         print(f"Running the {number_reps} bootstrap iterations")
         for k in range(y_ps_boot.shape[0]):
-            boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps_sorted, area_ps)
+            boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps, area_ps)
             boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ys_mean, boot_Xs_mean, boot_gamma, _ = area_stats(
                 y_ps_boot[k, :],
-                X_ps_sorted,
+                X_ps,
                 area_ps,
                 boot_error_std,
                 boot_re_std,
@@ -586,8 +581,19 @@ class EblupUnitModel:
             [pd.DataFrame]: a pandas dataframe 
         """
 
-        if self.area_mse_boot is None:
+        ncols = len(col_names)
+
+        if self.area_est is None:
+            raise AssertionError("No prediction yet. Must predict the area level estimates.")
+        elif self.area_mse_boot is None and ncols not in (3, 4):
+            raise AssertionError("col_names must have 3 or 4 values")
+        elif self.area_mse_boot is None and ncols == 4:
             col_names.pop()  # remove the last element same as .pop(-1)
+
+        print(self.area_est)
+        print(self.area_mse)
+        print(self.area_mse_boot)
+        if self.area_mse_boot is None:
             area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse)
         else:
             area_df = formats.dict_to_dataframe(
@@ -1146,7 +1152,7 @@ class EbUnitModel:
             [pd.DataFrame]: a pandas dataframe 
         """
 
-        area_df = EblupAreaModel().to_dataframe(self, col_names)
+        area_df = EblupUnitModel().to_dataframe(self, col_names)
         return area_df
 
 
