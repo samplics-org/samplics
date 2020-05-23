@@ -737,7 +737,7 @@ class EbUnitModel:
         samp_weight: Optional[Array] = None,
         scales: Union[Array, Number] = 1,
         intercept: bool = True,
-        tol: float = 1e-6,
+        tol: float = 1e-8,
         maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the model parameters that is the fixed
@@ -764,7 +764,7 @@ class EbUnitModel:
             ys, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=False,
         )
 
-        eblup_ul = EblupUnitModel()
+        eblup_ul = EblupUnitModel(method=self.method,)
         eblup_ul.fit(
             ys_transformed, Xs, areas, samp_weight, scales, intercept, tol=tol, maxiter=maxiter
         )
