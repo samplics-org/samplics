@@ -671,18 +671,14 @@ class EbUnitModel:
     """
 
     def __init__(
-        self,
-        method: str = "REML",
-        boxcox: Optional[float] = None,
-        constant: Number = 0,
-        indicator: Optional[Any] = None,
+        self, method: str = "REML", boxcox: Optional[float] = None, constant: Number = 0,
     ):
 
         # Setting
         self.method: str = method.upper()
         if self.method not in ("REML", "ML"):
             raise AssertionError("Value provided for method is not valid!")
-        self.indicator = indicator
+        self.indicator: Callable[..., Any] = None
         self.number_samples: Optional[int] = None
         self.boxcox = {"lambda": boxcox, "constant": constant}
 
@@ -802,7 +798,7 @@ class EbUnitModel:
         sigma2u: float,
         scale: np.ndarray,
         max_array_length: int,
-        indicator: Callable[..., np.ndarray],
+        indicator: Callable[..., Any],
         show_progress: bool,
         **kwargs: Any,
     ) -> np.ndarray:

@@ -43,7 +43,7 @@ def pov_gap(y, pov_line=500):
 """REML Method"""
 
 
-eb_bhf_reml = EbUnitModel(method="REML", boxcox=0, constant=10, indicator=pov_gap)
+eb_bhf_reml = EbUnitModel(method="REML", boxcox=0, constant=10, )
 eb_bhf_reml.fit(y_s, X_s, area_s, tol=1e-6, intercept=True)
 
 

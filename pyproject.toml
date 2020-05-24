@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "samplics"
-version = "0.0.12"
+version = "0.0.14"
 description = "Select, weight and analyze complex sample data"
 authors = ["Mamadou S Diallo <msdiallo@quantifyafrica.org>"]
 license = "MIT"
