@@ -103,9 +103,9 @@ class EblupUnitModel:
 
     Prediction related attributes
         | areap (array): the list of areas for the prediction. 
-        | pop_size (dict): area level population sizes. 
         | Xbar (array): population means of the auxiliary variables. 
         | number_reps (int): number of replicates for the bootstrap MSE estimation. 
+        | samp_rate (dict): sampling rates at the area level.
         | area_est (array): area level EBLUP estimates. 
         | area_mse (array): area level taylor estimation of the MSE. 
         | area_mse_boot (array): area level bootstrap estimation of the MSE.
@@ -150,9 +150,9 @@ class EblupUnitModel:
 
         # Predict(ion/ed) data
         self.areap_list: np.ndarray = np.array([])
-        self.pop_size: Dict[Any, float] = {}
         self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
+        self.samp_rate: Dict[Any, float] = None
         self.area_est: Dict[Any, float] = None
         self.area_mse: Dict[Any, float] = None
         self.area_mse_boot: Optional[Dict[Any, float]] = None
@@ -419,6 +419,7 @@ class EblupUnitModel:
             eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
                 samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
             ) * (self.ys_mean[ps_area] - np.matmul(self.Xs_mean[ps_area], self.fixed_effects))
+            self.samp_rate = dict(zip(areas_ps, samp_rate_ps))
         elif pop_size is None:
             eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
 
@@ -571,7 +572,7 @@ class EblupUnitModel:
         self.area_mse_boot = dict(zip(area_ps, np.mean(boot_mse, axis=0)))
 
     def to_dataframe(
-        self, col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"]
+        self, col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"],
     ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
@@ -1263,7 +1264,6 @@ class EllUnitModel:
 
         # Predict(ion/ed) data
         self.areap: np.ndarray = np.array([])
-        self.pop_size: Dict[Any, float] = {}
         self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
