@@ -804,7 +804,7 @@ class EbUnitModel:
         max_array_length: int,
         indicator: Callable[..., np.ndarray],
         show_progress: bool,
-        *args: Any,
+        **kwargs: Any,
     ) -> np.ndarray:
         nb_arear = len(arear_list)
         mu_r = X_r @ fixed_effects
@@ -858,7 +858,7 @@ class EbUnitModel:
             z_d = basic_functions.transform(
                 y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True,
             )
-            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)  # *)
+            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, **kwargs)  # *)
 
         if show_progress:
             print("\n")
@@ -875,7 +875,7 @@ class EbUnitModel:
         intercept: bool = True,
         max_array_length: int = int(100e6),
         show_progress: bool = True,
-        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """Predicts the area level means and provides the taylor MSE estimation of the estimated
         area means. 
@@ -885,7 +885,7 @@ class EbUnitModel:
             arear (Array): provides the area of the out of sample units.
             indicator (Callable[..., Array]): a user defined function which computes the area level
                 indicators. The function should take y (output variable) as the first parameters, 
-                additional parameters can be used. Use *args* to transfer the additional 
+                additional parameters can be used. Use ***kwargs* to transfer the additional 
                 parameters.
             number_samples (int): number of replicates for the Monte-Carlo (MC) algorithm.  
             scaler (Union[Array, Number], optional): the scale factor for the unit level errors. 
@@ -939,7 +939,7 @@ class EbUnitModel:
             max_array_length,
             indicator,
             show_progress,
-            *args,
+            **kwargs,
         )
 
         self.area_est = dict(zip(self.arear_list, area_est))
@@ -955,7 +955,7 @@ class EbUnitModel:
         tol: float = 1e-6,
         maxiter: int = 100,
         max_array_length: int = int(100e6),
-        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """Computes the MSE bootstrap estimates of the area level indicator estimates.
 
@@ -1057,7 +1057,7 @@ class EbUnitModel:
                     constant=self.boxcox["constant"],
                     inverse=True,
                 )
-                eta_pop_boot[start:end, i] = indicator(zboot_d, *args)
+                eta_pop_boot[start:end, i] = indicator(zboot_d, **kwargs)
 
                 if i == 0:
                     yboot_s = yboot_d[:, -sample_size_dict[d] :]
@@ -1127,7 +1127,7 @@ class EbUnitModel:
                 max_array_length,
                 indicator,
                 False,
-                *args,
+                **kwargs,
             )
 
             if b in steps:
@@ -1370,7 +1370,7 @@ class EllUnitModel:
         scale: Array,
         max_array_length: int,
         show_progress: bool,
-        *args: Any,
+        **kwargs: Any,
     ) -> Tuple[np.ndarray, np.ndarray]:
 
         areas = np.unique(area)
@@ -1414,7 +1414,7 @@ class EllUnitModel:
             z_d = basic_functions.transform(
                 y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True,
             )
-            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, *args)
+            eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, **kwargs)
 
         if show_progress:
             print("\n")
@@ -1433,7 +1433,7 @@ class EllUnitModel:
         total_residuals: np.ndarray,
         max_array_length: int,
         show_progress: bool,
-        *args: Any,
+        **kwargs: Any,
     ) -> Tuple[np.ndarray, np.ndarray]:
 
         areas = np.unique(area)
@@ -1499,7 +1499,7 @@ class EllUnitModel:
         intercept: bool = True,
         max_array_length: int = int(100e6),
         show_progress: bool = True,
-        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """Predicts the area level indicator and its the MSE estimates. 
 
@@ -1508,7 +1508,7 @@ class EllUnitModel:
             area (Array): provides the area of the population units.
             indicator (Callable[..., Array]): a user defined function which computes the area level
                 indicators. The function should take y (output variable) as the first parameters, 
-                additional parameters can be used. Use *args* to transfer the additional 
+                additional parameters can be used. Use ***kwargs* to transfer the additional 
                 parameters.
             number_samples (int): [description]
             scale (Array, optional): [description]. Defaults to 1.
@@ -1570,7 +1570,7 @@ class EllUnitModel:
                 scale,
                 max_array_length,
                 show_progress,
-                *args,
+                **kwargs,
             )
         elif self.method in ("MOM"):
             # y_transformed_s = basic_functions.transform(
@@ -1586,7 +1586,7 @@ class EllUnitModel:
                 total_residuals,
                 max_array_length,
                 show_progress,
-                *args,
+                **kwargs,
             )
 
         self.area_est = dict(zip(self.areas_p, area_est))
