@@ -8,4 +8,4 @@ from samplics.utils.basic_functions import transform
 
 # __all__ = ["sampling", "weighting", "estimation", "sae"]
 
-__version__ = "0.0.11"
+__version__ = "0.0.12"

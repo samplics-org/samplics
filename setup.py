@@ -20,7 +20,7 @@ REQUIRED = [
     "statsmodels>=0.10.0",
 ]
 DEV_PACKAGES = ["pytest>=5.3.2", "black>=19.10", "mypy>=0.761"]
-VERSION = "0.0.4"
+VERSION = "0.0.12"
 
 here = path.abspath(path.dirname(__file__))
 

@@ -1,7 +1,8 @@
+get_ipython().run_line_magic("load_ext", " lab_black")
 import numpy as np
 import pandas as pd
 
-import samplics 
+import samplics
 from samplics.sae import EblupUnitModel
 
 
@@ -36,6 +37,22 @@ eblup_bhf_reml.predict(Xs_mean, areas)
 corn_est_reml = eblup_bhf_reml.to_dataframe()
 
 print(corn_est_reml)
+
+
+"""ML Method"""
+eblup_bhf_ml = EblupUnitModel(method="ML")
+eblup_bhf_ml.fit(
+    ys, Xs, areas,
+)
+
+eblup_bhf_ml.predict(Xs_mean, areas)
+
+corn_est_ml = eblup_bhf_ml.to_dataframe()
+
+print(corn_est_ml)
+
+
+
 
 
 

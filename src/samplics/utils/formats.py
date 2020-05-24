@@ -7,7 +7,7 @@ Functions:
     | *dataframe_to_array()* returns a pandas dataframe from an np.ndarray.
 """
 
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -96,11 +96,13 @@ def sample_size_dict(
 ) -> Dict[Any, int]:
     if not isinstance(sample_size, Dict) and stratification:
         strata = np.unique(stratum)
-        return dict(zip(strata, np.repeat(sample_size, strata.size)))
+        samp_dict = dict(zip(strata, np.repeat(sample_size, strata.size)))
     if not isinstance(sample_size, Dict) and not stratification:
-        return {"__none__": sample_size}
+        samp_dict = {"__none__": sample_size}
     elif isinstance(sample_size, Dict):
-        return sample_size
+        samp_dict = sample_size
+
+    return samp_dict
 
 
 def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
@@ -111,17 +113,13 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     return all_units
 
 
-def dict_to_dataframe(col_names: list, *args) -> pd.DataFrame:
+def dict_to_dataframe(col_names: List[str], *args: Dict[Any, Number]) -> pd.DataFrame:
 
     keys = list(args[0].keys())
     number_keys = len(keys)
     values = []
     for k, arg in enumerate(args):
         argk_keys = list(args[k].keys())
-        print(isinstance(arg, dict))
-        print(keys)
-        print(argk_keys)
-        print(number_keys)
         if not isinstance(arg, dict) or (keys != argk_keys) or number_keys != len(argk_keys):
             raise AssertionError("All input parameters must be dictionaries with the same keys.")
 
