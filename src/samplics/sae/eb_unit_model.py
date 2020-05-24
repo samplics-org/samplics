@@ -707,7 +707,7 @@ class EbUnitModel:
         # Predict(ion/ed) data
         self.number_reps: int = 0
         self.area_est: Dict[Any, float] = {}
-        self.area_mse: Dict[Any, float] = {}
+        # self.area_mse: Dict[Any, float] = {}
         self.area_mse_boot: Optional[Dict[Any, float]] = None
 
     def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
@@ -1138,23 +1138,34 @@ class EbUnitModel:
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
     def to_dataframe(
-        self, col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"]
+        self, col_names: List[str] = ["_area", "_estimate",  "_mse_boot"],
     ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
         Args:
             col_names (list, optional): list of string to be used for the dataframe columns names. 
-                Defaults to ["_area", "_estimate", "_mse", "_mse_boot"].
+                Defaults to ["_area", "_estimate", "_mse_boot"].
 
         Returns:
             [pd.DataFrame]: a pandas dataframe 
         """
 
-        eblup_model = EblupUnitModel()
-        eblup_model.area_est = self.area_est
-        eblup_model.area_mse = self.area_mse
-        eblup_model.area_mse_boot = self.area_mse_boot
-        area_df = eblup_model.to_dataframe(col_names)
+        ncols = len(col_names)
+
+        if self.area_est is None:
+            raise AssertionError("No prediction yet. Must predict the area level estimates.")
+        elif self.area_mse_boot is None and ncols not in (2, 3):
+            raise AssertionError("col_names must have 2 or 3 values")
+        elif self.area_mse_boot is None and ncols == 3:
+            col_names.pop()  # remove the last element same as .pop(-1)
+
+        if self.area_mse_boot is None:
+            area_df = formats.dict_to_dataframe(col_names, self.area_est)
+        else:
+            area_df = formats.dict_to_dataframe(
+                col_names, self.area_est, self.area_mse_boot
+            )
+
         return area_df
 
 
