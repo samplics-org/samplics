@@ -570,7 +570,9 @@ class EblupUnitModel:
 
         self.area_mse_boot = dict(zip(area_ps, np.mean(boot_mse, axis=0)))
 
-    def to_dataframe(self, col_names=["_area", "_estimate", "_mse", "_mse_boot"]) -> pd.DataFrame:
+    def to_dataframe(
+        self, col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"]
+    ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
         Args:
@@ -590,9 +592,6 @@ class EblupUnitModel:
         elif self.area_mse_boot is None and ncols == 4:
             col_names.pop()  # remove the last element same as .pop(-1)
 
-        print(self.area_est)
-        print(self.area_mse)
-        print(self.area_mse_boot)
         if self.area_mse_boot is None:
             area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse)
         else:
@@ -1141,7 +1140,9 @@ class EbUnitModel:
         mse_boot = np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
-    def to_dataframe(self, col_names=["_area", "_estimate", "_mse", "_mse_boot"]) -> pd.DataFrame:
+    def to_dataframe(
+        self, col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"]
+    ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
         Args:
@@ -1152,7 +1153,11 @@ class EbUnitModel:
             [pd.DataFrame]: a pandas dataframe 
         """
 
-        area_df = EblupUnitModel().to_dataframe(self, col_names)
+        eblup_model = EblupUnitModel()
+        eblup_model.area_est = self.area_est
+        eblup_model.area_mse = self.area_mse
+        eblup_model.area_mse_boot = self.area_mse_boot
+        area_df = eblup_model.to_dataframe(col_names)
         return area_df
 
 

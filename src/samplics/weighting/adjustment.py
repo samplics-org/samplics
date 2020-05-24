@@ -591,6 +591,3 @@ class SampleWeight:
 
         pass
 
-    def rake(self,) -> np.ndarray:
-
-        pass
