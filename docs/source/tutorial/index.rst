@@ -2,7 +2,7 @@
 Tutorial
 ========
 
-This tutorial is intended to users with basic knowledge of Python. It is assumed that the user has a basic understanding of the Python syntax. 
+This tutorial is intended to users with basic knowledge of Python. It is assumed that the user has a basic understanding of the Python syntax. Also, the tutorial is not intended to teach survey sampling methods.
 
 Sampling
 --------
