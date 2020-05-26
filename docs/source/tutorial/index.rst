@@ -2,7 +2,7 @@
 Tutorial
 ========
 
-This is a tutorial on samplics
+This tutorial is intended to users with basic knowledge of Python. It is assumed that the user has a basic understanding of the Python syntax. 
 
 Sampling
 --------
