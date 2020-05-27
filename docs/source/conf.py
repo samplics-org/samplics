@@ -189,9 +189,10 @@ html_theme_options = {
     "navbar_title": "Sample Analytics",
     "navbar_links": [
         ("Getting started", "gettingstarted"),
-        ("Github", "https://github.com/survey-methods/samplics"),
+        ("Tutorial", "tutorial/index"),
+        ("Github", "https://github.com/survey-methods/samplics", True),
     ],
-    "navbar_sidebarrel": True,
+    "navbar_sidebarrel": False,
     "navbar_site_name": "Documentation",
     "navbar_pagenav": False,
     "navbar_pagenav_name": "Pages",
