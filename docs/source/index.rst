@@ -1,12 +1,12 @@
 .. samplics documentation master file, created by
    sphinx-quickstart on Sat Nov  2 14:38:05 2019.
 
-
-
 ==========================
 SAMPLICS: sample analytics
 ==========================
-|Build Status| |Coverage Status| |Code Climate|
+.. image:: https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master
+    :target: https://travis-ci.com/survey-methods/samplics
+
 
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
