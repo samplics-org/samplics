@@ -41,6 +41,7 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
    and Inequality. *Econometrica*, **71**, 355-364.
 .. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
    John Wiley & Sons, Hoboken, New Jersey.
+   
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
@@ -1138,7 +1139,7 @@ class EbUnitModel:
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
     def to_dataframe(
-        self, col_names: List[str] = ["_area", "_estimate",  "_mse_boot"],
+        self, col_names: List[str] = ["_area", "_estimate", "_mse_boot"],
     ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
@@ -1162,9 +1163,7 @@ class EbUnitModel:
         if self.area_mse_boot is None:
             area_df = formats.dict_to_dataframe(col_names, self.area_est)
         else:
-            area_df = formats.dict_to_dataframe(
-                col_names, self.area_est, self.area_mse_boot
-            )
+            area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse_boot)
 
         return area_df
 
