@@ -41,7 +41,6 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
    and Inequality. *Econometrica*, **71**, 355-364.
 .. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
    John Wiley & Sons, Hoboken, New Jersey.
-   
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
