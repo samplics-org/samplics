@@ -590,4 +590,3 @@ class SampleWeight:
     def trim(self,) -> np.ndarray:
 
         pass
-

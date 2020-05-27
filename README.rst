@@ -2,56 +2,11 @@
 *SAMPLICS*
 ==========
 
-*samplics* is a python package for selecting, weighting
-and analyzing sample obtained from complex sampling design.
+.. image:: https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master
+    :target: https://travis-ci.com/survey-methods/samplics
 
-Sample Analytics
-----------------
-In large scale surveys, often complex random mechanisms are used to select
-samples. Estimations obtained from such samples must reflect the random
-mechanism to ensure accurate calculations. *samplics* implements a set of
-sampling techniques for complex survey designs.
+*samplics* is a python package for selecting, weighting and analyzing sample obtained from complex sampling design.
 
-Selection
-================
-Since the full population cannot be observed, a sample is selected
-to estimate population parameters of interest. The assumption is
-that the sample is **representative** of the population for the characteristics
-of interest. The selection methods in samplics are:
-
-* Simple random sampling (SRS)
-* Systematic selection (SYS)
-* Probability proportional to size (PPS)
-    * Systematic
-    * Brewer's method
-    * Hanurav-Vijayan method
-    * Murphy's method
-    * Sampford's method
-* Unequal sample selection
-
-Weighting
-=========
-Sample weighting is the main mechanism used in surveys to formalize the
-representivity of the sample. The base or design weights are usually
-adjusted to compensate for distorsions due nonresponse and other shorcomings
-of the operationalization of the sampling design.
-
-* Weight adjustment due to nonresponse
-* Weight poststratification, calibration and normalization
-* Weight replication i.e. Boostrap, BRR, and Jackknife
-
-Estimation
-==========
-The estimation of the parameters of interest must reflect the sampling
-mechanism and the weight adjustments.
-
- * Taylor linearization procedures
- * Replicate-based estimation i.e. Boostrap, BRR, and Jackknife
- * Regression-based
-
-Parameters of interest
-* Linear parameters e.g. total, mean, proportion
-* Non-linear (complex) parameters e.g. ratio, regression coefficient
 
 Installation
 ------------
