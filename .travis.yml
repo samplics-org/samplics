@@ -11,7 +11,9 @@ jobs:
     - python: "3.7"
       env: NOXSESSION="tests-3.7"
     - python: "3.8"
-      env: NOXSESSION="test_coverage" #test and coverage
+      env: 
+        NOXSESSION="test_coverage" #test and coverage
+        CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
     # - python: "3.8"
     #   env: NOXSESSION="lint"
     # - python: "3.8"
