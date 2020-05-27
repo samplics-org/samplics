@@ -1,10 +1,17 @@
 import nox
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
+@nox.session(python=["3.6", "3.7"])
 def tests(session):
     session.run("poetry", "install")
     session.run("pytest", "-v", "tests")
+
+
+@nox.session()
+def test_coverage(session):
+    session.run("poetry", "install")
+    session.run("pytest", "--cov-report", "term", "--cov=tests")
+    # session.run("codecov")
 
 
 @nox.session

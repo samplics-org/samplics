@@ -11,11 +11,11 @@ jobs:
     - python: "3.7"
       env: NOXSESSION="tests-3.7"
     - python: "3.8"
-      env: NOXSESSION="tests-3.8"
-    - python: "3.8"
-      env: NOXSESSION="lint"
-    - python: "3.8"
-      env: NOXSESSION="docs"
+      env: NOXSESSION="test_coverage" #test and coverage
+    # - python: "3.8"
+    #   env: NOXSESSION="lint"
+    # - python: "3.8"
+    #   env: NOXSESSION="docs"
 script: nox --non-interactive --session "$NOXSESSION"
 
 # before-deploy:

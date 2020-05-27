@@ -5,6 +5,10 @@
 .. image:: https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master
     :target: https://travis-ci.com/survey-methods/samplics
 
+.. image:: https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/survey-methods/samplics
+
+
 *samplics* is a python package for selecting, weighting and analyzing sample obtained from complex sampling design.
 
 
