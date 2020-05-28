@@ -113,7 +113,7 @@ class EblupUnitModel:
     Main methods
         | fit(): fits the linear mixed model to estimate the model parameters using REMl or ML
         |   methods. 
-        | predict(): predicts the area level mean estimates which includes both the point   | | 
+        | predict(): predicts the area level mean estimates which includes both the point  
         |   estimates and the taylor MSE estimate. 
         | bootstrap_mse(): computes the area level bootstrap MSE estimates of the mean.
     """

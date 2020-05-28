@@ -184,7 +184,7 @@ autodoc_default_options = {
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.
-html_logo = "_static/samplics_logo3.png"
+# html_logo = "_static/samplics_logo3.png"
 html_theme_options = {
     "navbar_title": "Sample Analytics",
     "navbar_links": [
