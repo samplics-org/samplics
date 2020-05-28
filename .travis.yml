@@ -37,6 +37,3 @@ script: nox --non-interactive --session "$NOXSESSION"
 
 notifications:
   email: msdiallo@quantifyafrica.org
-
-
-  198f3973abab5e30ac264beb7849dc30882b026c04b569f20280619e9de3649a36fa50f27ebb70a7c210d48f2a2d7783bc1ddf76e6d37178b5275d3c5df9a46d
