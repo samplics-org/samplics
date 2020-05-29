@@ -8,8 +8,8 @@ SAMPLICS: sample analytics
     :target: https://travis-ci.com/survey-methods/samplics
 
 .. image:: https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg?token=7C0LBB5N8Y
-  :target: https://codecov.io/gh/survey-methods/samplics
-
+  :target: https://codecov.io/gh/survey-methods/samplics    
+         
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
 mechanism to ensure accurate calculations. *Samplics* implements a set of

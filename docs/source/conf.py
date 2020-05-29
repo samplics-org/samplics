@@ -25,7 +25,7 @@ author = "Mamadou S. Diallo"
 master_doc = "index"
 
 version = samplics.__version__
-release = "__version__"
+release = version
 
 
 # -- General configuration ---------------------------------------------------
