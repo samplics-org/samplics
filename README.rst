@@ -16,8 +16,7 @@ Installation
 ------------
 ``pip install samplics``
 
-if both Python 2.x and python 3.x is installed on your computer,
-you may have to use: ``pip3 install samplics``
+if both Python 2.x and python 3.x are installed on your computer, you may have to use: ``pip3 install samplics``
 
 Dependencies
 ------------
