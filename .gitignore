@@ -126,4 +126,8 @@ notebooks/**/*.csv
 *.png
 *.ipynb_checkpoints/
 
+#Other
+*.Rhistory
+*.docx
+
 # End of https://www.gitignore.io/api/python
