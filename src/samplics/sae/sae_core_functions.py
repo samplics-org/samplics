@@ -24,7 +24,6 @@ from scipy.stats import norm as normal
 from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
-
 def area_stats(
     y: np.ndarray,
     X: np.ndarray,
