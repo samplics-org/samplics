@@ -378,7 +378,7 @@ class EblupUnitModel:
         area_est = {}
         samp_rate = {}
         for d in self.areap:
-            if pop_size is not None:
+            if pop_size is not None and d in self.areas_list:
                 samp_rate[d] = self.samp_size[d] / pop_size_dict[d]
             else:
                 samp_rate[d] = 0
