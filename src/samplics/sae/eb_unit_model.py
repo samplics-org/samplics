@@ -44,11 +44,12 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 """
 
 from typing import Any, Dict, List, Optional, Tuple, Union, Callable
+
 import warnings
+import math
+
 import numpy as np
 import pandas as pd
-
-import math
 
 import statsmodels.api as sm
 
@@ -103,7 +104,7 @@ class EblupUnitModel:
 
     Prediction related attributes
         | areap (array): the list of areas for the prediction. 
-        | Xbar (array): population means of the auxiliary variables. 
+        | Xmean (array): population means of the auxiliary variables. 
         | number_reps (int): number of replicates for the bootstrap MSE estimation. 
         | samp_rate (dict): sampling rates at the area level.
         | area_est (array): area level EBLUP estimates. 
@@ -149,7 +150,7 @@ class EblupUnitModel:
         self.gamma: Dict[Any, float] = {}
 
         # Predict(ion/ed) data
-        self.areap_list: np.ndarray = np.array([])
+        self.areap: np.ndarray = np.array([])
         self.Xp_mean: np.ndarray = np.array([])
         self.number_reps: int = 0
         self.samp_rate: Dict[Any, float] = None
@@ -215,46 +216,6 @@ class EblupUnitModel:
 
         return g1 + g2 + 2 * g3
 
-    def _split_data(
-        self, area: np.ndarray, X: np.ndarray, Xmean: np.ndarray, samp_weight: np.ndarray,
-    ) -> Tuple[
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-    ]:
-
-        ps = np.isin(self.areas, area)
-        area_ps = self.areas[ps]
-        areas = np.unique(area)
-        areas_ps = np.unique(area_ps)
-
-        ps_area = np.isin(areas, areas_ps)
-        if Xmean is not None:
-            Xmean_ps = Xmean[ps_area]
-            Xmean_pr = Xmean[~ps_area]
-        else:
-            Xmean_ps = Xmean_pr = None
-        Xp_means = self.Xs_mean[ps_area]
-        samp_weight_ps = samp_weight[ps] if samp_weight is not None else None
-
-        return (
-            ps,
-            ps_area,
-            X[ps],
-            area_ps,
-            areas_ps,
-            Xmean_ps,
-            Xmean_pr,
-            Xp_means,
-            samp_weight_ps,
-        )
-
     def fit(
         self,
         ys: Array,
@@ -290,6 +251,11 @@ class EblupUnitModel:
         ys = formats.numpy_array(ys)
         Xs = formats.numpy_array(Xs)
 
+        self.ys = ys
+        self.Xs = Xs
+        self.areas = areas
+        self.areas_list = np.unique(areas)
+
         if intercept:
             if Xs.ndim == 1:
                 n = Xs.shape[0]
@@ -304,10 +270,6 @@ class EblupUnitModel:
             scales = formats.numpy_array(scales)
 
         self.scales = scales
-        self.ys = ys
-        self.Xs = Xs
-        self.areas = areas
-        self.areas_list = np.unique(areas)
 
         self.afactors = dict(zip(self.areas_list, basic_functions.sumby(areas, scales)))
 
@@ -351,12 +313,13 @@ class EblupUnitModel:
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
 
-        self.ys_mean, self.Xs_mean, gamma, samp_size = area_stats(
+        self.ys_mean, Xs_mean, gamma, samp_size = area_stats(
             ys, Xs, areas, self.error_std, self.re_std, self.afactors, samp_weight,
         )
-        self.random_effects = gamma * (self.ys_mean - self.Xs_mean @ self.fixed_effects)
+        self.random_effects = gamma * (self.ys_mean - Xs_mean @ self.fixed_effects)
         self.gamma = dict(zip(self.areas_list, gamma))
         self.samp_size = dict(zip(self.areas_list, samp_size))
+        self.Xs_mean = Xs_mean[:, 1:]
 
         # samp_weight = np.ones(y.size)
         if samp_weight is not None:
@@ -388,51 +351,53 @@ class EblupUnitModel:
             )
 
         Xmean = formats.numpy_array(Xmean)
+        self.Xp_mean = Xmean
         if intercept:
             if Xmean.ndim == 1:
                 n = Xmean.shape[0]
-                Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
+                Xp_mean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
+                Xs_mean = np.insert(self.Xs_mean.reshape(n, 1), 0, 1, axis=1)
+                Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
             else:
-                Xmean = np.insert(Xmean, 0, 1, axis=1)
-        self.Xbar_p = Xmean
+                Xp_mean = np.insert(Xmean, 0, 1, axis=1)
+                Xs_mean = np.insert(self.Xs_mean, 0, 1, axis=1)
+                Xs = np.insert(self.Xs, 0, 1, axis=1)
 
         area = formats.numpy_array(area)
-        areas_p = np.unique(area)
-
-        ps = np.isin(area, self.areas_list)
-        area_ps = area[ps]
-        areas_ps = np.unique(area_ps)
-        ps_area = np.isin(areas_p, areas_ps)
-
-        if Xmean is not None:
-            Xmean_ps = Xmean[ps_area]
-            Xmean_pr = Xmean[~ps_area]
-        else:
-            Xmean_ps = Xmean_pr = None
-
-        gamma_ps = np.asarray(list(self.gamma.values()))[ps_area]
-        samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
         if pop_size is not None:
             pop_size = formats.numpy_array(pop_size)
-            pop_size_ps = pop_size[ps_area]
-            samp_rate_ps = samp_size_ps / pop_size_ps
-            eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + (
-                samp_rate_ps + (1 - samp_rate_ps) * gamma_ps
-            ) * (self.ys_mean[ps_area] - np.matmul(self.Xs_mean[ps_area], self.fixed_effects))
-            self.samp_rate = dict(zip(areas_ps, samp_rate_ps))
-        elif pop_size is None:
-            eta_pred = np.matmul(Xmean_ps, self.fixed_effects) + gamma_ps
+            pop_size_dict = dict(zip(area, pop_size))
 
-        if np.sum(~ps) > 0:
-            eta_r_pred = np.matmul(Xmean_pr, self.fixed_effects)
-            eta_pred = np.append(eta_pred, eta_r_pred)
+        self.areap = area
 
-        self.area_est = dict(zip(areas_ps, eta_pred))
+        ps = np.isin(self.areap, self.areas_list)
 
-        s_in_p = np.isin(self.areas, area)
-        X_ps = self.Xs[s_in_p]
-        A_ps = np.diag(np.zeros(Xmean.shape[1])) if Xmean.ndim >= 2 else np.asarray([0])
-        for d in areas_ps:
+        mu = dict(zip(self.areap, Xp_mean @ self.fixed_effects))
+        resid = dict(zip(self.areas_list, self.ys_mean - Xs_mean @ self.fixed_effects))
+
+        area_est = {}
+        samp_rate = {}
+        for d in self.areap:
+            if pop_size is not None:
+                samp_rate[d] = self.samp_size[d] / pop_size_dict[d]
+            else:
+                samp_rate[d] = 0
+            if d in self.areas_list:
+                area_est[d] = (
+                    mu[d] + (samp_rate[d] + (1 - samp_rate[d]) * self.gamma[d]) * resid[d]
+                )
+            else:
+                area_est[d] = mu[d]
+
+        self.samp_rate = samp_rate
+        self.area_est = area_est
+
+        s_in_p = np.isin(self.areas, self.areap)
+        X_ps = Xs[s_in_p]
+        A_ps = np.diag(np.zeros(Xp_mean.shape[1])) if Xp_mean.ndim >= 2 else np.asarray([0])
+
+        ps_area_list = self.areap[ps]
+        for d in ps_area_list:
             areadps = s_in_p == d
             n_ps_d = np.sum(areadps)
             X_ps_d = X_ps[areadps]
@@ -441,97 +406,95 @@ class EblupUnitModel:
             ) * np.ones([n_ps_d, n_ps_d])
             A_ps = A_ps + np.matmul(np.matmul(np.transpose(X_ps_d), np.linalg.inv(V_ps_d)), X_ps_d)
 
-        a_factor_ps = np.asarray(list(self.afactors.values()))[ps_area]
+        ps_area_indices = np.isin(self.areas_list, ps_area_list)
+        a_factor_ps = np.asarray(list(self.afactors.values()))[ps_area_indices]
+        gamma_ps = np.asarray(list(self.gamma.values()))[ps_area_indices]
+        samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area_indices]
         mse_ps = self._mse(
-            areas_ps,
-            self.Xs_mean[ps_area],
-            Xmean_ps,
+            ps_area_list,
+            Xs_mean[ps_area_indices],
+            Xp_mean[ps],
             gamma_ps,
             samp_size_ps,
             a_factor_ps,
             np.linalg.inv(A_ps),
         )
-        self.area_mse = dict(zip(areas_ps, mse_ps))
+        self.area_mse = dict(zip(ps_area_list, mse_ps))
 
-        # TODO: add non-sampled areas prediction
+        pr_area_list = self.areap[~ps]
+        # TODO: add non-sampled areas prediction (section 6.2.2, Rao and molina (2015))
 
     def bootstrap_mse(
         self,
-        Xmean: Array,
-        area: Array,
         number_reps: int = 500,
-        samp_weight: Optional[Array] = None,
         intercept: bool = True,
         tol: float = 1.0e-6,
         maxiter: int = 100,
+        show_progress: bool = True,
     ) -> None:
         """Computes the MSE bootstrap estimates of the area level mean estimates. 
 
-        Args:
-            Xmean (Array): a multi-dimensional array of the population means of the auxiliary   
-                variables. 
-            area (Array): An array of the areas in the same order as Xmean. 
-            number_reps (int): Number of replicates for the bootstrap method.. Defaults to 500.
-            samp_weight (Optional[Array], optional): [description]. Defaults to None.
-            scale (Union[Array, Number], optional): [description]. Defaults to 1.
-            intercept (bool, optional): [description]. Defaults to True.
-            tol: float = 1.0e-4,
-            maxiter: int = 100,
+            Args:
+                number_reps (int): Number of replicates for the bootstrap method.. Defaults to 500.
+                scale (Union[Array, Number], optional): [description]. Defaults to 1.
+                intercept (bool, optional): [description]. Defaults to True.
+                tol: float = 1.0e-4,
+                maxiter: int = 100,
+                show_progress (bool, optional): shows a bar progress of the bootstrap replicates 
+                    calculations. Defaults to True.
 
-        Raises:
-            Exception: when bootstrap_mse() is called before fitting the model. 
-        """
+            Raises:
+                Exception: when bootstrap_mse() is called before fitting the model. 
+            """
 
         if not self.fitted:
             raise Exception(
                 "The model must be fitted first with .fit() before running the prediction."
             )
 
-        Xmean = formats.numpy_array(Xmean)
-        area = formats.numpy_array(area)
         if intercept:
-            if Xmean.ndim == 1:
-                n = Xmean.shape[0]
-                # Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
-                Xmean = np.insert(Xmean.reshape(n, 1), 0, 1, axis=1)
+            if self.Xs.ndim == 1:
+                n = self.Xs.shape[0]
+                Xp_mean = np.insert(self.Xp_mean.reshape(n, 1), 0, 1, axis=1)
+                Xs_mean = np.insert(self.Xs_mean.reshape(n, 1), 0, 1, axis=1)
+                Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
             else:
-                # Xs = np.insert(self.Xs, 0, 1, axis=1)
-                Xmean = np.insert(Xmean, 0, 1, axis=1)
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
-            samp_weight = formats.numpy_array(samp_weight)
+                Xp_mean = np.insert(self.Xp_mean, 0, 1, axis=1)
+                Xs_mean = np.insert(self.Xs_mean, 0, 1, axis=1)
+                Xs = np.insert(self.Xs, 0, 1, axis=1)
 
-        (
-            ps,
-            ps_area,
-            X_ps,
-            area_ps,
-            areas_ps,
-            Xmean_ps,
-            Xmean_pr,
-            xbar_ps,
-            samp_weight_ps,
-        ) = self._split_data(area, self.Xs, Xmean, samp_weight)
+        nb_areas = self.areap.size
+        ps = np.isin(self.areap, self.areas_list)
+        ps_area_list = self.areap[ps]
+        ps_area_indices = np.isin(self.areas_list, ps_area_list)
 
-        samp_size_ps = np.asarray(list(self.samp_size.values()))[ps_area]
-        s_in_p = np.isin(self.areas, area)
-        scale_ps_ordered = self.scales[s_in_p]
-        if np.min(scale_ps_ordered) != np.max(scale_ps_ordered):
-            scale_ps_ordered = scale_ps_ordered[np.argsort(area_ps)]
-        nb_areas = areas_ps.shape[0]
-        error = np.abs(scale_ps_ordered) * np.random.normal(
-            scale=self.error_std, size=(number_reps, np.sum(s_in_p))
-        )
-        re = np.random.normal(scale=self.re_std, size=(number_reps, nb_areas))
+        for i, d in enumerate(ps_area_list):
+            aread = self.areas == d
+            scale_ps_d = self.scales[aread]
+            error_d = np.abs(scale_ps_d) * np.random.normal(
+                scale=self.error_std, size=(number_reps, self.samp_size[d])
+            )
+            re_boot_d = np.random.normal(scale=self.re_std, size=(number_reps, 1))
+            re_d = np.repeat(re_boot_d, self.samp_size[d], axis=1)
+
+            if i == 0:
+                error = error_d
+                re_boot = re_boot_d
+                re = re_d
+                X_ps = Xs[aread]
+                area_ps = self.areas[aread]
+            else:
+                error = np.append(error, error_d, axis=1)
+                re_boot = np.append(re_boot, re_boot_d, axis=1)
+                re = np.append(re, re_d, axis=1)
+                X_ps = np.append(X_ps, Xs[aread], axis=0)
+                area_ps = np.append(area_ps, self.areas[aread])
+
         mu = X_ps @ self.fixed_effects
-        y_ps_boot = (
-            np.repeat(mu[None, :], number_reps, axis=0)
-            + np.repeat(re, samp_size_ps, axis=1)
-            + error
-        )
-
+        y_ps_boot = mu[None, :] + re + error
+        i = 0
         bar_length = min(50, number_reps)
         steps = np.linspace(0, number_reps, bar_length).astype(int)
-        i = 0
 
         fit_kwargs = {
             "tol": tol,
@@ -540,36 +503,41 @@ class EblupUnitModel:
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         reml = True if self.method == "REML" else False
+        # with warnings.catch_warnings():
+        #     warnings.filterwarnings("ignore")
+        #     beta_ols = sm.OLS(y_ps_boot[0, :], X_ps).fit().params
+        # resid_ols = y_ps_boot[0, :] - np.matmul(X_ps, beta_ols)
+        # re_ols = basic_functions.sumby(area_ps, resid_ols) / basic_functions.sumby(
+        #     area_ps, np.ones(area_ps.size)
+        # )
+
         boot_mse = np.zeros((number_reps, nb_areas))
         print(f"Running the {number_reps} bootstrap iterations")
-        for k in range(y_ps_boot.shape[0]):
-            boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps, area_ps)
-            boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
+        for k in range(number_reps):
+            with warnings.catch_warnings(record=True) as w:
+                boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps, area_ps)
+                boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ys_mean, boot_Xs_mean, boot_gamma, _ = area_stats(
-                y_ps_boot[k, :],
-                X_ps,
-                area_ps,
-                boot_error_std,
-                boot_re_std,
-                self.afactors,
-                samp_weight_ps,
+                y_ps_boot[k, :], X_ps, area_ps, boot_error_std, boot_re_std, self.afactors, None,
             )
-            boot_re = boot_gamma * (boot_ys_mean - np.matmul(boot_Xs_mean, boot_fe))
-            boot_mu = np.matmul(Xmean_ps, self.fixed_effects) + re[k, :]
-            boot_mu_h = np.matmul(Xmean_ps, boot_fe) + boot_re
+            boot_re = boot_gamma * (boot_ys_mean - boot_Xs_mean @ boot_fe)
+            boot_mu = Xp_mean @ self.fixed_effects + re_boot[k, :]
+            boot_mu_h = Xp_mean @ boot_fe + boot_re
             boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
 
-            if k in steps:
-                i += 1
-                print(
-                    f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i), end="",
-                )
-        print("\n")
-
-        self.area_mse_boot = dict(zip(area_ps, np.mean(boot_mse, axis=0)))
+            if show_progress:
+                if k in steps:
+                    i += 1
+                    print(
+                        f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i),
+                        end="",
+                    )
+        if show_progress:
+            print("\n")
+        self.area_mse_boot = dict(zip(ps_area_list, np.mean(boot_mse, axis=0)))
 
     def to_dataframe(
         self, col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"],
@@ -951,6 +919,7 @@ class EbUnitModel:
         tol: float = 1e-6,
         maxiter: int = 100,
         max_array_length: int = int(100e6),
+        show_progress: bool = True,
         **kwargs: Any,
     ) -> None:
         """Computes the MSE bootstrap estimates of the area level indicator estimates.
@@ -966,6 +935,9 @@ class EbUnitModel:
             maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
             Defaults to 100.
             max_array_length (int, optional): [description]. Defaults to int(100e6).
+            show_progress (bool, optional): shows a bar progress of the bootstrap replicates 
+                calculations. Defaults to True.
+
         """
 
         X_r = formats.numpy_array(Xr)
@@ -1060,31 +1032,33 @@ class EbUnitModel:
                 else:
                     yboot_s = np.append(yboot_s, yboot_d[:, -sample_size_dict[d] :], axis=1)
 
-                run_id = b * nb_areas_ps + i
-                if run_id in steps:
-                    k += 1
-                    print(
-                        f"\r[%-{bar_length}s] %d%%"
-                        % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
-                        end="",
-                    )
+                if show_progress:
+                    run_id = b * nb_areas_ps + i
+                    if run_id in steps:
+                        k += 1
+                        print(
+                            f"\r[%-{bar_length}s] %d%%"
+                            % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                            end="",
+                        )
 
             y_samp_boot[start:end, :] = yboot_s
 
-        print("\n")
+        if show_progress:
+            print("\n")
 
         k = 0
         bar_length = min(50, number_reps)
         steps = np.linspace(1, number_reps, bar_length).astype(int)
 
         reml = True if self.method == "REML" else False
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore")
-            beta_ols = sm.OLS(y_samp_boot[0, :], X_s).fit().params
-        resid_ols = y_samp_boot[0, :] - np.matmul(X_s, beta_ols)
-        re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
-            area_s, np.ones(area_s.size)
-        )
+        # with warnings.catch_warnings():
+        #     warnings.filterwarnings("ignore")
+        #     beta_ols = sm.OLS(y_samp_boot[0, :], X_s).fit().params
+        # resid_ols = y_samp_boot[0, :] - np.matmul(X_s, beta_ols)
+        # re_ols = basic_functions.sumby(area_s, resid_ols) / basic_functions.sumby(
+        #     area_s, np.ones(area_s.size)
+        # )
         fit_kwargs = {
             "tol": tol,
             "gtol": tol,
@@ -1098,7 +1072,7 @@ class EbUnitModel:
                 boot_model = sm.MixedLM(y_samp_boot[b, :], X_s, area_s)
                 boot_fit = boot_model.fit(
                     reml=reml,
-                    start_params=np.append(beta_ols, np.std(re_ols) ** 2),
+                    # start_params=np.append(beta_ols, np.std(re_ols) ** 2),
                     full_output=True,
                     **fit_kwargs,
                 )
@@ -1126,12 +1100,15 @@ class EbUnitModel:
                 **kwargs,
             )
 
-            if b in steps:
-                k += 1
-                print(
-                    f"\r[%-{bar_length}s] %d%%" % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
-                    end="",
-                )
+            if show_progress:
+                if b in steps:
+                    k += 1
+                    print(
+                        f"\r[%-{bar_length}s] %d%%"
+                        % ("=" * (k + 1), (k + 1) * (100 / bar_length)),
+                        end="",
+                    )
+
         print("\n")
 
         mse_boot = np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
