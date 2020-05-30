@@ -9,7 +9,7 @@ from samplics.sae.eb_unit_model import EblupUnitModel
 cornsoybean = pd.read_csv("./tests/sae/cornsoybean.csv")
 cornsoybean_mean = pd.read_csv("./tests/sae/cornsoybeanmeans.csv")
 
-cornsoybean = cornsoybean.sample(frac=1)
+# cornsoybean = cornsoybean.sample(frac=1)
 
 areas = cornsoybean["County"]
 areas_list = np.unique(areas)
@@ -101,18 +101,18 @@ def test_area_estimate_bhf_reml():
         np.array(list(eblup_bhf_reml.area_est.values())),
         np.array(
             [
-                120.55447124,
-                122.21541589,
-                117.99695584,
-                118.08398286,
-                129.21480156,
-                105.06010968,
-                119.61057668,
-                121.99430500,
-                106.96315539,
-                127.57909606,
-                121.67261182,
-                132.57032852,
+                122.56367092,
+                123.51515946,
+                113.09071900,
+                115.02074400,
+                137.19621212,
+                108.94543201,
+                116.51553231,
+                122.76148230,
+                111.53048000,
+                124.18034553,
+                112.50472697,
+                131.25788283,
             ]
         ),
         atol=1e-6,
@@ -146,7 +146,7 @@ def test_area_mse_bhf_reml():
 eblup_bhf_reml_fpc = EblupUnitModel()
 eblup_bhf_reml_fpc.fit(ys, Xs, areas)
 
-eblup_bhf_reml_fpc.predict(Xmean, areas, pop_size)
+eblup_bhf_reml_fpc.predict(Xmean, areas_list, pop_size)
 
 
 def test_y_predicted_bhf_reml_fpc():
@@ -215,7 +215,7 @@ def test_bhf_reml_to_dataframe_not_default():
 eblup_bhf_ml = EblupUnitModel(method="ml")
 eblup_bhf_ml.fit(ys, Xs, areas)
 
-eblup_bhf_ml.predict(Xmean, areas)
+eblup_bhf_ml.predict(Xmean, areas_list)
 
 
 def test_eblup_bhf_ml():
@@ -281,18 +281,18 @@ def test_area_estimate_bhf_ml():
         np.array(list(eblup_bhf_ml.area_est.values())),
         np.array(
             [
-                120.48632952,
-                122.14516247,
-                117.93571585,
-                118.0104899,
-                129.10942945,
-                105.00768892,
-                119.5226231,
-                121.906934,
-                106.90424842,
-                127.47440283,
-                121.57968692,
-                132.45368236,
+                122.17284832,
+                123.22129485,
+                113.85918468,
+                115.42994973,
+                136.06978025,
+                108.37573030,
+                116.84704244,
+                122.60003878,
+                110.93542654,
+                124.44934607,
+                113.41480260,
+                131.28369873,
             ]
         ),
         atol=1e-6,
@@ -326,7 +326,7 @@ def test_area_mse_bhf_ml():
 eblup_bhf_ml_fpc = EblupUnitModel(method="ML")
 eblup_bhf_ml_fpc.fit(ys, Xs, areas)
 
-eblup_bhf_ml_fpc.predict(Xmean, areas, pop_size)
+eblup_bhf_ml_fpc.predict(Xmean, areas_list, pop_size)
 
 
 def test_area_est_bhf_ml_fpc():
