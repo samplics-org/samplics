@@ -503,13 +503,6 @@ class EblupUnitModel:
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         reml = True if self.method == "REML" else False
-        # with warnings.catch_warnings():
-        #     warnings.filterwarnings("ignore")
-        #     beta_ols = sm.OLS(y_ps_boot[0, :], X_ps).fit().params
-        # resid_ols = y_ps_boot[0, :] - np.matmul(X_ps, beta_ols)
-        # re_ols = basic_functions.sumby(area_ps, resid_ols) / basic_functions.sumby(
-        #     area_ps, np.ones(area_ps.size)
-        # )
 
         boot_mse = np.zeros((number_reps, nb_areas))
         print(f"Running the {number_reps} bootstrap iterations")
