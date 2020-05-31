@@ -11,8 +11,8 @@ SAMPLICS: sample analytics
   :target: https://codecov.io/gh/survey-methods/samplics  
 
 .. image:: https://readthedocs.org/projects/samplics/badge/?version=latest
-:target: https://samplics.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+   :target: https://samplics.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
          
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
