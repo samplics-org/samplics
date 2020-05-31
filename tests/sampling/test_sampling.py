@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from samplics.sampling import Sample
+from samplics.sampling import SampleSelection
 from samplics.utils import checks, formats
 
 countries_population = pd.read_csv("./tests/sampling/countries_population_2019.csv")
@@ -15,7 +15,7 @@ sample_size = int(np.rint(countries.size / 40))
 
 
 """Simple random sampling"""
-grs_design = Sample(method="grs")
+grs_design = SampleSelection(method="grs")
 
 
 def test_grs_select():
@@ -27,7 +27,7 @@ def test_grs_select():
     assert (grs_probs == probs).all()
 
 
-srs_design_wr = Sample(method="srs")
+srs_design_wr = SampleSelection(method="srs")
 
 
 def test_srswr_probs():
@@ -42,7 +42,7 @@ def test_srswr_select():
     assert (np.isclose(srs_probs, sample_size / countries.size)).all()
 
 
-srs_design_wor = Sample(method="srs", with_replacement=False)
+srs_design_wor = SampleSelection(method="srs", with_replacement=False)
 
 
 def test_srswor_probs():
@@ -63,7 +63,7 @@ sample_sizes = dict(
     {"Africa": 10, "Asia": 7, "Europe": 5, "North America": 3, "South America": 3, "Oceanie": 1,}
 )
 
-str_srswr_design = Sample(method="srs", stratification=True)
+str_srswr_design = SampleSelection(method="srs", stratification=True)
 
 
 def test_stratified_srswr_probs():
@@ -87,7 +87,7 @@ def test_stratified_srswr_select():
     assert sample_sizes == obtained_sample_sizes
 
 
-str_srswor_design = Sample(method="srs", stratification=True, with_replacement=False)
+str_srswor_design = SampleSelection(method="srs", stratification=True, with_replacement=False)
 
 
 def test_stratified_srswor_probs():
@@ -115,7 +115,7 @@ def test_stratified_srswor_select():
 """PPS sampling"""
 mos = countries_population["population_2019"].to_numpy()
 
-pps_sys_design_wr = Sample(method="pps-sys")
+pps_sys_design_wr = SampleSelection(method="pps-sys")
 
 
 def test_ppswr_sys_probs():
@@ -132,7 +132,7 @@ def test_ppswr_sys_select():
     assert np.isclose(pps_probs, sample_size * mos / np.sum(mos)).all()
 
 
-pps_hv_design_wor = Sample(method="pps-hv", with_replacement=False)
+pps_hv_design_wor = SampleSelection(method="pps-hv", with_replacement=False)
 
 
 def test_ppswor_hv_probs():
@@ -147,7 +147,7 @@ def test_ppswor_hv_select():
     assert (np.unique(pps_number_hits) == (0, 1)).all()
 
 
-pps_brewer_design_wor = Sample(method="pps-brewer", with_replacement=False)
+pps_brewer_design_wor = SampleSelection(method="pps-brewer", with_replacement=False)
 
 
 def test_ppswor_brewer_probs():
@@ -162,7 +162,7 @@ def test_ppswor_brewer_select():
     assert (np.unique(pps_number_hits) == (0, 1)).all()
 
 
-pps_murphy_design_wor = Sample(method="pps-murphy", with_replacement=False)
+pps_murphy_design_wor = SampleSelection(method="pps-murphy", with_replacement=False)
 
 
 def test_ppswor_murphy_probs():
@@ -183,7 +183,7 @@ sample_sizes_pps = dict(
     {"Africa": 5, "Asia": 4, "Europe": 3, "North America": 2, "South America": 2, "Oceanie": 1,}
 )
 
-str_ppswr_sys_design = Sample(method="pps-sys", stratification=True)
+str_ppswr_sys_design = SampleSelection(method="pps-sys", stratification=True)
 
 
 def test_stratified_ppswr_sys_probs():
@@ -209,7 +209,7 @@ def test_stratified_ppswr_sys_select():
     assert sample_sizes_pps == obtained_sample_sizes
 
 
-str_ppswr_hv_design = Sample(method="pps-hv", stratification=True)
+str_ppswr_hv_design = SampleSelection(method="pps-hv", stratification=True)
 
 
 def test_stratified_ppswr_hv_probs():
@@ -235,7 +235,7 @@ def test_stratified_ppswr_hv_select():
     assert sample_sizes_pps == obtained_sample_sizes
 
 
-str_ppswr_brewer_design = Sample(method="pps-brewer", stratification=True)
+str_ppswr_brewer_design = SampleSelection(method="pps-brewer", stratification=True)
 
 
 def test_stratified_ppswr_brewer_probs():
@@ -274,7 +274,7 @@ sample_sizes_murphy = dict(
     {"Africa": 2, "Asia": 2, "Europe": 2, "North America": 2, "South America": 2,}
 )
 
-str_ppswr_murphy_design = Sample(method="pps-murphy", stratification=True)
+str_ppswr_murphy_design = SampleSelection(method="pps-murphy", stratification=True)
 
 
 def test_stratified_ppswr_murphy_probs():
