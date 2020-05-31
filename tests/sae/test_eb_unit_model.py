@@ -4,7 +4,7 @@ import pandas as pd
 from samplics.sae.eb_unit_model import EbUnitModel
 
 
-incomesample = pd.read_csv("./datasets/sae/incomedata.csv")
+incomesample = pd.read_csv("./tests/sae/incomedata.csv")
 
 areas = incomesample["prov"]
 ys = incomesample["income"]
@@ -13,7 +13,7 @@ Xs = incomesample[
 ].to_numpy()
 # X_s = np.insert(X_s, 0, np.ones(X_s.shape[0]), axis=1)
 
-X_outsample = pd.read_csv("./datasets/sae/Xoutsamp.csv")
+X_outsample = pd.read_csv("./tests/sae/Xoutsamp.csv")
 
 arear = X_outsample["domain"]
 Xr = X_outsample[
