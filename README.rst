@@ -2,14 +2,14 @@
 *SAMPLICS*
 ==========
 .. image:: https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master
-    :target: https://travis-ci.com/survey-methods/samplics
+  :target: https://travis-ci.com/survey-methods/samplics
 
 .. image:: https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg?token=7C0LBB5N8Y
   :target: https://codecov.io/gh/survey-methods/samplics     
 
 .. image:: https://readthedocs.org/projects/samplics/badge/?version=latest
-:target: https://samplics.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+  :target: https://samplics.readthedocs.io/en/latest/?badge=latest
+  :alt: Documentation Status
 
 *samplics* is a python package for selecting, weighting and analyzing sample obtained from complex sampling design.
 
