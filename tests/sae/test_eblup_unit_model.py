@@ -230,6 +230,56 @@ def test_bhf_reml_to_dataframe_boot_not_default():
     ).all()
 
 
+# Shorter output
+np.random.seed(123)
+
+samp_size_short = np.array([3, 3, 3, 4, 5, 5, 6])
+pop_size_short = np.array([570, 402, 567, 687, 569, 965, 556])
+pop_area_short = np.linspace(6, 12, 7).astype(int)
+Xp_mean_short = Xmean.loc[5:12, :]
+
+eblup_bhf_reml_short = EblupUnitModel()
+eblup_bhf_reml_short.fit(ys, Xs, areas, intercept=True)
+eblup_bhf_reml_short.predict(Xp_mean_short, pop_area_short, pop_size_short)
+
+
+def test_area_estimate_bhf_reml_short():
+    assert np.isclose(
+        np.array(list(eblup_bhf_reml_short.area_est.values())),
+        np.array(
+            [
+                108.98069631,
+                116.48388625,
+                122.77107460,
+                111.56475375,
+                124.15651773,
+                112.46256629,
+                131.25152478,
+            ]
+        ),
+        atol=1e-6,
+    ).all()
+
+
+# @pytest.mark.skip(reason="to be fixed")
+def test_area_mse_bhf_reml_short():
+    assert np.isclose(
+        np.array(list(eblup_bhf_reml_short.area_mse.values())),
+        np.array(
+            [
+                78.70883983,
+                78.02323786,
+                78.87309307,
+                70.04040931,
+                64.11261351,
+                61.87654547,
+                59.81982861,
+            ]
+        ),
+        atol=1e-6,
+    ).all()
+
+
 """ML Method"""
 eblup_bhf_ml = EblupUnitModel(method="ml")
 eblup_bhf_ml.fit(ys, Xs, areas)
@@ -417,3 +467,46 @@ df2_ml = eblup_bhf_ml_boot.to_dataframe(
 def test_bhf_ml_to_dataframe_boot_not_default():
     assert df2_ml.shape[1] == 4
     assert (df2_ml.columns == ["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]).all()
+
+
+# Shorter output
+eblup_bhf_ml_short = EblupUnitModel(method="ML")
+eblup_bhf_ml_short.fit(ys, Xs, areas, intercept=True)
+eblup_bhf_ml_short.predict(Xp_mean_short, pop_area_short, pop_size_short)
+
+
+def test_area_estimate_bhf_ml_short():
+    assert np.isclose(
+        np.array(list(eblup_bhf_ml_short.area_est.values())),
+        np.array(
+            [
+                108.41385641,
+                116.81295596,
+                122.61070603,
+                110.97329145,
+                124.42291775,
+                113.36799091,
+                131.27669442,
+            ]
+        ),
+        atol=1e-6,
+    ).all()
+
+
+# @pytest.mark.skip(reason="to be fixed")
+def test_area_mse_bhf_ml_short():
+    assert np.isclose(
+        np.array(list(eblup_bhf_ml_short.area_mse.values())),
+        np.array(
+            [
+                71.07422316,
+                70.52276075,
+                71.03548298,
+                65.27922762,
+                60.93670432,
+                58.91938558,
+                57.87424555,
+            ]
+        ),
+        atol=1e-6,
+    ).all()
