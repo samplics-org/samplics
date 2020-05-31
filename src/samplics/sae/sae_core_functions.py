@@ -24,13 +24,14 @@ from scipy.stats import norm as normal
 from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
+
 def area_stats(
     y: np.ndarray,
     X: np.ndarray,
     area: np.ndarray,
     error_std: float,
     re_std: float,
-    afactor: Dict[Any, float],
+    scale: Dict[Any, float],
     samp_weight: Optional[np.ndarray],
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Computes area level aggregated statistics. 
@@ -55,15 +56,15 @@ def area_stats(
     samp_size = np.zeros(areas.size)
     for k, d in enumerate(areas):
         sample_d = area == d
-        afactor_d = afactor[d]
+        scale_d = scale[d]
         if samp_weight is None:
             weight_d = np.ones(np.sum(sample_d))
-            delta_d = 1 / np.sum(afactor_d)
+            delta_d = 1 / np.sum(scale_d)
         else:
             weight_d = samp_weight[sample_d]
             delta_d = np.sum((weight_d / np.sum(weight_d)) ** 2)
-        aw_factor_d = weight_d * afactor_d
-        yw_d = y[sample_d] * afactor_d
+        aw_factor_d = weight_d * scale_d
+        yw_d = y[sample_d] * scale_d
         y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
         Xw_d = X[sample_d, :] * aw_factor_d[:, None]
         X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)

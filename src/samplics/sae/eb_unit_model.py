@@ -188,30 +188,30 @@ class EblupUnitModel:
         Xp_mean: np.ndarray,
         gamma: np.ndarray,
         samp_size: np.ndarray,
-        scale: np.ndarray,
+        afactor: np.ndarray,
         A_inv: np.ndarray,
     ) -> np.ndarray:
 
         sigma2e = self.error_std ** 2
         sigma2u = self.re_std ** 2
 
-        g1 = gamma * sigma2e / scale
+        g1 = gamma * sigma2e / afactor
 
         xbar_diff = Xp_mean - gamma[:, None] * Xs_mean
-        g2_matrix = np.matmul(np.matmul(xbar_diff, A_inv), np.transpose(xbar_diff))
+        g2_matrix = xbar_diff @ A_inv @ np.transpose(xbar_diff)
         g2 = np.diag(g2_matrix)
 
-        alpha = sigma2e + scale * sigma2u
-        i_vv = 0.5 * sum((scale / alpha) ** 2)
+        alpha = sigma2e + afactor * sigma2u
+        i_vv = 0.5 * sum((afactor / alpha) ** 2)
         i_ee = 0.5 * sum((samp_size - 1) / (sigma2e ** 2) + 1 / (alpha ** 2))
-        i_ve = 0.5 * sum(scale / (alpha ** 2))
+        i_ve = 0.5 * sum(afactor / (alpha ** 2))
         i_determinant = i_vv * i_ee - i_ve * i_ve
 
-        g3_scale = 1 / ((scale ** 2) * ((sigma2u + sigma2e / scale) ** 3))
-        g3 = g3_scale * (
-            (sigma2e ** 2) * (i_ee / i_determinant)
-            + (sigma2u ** 2) * (i_vv / i_determinant)
-            - 2 * (sigma2e * sigma2u) * (-i_vv / i_determinant)
+        g3_afactor = (1 / afactor ** 2) * (1 / (sigma2u + sigma2e / afactor) ** 3)
+        g3 = (
+            g3_afactor
+            * ((sigma2e ** 2) * i_ee + (sigma2u ** 2) * i_vv - 2 * (sigma2e * sigma2u) * (-i_ve))
+            / i_determinant
         )
 
         return g1 + g2 + 2 * g3
@@ -392,19 +392,18 @@ class EblupUnitModel:
         self.samp_rate = samp_rate
         self.area_est = area_est
 
-        s_in_p = np.isin(self.areas, self.areap)
-        X_ps = Xs[s_in_p]
         A_ps = np.diag(np.zeros(Xp_mean.shape[1])) if Xp_mean.ndim >= 2 else np.asarray([0])
 
         ps_area_list = self.areap[ps]
         for d in ps_area_list:
-            areadps = s_in_p == d
+            areadps = self.areas == d
             n_ps_d = np.sum(areadps)
-            X_ps_d = X_ps[areadps]
-            V_ps_d = (self.error_std ** 2) * np.diag(np.ones(n_ps_d)) + (
-                self.re_std ** 2
-            ) * np.ones([n_ps_d, n_ps_d])
-            A_ps = A_ps + np.matmul(np.matmul(np.transpose(X_ps_d), np.linalg.inv(V_ps_d)), X_ps_d)
+            X_ps_d = Xs[areadps]
+            scale_ps_d = self.scales[areadps]
+            V_ps_d = (self.error_std ** 2) * np.diag(scale_ps_d) + (self.re_std ** 2) * np.ones(
+                [n_ps_d, n_ps_d]
+            )
+            A_ps = A_ps + np.transpose(X_ps_d) @ np.linalg.inv(V_ps_d) @ X_ps_d
 
         ps_area_indices = np.isin(self.areas_list, ps_area_list)
         a_factor_ps = np.asarray(list(self.afactors.values()))[ps_area_indices]
@@ -422,7 +421,7 @@ class EblupUnitModel:
         self.area_mse = dict(zip(ps_area_list, mse_ps))
 
         pr_area_list = self.areap[~ps]
-        # TODO: add non-sampled areas prediction (section 6.2.2, Rao and molina (2015))
+        # TODO: add non-sampled areas prediction (section 7.2.2, Rao and molina (2015))
 
     def bootstrap_mse(
         self,
@@ -506,23 +505,23 @@ class EblupUnitModel:
 
         boot_mse = np.zeros((number_reps, nb_areas))
         print(f"Running the {number_reps} bootstrap iterations")
-        for k in range(number_reps):
+        for b in range(number_reps):
             with warnings.catch_warnings(record=True) as w:
-                boot_model = sm.MixedLM(y_ps_boot[k, :], X_ps, area_ps)
+                boot_model = sm.MixedLM(y_ps_boot[b, :], X_ps, area_ps)
                 boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale ** 0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ys_mean, boot_Xs_mean, boot_gamma, _ = area_stats(
-                y_ps_boot[k, :], X_ps, area_ps, boot_error_std, boot_re_std, self.afactors, None,
+                y_ps_boot[b, :], X_ps, area_ps, boot_error_std, boot_re_std, self.afactors, None,
             )
             boot_re = boot_gamma * (boot_ys_mean - boot_Xs_mean @ boot_fe)
-            boot_mu = Xp_mean @ self.fixed_effects + re_boot[k, :]
+            boot_mu = Xp_mean @ self.fixed_effects + re_boot[b, :]
             boot_mu_h = Xp_mean @ boot_fe + boot_re
-            boot_mse[k, :] = (boot_mu_h - boot_mu) ** 2
+            boot_mse[b, :] = (boot_mu_h - boot_mu) ** 2
 
             if show_progress:
-                if k in steps:
+                if b in steps:
                     i += 1
                     print(
                         f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i),
@@ -530,7 +529,10 @@ class EblupUnitModel:
                     )
         if show_progress:
             print("\n")
+
         self.area_mse_boot = dict(zip(ps_area_list, np.mean(boot_mse, axis=0)))
+
+        # TODO: nonnegligeable sampling fractions, section 7.2.4, Rao and Molina (2015)
 
     def to_dataframe(
         self, col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"],

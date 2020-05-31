@@ -9,7 +9,8 @@ from samplics.sae.eb_unit_model import EblupUnitModel
 cornsoybean = pd.read_csv("./tests/sae/cornsoybean.csv")
 cornsoybean_mean = pd.read_csv("./tests/sae/cornsoybeanmeans.csv")
 
-# cornsoybean = cornsoybean.sample(frac=1)
+cornsoybean = cornsoybean.sample(frac=1)  # shuffle the data to remove the
+# print(cornsoybean)
 
 areas = cornsoybean["County"]
 areas_list = np.unique(areas)
@@ -18,7 +19,7 @@ ys = cornsoybean["CornHec"]
 Xs = cornsoybean[["CornPix", "SoyBeansPix"]]
 
 Xmean = cornsoybean_mean[["MeanCornPixPerSeg", "MeanSoyBeansPixPerSeg"]]
-
+# print(Xmean)
 
 samp_size = np.array([1, 1, 1, 2, 3, 3, 3, 3, 4, 5, 5, 6])
 pop_size = np.array([545, 566, 394, 424, 564, 570, 402, 567, 687, 569, 965, 556])
@@ -48,10 +49,27 @@ def test_fe_std_bhf_reml():
     ).all()
 
 
-# def test_gamma_bhf_reml():
-#    assert np.isclose(
-#        eblup_bhf_reml.gamma, np.array([]), atol=1e-6
-#    ).all()
+def test_gamma_bhf_reml():
+    assert np.isclose(
+        np.array(list(eblup_bhf_reml.gamma.values())),
+        np.array(
+            [
+                0.17537405,
+                0.17537405,
+                0.17537405,
+                0.29841402,
+                0.38950426,
+                0.38950426,
+                0.38950426,
+                0.38950426,
+                0.45965927,
+                0.51535245,
+                0.51535245,
+                0.56063774,
+            ]
+        ),
+        atol=1e-6,
+    ).all()
 
 
 def test_random_effects_bhf_reml():
@@ -119,24 +137,24 @@ def test_area_estimate_bhf_reml():
     ).all()
 
 
-@pytest.mark.skip(reason="to be fixed")
+# @pytest.mark.skip(reason="to be fixed")
 def test_area_mse_bhf_reml():
     assert np.isclose(
         np.array(list(eblup_bhf_reml.area_mse.values())),
         np.array(
             [
-                93.05934378,
-                93.2128987,
-                92.56865476,
-                92.5524427,
-                81.22462137,
-                82.56457487,
-                81.21514355,
-                82.78764215,
-                73.8112406,
-                66.10386877,
-                65.19585515,
-                60.74108415,
+                85.495399459,
+                85.648949504,
+                85.004705566,
+                83.235995880,
+                72.017014455,
+                73.356967955,
+                72.007536645,
+                73.580035237,
+                65.299062174,
+                58.426265442,
+                57.518251822,
+                53.876770532,
             ]
         ),
         atol=1e-6,
@@ -184,31 +202,32 @@ def test_bhf_reml_to_dataframe_not_default():
     assert (df.columns == ["small_area", "modelled_estimate", "taylor_mse"]).all()
 
 
-## Bootstrap with REML
-# eblup_bhf_reml_boot = EblupUnitModel()
-# eblup_bhf_reml_boot.fit(
-#     ys, Xs, areas,
-# )
-# eblup_bhf_reml_boot.predict(Xmean, areas)
-# eblup_bhf_reml_boot.bootstrap_mse(Xmean, areas_list, number_reps=5)
+# Bootstrap with REML
+eblup_bhf_reml_boot = EblupUnitModel()
+eblup_bhf_reml_boot.fit(
+    ys, Xs, areas,
+)
+eblup_bhf_reml_boot.predict(Xmean, areas_list)
+eblup_bhf_reml_boot.bootstrap_mse(number_reps=5, show_progress=False)
+
+df1_reml = eblup_bhf_reml_boot.to_dataframe()
 
 
-# def test_area_mse_boot_bhf_reml():
-#     assert False == True
+def test_bhf_reml_to_dataframe_boot_default():
+    assert df1_reml.shape[1] == 4
+    assert (df1_reml.columns == ["_area", "_estimate", "_mse", "_mse_boot"]).all()
 
 
-# def test_bhf_reml_to_dataframe_boot_default():
-#     df = eblup_bhf_reml_boot.to_dataframe()
-#     assert df.shape[1] == 4
-#     assert (df.columns == ["_area", "_estimate", "_mse", "_mse_boot"]).all()
+df2_reml = eblup_bhf_reml_boot.to_dataframe(
+    col_names=["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+)
 
 
-# def test_bhf_reml_to_dataframe_boot_not_default():
-#     df = eblup_bhf_reml_boot.to_dataframe(
-#         col_names=["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
-#     )
-#     assert df.shape[1] == 4
-#     assert (df.columns == ["small_area", "modelled_estimate", "taylor_mse"]).all()
+def test_bhf_reml_to_dataframe_boot_not_default():
+    assert df2_reml.shape[1] == 4
+    assert (
+        df2_reml.columns == ["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+    ).all()
 
 
 """ML Method"""
@@ -231,6 +250,29 @@ def test_fixed_effects_bhf_ml():
 def test_fe_std_bhf_ml():
     assert np.isclose(
         eblup_bhf_ml.fe_std, np.array([29.82724469, 0.06262676, 0.06506189]), atol=1e-5,
+    ).all()
+
+
+def test_gamma_bhf_ml():
+    assert np.isclose(
+        np.array(list(eblup_bhf_ml.gamma.values())),
+        np.array(
+            [
+                0.14570573,
+                0.14570573,
+                0.14570573,
+                0.25435106,
+                0.33848019,
+                0.33848019,
+                0.33848019,
+                0.33848019,
+                0.40555003,
+                0.46027174,
+                0.46027174,
+                0.50576795,
+            ]
+        ),
+        atol=1e-6,
     ).all()
 
 
@@ -299,24 +341,23 @@ def test_area_estimate_bhf_ml():
     ).all()
 
 
-@pytest.mark.skip(reason="to be fixed")
 def test_area_mse_bhf_ml():
     assert np.isclose(
-        np.array(list(eblup_bhf_reml.area_mse.values())),
+        np.array(list(eblup_bhf_ml.area_mse.values())),
         np.array(
             [
-                93.05934378,
-                93.2128987,
-                92.56865476,
-                92.5524427,
-                81.22462137,
-                82.56457487,
-                81.21514355,
-                82.78764215,
-                73.8112406,
-                66.10386877,
-                65.19585515,
-                60.74108415,
+                70.03789330,
+                70.14078955,
+                69.75891524,
+                71.50874622,
+                64.73862949,
+                66.13552266,
+                64.77099780,
+                66.09246929,
+                60.71287515,
+                55.31330901,
+                54.52024143,
+                51.85801645,
             ]
         ),
         atol=1e-4,
@@ -350,3 +391,29 @@ def test_area_est_bhf_ml_fpc():
         ),
         atol=1e-4,
     ).all()
+
+
+# Bootstrap with ML
+eblup_bhf_ml_boot = EblupUnitModel(method="ML")
+eblup_bhf_ml_boot.fit(
+    ys, Xs, areas,
+)
+eblup_bhf_ml_boot.predict(Xmean, areas_list)
+eblup_bhf_ml_boot.bootstrap_mse(number_reps=5, show_progress=False)
+
+df1_ml = eblup_bhf_ml_boot.to_dataframe()
+
+
+def test_bhf_ml_to_dataframe_boot_default():
+    assert df1_ml.shape[1] == 4
+    assert (df1_ml.columns == ["_area", "_estimate", "_mse", "_mse_boot"]).all()
+
+
+df2_ml = eblup_bhf_ml_boot.to_dataframe(
+    col_names=["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+)
+
+
+def test_bhf_ml_to_dataframe_boot_not_default():
+    assert df2_ml.shape[1] == 4
+    assert (df2_ml.columns == ["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]).all()
