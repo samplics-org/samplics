@@ -1,8 +1,7 @@
 """Sampling selection module
 
-The module has one main class called *Sample* which provides a number of random selection methods
-and associated probability of selection. All the samping techniques implemented in this modules
-are discussed in the following reference book: Cochran, W.G. (1977) [#c1977]_, 
+The module has one main class called *SampleSelection* which provides a number of random selection methodsand associated probability of selection. All the samping techniques implemented in this 
+modules are discussed in the following reference book: Cochran, W.G. (1977) [#c1977]_, 
 Kish, L. (1965) [#k1965]_, and Lohr, S.L. (2010) [#l2010]_. Furthermore, Brewer, K.R.W. and 
 Hanif, M. (1983) [#bh1983]_ provides comprehensive and detailed descriptions of these complex 
 sampling algorithms.
@@ -25,8 +24,8 @@ from samplics.utils import checks, formats
 from samplics.utils.types import Array, Number, StringNumber
 
 
-class Sample:
-    """*Sample* implements a number of sampling selection algorithms. 
+class SampleSelection:
+    """*SampleSelection* implements a number of sampling selection algorithms. 
 
     The implemented sampling algorithms are the simple random sampling (srs), the 
     systematic selection (sys), five different algorithms of probability proportional 

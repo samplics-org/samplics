@@ -1,3 +1,3 @@
-from samplics.sampling.selection import Sample
+from samplics.sampling.selection import SampleSelection
 
-__all__ = ["Sample"]
+__all__ = ["SampleSelection"]
