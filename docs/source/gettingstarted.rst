@@ -29,11 +29,11 @@ we can use a code similar to:
 .. code:: python
 
     import samplics
-    from samplics.sampling import Sample
+    from samplics.sampling import SampleSelection
 
     psu_frame = pd.read_csv("psu_frame.csv")
     psu_sample_size = {"East":3, "West": 2, "North": 2, "South": 3}
-    pps_design = Sample(method="pps-sys", stratification=True, with_replacement=False)
+    pps_design = SampleSelection(method="pps-sys", stratification=True, with_replacement=False)
     frame["psu_prob"] = pps_design.inclusion_probs(
         psu_frame["cluster"],
         psu_sample_size,
