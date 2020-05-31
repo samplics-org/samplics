@@ -76,7 +76,7 @@ we can use a code similar to:
         samp_weight=nhanes2f["finalwgt"],
         stratum=nhanes2f["stratid"],
         psu=nhanes2f["psuid"],
-        exclude_nan=True
+        remove_nan=True
     )
 
     ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
@@ -84,7 +84,7 @@ we can use a code similar to:
         samp_weight=nhanes2brr["finalwgt"],
         x=nhanes2brr["height"],
         rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
-        exclude_nan = True
+        remove_nan = True
     )
 
 
