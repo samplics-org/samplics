@@ -5,14 +5,14 @@
 SAMPLICS: sample analytics
 ==========================
 .. image:: https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master
-    :target: https://travis-ci.com/survey-methods/samplics
+  :target: https://travis-ci.com/survey-methods/samplics
 
 .. image:: https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg?token=7C0LBB5N8Y
   :target: https://codecov.io/gh/survey-methods/samplics  
 
 .. image:: https://readthedocs.org/projects/samplics/badge/?version=latest
-   :target: https://samplics.readthedocs.io/en/latest/?badge=latest
-   :alt: Documentation Status
+  :target: https://samplics.readthedocs.io/en/latest/?badge=latest
+  :alt: Documentation Status
          
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
