@@ -760,11 +760,20 @@ class EbUnitModel:
         sigma2e: float,
         sigma2u: float,
         scale: np.ndarray,
+        intercept: bool,
         max_array_length: int,
         indicator: Callable[..., Any],
         show_progress: bool,
         **kwargs: Any,
     ) -> np.ndarray:
+
+        if intercept:
+            if self.Xs_mean.ndim == 1:
+                n = self.Xs_mean.shape[0]
+                Xs_mean = np.insert(self.Xs_mean.reshape(n, 1), 0, 1, axis=1)
+            else:
+                Xs_mean = np.insert(self.Xs_mean, 0, 1, axis=1)
+
         nb_arear = len(arear_list)
         mu_r = X_r @ fixed_effects
 
@@ -781,7 +790,7 @@ class EbUnitModel:
             mu_dr = mu_r[oos]
             ss = self.areas_list == d
             ybar_d = self.ys_mean[ss]
-            xbar_d = self.Xs_mean[ss]
+            xbar_d = Xs_mean[ss]
             mu_bias_dr = self.gamma[d] * (ybar_d - xbar_d @ fixed_effects)
             scale_dr = scale[oos]
             N_dr = np.sum(oos)
@@ -879,13 +888,15 @@ class EbUnitModel:
             if Xr.ndim == 1:
                 n = Xr.shape[0]
                 Xr = np.insert(Xr.reshape(n, 1), 0, 1, axis=1)
+                Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
             else:
                 Xr = np.insert(Xr, 0, 1, axis=1)
+                Xs = np.insert(self.Xs, 0, 1, axis=1)
 
         area_est = self._predict_indicator(
             self.number_samples,
             self.ys,
-            self.Xs,
+            Xs,
             self.areas,
             Xr,
             arear,
@@ -895,6 +906,7 @@ class EbUnitModel:
             self.error_std ** 2,
             self.re_std ** 2,
             scaler,
+            intercept,
             max_array_length,
             indicator,
             show_progress,
@@ -943,8 +955,10 @@ class EbUnitModel:
             if X_r.ndim == 1:
                 n = X_r.shape[0]
                 X_r = np.insert(X_r.reshape(n, 1), 0, 1, axis=1)
+                Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
             else:
                 X_r = np.insert(X_r, 0, 1, axis=1)
+                Xs = np.insert(self.Xs, 0, 1, axis=1)
 
         if isinstance(scaler, (float, int)):
             scale_r = np.ones(X_r.shape[0]) * scaler
@@ -959,7 +973,7 @@ class EbUnitModel:
         scale_s = self.scales[np.isin(self.areas, arear_list)]
         scale = np.append(scale_r, scale_s)
         _, N_d = np.unique(area, return_counts=True)
-        X_s = self.Xs[np.isin(self.areas, arear_list)]
+        X_s = Xs[np.isin(self.areas, arear_list)]
         X = np.append(X_r, X_s, axis=0)
 
         aboot_factor = np.zeros(nb_areas_ps)
@@ -1089,6 +1103,7 @@ class EbUnitModel:
                 boot_fit.scale,
                 float(boot_fit.cov_re),
                 scale_r,
+                intercept,
                 max_array_length,
                 indicator,
                 False,
