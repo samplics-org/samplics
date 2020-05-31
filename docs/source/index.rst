@@ -58,10 +58,14 @@ Documentation
 
    modules 
 
-
 Index and search
 ################
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+**Contact Information**
+| Mamadou S. Diallo 
+| msdiallo@QuantifyAfrica.org
+| https://www.linkedin.com/in/mamadousdiallo/
