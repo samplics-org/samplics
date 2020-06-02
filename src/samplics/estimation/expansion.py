@@ -8,7 +8,7 @@ and Wolter, K.M. (2007) [#w2007]_.
 .. [#c1977] Cochran, W.G. (1977), *Sampling Techniques, 3rd edn.*, Jonh Wiley & Sons, Inc.
 .. [#k1965] Kish, L. (1965), *Survey Sampling*, Jonh Wiley & Sons, Inc.
 .. [#l2010] Lohr, S.L. (2010), *Sampling: Design and Analysis, 2nd edn.*, Cengage Learning, Inc.
-.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, 
+.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimation, 2nd edn.*, 
    Springer-Verlag New York, Inc
 """
 
