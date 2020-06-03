@@ -214,9 +214,9 @@ def test_size_nat_fleiss_df():
 ## Fleiss' method - stratified
 size_str_fleiss = SampleSize(parameter="Proportion", method="Fleiss", stratification=True)
 
-target = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
-precision = {"stratum1": 0.30, "stratum2": 0.10, "stratum3": 0.15}
-deff = {"stratum1": 1, "stratum2": 1.5, "stratum3": 2.5}
+target2 = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
+precision2 = {"stratum1": 0.03, "stratum2": 0.10, "stratum3": 0.05}
+deff2 = {"stratum1": 1, "stratum2": 1.5, "stratum3": 2.5}
 
 
 def test_size_str_fleiss_basics():
@@ -226,31 +226,31 @@ def test_size_str_fleiss_basics():
 
 
 def test_size_str_fleiss_size1():
-    size_str_fleiss.allocate(target, 0.10)
+    size_str_fleiss.allocate(target2, 0.10)
     assert size_str_fleiss.samp_size["stratum1"] == 70
     assert size_str_fleiss.samp_size["stratum2"] == 103
     assert size_str_fleiss.samp_size["stratum3"] == 103
 
 
 def test_size_str_fleiss_size2():
-    size_str_fleiss.allocate(0.8, precision)
-    assert size_str_fleiss.samp_size["stratum1"] == 11
+    size_str_fleiss.allocate(0.8, precision2)
+    assert size_str_fleiss.samp_size["stratum1"] == 788
     assert size_str_fleiss.samp_size["stratum2"] == 88
-    assert size_str_fleiss.samp_size["stratum3"] == 43
+    assert size_str_fleiss.samp_size["stratum3"] == 306
 
 
 def test_size_str_fleiss_size3():
-    size_str_fleiss.allocate(0.8, 0.10, deff)
+    size_str_fleiss.allocate(0.8, 0.10, deff2)
     assert size_str_fleiss.samp_size["stratum1"] == 88
     assert size_str_fleiss.samp_size["stratum2"] == 132
     assert size_str_fleiss.samp_size["stratum3"] == 220
 
 
 def test_size_str_fleiss_size4():
-    size_str_fleiss.allocate(target, precision, deff)
-    assert size_str_fleiss.samp_size["stratum1"] == 11
+    size_str_fleiss.allocate(target2, precision2, deff2)
+    assert size_str_fleiss.samp_size["stratum1"] == 354
     assert size_str_fleiss.samp_size["stratum2"] == 154
-    assert size_str_fleiss.samp_size["stratum3"] == 115
+    assert size_str_fleiss.samp_size["stratum3"] == 1002
 
 
 def test_size_str_fleiss_size5():
