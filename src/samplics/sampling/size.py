@@ -132,6 +132,24 @@ class SampleSize:
         number_strata: Optional[int] = None,
         alpha: float = 0.05,
     ) -> None:
+        """calculate the sample allocation. 
+
+        Args:
+            target (Union[Dict[Any, Number], Number]): the expected proportion used to calculate 
+                the sample size. It can be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.
+            precision (Union[Dict[Any, Number], Number]): level of precision or half confidence 
+                interval. It can be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.
+            deff (Union[Dict[Any, float], float], optional): design effect. It can be a single 
+                number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.. Defaults to 1.0.
+            resp_rate (Union[Dict[Any, float], float], optional): expected response rate. It can 
+                be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.. Defaults to 1.0.
+            number_strata (Optional[int], optional): number of strata. Defaults to None.
+            alpha (float, optional): level of significance. Defaults to 0.05.
+
+        Raises:
+            AssertionError: when a dictionary is provided for a non-stratified design.
+            AssertionError: when the dictionaries have different keys.
+        """
 
         is_target_dict = isinstance(target, dict)
         is_precision_dict = isinstance(precision, dict)
@@ -204,6 +222,18 @@ class SampleSize:
     def to_dataframe(
         self, col_names: List[str] = ["_stratum", "_target", "_precision", "_samp_size"]
     ) -> pd.DataFrame:
+        """Coverts the dictionaries to a pandas dataframe
+
+        Args:
+            col_names (List[str], optional): column names for the dataframe. Defaults to 
+                ["_stratum", "_target", "_precision", "_samp_size"].
+
+        Raises:
+            AssertionError: when sample size is not calculated.
+
+        Returns:
+            pd.DataFrame: output pandas dataframe.
+        """
 
         ncols = len(col_names)
 
