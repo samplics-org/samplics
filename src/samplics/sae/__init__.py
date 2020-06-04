@@ -5,4 +5,5 @@ from samplics.sae.eb_unit_model import (
     EllUnitModel,
 )
 
+
 __all__ = ["EblupAreaModel", "EblupUnitModel", "EbUnitModel", "EllUnitModel"]
