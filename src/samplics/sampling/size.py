@@ -54,7 +54,7 @@ class SampleSize:
         else:
             raise ValueError("Combination of types not supported.")
 
-    def _allocate_wald(
+    def _calculate_wald(
         self, target: Dict[Any, Number], precision: Dict[Any, Number], stratum: Optional[Array],
     ) -> Dict[Any, int]:
 
@@ -77,7 +77,7 @@ class SampleSize:
 
         return samp_size
 
-    def _allocate_fleiss(
+    def _calculate_fleiss(
         self, target: Dict[Any, Number], precision: Dict[Any, Number], stratum: Optional[Array],
     ) -> Dict[Any, int]:
 
@@ -123,7 +123,7 @@ class SampleSize:
 
         return samp_size
 
-    def allocate(
+    def calculate(
         self,
         target: Union[Dict[Any, Number], Number],
         precision: Union[Dict[Any, Number], Number],
@@ -209,15 +209,21 @@ class SampleSize:
         self.alpha = alpha
 
         if self.method == "wald":
-            samp_size = self._allocate_wald(
+            samp_size = self._calculate_wald(
                 target=self.target, precision=self.precision, stratum=stratum
             )
         elif self.method == "fleiss":
-            samp_size = self._allocate_fleiss(
+            samp_size = self._calculate_fleiss(
                 target=self.target, precision=self.precision, stratum=stratum
             )
 
         self.samp_size = samp_size
+
+    def allocate(self):
+        pass
+
+    def optimize(self):
+        pass
 
     def to_dataframe(
         self, col_names: List[str] = ["_stratum", "_target", "_precision", "_samp_size"]
