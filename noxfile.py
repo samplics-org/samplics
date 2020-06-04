@@ -10,7 +10,7 @@ def tests(session):
 @nox.session()
 def test_coverage(session):
     session.run("poetry", "install")
-    session.run("pytest", "--cov-report", "xml", "--cov=tests")
+    session.run("pytest", "--cov-report", "xml", "--cov=src/samplics")
     session.run("codecov")
 
 
