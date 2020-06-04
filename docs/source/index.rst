@@ -22,8 +22,9 @@ sampling techniques for complex survey designs.
 **Sampling.** Since the full population cannot be observed, a sample is selected
 to estimate population parameters of interest. The assumption is
 that the sample is representative of the population for the characteristics
-of interest. The selection methods in Samplics are:
+of interest. The sample size calculation and selection methods in Samplics are:
 
+* Sample size calculation and allocation: Wald and Fleiss methods for proportions. 
 * Equal probability of selection: simple random sampling (SRS) and systematic selection (SYS)
 * Probability proportional to size (PPS): Systematic, Brewer's method, Hanurav-Vijayan method, Murphy's method, and Rao-Sampford's method.
 
@@ -44,6 +45,8 @@ mechanism and the weight adjustments.
 * Regression-based e.g. generalized regression (GREG)
 
 **Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to modelled the output variable of interest to produce domain level estimaetes.
+
+**Important.** *Samplics* is in beta version. It's been actively developed. The list of features mentioned above is not the complete list. **Despite the very high code testing coverage, Samplics is not yet ready for production.** Backward compatibility is not yet guaranteed. 
 
 
 Documentation

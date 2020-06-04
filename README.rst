@@ -101,7 +101,7 @@ License
 
 Project status
 --------------
-This is an alpha version. At this stage, this project is not recommended to be
+This is a beta version. At this stage, this project is not recommended to be
 used for production or any project that the user depend on.
 
 

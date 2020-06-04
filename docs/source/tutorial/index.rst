@@ -7,10 +7,25 @@ Samplics is a Python package designed to be a comprehensive tool for selecting, 
 This tutorial is intended for users with basic knowledge of Python. It is assumed that the user has a basic understanding of Python syntax. Also, the tutorial is not intended to teach survey sampling methods. To learn survey sampling methods, we refer the user to the `UNStats Handbook 2005 <https://unstats.un.org/unsd/hhsurveys/>`_, `Designing Household Survey Samples: Practical Guidelines <https://unstats.un.org/unsd/demographic/sources/surveys/Series_F98en.pdf>`_, and the reference material mentioned throughout this tutorial. 
 
 
+Sample size
+-----------
+Sample size calculation and allocation is usually one of the first steps in conducting a survey. Sample size calculations allow the survey implementers to collect enough data o achieve targeted precision levels. To do so, the sample size calculation should follow as close as possible the actual sampling design and take into account imperfections of survey implementations such as non response. Since sample sizes are calculated prior to implementing the survey, many of the input data needed to calculate sample sizes are obtained from previous experience and from reasonable assumptions. 
+
+In this tutorial, we illustrate the calculation and allocation of some common sample size methods. Users can found additional details from Chow, S., Shao, J., Wang, H., Lokhnygina, Y. (2018) [#c2018]_ and Ryan, T.P. [#r2013]_.
+
+.. toctree::
+   :maxdepth: 1
+
+   sample_size_calculation
+
+
+.. [#c2018] Chow, S., Shao, J., Wang, H., Lokhnygina, Y. (2018), *Sample Size Calculations in Clinical Research, Third Edition.*, CRC Press, Taylor & Francis Group.
+.. [#r2013] Ryan, T.P. (2013), *Sample Size Determination and Power*, Jonh Wiley & Sons, Inc.
+
 Sampling
 --------
 
-When a sample frame is available, the simple random sampling (srs) method is usually the easiest way to select a sample. However, operational and cost constraints often result in much more complex mechanisms for selecting samples. A common use case of complex sampling designs is the national household surveys such as the `Demographic and Health Surveys (DHS) <https://dhsprogram.com>`_, the `Living Standards Measurement Study (LSMS) <http://surveys.worldbank.org>`_, the `Multiple Indicator Cluster Surveys (MICS) <https://mics.unicef.org>`_, and many more. In the national household surveys, the sample is selected in stages. For example, at the first stage clusters of households are selected using probability proportional to size (pps) method, at the second stage households are selected from the sampled clusters, and at the final stage individuals are selected from households in the sample.  
+When a sample frame is available, the simple random sampling (srs) method is usually the easiest way to select a sample. However, operational and cost constraints often result in much more complex mechanisms for selecting samples. Common use cases of complex sampling designs are the national household surveys such as the `Demographic and Health Surveys (DHS) <https://dhsprogram.com>`_, the `Living Standards Measurement Study (LSMS) <http://surveys.worldbank.org>`_, the `Multiple Indicator Cluster Surveys (MICS) <https://mics.unicef.org>`_, and many more. In the national household surveys, the sample is selected in stages. For example, at the first stage clusters of households are selected using probability proportional to size (pps) method, at the second stage households are selected from the sampled clusters, and at the final stage individuals are selected from households in the sample.  
 
 In this tutorial, we generate simulated data to illustrate the first and second stage selections of clusters and households, respectively. 
 
