@@ -76,9 +76,9 @@ def _hadamard20() -> np.ndarray:
     hadamard20 = np.ones((20, 20))
 
     row = np.array([1, 3, 4, 9, 11, 13, 14, 15, 16, 19])
-    for r in range(0, 20):
+    for r in range(1, 20):
         for c in row:
-            hadamard20[r + 1, c] = -1
+            hadamard20[r, c] = -1
         row = (row + 1) % 20
         if row[9] == 0:
             row[9] = 1
@@ -193,7 +193,3 @@ def _hadamard28() -> np.ndarray:
         hadamard28[27, c] = -1
 
     return hadamard28
-
-
-# mat28 = hadamard(28)
-# print(np.dot(mat28, mat28.T))

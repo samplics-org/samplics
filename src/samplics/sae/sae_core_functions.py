@@ -370,7 +370,6 @@ def iterative_fisher_scoring(
         # print(np.matmul(np.linalg.inv(info_matrix), derivatives))
         sigma2 = sigma2 + derivatives @ np.linalg.inv(info_matrix)
         sigma2e, sigma2u = sigma2[0], sigma2[1]
-        print(tolerance)
         tolerance = min(abs(sigma2 - sigma2_previous))
         tol = max(abstol, reltol * min(abs(sigma2)))
         convergence = tolerance <= tol

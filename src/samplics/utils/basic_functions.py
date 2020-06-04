@@ -89,7 +89,7 @@ def transform(
             z = np.exp(y) - constant
         else:
             z = np.log(y + constant)
-    elif boxcox["lambda"] != 0.0:
+    elif llambda != 0.0:
         if inverse:
             z = np.exp(np.log(1 + y * llambda) / llambda)
         else:
@@ -97,18 +97,42 @@ def transform(
     return z
 
 
-def skewness(y: Array) -> float:
+def skewness(y: Array, type: int = 1) -> float:
+
+    if type not in (1, 2, 3):
+        raise AssertionError("Parameter type must be 1, 2 or 3.")
 
     y = formats.numpy_array(y)
     skewness = float(np.mean((y - np.mean(y)) ** 3) / np.std(y) ** 3)
+    if type == 2:
+        n = y.shape[0]
+        if n <= 3:
+            raise ValueError("For type 2, y must be of size 3 or more.")
+        skewness = skewness * np.sqrt(n * (n - 1)) / (n - 2)
+    elif type == 3:
+        n = y.shape[0]
+        skewness = skewness * np.power(1 - 1 / n, 3 / 2)
 
     return skewness
 
 
-def kurtosis(y: Array) -> float:
+def kurtosis(y: Array, type: int = 1) -> float:
+
+    if type not in (1, 2, 3):
+        raise AssertionError("Parameter type must be 1, 2 or 3.")
 
     y = formats.numpy_array(y)
-    kurtosis = float(np.mean((y - np.mean(y)) ** 4) / np.std(y) ** 4 - 3)
+    kurtosis = float(np.mean((y - np.mean(y)) ** 4) / np.std(y) ** 4)
+    if type == 1:
+        kurtosis = kurtosis - 3
+    elif type == 2:
+        n = y.shape[0]
+        if n <= 4:
+            raise ValueError("For type 2, y must be of size 4 or more.")
+        kurtosis = ((n + 1) * (kurtosis - 3) + 6) * (n - 1) / ((n - 2) * (n - 3))
+    elif type == 3:
+        n = y.shape[0]
+        kurtosis = kurtosis * np.power(1 - 1 / n, 2) - 3
 
     return kurtosis
 
@@ -119,6 +143,7 @@ def _plot_measure(
     coef_max: Number = 5,
     nb_points: int = 100,
     measure: str = "skewness",
+    block=True,
 ) -> None:
     y = formats.numpy_array(y)
     lambda_range = np.linspace(coef_min, coef_max, num=nb_points)
@@ -145,11 +170,11 @@ def _plot_measure(
     plt.ylabel(f"{measure.title()}")
     plt.xlabel("Lambda (coefs)")
     legent = plt.legend((p1, p2), ("Normality zone", "Non-normality zone"), loc=measure_loc,)
-    plt.show()
+    plt.show(block=block)
 
 
 def plot_skewness(
-    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100,
+    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100, block=True
 ) -> None:
     """Plots a scatter plot of skewness coefficients and the lambda coefficients of the Boxcox
     transformation. The plot helps identify the range of lambda values to minimize the 
@@ -162,12 +187,17 @@ def plot_skewness(
         nb_points (int, optional): number of points in the plot. Defaults to 100.
     """
     _plot_measure(
-        y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="skewness",
+        y=y,
+        coef_min=coef_min,
+        coef_max=coef_max,
+        nb_points=nb_points,
+        measure="skewness",
+        block=block,
     )
 
 
 def plot_kurtosis(
-    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100,
+    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100, block=True
 ) -> None:
     """Plots a scatter plot of skewness coefficients and the lambda coefficients of the Boxcox
     transformation. The plot helps identify the range of lambda values to minimize the 
@@ -180,5 +210,10 @@ def plot_kurtosis(
         nb_points (int, optional): number of points in the plot. Defaults to 100.
     """
     _plot_measure(
-        y=y, coef_min=coef_min, coef_max=coef_max, nb_points=nb_points, measure="kurtosis",
+        y=y,
+        coef_min=coef_min,
+        coef_max=coef_max,
+        nb_points=nb_points,
+        measure="kurtosis",
+        block=block,
     )
