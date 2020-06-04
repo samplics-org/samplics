@@ -217,12 +217,10 @@ class SampleSize:
                 target=self.target, precision=self.precision, stratum=stratum
             )
 
-        if (1 < resp_rate.values() < 100).all():
+        resp_rate_values = np.array(list(self.resp_rate.values()))
+        if (0 < resp_rate_values).all() and (resp_rate_values <= 1).all():
             for s in samp_size:
-                samp_size[s] = samp_size[s] / (resp_rate[s] / 100)
-        elif (0 < resp_rate.values() < 1).all():
-            for s in samp_size:
-                samp_size[s] = samp_size[s] / resp_rate[s]
+                samp_size[s] = samp_size[s] / self.resp_rate[s]
         else:
             raise ValueError(
                 "Response rates must be between 1 and 100 (percentage) or between 0 and  (proportion)."
