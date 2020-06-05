@@ -46,8 +46,6 @@ est_beta = fixed_coefficients(y, X, area, 1, 0.25, scale)
 est_covariance = covariance(area, 1, 0.25, scale)
 est_inv_covariance = inverse_covariance(area, 1, 0.25, scale)
 est_log_det_covariance = log_det_covariance(area, 1, 0.25, scale)
-est_log_likelihod = log_likelihood("REML", y, X, beta, est_inv_covariance, est_log_det_covariance)
-est_partial_deriv, est_info_matrix = partial_derivatives("REML", area, y, X, 1, 0.25, scale)
 
 
 def test_fixed_coefficients():
@@ -74,6 +72,11 @@ def test_log_det_covariance():
     assert np.isclose(est_log_det_covariance, 19.76636, atol=1e-3)
 
 
+## REML method
+est_log_likelihod = log_likelihood("REML", y, X, beta, est_inv_covariance, est_log_det_covariance)
+est_partial_deriv, est_info_matrix = partial_derivatives("REML", area, y, X, 1, 0.25, scale)
+
+
 def test_log_likehood():
     assert np.isclose(est_log_likelihod, -1450.84762, atol=1e-3)
 
@@ -92,5 +95,32 @@ def test_info_matrix():
 
 def test_iterative_fisher():
     sigma2, inv_info_mat, iterations, tolerance, convergence = iterative_fisher_scoring(
-        "REML", area, y, X, 1, 0.25, scale, 0.1, 0.1, 2
+        "REML", area, y, X, 1, 0.25, scale, 0.01, 0.01, 5
+    )
+
+
+## REML method
+est_log_likelihod_ml = log_likelihood("ML", y, X, beta, est_inv_covariance, est_log_det_covariance)
+est_partial_deriv_ml, est_info_matrix_ml = partial_derivatives("ML", area, y, X, 1, 0.25, scale)
+
+
+def test_log_likehood():
+    assert np.isclose(est_log_likelihod_ml, -1410.6938996, atol=1e-3)
+
+
+def test_partial_derivatives():
+    assert np.isclose(est_partial_deriv_ml[0], -17.8333010, atol=1e-3)
+    assert np.isclose(est_partial_deriv_ml[1], -9.58866729, atol=1e-3)
+
+
+def test_info_matrix():
+    assert np.isclose(est_info_matrix_ml[0, 0], 495.09776441, atol=1e-3)
+    assert np.isclose(est_info_matrix_ml[1, 1], 948.759416, atol=1e-3)
+    assert np.isclose(est_info_matrix_ml[1, 0], 9.5691529, atol=1e-3)
+    assert np.isclose(est_info_matrix_ml[0, 1], 9.56915294, atol=1e-3)
+
+
+def test_iterative_fisher():
+    sigma2, inv_info_mat, iterations, tolerance, convergence = iterative_fisher_scoring(
+        "ML", area, y, X, 1, 0.25, scale, 0.01, 0.01, 5
     )

@@ -1,0 +1,8 @@
+[run]
+source = ./src/samplics
+omit = 
+    */__pycache__/*
+    *__init__*
+
+[report]
+show_missing = True

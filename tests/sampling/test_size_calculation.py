@@ -7,6 +7,27 @@ from samplics.utils import checks, formats
 
 from samplics.sampling import SampleSize
 
+## Design effects
+
+
+deff_calculation = SampleSize()
+
+
+def test_deff_int():
+    assert deff_calculation.deff(30, 0.01) == 1.29
+
+
+def test_deff_float():
+    assert deff_calculation.deff(15.5, 0.03) == 1.435
+
+
+def test_deff_dict():
+    m = {"stratum1": 30, "stratum2": 15.5, "stratum3": 50}
+    icc = {"stratum1": 0.01, "stratum2": 0.03, "stratum3": 0.10}
+    deff = deff_calculation.deff(m, icc)
+    assert deff == {"stratum1": 1.29, "stratum2": 1.435, "stratum3": 5.9}
+
+
 ## Wald's method
 
 size_nat_wald = SampleSize()
