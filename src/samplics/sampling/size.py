@@ -230,7 +230,7 @@ class SampleSize:
         resp_rate_values = np.array(list(self.resp_rate.values()))
         if (0 < resp_rate_values).all() and (resp_rate_values <= 1).all():
             for s in samp_size:
-                samp_size[s] = samp_size[s] / self.resp_rate[s]
+                samp_size[s] = math.ceil(samp_size[s] / self.resp_rate[s])
         else:
             raise ValueError("Response rates must be between 0 and 1 (proportion).")
 
