@@ -55,29 +55,29 @@ def test_kurtosis2():
 
 @pytest.mark.parametrize("y", [y1, y2])
 def test_transform_log(y):
-    constant = -(min(y) - 1)
+    constant = -(min(y) - 10)
     y_transformed = transform(y, 0, constant, inverse=False)
     assert np.isclose(y_transformed, np.log(y + constant)).all()
 
 
 @pytest.mark.parametrize("y", [y1, y2])
 def test_transform_log_inverse(y):
-    constant = -(min(y) - 1)
+    constant = -(min(y) - 10)
     y_transformed = transform(y, 0, constant, inverse=True)
     assert np.isclose(y_transformed, np.exp(y) - constant).all()
 
 
 @pytest.mark.parametrize("y", [y1, y2])
 def test_transform_exp(y):
-    constant = -(min(y) - 1)
+    constant = -min(y) + 10
     llambda = 2
-    y_transformed = transform(y, llambda, constant, inverse=False)
-    assert np.isclose(y_transformed, np.power(y, llambda) / llambda).all()
+    y_transformed = transform(y + constant, llambda, constant, inverse=False)
+    assert np.isclose(y_transformed, np.power(y + constant, llambda) / llambda).all()
 
 
 @pytest.mark.parametrize("y", [y1, y2])
 def test_transform_exp_inverse(y):
-    constant = -(min(y) - 1)
+    constant = -min(y) + 10
     llambda = 2
     y_transformed = transform(y + constant, llambda, constant, inverse=True)
     assert np.isclose(y_transformed, np.exp(np.log(1 + (y + constant) * llambda) / llambda)).all()

@@ -615,7 +615,8 @@ class SampleSelection:
             samp_rate = self._convert_to_dict(samp_rate, float)
 
         if shuffle and self.method in ("sys", "pps-sys"):
-            suffled_order = np.random.shuffle(range(samp_unit.size))
+            suffled_order = np.linspace(0, samp_unit.size - 1, samp_unit.size).astype(int)
+            np.random.shuffle(suffled_order)
             samp_unit = samp_unit[suffled_order]
             if stratum is not None:
                 stratum = stratum[suffled_order]

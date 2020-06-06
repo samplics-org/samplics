@@ -13,6 +13,8 @@ population_size = countries_population["population_2019"]
 
 sample_size = int(np.rint(countries.size / 40))
 
+np.random.seed(12345)
+
 
 """Simple random sampling"""
 grs_design = SampleSelection(method="grs")
@@ -130,6 +132,15 @@ def test_ppswr_sys_select():
     assert np.sum(pps_sample) <= sample_size
     assert np.sum(pps_number_hits) == sample_size
     assert np.isclose(pps_probs, sample_size * mos / np.sum(mos)).all()
+
+
+def test_ppswr_sys_select_shuffle():
+    pps_sample_shuffled, pps_number_hits_shuffled, pps_probs_shuffled = pps_sys_design_wr.select(
+        countries, sample_size, mos=mos, shuffle=True
+    )
+    assert np.sum(pps_sample_shuffled) <= sample_size
+    assert np.sum(pps_number_hits_shuffled) == sample_size
+    # assert np.isclose(pps_probs_shuffled, sample_size * mos / np.sum(mos)).all()
 
 
 pps_hv_design_wor = SampleSelection(method="pps-hv", with_replacement=False)
