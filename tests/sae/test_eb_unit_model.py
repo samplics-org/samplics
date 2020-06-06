@@ -182,3 +182,6 @@ def test_re_std_eb_bhf_ml():
 
 def test_error_var_eb_bhf_ml():
     assert np.isclose(eb_bhf_reml.error_std, 0.957584, atol=1e-4)
+
+
+
