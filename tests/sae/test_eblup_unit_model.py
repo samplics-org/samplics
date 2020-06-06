@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from samplics.sae.eb_unit_model import EblupUnitModel
+from samplics.sae.eblup_unit_model import EblupUnitModel
 
 
 cornsoybean = pd.read_csv("./tests/sae/cornsoybean.csv")
