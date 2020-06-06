@@ -206,6 +206,16 @@ class SampleSize:
             elif isinstance(resp_rate, dict):
                 self.resp_rate = resp_rate
 
+        target_values = np.array(list(self.target.values()))
+        precision_values = np.array(list(self.precision.values()))
+        if self.parameter == "proportion" and (
+            (0 > target_values).any()
+            or (target_values > 1).any()
+            or (0 > precision_values).any()
+            or (precision_values > 1).all()
+        ):
+            raise ValueError("Proportion values must be between 0 and 1.")
+
         self.alpha = alpha
 
         if self.method == "wald":
@@ -222,9 +232,7 @@ class SampleSize:
             for s in samp_size:
                 samp_size[s] = samp_size[s] / self.resp_rate[s]
         else:
-            raise ValueError(
-                "Response rates must be between 1 and 100 (percentage) or between 0 and  (proportion)."
-            )
+            raise ValueError("Response rates must be between 0 and 1 (proportion).")
 
         self.samp_size = samp_size
 
