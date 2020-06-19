@@ -29,7 +29,7 @@ packages = [
 #exclude = ["tests", "docs", "datasets"] - exclude by default since not inside src
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.1"
 numpy = "^1.15"
 pandas = "^1.0"
 scipy = "^1.4"
