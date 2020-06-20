@@ -86,17 +86,14 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
     else:
         raise AssertionError("The input data is not a pandas dataframe")
 
-    x_array.rename(columns="_array", inplace=True)
-
-    return x_array
+    return x_array.to_numpy()
 
 
 def sample_size_dict(
     sample_size: Union[Dict[Any, int], int], stratification: bool, stratum: Array,
 ) -> Dict[Any, int]:
     if not isinstance(sample_size, Dict) and stratification:
-        strata = np.unique(stratum)
-        samp_dict = dict(zip(strata, np.repeat(sample_size, strata.size)))
+        samp_dict = dict(zip(stratum, np.repeat(sample_size, len(stratum))))
     if not isinstance(sample_size, Dict) and not stratification:
         samp_dict = {"__none__": sample_size}
     elif isinstance(sample_size, Dict):

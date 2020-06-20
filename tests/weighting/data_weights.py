@@ -31,12 +31,12 @@ sample = pd.merge(sample, area_type, on="cluster_id")
 sample["response_status"] = np.random.choice(
     ("IN", "RR", "NR", "UK"), number_units, p=(0.01, 0.81, 0.15, 0.03)
 )
-print(pd.crosstab(sample["region_id"], sample["response_status"]))
+# print(pd.crosstab(sample["region_id"], sample["response_status"]))
 
 sample["educ_level"] = np.random.choice(
     ("0. Primary", "1. High-School", "2. University"), number_units, p=(0.10, 0.60, 0.30),
 )
-print(pd.crosstab(sample["region_id"], sample["educ_level"]))
+# print(pd.crosstab(sample["region_id"], sample["educ_level"]))
 
 sample["income"] = 0
 low_income = 30000
@@ -78,19 +78,19 @@ sample["design_wgt"] = np.round(sample["cluster_id"].astype("int") / 10, 0)
 
 # print(sum(sample["design_wgt"]))
 # print(sample.sample(25))
-print(
-    sample[
-        [
-            "region_id",
-            "cluster_id",
-            "area_type",
-            "response_status",
-            "educ_level",
-            "income",
-            "design_wgt",
-        ]
-    ].sample(50)
-)
+# print(
+#     sample[
+#         [
+#             "region_id",
+#             "cluster_id",
+#             "area_type",
+#             "response_status",
+#             "educ_level",
+#             "income",
+#             "design_wgt",
+#         ]
+#     ].sample(50)
+# )
 
 
 sample.to_csv("./tests/weighting/synthetic_income_data.csv")
