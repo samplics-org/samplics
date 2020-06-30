@@ -493,13 +493,22 @@ class TaylorEstimator(_SurveyEstimator):
                 for level in self.variance[key]:
                     point_est = self.point_est[key][level]
                     stderror[level] = pow(self.variance[key][level], 0.5)
-                    location_ci = math.log(point_est / (1 - point_est))
-                    scale_ci = stderror[level] / (point_est * (1 - point_est))
-                    ll = location_ci - t_quantile * scale_ci
-                    lower_ci[level] = math.exp(ll) / (1 + math.exp(ll))
-                    uu = location_ci + t_quantile * scale_ci
-                    upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
-                    coef_var[level] = stderror[level] / point_est
+                    if point_est == 0:
+                        lower_ci[level] = 0
+                        upper_ci[level] = 0
+                        coef_var[level] = 0
+                    elif point_est == 1:
+                        lower_ci[level] = 1
+                        upper_ci[level] = 1
+                        coef_var[level] = 0
+                    else:
+                        location_ci = math.log(point_est / (1 - point_est))
+                        scale_ci = stderror[level] / (point_est * (1 - point_est))
+                        ll = location_ci - t_quantile * scale_ci
+                        uu = location_ci + t_quantile * scale_ci
+                        lower_ci[level] = math.exp(ll) / (1 + math.exp(ll))
+                        upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
+                        coef_var[level] = stderror[level] / point_est
 
                 self.stderror[key] = stderror
                 self.coef_var[key] = coef_var
