@@ -1,9 +1,5 @@
-import pytest
-
 import numpy as np
 import pandas as pd
-
-import math
 
 from samplics.estimation import TaylorEstimator
 

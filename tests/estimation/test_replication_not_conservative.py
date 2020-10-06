@@ -1,12 +1,7 @@
-import pytest
-
 import numpy as np
 import pandas as pd
 
-import math
-
 from samplics.estimation import ReplicateEstimator
-from samplics.weighting import ReplicateWeight
 
 """Jackknife estimates"""
 nhanes2jkn = pd.read_csv("./tests/estimation/nhanes2jknife.csv")

@@ -1,10 +1,3 @@
-import pytest
-
-import numpy as np
-import pandas as pd
-
-from samplics.utils import checks, formats
-
 from samplics.sampling import SampleSize
 
 ## Design effects
