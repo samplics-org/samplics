@@ -1,18 +1,12 @@
-from typing import TypeVar, Type, Any, Dict, Optional, Tuple, Union
+import math
+from typing import TypeVar, Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
-import math
-
-from scipy.stats import norm as normal
-from scipy.stats import t as student
-
 from samplics.estimation.expansion import _SurveyEstimator
-
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
-
+from samplics.utils import formats
+from samplics.utils.types import Array, Number, StringNumber
+from scipy.stats import t as student
 
 TypeRepEst = TypeVar("TypeRepEst", bound="ReplicateEstimator")
 

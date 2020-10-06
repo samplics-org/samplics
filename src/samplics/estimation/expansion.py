@@ -12,19 +12,14 @@ and Wolter, K.M. (2007) [#w2007]_.
    Springer-Verlag New York, Inc
 """
 
-from typing import TypeVar, Type, Any, Dict, List, Optional, Tuple, Union
+import math
+from typing import TypeVar, Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
-
-import math
-
-from scipy.stats import norm as normal
+from samplics.utils import formats
+from samplics.utils.types import Array, StringNumber
 from scipy.stats import t as student
-
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
-
 
 TypeTaylorEst = TypeVar("TypeTaylorEst", bound="TaylorEstimator")
 
