@@ -14,19 +14,13 @@ level.
    Association*, **74**, 269-277.
 """
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+import math
+from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
-import math
-
-import statsmodels.api as sm
-
-from scipy.stats import norm as normal
-
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.utils import formats
+from samplics.utils.types import Array, Number
 
 
 class EblupAreaModel:

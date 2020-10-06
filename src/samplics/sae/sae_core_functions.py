@@ -97,8 +97,9 @@ def fixed_coefficients(
     """
 
     V_inv = inverse_covariance(area, error_std, re_std, scale)
-    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
-    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
+    X_T = np.transpose(X)
+    x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(X_T, V_inv), X))
+    x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, X_T), V_inv)
     beta_hat = np.matmul(x_v_x_inv_x, y)
 
     # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)

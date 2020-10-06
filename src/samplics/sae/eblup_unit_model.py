@@ -25,22 +25,15 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
-from typing import Any, Dict, List, Optional, Tuple, Union, Callable
-
 import warnings
-import math
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
-
 import statsmodels.api as sm
-
-from scipy.stats import norm as normal
-
-from samplics.utils import checks, formats, basic_functions
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
-
 from samplics.sae.sae_core_functions import area_stats
+from samplics.utils import formats, basic_functions
+from samplics.utils.types import Array, Number
 
 
 class EblupUnitModel:
