@@ -1,10 +1,7 @@
-import pytest
-
 import numpy as np
 import pandas as pd
 
 from samplics.sampling import SampleSelection
-from samplics.utils import checks, formats
 
 countries_population = pd.read_csv("./tests/sampling/countries_population_2019.csv")
 

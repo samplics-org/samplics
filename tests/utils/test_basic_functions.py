@@ -1,9 +1,5 @@
 import pytest
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
 from samplics.utils.basic_functions import *
 
 group1 = np.array([1, 2, 1, 3, 2, 1, 2, 2, 1, 3, 2])
