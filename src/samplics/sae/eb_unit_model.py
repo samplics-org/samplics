@@ -1,10 +1,8 @@
 """EB  for the unit level model.
 
-This module implements the basic EB unit level model. The functionalities are organized in 
-classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*. Linear 
-Mixed Models (LMM) are the core underlying statistical framework used to model the hierarchical 
-nature of the small area estimation (SAE) techniques implemented in this module, 
-see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more details on LMM.
+This module implements the basic EB unit level model. The functionalities are organized in
+classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*. 
+Linear Mixed Models (LMM) are the core underlying statistical framework used to model the hierarchical nature of the small area estimation (SAE) techniques implemented in this module, see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more details on LMM.
 
 The *EbUnitModel* class implements the model developed by Molina, I. and Rao, J.N.K. (2010)
 [#mr2010]_. So far, only the basic approach requiring the normal distribution of the errors is 
@@ -349,7 +347,7 @@ class EbUnitModel:
         if isinstance(scaler, (float, int)):
             scaler = np.ones(Xr.shape[0]) * scaler
         else:
-            scale = formats.numpy_array(scaler)
+            scaler = formats.numpy_array(scaler)
         area = formats.numpy_array(arear)
         self.arear_list = np.unique(arear)
         Xr = formats.numpy_array(Xr)
