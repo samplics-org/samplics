@@ -57,6 +57,17 @@ def test_total_estimator_with_str():
     assert np.isclose(total_estimator.coef_var["__none__"], 555.5157 / 7938.333)
 
 
+def test_total_estimator_with_str_without_psu():
+    total_estimator = svy_total_with_str.estimate(y, weight, stratum=stratum, remove_nan=True)
+
+    assert np.isclose(total_estimator.point_est["__none__"], 7938.333)
+    assert np.isclose(total_estimator.variance["__none__"], 97.75523 ** 2)
+    assert np.isclose(total_estimator.stderror["__none__"], 97.75523)
+    assert np.isclose(total_estimator.lower_ci["__none__"], 7746.71)
+    assert np.isclose(total_estimator.upper_ci["__none__"], 8129.957)
+    assert np.isclose(total_estimator.coef_var["__none__"], 97.75523 / 7938.333)
+
+
 """Taylor Approximation WITHOUT Stratification for MEAN"""
 svy_mean_without_str = TaylorEstimator("mean")
 
