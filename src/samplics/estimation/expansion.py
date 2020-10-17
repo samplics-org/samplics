@@ -192,6 +192,10 @@ class _SurveyEstimator:
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
             y_dummies = y_dummies.values
+        else:
+            y_dummies = None
+            categories = None
+            y_dummies = None
 
         estimate: Dict[StringNumber, Any] = {}
         if domain is None:
@@ -304,7 +308,7 @@ class TaylorEstimator(_SurveyEstimator):
 
         variance = 0.0
 
-        if ssu_s != None:
+        if ssu_s is not None:
             psus = np.unique(psu_s)
             for psu in np.unique(psus):
                 scores_psu_mean = y_score_s[psus == psu].mean()
@@ -381,6 +385,10 @@ class TaylorEstimator(_SurveyEstimator):
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
             y_dummies = y_dummies.values
+        else:
+            y_dummies = None
+            categories = None
+            y_dummies = None
 
         variance: Dict[StringNumber, Any] = {}
         if domain is None:
