@@ -7,14 +7,14 @@ Functions:
     | *dataframe_to_array()* returns a pandas dataframe from an np.ndarray.
 """
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Union
 
 import numpy as np
 import pandas as pd
 
 from samplics.utils import checks
 
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.utils.types import Array, Number, StringNumber
 
 
 def numpy_array(arr: Any) -> np.ndarray:
@@ -93,13 +93,11 @@ def sample_size_dict(
     sample_size: Union[Dict[Any, int], int], stratification: bool, stratum: Array,
 ) -> Dict[Any, int]:
     if not isinstance(sample_size, Dict) and stratification:
-        samp_dict = dict(zip(stratum, np.repeat(sample_size, len(stratum))))
+        return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
     if not isinstance(sample_size, Dict) and not stratification:
-        samp_dict = {"__none__": sample_size}
+        return {"__none__": sample_size}
     elif isinstance(sample_size, Dict):
-        samp_dict = sample_size
-
-    return samp_dict
+        return sample_size
 
 
 def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
