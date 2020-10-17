@@ -131,14 +131,15 @@ class _SurveyEstimator:
         psu = formats.numpy_array(psu)
 
         if stratum.size <= 1:
-            self.number_psus = np.unique(psu).size
+            self.number_psus = np.unique(psu).size if psu.size > 1 else samp_weight.size
             self.number_strata = 1
         elif psu.size > 1:
             self.number_psus = np.unique([stratum, psu], axis=1).shape[1]
             self.number_strata = np.unique(stratum).size
         else:
             samp_weight = formats.numpy_array(samp_weight)
-            self.degree_of_freedom = samp_weight.size
+            self.number_psus = samp_weight.size
+            self.number_strata = np.unique(stratum).size
 
         self.degree_of_freedom = self.number_psus - self.number_strata
 
@@ -284,20 +285,25 @@ class TaylorEstimator(_SurveyEstimator):
 
     @staticmethod
     def _variance_stratum_between(
-        y_score_s: np.ndarray, number_psus_in_s: int, psu_s: np.ndarray
+        y_score_s: np.ndarray, samp_weight_s: np.ndarray, number_psus_in_s: int, psu_s: np.ndarray
     ) -> np.float64:
         """Computes the variance for one stratum """
 
-        scores_s_mean = y_score_s.sum() / number_psus_in_s
         variance = 0.0
         if number_psus_in_s > 1:
+            scores_s_mean = y_score_s.sum() / number_psus_in_s
             psus = np.unique(psu_s)
             scores_psus_sums = np.zeros(number_psus_in_s)
             for k, psu in enumerate(np.unique(psus)):
                 scores_psus_sums[k] = y_score_s[psu_s == psu].sum()
-
-                variance = ((scores_psus_sums - scores_s_mean) ** 2).sum()
-                variance = (number_psus_in_s / (number_psus_in_s - 1)) * variance
+            variance = ((scores_psus_sums - scores_s_mean) ** 2).sum()
+            variance = (number_psus_in_s / (number_psus_in_s - 1)) * variance
+        elif number_psus_in_s in (0, 1):
+            number_obs = y_score_s.size
+            y_score_s_mean = y_score_s.sum() / number_obs
+            variance = (number_obs / (number_obs - 1)) * ((y_score_s - y_score_s_mean) ** 2).sum()
+        else:
+            raise ValueError("Number of psus cannot be negative.")
 
         return variance
 
@@ -327,6 +333,7 @@ class TaylorEstimator(_SurveyEstimator):
     def _taylor_variance(
         self,
         y_score: np.ndarray,
+        samp_weight: np.ndarray,
         stratum: np.ndarray,
         psu: np.ndarray,
         ssu: Optional[np.ndarray] = None,
@@ -336,23 +343,19 @@ class TaylorEstimator(_SurveyEstimator):
         if stratum is None:
             number_psus = np.unique(psu).size
             var_est = self._variance_stratum_between(
-                y_score, number_psus, psu
+                y_score, samp_weight, number_psus, psu
             ) + self._variance_stratum_within(y_score, number_psus, psu, ssu)
 
         else:
             var_est = 0.0
             for s in np.unique(stratum):
                 y_score_s = y_score[stratum == s]
-                psu_s = psu[stratum == s]
+                samp_weight_s = samp_weight[stratum == s]
+                psu_s = psu[stratum == s] if psu is not None else np.array([])
                 number_psus_in_s = np.size(np.unique(psu_s))
-
-                if ssu is not None:
-                    ssu_s = ssu[stratum == s]
-                else:
-                    ssu_s = None
-
+                ssu_s = ssu[stratum == s] if ssu is not None else None
                 var_est += self._variance_stratum_between(
-                    y_score_s, number_psus_in_s, psu_s
+                    y_score_s, samp_weight_s, number_psus_in_s, psu_s
                 ) + self._variance_stratum_within(y_score_s, number_psus_in_s, psu_s, ssu_s)
 
         return var_est
@@ -397,13 +400,19 @@ class TaylorEstimator(_SurveyEstimator):
                 for k in range(categories.size):
                     y_score_k = self._score_variable(y_dummies[:, k], samp_weight)
                     cat_dict_k = dict(
-                        {categories[k]: self._taylor_variance(y_score_k, stratum, psu, ssu)}
+                        {
+                            categories[k]: self._taylor_variance(
+                                y_score_k, samp_weight, stratum, psu, ssu
+                            )
+                        }
                     )
                     cat_dict.update(cat_dict_k)
                 variance["__none__"] = cat_dict
             else:
                 y_score = self._score_variable(y, samp_weight, x)
-                variance[self.domains[0]] = self._taylor_variance(y_score, stratum, psu, ssu)
+                variance[self.domains[0]] = self._taylor_variance(
+                    y_score, samp_weight, stratum, psu, ssu
+                )
 
         else:
             for d in np.unique(domain):
@@ -418,14 +427,18 @@ class TaylorEstimator(_SurveyEstimator):
                     for k in range(categories.size):
                         y_score_d_k = self._score_variable(y_dummies_d[:, k], weight_d)
                         cat_dict_d_k = dict(
-                            {categories[k]: self._taylor_variance(y_score_d_k, stratum, psu, ssu)}
+                            {
+                                categories[k]: self._taylor_variance(
+                                    y_score_d_k, weight_d, stratum, psu, ssu
+                                )
+                            }
                         )
                         cat_dict.update(cat_dict_d_k)
                     variance[d] = cat_dict
                 else:
                     y_d = y * (domain == d)
                     y_score_d = self._score_variable(y_d, weight_d, x_d)
-                    variance[d] = self._taylor_variance(y_score_d, stratum, psu, ssu)
+                    variance[d] = self._taylor_variance(y_score_d, weight_d, stratum, psu, ssu)
 
         return variance
 
