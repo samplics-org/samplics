@@ -83,6 +83,17 @@ def test_mean_estimator_without_str():
     assert np.isclose(mean_estimator.coef_var["__none__"], 0.020_285_6 / 0.813_622_5)
 
 
+def test_mean_estimator_without_str_nor_psu():
+    mean_estimator = svy_mean_without_str.estimate(y, weight, remove_nan=True)
+
+    assert np.isclose(mean_estimator.point_est["__none__"], 0.8136225)
+    assert np.isclose(mean_estimator.variance["__none__"], 0.0066567 ** 2)
+    assert np.isclose(mean_estimator.stderror["__none__"], 0.0066567)
+    assert np.isclose(mean_estimator.lower_ci["__none__"], 0.8005738)
+    assert np.isclose(mean_estimator.upper_ci["__none__"], 0.8266712)
+    assert np.isclose(mean_estimator.coef_var["__none__"], 0.0066567 / 0.8136225)
+
+
 """Taylor Approximation WITH Stratification for MEAN"""
 svy_mean_with_str = TaylorEstimator("mean")
 
@@ -100,6 +111,17 @@ def test_mean_estimator_with_str():
     assert np.isclose(mean_estimator.coef_var["__none__"], 0.019_862_1 / 0.813_622_5)
 
 
+def test_mean_estimator_with_str_without_psu():
+    mean_estimator = svy_mean_with_str.estimate(y, weight, stratum=stratum, remove_nan=True)
+
+    assert np.isclose(mean_estimator.point_est["__none__"], 0.8136225)
+    assert np.isclose(mean_estimator.variance["__none__"], 0.0066091 ** 2)
+    assert np.isclose(mean_estimator.stderror["__none__"], 0.0066091)
+    assert np.isclose(mean_estimator.lower_ci["__none__"], 0.8006671)
+    assert np.isclose(mean_estimator.upper_ci["__none__"], 0.8265779)
+    assert np.isclose(mean_estimator.coef_var["__none__"], 0.0066091 / 0.8136225)
+
+
 """Taylor Approximation WITHOUT Stratification for RATIO"""
 svy_ratio_without_str = TaylorEstimator("ratio")
 
@@ -113,6 +135,17 @@ def test_ratio_estimator_without_str():
     assert np.isclose(ratio_estimator.lower_ci["__none__"], 0.691_572_8)
     assert np.isclose(ratio_estimator.upper_ci["__none__"], 0.722_318_8)
     assert np.isclose(ratio_estimator.coef_var["__none__"], 0.007_657_5 / 0.706_945_8)
+
+
+def test_ratio_estimator_without_str_nor_psu():
+    ratio_estimator = svy_ratio_without_str.estimate(y, weight, x, remove_nan=True)
+
+    assert np.isclose(ratio_estimator.point_est["__none__"], 0.7069458)
+    assert np.isclose(ratio_estimator.variance["__none__"], 0.0025128 ** 2)
+    assert np.isclose(ratio_estimator.stderror["__none__"], 0.0025128)
+    assert np.isclose(ratio_estimator.lower_ci["__none__"], 0.7020202)
+    assert np.isclose(ratio_estimator.upper_ci["__none__"], 0.7118715)
+    assert np.isclose(ratio_estimator.coef_var["__none__"], 0.0025128 / 0.7069458)
 
 
 """Taylor Approximation WITH Stratification for RATIO"""
@@ -130,6 +163,17 @@ def test_ratio_estimator_with_str():
     assert np.isclose(ratio_estimator.lower_ci["__none__"], 0.691_780_5)
     assert np.isclose(ratio_estimator.upper_ci["__none__"], 0.722_111_1)
     assert np.isclose(ratio_estimator.coef_var["__none__"], 0.007_497_6 / 0.706_945_8)
+
+
+def test_ratio_estimator_with_str_without_psu():
+    ratio_estimator = svy_ratio_with_str.estimate(y, weight, x, stratum=stratum, remove_nan=True)
+
+    assert np.isclose(ratio_estimator.point_est["__none__"], 0.7069458)
+    assert np.isclose(ratio_estimator.variance["__none__"], 0.0024948 ** 2)
+    assert np.isclose(ratio_estimator.stderror["__none__"], 0.0024948)
+    assert np.isclose(ratio_estimator.lower_ci["__none__"], 0.7020554)
+    assert np.isclose(ratio_estimator.upper_ci["__none__"], 0.7118362)
+    assert np.isclose(ratio_estimator.coef_var["__none__"], 0.0024948 / 0.7069458)
 
 
 """Taylor Approximation WITHOUT Stratification for PROPORTION"""
@@ -153,6 +197,23 @@ def test_prop_estimator_without_str():
     assert np.isclose(prop_estimator.coef_var["__none__"][1.0], 0.020_285_6 / 0.813_622_5)
 
 
+def test_prop_estimator_without_str_nor_psu():
+    prop_estimator = svy_prop_without_str.estimate(y, weight, remove_nan=True)
+
+    assert np.isclose(prop_estimator.point_est["__none__"][0.0], 0.1863775)
+    assert np.isclose(prop_estimator.point_est["__none__"][1.0], 0.8136225)
+    assert np.isclose(prop_estimator.variance["__none__"][0.0], 0.0066567 ** 2)
+    assert np.isclose(prop_estimator.variance["__none__"][1.0], 0.0066567 ** 2)
+    assert np.isclose(prop_estimator.stderror["__none__"][0.0], 0.0066567)
+    assert np.isclose(prop_estimator.stderror["__none__"][1.0], 0.0066567)
+    assert np.isclose(prop_estimator.lower_ci["__none__"][0.0], 0.1736793)
+    assert np.isclose(prop_estimator.lower_ci["__none__"][1.0], 0.8002204)
+    assert np.isclose(prop_estimator.upper_ci["__none__"][0.0], 0.1997796)
+    assert np.isclose(prop_estimator.upper_ci["__none__"][1.0], 0.8263207)
+    assert np.isclose(prop_estimator.coef_var["__none__"][0.0], 0.0066567 / 0.1863775)
+    assert np.isclose(prop_estimator.coef_var["__none__"][1.0], 0.0066567 / 0.8136225)
+
+
 """Taylor Approximation WITH Stratification for PROPORTION"""
 svy_prop_with_str = TaylorEstimator("proportion")
 
@@ -174,3 +235,20 @@ def test_prop_estimator_with_str():
     assert np.isclose(prop_estimator.upper_ci["__none__"][1.0], 0.850_516_3)
     assert np.isclose(prop_estimator.coef_var["__none__"][0.0], 0.019_862_1 / 0.186_377_5)
     assert np.isclose(prop_estimator.coef_var["__none__"][1.0], 0.019_862_1 / 0.813_622_5)
+
+
+def test_prop_estimator_with_str_without_psu():
+    prop_estimator = svy_prop_with_str.estimate(y, weight, stratum=stratum, remove_nan=True)
+
+    assert np.isclose(prop_estimator.point_est["__none__"][0.0], 0.1863775)
+    assert np.isclose(prop_estimator.point_est["__none__"][1.0], 0.8136225)
+    assert np.isclose(prop_estimator.variance["__none__"][0.0], 0.0066091 ** 2)
+    assert np.isclose(prop_estimator.variance["__none__"][1.0], 0.0066091 ** 2)
+    assert np.isclose(prop_estimator.stderror["__none__"][0.0], 0.0066091)
+    assert np.isclose(prop_estimator.stderror["__none__"][1.0], 0.0066091)
+    assert np.isclose(prop_estimator.lower_ci["__none__"][0.0], 0.1737677)
+    assert np.isclose(prop_estimator.lower_ci["__none__"][1.0], 0.8003188)
+    assert np.isclose(prop_estimator.upper_ci["__none__"][0.0], 0.1996812)
+    assert np.isclose(prop_estimator.upper_ci["__none__"][1.0], 0.8262323)
+    assert np.isclose(prop_estimator.coef_var["__none__"][0.0], 0.0066091 / 0.1863775)
+    assert np.isclose(prop_estimator.coef_var["__none__"][1.0], 0.0066091 / 0.8136225)
