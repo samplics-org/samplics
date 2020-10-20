@@ -11,7 +11,7 @@ Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more detail
    Springer-Verlag New York, Inc
 """
 
-from typing import Any, Dict, Optional, Tuple, Union, List
+from typing import Union, List
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,7 @@ import math
 
 from samplics.utils import checks, formats
 from samplics.utils import hadamard as hdd
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.utils.types import Array, Number
 
 
 class ReplicateWeight:
