@@ -58,8 +58,8 @@ class EbUnitModel:
         |   If not specified, "REML" is used as default.  
         | indicator (function): a user defined function to compute the indicator. 
         | boxcox (dict): contains the *lambda* parameter of the Boxcox and a constant for the 
-        | log-transformation of the Boxcox.  
-    
+        | log-transformation of the Boxcox.
+
     Sample related attributes
         | ys (array): the output sample observations. 
         | Xs (ndarray): the auxiliary information. 
@@ -142,18 +142,17 @@ class EbUnitModel:
 
     def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
         if self.boxcox["lambda"] is None:
-            z = y
+            return y
         elif self.boxcox["lambda"] == 0.0:
             if inverse:
-                z = np.exp(y) - self.boxcox["constant"]
+                return np.exp(y) - self.boxcox["constant"]
             else:
-                z = np.log(y + self.boxcox["constant"])
+                return np.log(y + self.boxcox["constant"])
         elif self.boxcox["lambda"] != 0.0:
             if inverse:
-                z = np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
+                return np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
             else:
-                z = np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
-        return z
+                return np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
 
     def fit(
         self,
@@ -240,16 +239,20 @@ class EbUnitModel:
                 Xs_mean = np.insert(self.Xs_mean.reshape(n, 1), 0, 1, axis=1)
             else:
                 Xs_mean = np.insert(self.Xs_mean, 0, 1, axis=1)
+        else:
+            Xs_mean = self.Xs_mean
 
         nb_arear = len(arear_list)
         mu_r = X_r @ fixed_effects
 
+        bar_length = 0
+        steps = 0
         if show_progress:
-            k = 0
             bar_length = min(50, nb_arear)
             steps = np.linspace(1, nb_arear - 1, bar_length).astype(int)
             print(f"Generating the {number_samples} replicates samples")
 
+        k = 0
         eta = np.zeros((number_samples, nb_arear)) * np.nan
         for i, d in enumerate(arear_list):
             # print(d)
@@ -265,6 +268,7 @@ class EbUnitModel:
             number_cycles = int(number_samples // cycle_size)
             last_cycle_size = number_samples % cycle_size
 
+            y_dr = None
             for j in range(number_cycles + 1):
                 if j == number_cycles:
                     cycle_size = last_cycle_size
@@ -348,7 +352,7 @@ class EbUnitModel:
             scaler = np.ones(Xr.shape[0]) * scaler
         else:
             scaler = formats.numpy_array(scaler)
-        area = formats.numpy_array(arear)
+        arear = formats.numpy_array(arear)
         self.arear_list = np.unique(arear)
         Xr = formats.numpy_array(Xr)
         if intercept:
@@ -359,6 +363,8 @@ class EbUnitModel:
             else:
                 Xr = np.insert(Xr, 0, 1, axis=1)
                 Xs = np.insert(self.Xs, 0, 1, axis=1)
+        else:
+            Xs = self.Xs
 
         area_est = self._predict_indicator(
             self.number_samples,
@@ -426,6 +432,8 @@ class EbUnitModel:
             else:
                 X_r = np.insert(X_r, 0, 1, axis=1)
                 Xs = np.insert(self.Xs, 0, 1, axis=1)
+        else:
+            Xs = self.Xs
 
         if isinstance(scaler, (float, int)):
             scale_r = np.ones(X_r.shape[0]) * scaler
@@ -460,9 +468,9 @@ class EbUnitModel:
             scale_dict[d] = scale[indice_dict[d]]
             a_factor_dict[d] = self.afactors[d] if d in self.areas_list else 0
             sample_size_dict[d] = self.samp_size[d] if d in self.areas_list else 0
-            scale_s_dict[d] = scale_s[area_s == d] if d in self.areas_list else 0
+            scale_s_dict[d] = scale_s[area_ds] if d in self.areas_list else 0
             X_dict[d] = X[indice_dict[d]]
-            X_s_dict[d] = X_s[area_s == d]
+            X_s_dict[d] = X_s[area_ds]
 
         cycle_size = max(int(max_array_length // sum(N_d)), 1)
         number_cycles = int(number_reps // cycle_size)
@@ -484,6 +492,7 @@ class EbUnitModel:
                 end = number_reps
                 cycle_size = last_cycle_size
 
+            yboot_s = None
             for i, d in enumerate(areas_ps):
                 aboot_factor[i] = a_factor_dict[d]
 

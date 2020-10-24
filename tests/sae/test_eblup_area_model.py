@@ -11,7 +11,7 @@ X = pd.get_dummies(milk["MajorArea"])
 X.loc[:, 1] = 1
 sigma_e = milk["SD"]
 
-## REML method
+# REML method
 fh_model_reml = EblupAreaModel(method="REML")
 fh_model_reml.fit(
     yhat=yhat, X=X, area=area, intercept=False, error_std=sigma_e, tol=1e-4,
@@ -20,7 +20,7 @@ fh_model_reml.predict(X=X, area=area, intercept=False)
 
 
 def test_fay_herriot_REML_convergence():
-    assert fh_model_reml.convergence["achieved"] == True
+    assert fh_model_reml.convergence["achieved"] is True
     assert fh_model_reml.convergence["iterations"] == 3
     assert fh_model_reml.convergence["precision"] <= 1e-4
 
@@ -154,7 +154,7 @@ def test_fay_herriot_REML_mse():
     ).all()
 
 
-## ML method
+# ML method
 X = pd.get_dummies(milk["MajorArea"], drop_first=False)
 X = np.delete(X.to_numpy(), 0, axis=1)
 fh_model_ml = EblupAreaModel(method="ML")
@@ -167,15 +167,15 @@ fh_model_ml.predict(
 
 
 def test_fay_herriot_ML_convergence():
-    assert fh_model_ml.convergence["achieved"] == True
+    assert fh_model_ml.convergence["achieved"] is True
     assert fh_model_ml.convergence["iterations"] == 3
     assert fh_model_ml.convergence["precision"] <= 1e-4
 
 
 def test_fay_herriot_ML_goodness():
-    assert np.isclose(fh_model_ml.goodness["loglike"], 1.817033876, atol=1e-4)
-    assert np.isclose(fh_model_ml.goodness["AIC"], 8.365932247, atol=1e-4)
-    assert np.isclose(fh_model_ml.goodness["BIC"], 18.9331329415, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["loglike"], 1.8172151644, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["AIC"], 8.3655696710, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["BIC"], 18.9327703651, atol=1e-4)
 
 
 def test_fay_herriot_ML_fixed_effect():
@@ -299,7 +299,7 @@ def test_fay_herriot_ML_mse():
     ).all()
 
 
-## FH method
+# FH method
 X = pd.get_dummies(milk["MajorArea"], drop_first=True)
 # X = np.delete(X.to_numpy(), 0, axis=1)
 fh_model_fh = EblupAreaModel(method="FH")
@@ -310,12 +310,12 @@ fh_model_fh.predict(X=X, area=area, intercept=True)
 
 
 def test_fay_herriot_FH_convergence():
-    assert fh_model_fh.convergence["achieved"] == True
+    assert fh_model_fh.convergence["achieved"] is True
     assert fh_model_fh.convergence["iterations"] == 5
     assert fh_model_fh.convergence["precision"] <= 1e-4
 
 
-def test_fay_herriot_ML_goodness():
+def test_fay_herriot_FH_goodness():
     assert np.isclose(fh_model_fh.goodness["loglike"], 1.76370010, atol=1e-4)
     assert np.isclose(fh_model_fh.goodness["AIC"], 8.472599789, atol=1e-4)
     assert np.isclose(fh_model_fh.goodness["BIC"], 19.039800483, atol=1e-4)  # a
@@ -429,7 +429,3 @@ def test_fay_herriot_FH_mse():
         ),
         atol=1e-4,
     ).all()
-
-
-def test_fay_herriot_FH_goodness():
-    pass  # assert fh_model_ml.goodness[""]

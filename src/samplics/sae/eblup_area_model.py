@@ -36,8 +36,8 @@ class EblupAreaModel:
     Setting attributes
         | method (str): the fitting method of the model parameters which can take the possible 
         |   values restricted maximum likelihood (REML), maximum likelihood (ML), and 
-        |   Fay-Herriot (FH). If not specified, "REML" is used as default.  
-    
+        |   Fay-Herriot (FH). If not specified, "REML" is used as default.
+
     Sample related attributes
         | yhat (array): the survey output area level estimates. This is also referred to as the 
         | direct estimates. 
@@ -166,12 +166,12 @@ class EblupAreaModel:
         b_const: np.ndarray,
     ) -> Tuple[float, float]:
 
+        deriv_sigma = 0.0
+        info_sigma = 0.0
         if self.method == "ML":
             beta, beta_cov = self._fixed_coefficients(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
             )
-            deriv_sigma = 0.0
-            info_sigma = 0.0
             for d in area:
                 b_d = b_const[area == d]
                 phi_d = sigma2_e[area == d]
@@ -202,8 +202,6 @@ class EblupAreaModel:
             beta, beta_cov = self._fixed_coefficients(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
             )
-            deriv_sigma = 0.0
-            info_sigma = 0.0
             for d in area:
                 b_d = b_const[area == d]
                 phi_d = sigma2_e[area == d]
@@ -231,26 +229,23 @@ class EblupAreaModel:
         tol: float,
         maxiter: int,
     ) -> Tuple[float, float, int, float, bool]:  # May not need variance
-        """ Fisher-scroring algorithm for estimation of variance component"""
+        """ Fisher-scroring algorithm for estimation of variance component
+        return (sigma, covariance, number_iterations, tolerance, covergence status)"""
 
         iterations = 0
         tolerance = tol + 1.0
         sigma2_v = sigma2_v_start
+        info_sigma = 0.0
         while iterations < maxiter and tolerance > tol:
             sigma2_v_previous = sigma2_v
             deriv_sigma, info_sigma = self._partial_derivatives(
                 area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
             )
             sigma2_v += deriv_sigma / info_sigma
-            sigma2_v_cov = 1 / info_sigma
-
             tolerance = abs(sigma2_v - sigma2_v_previous)
-            convergence = tolerance <= tol
             iterations += 1
 
-        sigma2_v = float(max(sigma2_v, 0))
-
-        return sigma2_v, sigma2_v_cov, iterations, tolerance, convergence
+        return float(max(sigma2_v, 0)), 1 / info_sigma, iterations, tolerance, tolerance <= tol
 
     def _eb_estimates(
         self,
@@ -274,10 +269,7 @@ class EblupAreaModel:
 
         m = self.yhat.size
         v_i = sigma2_e + sigma2_v * (b_const ** 2)
-        V = np.diag(v_i)
         V_inv = np.diag(1 / v_i)
-        mu = np.dot(X, beta)
-        resid = self.yhat - mu
         G = np.diag(np.ones(m) * sigma2_v)
 
         Z = np.diag(b_const)
@@ -311,6 +303,9 @@ class EblupAreaModel:
             sum_vi = np.sum((1 / v_i))
             b_sigma2_v = 2 * (m * sum_inv_vi2 - sum_vi ** 2) / (sum_vi ** 3)
             g3_scale = 2 * m / sum_vi ** 2
+        else:
+            b_sigma2_v = 0
+            g3_scale = 0
 
         for d in area:
             b_d = b_const[area == d]
@@ -329,6 +324,9 @@ class EblupAreaModel:
             g3_star[area == d] = (g3[area == d] / variance_d) * (resid_d ** 2)
             g1_partial[area == d] = (b_d ** 2) * ((1 - gamma_d) ** 2) * b_sigma2_v
 
+        mse = 0
+        mse1_area_specific = 0
+        mse2_area_specific = 0
         if self.method == "REML":
             mse = g1 + g2 + 2 * g3
             mse1_area_specific = g1 + g2 + 2 * g3_star
