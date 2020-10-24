@@ -10,17 +10,14 @@ Functions:
 respectively. 
 
 """
-from typing import Any, List, Dict, Optional, Tuple
+from typing import Optional
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
-from scipy.stats import boxcox, norm as normal
-
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.utils import formats
+from samplics.utils.types import Array, Number
 
 
 def sumby(
@@ -83,18 +80,17 @@ def transform(
         np.ndarray: [description]
     """
     if llambda is None:
-        z = y
+        return y
     elif llambda == 0.0:
         if inverse:
-            z = np.exp(y) - constant
+            return np.exp(y) - constant
         else:
-            z = np.log(y + constant)
+            return np.log(y + constant)
     elif llambda != 0.0:
         if inverse:
-            z = np.exp(np.log(1 + y * llambda) / llambda)
+            return np.exp(np.log(1 + y * llambda) / llambda)
         else:
-            z = np.power(y, llambda) / llambda
-    return z
+            return np.power(y, llambda) / llambda
 
 
 def skewness(y: Array, type: int = 1) -> float:
@@ -148,6 +144,7 @@ def _plot_measure(
     y = formats.numpy_array(y)
     lambda_range = np.linspace(coef_min, coef_max, num=nb_points)
     coefs = np.zeros(lambda_range.size)
+    measure_loc = None
     for k, ll in enumerate(lambda_range):
         y_ll = transform(y, ll)
         if measure.lower() == "skewness":
@@ -156,6 +153,8 @@ def _plot_measure(
         elif measure.lower() == "kurtosis":
             coefs[k] = kurtosis(y_ll)
             measure_loc = "upper right"
+        else:
+            raise ValueError("measure type not valid!")
 
     normality = np.abs(coefs) < 2.0
 
@@ -169,7 +168,9 @@ def _plot_measure(
     plt.title(f"{measure.title()} by BoxCox lambda")
     plt.ylabel(f"{measure.title()}")
     plt.xlabel("Lambda (coefs)")
-    legent = plt.legend((p1, p2), ("Normality zone", "Non-normality zone"), loc=measure_loc,)
+    plt.legend(
+        (p1, p2), ("Normality zone", "Non-normality zone"), loc=measure_loc,
+    )
     plt.show(block=block)
 
 
