@@ -11,18 +11,9 @@ Functions:
    | *iterative_fisher_scoring()* implements the Fisher scoring algorithm. 
 """
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
-import pandas as pd
-
-import math
-
-from scipy import linalg
-from scipy.stats import norm as normal
-
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
 def area_stats(
@@ -156,10 +147,9 @@ def inverse_covariance(
     areas, areas_size = np.unique(area, return_counts=True)
     V_inv = np.zeros((n, n))
     for i, d in enumerate(areas):
-        nd, scale_d = areas_size[i], scale[area == d]
+        _, scale_d = areas_size[i], scale[area == d]
         a_d = 1 / (scale_d ** 2)
         sum_scale_d = np.sum(a_d)
-        Zd = np.ones((nd, nd))
         start = 0 if i == 0 else sum(areas_size[:i])
         end = n if i == areas.size - 1 else sum(areas_size[: (i + 1)])
         gamma_d = sigma2u / (sigma2u + sigma2e / sum_scale_d)
@@ -353,7 +343,7 @@ def iterative_fisher_scoring(
         abstol (float): absolute precision required. 
         reltol (float): relative precision required.
         maxiter (int): maximun number of iterations. 
-    
+
     return:
         Tuple[float, float, int, float, bool]: a tuple of variance components, covariance of 
         variance components, number of iterations, tolerance, and convergence.
@@ -363,6 +353,7 @@ def iterative_fisher_scoring(
     tolerance, tol = 1, 0.9
     sigma2 = np.asarray([0, 0])
     sigma2_previous = np.asarray([0, 0])
+    info_matrix = None
     while tolerance > tol:
         derivatives, info_matrix = partial_derivatives(
             method, area=area, y=y, X=X, error_std=error_std, re_std=re_std, scale=scale,
@@ -370,12 +361,9 @@ def iterative_fisher_scoring(
 
         # print(np.matmul(np.linalg.inv(info_matrix), derivatives))
         sigma2 = sigma2 + derivatives @ np.linalg.inv(info_matrix)
-        sigma2e, sigma2u = sigma2[0], sigma2[1]
         tolerance = min(abs(sigma2 - sigma2_previous))
         tol = max(abstol, reltol * min(abs(sigma2)))
-        convergence = tolerance <= tol
         sigma2_previous = sigma2
-
         if iterations == maxiter:
             break
         else:
@@ -386,5 +374,5 @@ def iterative_fisher_scoring(
         np.linalg.inv(info_matrix),
         iterations,
         tolerance,
-        convergence,
+        tolerance <= tol,
     )
