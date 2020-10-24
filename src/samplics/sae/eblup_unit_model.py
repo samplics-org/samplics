@@ -49,7 +49,7 @@ class EblupUnitModel:
         | method (str): the fitting method of the model parameters which can take the possible 
         |   values restricted maximum likelihood (REML) or maximum likelihood (ML). 
         |   If not specified, "REML" is used as default.  
-    
+
     Sample related attributes
         | ys (array): the output sample observations. 
         | Xs (ndarray): the auxiliary information. 
@@ -293,10 +293,6 @@ class EblupUnitModel:
         self.samp_size = dict(zip(self.areas_list, samp_size))
         self.Xs_mean = Xs_mean[:, 1:]
 
-        # samp_weight = np.ones(y.size)
-        if samp_weight is not None:
-            beta_w = self._beta(ys, Xs, areas, samp_weight)
-
         self.fitted = True
 
     def predict(
@@ -334,8 +330,13 @@ class EblupUnitModel:
                 Xp_mean = np.insert(Xmean, 0, 1, axis=1)
                 Xs_mean = np.insert(self.Xs_mean, 0, 1, axis=1)
                 Xs = np.insert(self.Xs, 0, 1, axis=1)
+        else:
+            Xp_mean = self.Xp_mean
+            Xs_mean = self.Xs_mean
+            Xs = self.Xs
 
         area = formats.numpy_array(area)
+        pop_size_dict = {}
         if pop_size is not None:
             pop_size = formats.numpy_array(pop_size)
             pop_size_dict = dict(zip(area, pop_size))
@@ -392,8 +393,8 @@ class EblupUnitModel:
         )
         self.area_mse = dict(zip(ps_area_list, mse_ps))
 
-        pr_area_list = self.areap[~ps]
         # TODO: add non-sampled areas prediction (section 7.2.2, Rao and molina (2015))
+        # pr_area_list = self.areap[~ps]
 
     def bootstrap_mse(
         self,
@@ -427,18 +428,23 @@ class EblupUnitModel:
             if self.Xs.ndim == 1:
                 n = self.Xs.shape[0]
                 Xp_mean = np.insert(self.Xp_mean.reshape(n, 1), 0, 1, axis=1)
-                Xs_mean = np.insert(self.Xs_mean.reshape(n, 1), 0, 1, axis=1)
                 Xs = np.insert(self.Xs.reshape(n, 1), 0, 1, axis=1)
             else:
                 Xp_mean = np.insert(self.Xp_mean, 0, 1, axis=1)
-                Xs_mean = np.insert(self.Xs_mean, 0, 1, axis=1)
                 Xs = np.insert(self.Xs, 0, 1, axis=1)
+        else:
+            Xp_mean = self.Xp_mean
+            Xs = self.Xs
 
         nb_areas = self.areap.size
         ps = np.isin(self.areap, self.areas_list)
         ps_area_list = self.areap[ps]
-        ps_area_indices = np.isin(self.areas_list, ps_area_list)
 
+        error = None
+        re_boot = None
+        re = None
+        X_ps = None
+        area_ps = None
         for i, d in enumerate(ps_area_list):
             aread = self.areas == d
             scale_ps_d = self.scales[aread]
@@ -478,7 +484,7 @@ class EblupUnitModel:
         boot_mse = np.zeros((number_reps, nb_areas))
         print(f"Running the {number_reps} bootstrap iterations")
         for b in range(number_reps):
-            with warnings.catch_warnings(record=True) as w:
+            with warnings.catch_warnings(record=True):
                 boot_model = sm.MixedLM(y_ps_boot[b, :], X_ps, area_ps)
                 boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
