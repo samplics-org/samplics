@@ -23,20 +23,15 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
-from typing import Any, Dict, List, Optional, Tuple, Union, Callable
-
-import warnings
-import math
+from typing import Any, Dict, Optional, Tuple, Union, Callable
 
 import numpy as np
 import pandas as pd
 
 import statsmodels.api as sm
 
-from scipy.stats import norm as normal
-
-from samplics.utils import checks, formats, basic_functions
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.utils import formats, basic_functions
+from samplics.utils.types import Array, Number
 
 from samplics.sae.sae_core_functions import area_stats
 from samplics.sae.eb_unit_model import EbUnitModel
@@ -68,7 +63,7 @@ class EllUnitModel:
         | indicator (function): a user defined function to compute the indicator. 
         | boxcox (dict): contains the *lambda* parameter of the Boxcox and a constant for the 
         |   log-transformation of the Boxcox.  
-    
+
     Sample related attributes
         | ys (array): the output sample observations. 
         | Xs (ndarray): the auxiliary information. 
@@ -222,7 +217,7 @@ class EllUnitModel:
                 ys, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=False
             )
             ols_fit = sm.OLS(ys_transformed, Xs).fit()
-            re_ols = basic_functions.averageby(areas, ols_fit.resid)
+            # re_ols = basic_functions.averageby(areas, ols_fit.resid)
             self.fixed_effects = ols_fit.params
             self.scales = scales
             self.ys = ys
@@ -252,12 +247,14 @@ class EllUnitModel:
 
         areas = np.unique(area)
         nb_areas = len(areas)
+        bar_length = 0
+        steps = 0
         if show_progress:
-            k = 0
             bar_length = min(50, nb_areas)
             steps = np.linspace(1, nb_areas - 1, bar_length).astype(int)
             print(f"Generating the {number_samples} replicates samples")
 
+        k = 0
         eta = np.zeros((number_samples, nb_areas)) * np.nan
         for i, d in enumerate(areas):
             aread = area == d
@@ -268,6 +265,7 @@ class EllUnitModel:
             number_cycles = int(number_samples // cycle_size)
             last_cycle_size = number_samples % cycle_size
 
+            y_d = None
             for j in range(number_cycles + 1):
                 if j == number_cycles:
                     cycle_size = last_cycle_size
@@ -315,13 +313,16 @@ class EllUnitModel:
 
         areas = np.unique(area)
         nb_areas = len(areas)
+        bar_length = 0
+        steps = 0
         if show_progress:
-            k = 0
             bar_length = min(50, nb_areas)
             steps = np.linspace(1, nb_areas - 1, bar_length).astype(int)
             print(f"Generating the {number_samples} replicates samples")
 
+        k = 0
         area_effects = basic_functions.averageby(self.areas, total_residuals)
+        unit_errors = None
         for i, d in enumerate(self.areas_list):
             total_residuals_d = total_residuals[self.areas == d]
             if i == 0:
@@ -338,6 +339,7 @@ class EllUnitModel:
             number_cycles = int(number_samples // cycle_size)
             last_cycle_size = number_samples % cycle_size
 
+            y_d = None
             for j in range(number_cycles + 1):
                 if j == number_cycles:
                     cycle_size = last_cycle_size
@@ -423,6 +425,8 @@ class EllUnitModel:
 
         mu = X @ self.fixed_effects
 
+        area_est = None
+        area_mse = None
         if self.method in ("REML", "ML"):
             area_est, area_mse = self._predict_indicator_parametric(
                 self.number_samples,
