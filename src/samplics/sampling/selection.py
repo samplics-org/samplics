@@ -20,8 +20,8 @@ import pandas as pd
 
 import math
 
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber
+from samplics.utils import formats
+from samplics.utils.types import Array, StringNumber
 
 
 class SampleSelection:
@@ -75,13 +75,11 @@ class SampleSelection:
     def _convert_to_dict(obj_any: Any, obj_type: type) -> Dict[Any, Any]:
 
         if obj_any is not None and isinstance(obj_any, obj_type):
-            obj_dict = {"__none__": obj_any}
+            return {"__none__": obj_any}
         elif obj_any is not None and isinstance(obj_any, Dict):
-            obj_dict = obj_any
+            return obj_any
         elif not isinstance(obj_any, dict):
             raise TypeError(f"{str(obj_any)} must be a dictionary or {obj_type.__name__}.")
-
-        return obj_dict
 
     @staticmethod
     def _to_dataframe(
@@ -150,8 +148,9 @@ class SampleSelection:
                     all_indices[stratum_units], samp_size[s], self.with_replacement, probs_s,
                 )
                 sampled_indices_list.append(sampled_indices_s)
-                sampled_indices = [val for sublist in sampled_indices_list for val in sublist]
-            sampled_indices = np.array(sampled_indices).flatten()
+            sampled_indices = np.array(
+                [val for sublist in sampled_indices_list for val in sublist]
+            ).flatten()
         else:
             sampled_indices = np.random.choice(
                 samp_unit.size,
@@ -370,7 +369,8 @@ class SampleSelection:
 
         stop = False
         sample = hits = np.zeros(samp_unit.size).astype("int")
-        while stop != True:
+        sampled_indices = None
+        while stop is not True:
             sampled_indices = np.random.choice(all_indices, 1, p=all_probs)
             remaining_indices = np.delete(all_indices, sampled_indices)
             remaining_probs = all_probs / (1 - samp_size * all_probs)
@@ -379,8 +379,7 @@ class SampleSelection:
             remaining_sample = np.random.choice(
                 remaining_indices, samp_size - 1, p=remaining_probs
             )
-            sampled_indices = np.append(sampled_indices, remaining_sample)
-            _, counts = np.unique(sampled_indices, return_counts=True)
+            _, counts = np.unique(np.append(sampled_indices, remaining_sample), return_counts=True)
             if (counts == 1).all():
                 stop = True
 
@@ -547,6 +546,8 @@ class SampleSelection:
             incl_probs = self._pps_inclusion_probs(samp_unit, samp_size, mos, stratum)
         elif self.method == "sys":
             incl_probs = self._sys_inclusion_probs(samp_unit, samp_size, stratum, samp_rate)
+        else:
+            raise ValueError("method not valid!")
 
         return incl_probs
 
@@ -614,6 +615,7 @@ class SampleSelection:
         if samp_rate is not None:
             samp_rate = self._convert_to_dict(samp_rate, float)
 
+        suffled_order = None
         if shuffle and self.method in ("sys", "pps-sys"):
             suffled_order = np.linspace(0, samp_unit.size - 1, samp_unit.size).astype(int)
             np.random.shuffle(suffled_order)
@@ -623,6 +625,8 @@ class SampleSelection:
             if self.method == "pps-sys" and mos is not None:
                 mos = mos[suffled_order]
 
+        sample = None
+        hits = None
         if self.method == "srs":
             probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum=stratum)
             sample, hits = self._grs_select(probs, samp_unit, samp_size, stratum)
