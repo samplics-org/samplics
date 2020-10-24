@@ -133,14 +133,14 @@ class ReplicateWeight:
             psu_replicates[:, rep][psu_ids] = psus_counts
 
         ratio_sqrt = np.sqrt((1 - samp_rate) * sample_size / (number_psus - 1))
-        boot_coefs = 1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
 
-        return boot_coefs
+        return 1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
 
     def _boot_replicates(
         self, psu: np.ndarray, stratum: np.ndarray, samp_rate: Number = 0, size_gap: int = 1,
     ) -> np.ndarray:
 
+        boot_coefs = None
         if stratum is None:
             psu_ids = np.unique(psu)
             boot_coefs = self._boot_psus_replicates(
