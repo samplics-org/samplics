@@ -119,6 +119,7 @@ class ReplicateEstimator(_SurveyEstimator):
         conservative: bool = False,
     ) -> float:
 
+        variance = 0
         rep_estimates = self._rep_point(y, rep_weights, x)
         if self.method == "jackknife":  # page 155 (4.2.3 and 4.2.5) - Wolter(2003)
             jk_factor = np.array(1 / (1 - rep_coefs))
@@ -163,6 +164,8 @@ class ReplicateEstimator(_SurveyEstimator):
             )
             rep_weights = rep_weights[~excluded_units, :]
 
+        categories = None
+        y_dummies = None
         if self.parameter == "proportion":
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
@@ -199,7 +202,7 @@ class ReplicateEstimator(_SurveyEstimator):
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._bias(
-                                    y_dummies_d[:, k], samp_weight_d, rep_weights, None,
+                                    y_dummies_d[:, k], samp_weight_d, rep_weights_d, None,
                                 )
                             }
                         )
@@ -223,6 +226,8 @@ class ReplicateEstimator(_SurveyEstimator):
         remove_nan: bool = False,
     ) -> Dict[StringNumber, Any]:
 
+        categories = None
+        y_dummies = None
         if self.parameter == "proportion":
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
