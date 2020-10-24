@@ -8,12 +8,10 @@ Functions:
     | *assert_brr_number_psus()* checks that the number of psus is a multiple of 2. 
 """
 
-from typing import TypeVar, Type, Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict
 
 import numpy as np
-import pandas as pd
-from samplics.utils import formats
-from samplics.utils.types import Array, Number, StringNumber
+from samplics.utils.types import Array
 
 
 def assert_probabilities(probabilities: Array) -> None:
