@@ -280,8 +280,10 @@ class TaylorEstimator(_SurveyEstimator):
             weighted_sum_x = np.sum(x * samp_weight)
             weighted_ratio = np.sum(y_weighted) / weighted_sum_x
             return samp_weight * (y - x * weighted_ratio) / weighted_sum_x
-        else:  # self.parameter == "total":
+        elif self.parameter == "total":
             return y_weighted
+        else:
+            raise ValueError("parameter not valid!")
 
     @staticmethod
     def _variance_stratum_between(
