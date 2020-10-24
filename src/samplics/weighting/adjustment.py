@@ -8,7 +8,7 @@ sample weights.
    Calculation*, Stata Press.
 """
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -267,7 +267,7 @@ class SampleWeight:
                 is None. Defaults to None.
             domain (Optional[Array], optional) : array indicating the normalization class for each 
                 sample unit. Defaults to None.
-        
+
         Returns:
             An arrays: the normalized sample weight.
         """
@@ -385,23 +385,26 @@ class SampleWeight:
 
         if not isinstance(data, pd.DataFrame) or data is None:
             raise ValueError("data must be a pandas dataframe.")
+
         if x_cat is None and x_cont is None:
             raise AssertionError("x_cat and/or x_cont must be specified.")
-
-        if x_cat is not None:
-            x_concat = formats.dataframe_to_array(data[x_cat])
-            x_dummies = pd.get_dummies(x_concat)
-            x_dict = formats.array_to_dict(x_concat)
-            # x_dummies.insert(0, "intercept", 1)
-        if x_cont is None:
-            x_array = x_dummies.astype("int")
         else:
-            x_array = pd.concat([x_dummies, data[x_cont]], axis=1).astype("int")
-            x_cont_dict: Dict[StringNumber, Number] = {}
-            nb_obs = data[x_cont].shape[0]
-            for var in x_cont:
-                x_cont_dict[var] = nb_obs
-                x_dict.update(x_cont_dict)
+            x_dummies = None
+            x_dict = None
+            if x_cat is not None:
+                x_concat = formats.dataframe_to_array(data[x_cat])
+                x_dummies = pd.get_dummies(x_concat)
+                x_dict = formats.array_to_dict(x_concat)
+                # x_dummies.insert(0, "intercept", 1)
+            if x_cont is None:
+                x_array = x_dummies.astype("int")
+            else:
+                x_array = pd.concat([x_dummies, data[x_cont]], axis=1).astype("int")
+                x_cont_dict: Dict[StringNumber, Number] = {}
+                nb_obs = data[x_cont].shape[0]
+                for var in x_cont:
+                    x_cont_dict[var] = nb_obs
+                    x_dict.update(x_cont_dict)
 
         return x_array.to_numpy(), x_dict
 
@@ -555,6 +558,9 @@ class SampleWeight:
                     control_d_values = [control_d]
                 elif isinstance(control_d, Dict):
                     control_d_values = list(control_d.values())
+                else:
+                    control_d_values = None
+                    raise TypeError("Type of control not valid!")
 
                 scale_d = scale[domain == d]
                 if additive:

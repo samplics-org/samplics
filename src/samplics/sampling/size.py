@@ -2,7 +2,7 @@
 
 """
 
-from typing import Any, Dict, Tuple, List, Union, Optional, overload
+from typing import Any, Dict, List, Union, Optional
 
 import math
 
@@ -11,8 +11,8 @@ import pandas as pd
 
 from scipy.stats import norm as normal
 
-from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber
+from samplics.utils import formats
+from samplics.utils.types import Array, Number
 
 
 class SampleSize:
@@ -32,8 +32,7 @@ class SampleSize:
         self.deff_c: Dict[Any, float] = {"__none__": 1.0}
         self.deff_w: Dict[Any, float] = {"__none__": 1.0}
 
-        ## Output data
-        samp_size: Dict[Any, int]
+        self.samp_size: Dict[Any, int]
 
     def icc(self) -> Union[Dict[Any, Number], Number]:
         pass
@@ -171,6 +170,8 @@ class SampleSize:
             if isinstance(resp_rate, (int, float)):
                 self.resp_rate = {"__none__": resp_rate}
 
+        strata = None
+        stratum = None
         if self.stratification and number_dictionaries == 0:
             stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
             self.target = dict(zip(stratum, np.repeat(target, number_strata)))
@@ -218,6 +219,7 @@ class SampleSize:
 
         self.alpha = alpha
 
+        samp_size = None
         if self.method == "wald":
             samp_size = self._calculate_wald(
                 target=self.target, precision=self.precision, stratum=stratum
@@ -257,8 +259,6 @@ class SampleSize:
         Returns:
             pd.DataFrame: output pandas dataframe.
         """
-
-        ncols = len(col_names)
 
         if self.samp_size is None:
             raise AssertionError("No sample size calculated.")
