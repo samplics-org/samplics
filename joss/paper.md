@@ -1,21 +1,19 @@
 ---
 title: "Samplics: a Python Package for selecting, weighting and analyzing data from complex sampling designs."
 tags:
-
-- Python
-- Survey sampling
-- small area estimation
-- Official statistics
-  authors:
-- name: Mamadou S. Diallo
-  orcid: 0000-0002-0376-3631
-  affiliation: 1
-  affiliations:
-- name: UNICEF, The United Nations Children's Fund
-  index: 1
-  date: 12 December 2020
-  bibliography: paper.bib
-
+	- Python
+	- Survey sampling
+	- small area estimation
+	- Official statistics
+authors:
+	- name: Mamadou S. Diallo
+	  orcid: 0000-0002-0376-3631
+	  affiliation: 1
+	  affiliations:
+	- name: UNICEF, The United Nations Children's Fund
+	  index: 1
+	  date: 12 December 2020
+	  bibliography: paper.bib
 ---
 
 # Summary
