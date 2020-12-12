@@ -129,6 +129,5 @@ notebooks/
 #Other
 *.Rhistory
 *.docx
-/joss
 
 # End of https://www.gitignore.io/api/python
