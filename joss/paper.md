@@ -1,4 +1,4 @@
-\_\_---
+---
 title: "Samplics: a Python Package for selecting, weighting and analyzing data from complex sampling designs."
 tags:
 
@@ -13,7 +13,7 @@ tags:
   affiliations:
 - name: UNICEF, The United Nations Children's Fund
   index: 1
-  date: 17 October 2020
+  date: 12 December 2020
   bibliography: paper.bib
 
 ---
