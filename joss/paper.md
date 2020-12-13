@@ -8,7 +8,7 @@ tags:
 authors:
 	- name: Mamadou S. Diallo^[Corresponding author.]
 	  orcid: 0000-0002-0376-3631
-	  affiliation: "1"
+	  affiliation: 1
 affiliations:
 	- name: UNICEF, The United Nations Children's Fund
 	  index: 1

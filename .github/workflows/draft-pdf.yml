@@ -16,4 +16,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: paper
-          path: joss/paper.pdgit 
+          path: joss/paper.pdf
