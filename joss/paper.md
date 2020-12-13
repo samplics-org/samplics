@@ -40,20 +40,30 @@ As mentioned above, estimation of population parameters e.g. total, mean, median
 
 Using the Taylor series method, the variance of the total is estimated as $$\hat{V}(\hat{Y})=\sum_{h=1}^{H} \frac{n_h(1-f_h)}{n_h-1} \sum_{i=1}^{n_h} (y_{hi.}-\bar{y}_{h..})^2,$$ where $y_{hi.}=\sum_{j=1}^{m_{hi}}w_{hij} y_{hij}$, $\bar{y}_{h..}=\sum_{i=1}^{n_h} y_{hi.}/n_h$, and $f_h$ is the sampling rate for the first stage from stratum $h$. The formula can be extended to the two-stage sampling design where second stage clusters or secondary sampling units (SSUs) are randomly selected from the PSUs prior to the selection of final sample units within selected SSUs. Under the two-stage sampling design, the Taylor series variance estimate of the total is $$ \hat{V}(\hat{Y})=\sum_{h=1}^{H} \frac{n_h(1-f_h)}{n_h-1} \sum_{i=1}^{n_h} (y_{hi.}-\bar{y}_{h..})^2 + \sum_{h=1}^{H} f_h \sum_{i=1}^{n_h} (1-f_{hi})\frac{m_{hi}}{m_{hi}-1}\sum_{j=1}^{m_{hi}} (y_{hij.}-\bar{y}_{hi..})^2,$$ where $\hat{Y} = \sum_{h=1}^{H}\sum_{i=1}^{N_h}\sum_{j=1}^{M_{hi}} \sum_{k=1}^{} w_{hijk} y_{hij} I_{hijk}$, $y_{hij.}=\sum_{k=1}^{m_{hij}}w_{hijk} y_{hijk}$, $\bar{y}_{hi..}=\sum_{j=1}^{m_{hi}} y_{hij.}/m_{hi}$, and $f_{hi}$ is the sampling rate for the second stage of sampling from PSU $i$ in stratum $h$. The variance estimation of the total can be extended to other population parameters that are functions of the sample weight. For example, the variance estimates of the mean and ratio are obtained by replacing $y_{hijk}$ by $(y_{hijk} - \hat{\bar{Y}})/\hat{W}$ and $(y_{hijk} - \hat{R}x_{hijk})/\hat{X}$, respectively, where $\hat{\bar{Y}} = \hat{Y} / \hat{W}$, $\hat{W} = \sum_{h=1}^{H}\sum_{i=1}^{N_h}\sum_{j=1}^{M_{hi}} \sum_{k=1}^{} w_{hijk}$, $\hat{X} = \sum_{h=1}^{H}\sum_{i=1}^{N_h}\sum_{j=1}^{M_{hi}} \sum_{k=1}^{} x_{hijk}$ and $\hat{R} = \hat{Y} / \hat{X}$. Furthermore, the variance estimators in this section are extensible to domain analysis.
 
-Suppose that $\theta$ is the population parameter of interest. Under the replication framework, multiple replicates, say R, of the sample are drawn following a given selection scheme [@efron94] and [@wolter07]. For each replicate, a set of replicate weights is constructed by multiplying the sample weights by an adjustement factor $a_{hi}$. The resulting weights, called the replicate weights, are then used to obtain the R replicate estimates of the population parameter i.e. ${\hat{\theta}_{(r)}, r=1,...,R}$. The estimate of the variance of $\hat{\theta}$ is then given by $$\hat{V}(\hat{\theta})=\sum_{r=1}^{R}c_r(\hat{\theta}_{(r)}-\bar{\theta}_{(.)})^2,$$ where $\bar{\theta}_{(.)}=\frac{1}{R}\sum_{r=1}^{R}\hat{\theta}_{(r)}$. Both $c_r$ and $a_{hi}$ are specific to the replication method and defined as follows
+Suppose that $\theta$ is the population parameter of interest. Under the replication framework, multiple replicates, say R, of the sample are drawn following a given selection scheme [@efron94] and [@wolter07]. For each replicate, a set of replicate weights is constructed by multiplying the sample weights by an adjustement factor $a_{hi}$. The resulting weights, called the replicate weights, are then used to obtain the R replicate estimates of the population parameter i.e. ${\hat{\theta}_{(r)}, r=1,...,R}$. The estimate of the variance of $\hat{\theta}$ is then given by $$\hat{V}(\hat{\theta})=\sum_{r=1}^{R}c_r(\hat{\theta}_{(r)}-\bar{\theta}_{(.)})^2,$$ where $\bar{\theta}_{(.)}=\frac{1}{R}\sum_{r=1}^{R}\hat{\theta}_{(r)}$. Both $c_r$ and $a_{hi}$ are specific to the replication method.
 
-- For Bootstrap, we have $c_r=1/R$ and $a_{hi}=\frac{n_h}{n_h-1}m_{hi}^{*}$, where $m_{hi}^{*}$ is the number of times PSU $hi$ was resampled. The replication factor $c_r$ is the same across the strata, however the weight adjustment factors $a_{hi}$ are stratum specific.
-- For balanced repeated replication (BRR) with Fay, we have $c_r=\frac{1}{R(1-f^2)}$ and $a_{hi} =
+For **Bootstrap**, we have $c_r=1/R$ and $a_{hi}=\frac{n_h}{n_h-1}m_{hi}^{*}$, where $m_{hi}^{*}$ is the number of times PSU $hi$ was resampled. The replication factor $c_r$ is the same across the strata, however the weight adjustment factors $a_{hi}$ are stratum specific.
+
+For **balanced repeated replication (BRR)** with Fay, we have 
+
+$c_r=\frac{1}{R(1-f^2)}$ and $a_{hi} =
   \begin{cases}
     f    & \text{if } Hd(hi)=-1\\
     2-f  & \text{if } Hd(hi)=1
-  \end{cases}$, where $Hd$ is the Hadarmard matrix. $f=0$ corresponds to the default BRR method without the Fay adjustment. A Hadamard matrix is a square matrix whose entries are either +1 or −1 and whose rows are mutually orthogonal. In the case of BRR-Fay, both the replication factor $c_r$ and the weight adjustment factor $a_{hi}$ are constant across the strata.
-- For Jackknife (delete-one), we have $c_r=\frac{n_{h'}-1}{n_{h'}}$ and $a_{hi}=
+  \end{cases}$, 
+  
+  where $Hd$ is the Hadarmard matrix. $f=0$ corresponds to the default BRR method without the Fay adjustment. A Hadamard matrix is a square matrix whose entries are either +1 or −1 and whose rows are mutually orthogonal. In the case of BRR-Fay, both the replication factor $c_r$ and the weight adjustment factor $a_{hi}$ are constant across the strata.
+
+For **Jackknife (delete-one)**, we have 
+
+$c_r=\frac{n_{h'}-1}{n_{h'}}$ and $a_{hi}=
   \begin{cases}
     \frac{n_{h'}}{n_{h'}-1} & \text{if } h'=h \text{ and } i \text{ not dropped}\\
     0                       & \text{if } h'=h \text{ and } i \text{ dropped}\\
     1                       & \text{if } h'\neq h
-  \end{cases}.$ This formula is easily generalizable to the non stratified design ($H=1$) by replacing $n_{h'}$ by $n$ and dropping the case $h' \neq h$. The replication factor $c_r$ is stratum specific in the case of Jackknife which allows a finite-population correction by stratum.
+  \end{cases}.$ 
+  
+  This formula is easily generalizable to the non stratified design ($H=1$) by replacing $n_{h'}$ by $n$ and dropping the case $h' \neq h$. The replication factor $c_r$ is stratum specific in the case of Jackknife which allows a finite-population correction by stratum.
 
 # Small Area Estimation (SAE)
 
