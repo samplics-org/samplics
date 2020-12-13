@@ -6,14 +6,14 @@ tags:
 	- small area estimation
 	- Official statistics
 authors:
-	- name: Mamadou S. Diallo
+	- name: Mamadou S. Diallo^[Corresponding author.]
 	  orcid: 0000-0002-0376-3631
-	  affiliation: 1
-	  affiliations:
+	  affiliation: "1"
+affiliations:
 	- name: UNICEF, The United Nations Children's Fund
 	  index: 1
-	  date: 12 December 2020
-	  bibliography: paper.bib
+date: 12 December 2020
+bibliography: paper.bib
 ---
 
 # Summary
