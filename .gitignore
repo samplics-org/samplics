@@ -119,6 +119,9 @@ dmypy.json
 #MaCOS
 .DS_Store
 
+# Github 
+.github
+
 #Extra
 datasets
 reference_material

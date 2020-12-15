@@ -1,5 +1,5 @@
 ---
-title: "Samplics: a Python Package for selecting, weighting and analyzing data from complex sampling designs."
+title: "samplics: a Python Package for selecting, weighting and analyzing data from complex sampling designs."
 tags:
 	- Python
 	- Survey sampling
