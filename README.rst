@@ -101,7 +101,7 @@ License
 
 Contact 
 --------------
-created by `Mamadou S. Diallo <https://twitter.com/MamadouSDiallo>` - feel free to contact me!
+created by `Mamadou S. Diallo <https://twitter.com/MamadouSDiallo>`_ - feel free to contact me!
 
 
 
