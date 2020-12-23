@@ -15,18 +15,15 @@
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
 mechanism to ensure accurate calculations. *Samplics* is a python package that implements a set of
-sampling techniques for complex survey designs. In the package, these techniques are organized into the following four categories.
+sampling techniques for complex survey designs. In the package, these techniques are organized into the following four subpackages.
 
-**Sampling** contains a set of random selection techniques used to draw a sample from a population. It also provides procedures for calculating sample sizes. The sampling module contains: 
+**Sampling** provides a set of random selection techniques used to draw a sample from a population. It also provides procedures for calculating sample sizes. The sampling subpackage contains: 
 
 * Sample size calculation and allocation: Wald and Fleiss methods for proportions. 
 * Equal probability of selection: simple random sampling (SRS) and systematic selection (SYS)
 * Probability proportional to size (PPS): Systematic, Brewer's method, Hanurav-Vijayan method, Murphy's method, and Rao-Sampford's method.
 
-**Weighting.** Sample weighting is the main mechanism used in surveys to formalize the
-representivity of the sample. The design/base weights are usually
-adjusted to compensate for distortions due nonresponse and other shortcomings
-of the the sampling design implementation.
+**Weighting.** provides the procedures for adjusting sample weights. More specifically, the weighting subpackage allows the followin:
 
 * Weight adjustment due to nonresponse
 * Weight poststratification, calibration and normalization
