@@ -11,7 +11,7 @@
   :target: https://samplics.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
-*samplics* is a python package for selecting, weighting and analyzing sample obtained from complex sampling design.
+*samplics* is a python package for selecting, weighting and analyzing sample obtained from complex sampling design. 
 
 
 In large scale surveys, often complex random mechanisms are used to select
@@ -45,21 +45,6 @@ mechanism and the weight adjustments.
 * Regression-based e.g. generalized regression (GREG)
 
 **Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to modelled the output variable of interest to produce domain level estimaetes.
-
-Installation
-------------
-``pip install samplics``
-
-if both Python 2.x and python 3.x are installed on your computer, you may have to use: ``pip3 install samplics``
-
-Dependencies
-------------
-Python versions 3.6.x or newer and the following packages:
-
-* `numpy <https://numpy.org/>`_
-* `pandas <https://pandas.pydata.org/>`_
-* `scpy <https://www.scipy.org/>`_
-* `statsmodels <https://www.statsmodels.org/stable/index.h.tml>`_
 
 Usage
 ------
@@ -122,6 +107,20 @@ we can use a code similar to:
         remove_nan = True
     )
 
+Installation
+------------
+``pip install samplics``
+
+if both Python 2.x and python 3.x are installed on your computer, you may have to use: ``pip3 install samplics``
+
+Dependencies
+------------
+Python versions 3.6.x or newer and the following packages:
+
+* `numpy <https://numpy.org/>`_
+* `pandas <https://pandas.pydata.org/>`_
+* `scpy <https://www.scipy.org/>`_
+* `statsmodels <https://www.statsmodels.org/stable/index.h.tml>`_
 
 Contributing
 ------------
