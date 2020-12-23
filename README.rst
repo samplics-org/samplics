@@ -23,16 +23,15 @@ sampling techniques for complex survey designs. In the package, these techniques
 * Equal probability of selection: simple random sampling (SRS) and systematic selection (SYS)
 * Probability proportional to size (PPS): Systematic, Brewer's method, Hanurav-Vijayan method, Murphy's method, and Rao-Sampford's method.
 
-**Weighting.** provides the procedures for adjusting sample weights. More specifically, the weighting subpackage allows the followin:
+**Weighting** provides the procedures for adjusting sample weights. More specifically, the weighting subpackage allows the following:
 
 * Weight adjustment due to nonresponse
 * Weight poststratification, calibration and normalization
 * Weight replication i.e. Bootstrap, BRR, and Jackknife
 
-**Estimation.** The estimation of the parameters of interest must reflect the sampling
-mechanism and the weight adjustments.
+**Estimation** provides methods for estimating the parameters of interest with uncertainty measures that are consistent with the sampling design. The estimation subpackage implements the following types of estimation methods:
 
-* Taylor-based procedures
+* Taylor-based, also called linearization methods
 * Replication-based estimation i.e. Boostrap, BRR, and Jackknife
 * Regression-based e.g. generalized regression (GREG)
 
