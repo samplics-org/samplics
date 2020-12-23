@@ -46,9 +46,6 @@ mechanism and the weight adjustments.
 
 **Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to modelled the output variable of interest to produce domain level estimaetes.
 
-**Important.** *Samplics* is in beta version. It's been actively developed. The list of features mentioned above is not the complete list. **Despite the very high code testing coverage, Samplics is not yet ready for production.** Backward compatibility is not yet guaranteed. 
-
-
 Documentation
 #############
 
@@ -69,6 +66,5 @@ Index and search
 * :ref:`search`
 
 **Contact Information**
-| Mamadou S. Diallo 
+| `Mamadou S. Diallo <https://twitter.com/MamadouSDiallo>`_
 | msdiallo@QuantifyAfrica.org
-| https://www.linkedin.com/in/mamadousdiallo/
