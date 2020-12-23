@@ -1,5 +1,5 @@
 ==========
-*SAMPLICS, a Phyton package for complex survey samples*
+*SAMPLICS*
 ==========
 .. image:: https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master
   :target: https://travis-ci.com/survey-methods/samplics
@@ -14,13 +14,10 @@
 
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
-mechanism to ensure accurate calculations. *Samplics* implements a set of
-sampling techniques for complex survey designs.
+mechanism to ensure accurate calculations. *Samplics* is a python package that implements a set of
+sampling techniques for complex survey designs. In the package, these techniques are organized into the following four categories.
 
-**Sampling.** Since the full population cannot be observed, a sample is selected
-to estimate population parameters of interest. The assumption is
-that the sample is representative of the population for the characteristics
-of interest. The sample size calculation and selection methods in Samplics are:
+**Sampling** contains a set of random selection techniques used to draw a sample from a population. It also provides procedures for calculating sample sizes. The sampling module contains: 
 
 * Sample size calculation and allocation: Wald and Fleiss methods for proportions. 
 * Equal probability of selection: simple random sampling (SRS) and systematic selection (SYS)
