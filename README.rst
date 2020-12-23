@@ -1,5 +1,5 @@
 ==========
-*SAMPLICS*
+*SAMPLICS, a Phyton package for complex survey samples*
 ==========
 .. image:: https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master
   :target: https://travis-ci.com/survey-methods/samplics
@@ -10,8 +10,6 @@
 .. image:: https://readthedocs.org/projects/samplics/badge/?version=latest
   :target: https://samplics.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
-
-*samplics* is a python package for selecting, weighting and analyzing sample obtained from complex sampling design. 
 
 
 In large scale surveys, often complex random mechanisms are used to select
