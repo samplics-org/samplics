@@ -76,7 +76,7 @@ Furthermore, the population is located in four natural regions i.e. North, South
 
 |
 To select a sample of primary sampling units using PPS method,
-we can use a code similar to:
+we can use code similar to:
 
 .. code:: python
 
@@ -99,7 +99,7 @@ we can use a code similar to:
 
 |
 To adjust the design sample weight for nonresponse,
-we can use a code similar to:
+we can use code similar to:
 
 .. code:: python
 
@@ -120,6 +120,8 @@ we can use a code similar to:
         resp_dict=status_mapping
         )
 
+|
+To estimate population parameters, we can use code similar to:
 .. code:: python
 
     import samplics
