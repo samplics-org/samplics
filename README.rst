@@ -122,6 +122,7 @@ we can use code similar to:
 
 |
 To estimate population parameters, we can use code similar to:
+
 .. code:: python
 
     import samplics
