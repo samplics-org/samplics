@@ -52,7 +52,7 @@ Let's assume that we have a population and we would like to select a sample from
 
     assert size_nat_wald.samp_size["__none__"] == 62
 
-
+|
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements e.g. expected proportions, desired precisions and associated design effects.  
 
 .. code:: python
