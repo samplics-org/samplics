@@ -1,4 +1,4 @@
-<img src="./img/samplics_logo3.png" width="125" height="125" align="right" />
+<img src="./img/samplics_logo3.png" width="150" height="125" align="left" />
 
 # _SAMPLICS_
 
