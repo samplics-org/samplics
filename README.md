@@ -41,15 +41,15 @@ For more details, visit https://samplics.readthedocs.io/en/latest/
 
 Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
 
-.. code-block:: python
-
-    import samplics
-    from samplics.sampling import SampleSize
-
-    sample_size = SampleSize(parameter = "proportion")
-    sample_size.calculate(target=0.80, precision=0.10)
-
-    assert size_nat_wald.samp_size["__none__"] == 62
+> ```python
+> import samplics
+> from samplics.sampling import SampleSize
+>
+> sample_size = SampleSize(parameter = "proportion")
+> sample_size.calculate(target=0.80, precision=0.10)
+>
+> assert size_nat_wald.samp_size["__none__"] == 62
+> ```
 
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements e.g. expected proportions, desired precisions and associated design effects.
 
@@ -170,3 +170,7 @@ Python 3.6 or newer is required and the main dependencies are `numpy <https://nu
 ## Contact
 
 created by `Mamadou S. Diallo <https://twitter.com/MamadouSDiallo>`\_ - feel free to contact me!
+
+```
+
+```
