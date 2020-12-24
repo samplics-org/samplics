@@ -130,6 +130,7 @@ To estimate population parameters, we can use code similar to:
     import samplics
     from samplics.estimation import TaylorEstimation, ReplicateEstimator
 
+    # Taylor-based 
     zinc_mean_str = TaylorEstimator("mean").estimate(
         y=nhanes2f["zinc"],
         samp_weight=nhanes2f["finalwgt"],
@@ -138,6 +139,7 @@ To estimate population parameters, we can use code similar to:
         remove_nan=True
     )
 
+    # Replicate-based
     ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
         y=nhanes2brr["weight"],
         samp_weight=nhanes2brr["finalwgt"],
