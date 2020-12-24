@@ -126,7 +126,6 @@ dmypy.json
 datasets
 reference_material
 notebooks/
-*.png
 *.ipynb_checkpoints/
 
 #Other
