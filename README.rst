@@ -35,7 +35,7 @@ sampling techniques for complex survey designs. These survey sampling techniques
 * Replication-based estimation i.e. Boostrap, BRR, and Jackknife
 * Regression-based e.g. generalized regression (GREG)
 
-**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to modelled the output variable of interest to produce domain level estimaetes. This subpackage provides Area-level and Unit-level SAE methods. 
+**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to model the output variable of interest to produce domain level estimates. This subpackage provides Area-level and Unit-level SAE methods. 
 
 Usage
 ------
