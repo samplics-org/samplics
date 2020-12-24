@@ -35,7 +35,7 @@ sampling techniques for complex survey designs. In the package, these techniques
 * Replication-based estimation i.e. Boostrap, BRR, and Jackknife
 * Regression-based e.g. generalized regression (GREG)
 
-**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to modelled the output variable of interest to produce domain level estimaetes. This subpackage provides SAE Area-level and Unit-level methods. 
+**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to modelled the output variable of interest to produce domain level estimaetes. This subpackage provides Area-level and Unit-level SAE methods. 
 
 Usage
 ------
@@ -50,7 +50,11 @@ we can use a code similar to:
 
     psu_frame = pd.read_csv("psu_frame.csv")
     psu_sample_size = {"East":3, "West": 2, "North": 2, "South": 3}
-    pps_design = SampleSelection(method="pps-sys", stratification=True, with_replacement=False)
+    pps_design = SampleSelection(
+      method="pps-sys", 
+      stratification=True, 
+      with_replacement=False
+      )
     frame["psu_prob"] = pps_design.inclusion_probs(
         psu_frame["cluster"],
         psu_sample_size,
@@ -67,7 +71,10 @@ we can use a code similar to:
     from samplics.weighting import SampleWeight
 
     status_mapping = {
-        "in": "ineligible", "rr": "respondent", "nr": "non-respondent", "uk":"unknown"
+        "in": "ineligible", 
+        "rr": "respondent", 
+        "nr": "non-respondent", 
+        "uk":"unknown"
         }
 
     full_sample["nr_weight"] = SampleWeight().adjust(
@@ -102,7 +109,8 @@ Installation
 ------------
 ``pip install samplics``
 
-if both Python 2.x and python 3.x are installed on your computer, you may have to use: ``pip3 install samplics``
+if both Python 2.x and python 3.x are installed on your computer, 
+you may have to use: ``pip3 install samplics``
 
 Dependencies
 ------------
