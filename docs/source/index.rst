@@ -16,13 +16,13 @@ SAMPLICS: sample analytics
          
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
-mechanism to ensure accurate calculations. *Samplics* implements a set of
+mechanism to ensure accurate calculations. *samplics* implements a set of
 sampling techniques for complex survey designs.
 
 **Sampling.** Since the full population cannot be observed, a sample is selected
 to estimate population parameters of interest. The assumption is
 that the sample is representative of the population for the characteristics
-of interest. The sample size calculation and selection methods in Samplics are:
+of interest. The sample size calculation and selection methods in *samplics* are:
 
 * Sample size calculation and allocation: Wald and Fleiss methods for proportions. 
 * Equal probability of selection: simple random sampling (SRS) and systematic selection (SYS)
@@ -44,7 +44,7 @@ mechanism and the weight adjustments.
 * Replication-based estimation i.e. Boostrap, BRR, and Jackknife
 * Regression-based e.g. generalized regression (GREG)
 
-**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to modelled the output variable of interest to produce domain level estimaetes.
+**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to model the output variable of interest to produce domain level estimates.
 
 Documentation
 #############
