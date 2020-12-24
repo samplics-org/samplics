@@ -146,6 +146,23 @@ To estimate population parameters, we can use code similar to:
         remove_nan = True
     )
 
+To predict small area parameters, we can use code similar to:
+
+.. code:: python 
+
+    # Area-level basic method
+    fh_model_reml = EblupAreaModel(method="REML")
+    fh_model_reml.fit(
+        yhat=yhat, X=X, area=area, intercept=False, error_std=sigma_e, tol=1e-4,
+    )
+    fh_model_reml.predict(X=X, area=area, intercept=False)
+
+    # Unit-level basic method
+    eblup_bhf_reml = EblupUnitModel()
+    eblup_bhf_reml.fit(ys, Xs, areas,)
+    eblup_bhf_reml.predict(Xmean, areas_list)
+
+
 Installation
 ------------
 ``pip install samplics``
