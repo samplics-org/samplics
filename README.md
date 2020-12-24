@@ -4,7 +4,7 @@
 
 <!-- :target: https://travis-ci.com/survey-methods/samplics -->
 
-[![codecov]("https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg?token=7C0LBB5N8Y")]
+[![codecov]("https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg?token=7C0LBB5N8Y")](https://codecov.io/gh/survey-methods/samplics/branch/master)
 
 <!-- :target: https://codecov.io/gh/survey-methods/samplics -->
 
