@@ -40,7 +40,7 @@ sampling techniques for complex survey designs. These survey sampling techniques
 Usage
 ------
 
-Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
+[section1] Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
 
 .. code:: python
 
