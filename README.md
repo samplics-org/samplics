@@ -173,4 +173,4 @@ Python 3.6 or newer is required and the main dependencies are [numpy](https://nu
 
 ## Contact
 
-created by [Mamadou S. Diallo] (https://twitter.com/MamadouSDiallo) - feel free to contact me!
+created by [Mamadou S. Diallo](https://twitter.com/MamadouSDiallo) - feel free to contact me!
