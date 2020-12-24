@@ -1,6 +1,6 @@
 # _SAMPLICS_
 
-[![Build Status]("https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master")]
+[![Build Status](<img src="https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master">)]("https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master")]
 
 <!-- :target: https://travis-ci.com/survey-methods/samplics -->
 
