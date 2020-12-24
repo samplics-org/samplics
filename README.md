@@ -1,14 +1,14 @@
 # _SAMPLICS_
 
-[![Build Status](<img src="https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master">)]("https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master")]
+[![Build Status](https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master)]("https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master")]
 
 <!-- :target: https://travis-ci.com/survey-methods/samplics -->
 
-[![codecov]("https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg")](https://codecov.io/gh/survey-methods/samplics/branch/master)
+[![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics/branch/master)
 
 <!-- :target: https://codecov.io/gh/survey-methods/samplics -->
 
-[![docs]("https://readthedocs.org/projects/samplics/badge/?version=latest")]
+[![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)]
 
 <!-- :target: https://samplics.readthedocs.io/en/latest/?badge=latest
 :alt: Documentation Status -->
