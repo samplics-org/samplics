@@ -1,4 +1,4 @@
-# _SAMPLICS_
+# <img src="./img/samplics-logo3.jpeg"> _SAMPLICS_
 
 [![Build Status](https://travis-ci.com/survey-methods/samplics.svg?branch=master)](https://travis-ci.com/survey-methods/samplics/branches)
 [![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics)
@@ -157,7 +157,7 @@ To predict small area parameters, we can use code similar to:
 
 ## Installation
 
-_pip install samplics_
+`pip install samplics`
 
 Python 3.6 or newer is required and the main dependencies are [numpy](https://numpy.org), [pandas](https://pandas.pydata.org), [scpy](https://www.scipy.org), and [statsmodel](https://www.statsmodels.org/stable/index.h.tml).
 
