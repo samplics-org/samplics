@@ -1,6 +1,6 @@
 <img src="./img/samplics_logo3.png" width="150" height="110" align="left" />
 
-# _SAMPLICS_
+# _Sample Analytics_
 
 [![Build Status](https://travis-ci.com/survey-methods/samplics.svg?branch=master)](https://travis-ci.com/survey-methods/samplics/branches)
 [![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics)
