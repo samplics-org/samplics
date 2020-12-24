@@ -1,6 +1,6 @@
 # _SAMPLICS_
 
-[![Build Status](https://travis-ci.com/survey-methods/samplics.svg?branch=master)](https://travis-ci.com/survey-methods/samplics)
+[![Build Status](https://travis-ci.com/survey-methods/samplics.svg?branch=master)](https://travis-ci.com/survey-methods/samplics/branches)
 [![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics)
 [![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)](https://samplics.readthedocs.io/en/latest/?badge=latest)
 
