@@ -40,6 +40,18 @@ sampling techniques for complex survey designs. These survey sampling techniques
 Usage
 ------
 
+Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
+
+.. code 
+
+    import samplics
+    from samplics.sampling import SampleSize
+
+    sample_size = SampleSize(parameter = "proportion")
+    sample_size.calculate(target=0.80, precision=0.10)
+
+Furthermore, the population is located in four natural regions i.e. North, South, East, and West. 
+
 To select a sample of primary sampling units using PPS method,
 we can use a code similar to:
 
@@ -110,10 +122,6 @@ Installation
 ``pip install samplics``
 
 Python 3.6 or newer is required and the main dependencies are `numpy <https://numpy.org/>`_, `pandas <https://pandas.pydata.org/>`_, `scpy <https://www.scipy.org/>`_, and `statsmodels <https://www.statsmodels.org/stable/index.h.tml>`_.
-
-Contributing
-------------
-TBD
 
 License
 -------
