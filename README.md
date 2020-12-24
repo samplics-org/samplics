@@ -98,24 +98,24 @@ we can use code similar to:
 To adjust the design sample weight for nonresponse,
 we can use code similar to:
 
-.. code:: python
-
-    import samplics
-    from samplics.weighting import SampleWeight
-
-    status_mapping = {
-        "in": "ineligible",
-        "rr": "respondent",
-        "nr": "non-respondent",
-        "uk":"unknown"
-        }
-
-    full_sample["nr_weight"] = SampleWeight().adjust(
-        samp_weight=full_sample["design_weight"],
-        adjust_class=full_sample["region"],
-        resp_status=full_sample["response_status"],
-        resp_dict=status_mapping
-        )
+> ```python
+> import samplics
+> from samplics.weighting import SampleWeight
+>
+> status_mapping = {
+>    "in": "ineligible",
+>    "rr": "respondent",
+>    "nr": "non-respondent",
+>    "uk":"unknown"
+>    }
+>
+> full_sample["nr_weight"] = SampleWeight().adjust(
+>    samp_weight=full_sample["design_weight"],
+>    adjust_class=full_sample["region"],
+>    resp_status=full_sample["response_status"],
+>    resp_dict=status_mapping
+>    )
+> ```
 
 To estimate population parameters, we can use code similar to:
 
@@ -163,18 +163,14 @@ To predict small area parameters, we can use code similar to:
 
 ## Installation
 
-`pip install samplics`
+_pip install samplics_
 
-Python 3.6 or newer is required and the main dependencies are `numpy <https://numpy.org/>`_, `pandas <https://pandas.pydata.org/>`_, `scpy <https://www.scipy.org/>`_, and `statsmodels <https://www.statsmodels.org/stable/index.h.tml>`_.
+Python 3.6 or newer is required and the main dependencies are [numpy] (https://numpy.org), [pandas] (https://pandas.pydata.org), [scpy] (https://www.scipy.org), and [statsmodel] (https://www.statsmodels.org/stable/index.h.tml).
 
 ## License
 
-`MIT <https://github.com/survey-methods/samplics/blob/master/license.txt>`\_
+[MIT] (https://github.com/survey-methods/samplics/blob/master/license.txt)
 
 ## Contact
 
-created by `Mamadou S. Diallo <https://twitter.com/MamadouSDiallo>`\_ - feel free to contact me!
-
-```
-
-```
+created by [Mamadou S. Diallo] (https://twitter.com/MamadouSDiallo) - feel free to contact me!
