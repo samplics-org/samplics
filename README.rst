@@ -52,7 +52,23 @@ Let's assume that we have a population and we would like to select a sample from
 
     assert size_nat_wald.samp_size["__none__"] == 62
 
-Furthermore, the population is located in four natural regions i.e. North, South, East, and West. 
+Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements.  
+
+.. code:: python
+
+    import samplics
+    from samplics.sampling import SampleSize
+
+    sample_size = SampleSize(parameter="proportion", method="wald", stratification=True)
+
+    target = {"North": 0.95, "South": 0.70, "East": 0.30, "West": 0.50}
+    precision = {"North": 0.30, "South": 0.10, "East": 0.15, "West": 0.10}
+    deff = {"North": 1, "South": 1.5, "East": 2.5, "West": 2.0}
+
+    sample_size = SampleSize(parameter = "proportion")
+    sample_size.calculate(target=0.80, precision=0.10)
+
+    assert size_nat_wald.samp_size["__none__"] == 62
 
 To select a sample of primary sampling units using PPS method,
 we can use a code similar to:
