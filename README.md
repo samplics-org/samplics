@@ -1,17 +1,8 @@
 # _SAMPLICS_
 
-[![Build Status](https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master)]("https://travis-ci.com/survey-methods/samplics.svg?token=WwRayqkQBt1W4ihyTzvw&branch=master")]
-
-<!-- :target: https://travis-ci.com/survey-methods/samplics -->
-
-[![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics/branch/master)
-
-<!-- :target: https://codecov.io/gh/survey-methods/samplics -->
-
-[![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)]
-
-<!-- :target: https://samplics.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status -->
+[![Build Status](https://travis-ci.com/survey-methods/samplics.svg?branch=master)](https://travis-ci.com/survey-methods/samplics)
+[![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics)
+[![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)](https://samplics.readthedocs.io/en/latest/?badge=latest)
 
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimates derived from such samples must reflect the random
