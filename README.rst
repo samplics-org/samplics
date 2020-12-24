@@ -148,6 +148,7 @@ To estimate population parameters, we can use code similar to:
         remove_nan = True
     )
 
+|
 To predict small area parameters, we can use code similar to:
 
 .. code:: python 
