@@ -54,7 +54,6 @@ Let's assume that we have a population and we would like to select a sample from
 
     assert size_nat_wald.samp_size["__none__"] == 62
 
-|
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements e.g. expected proportions, desired precisions and associated design effects.  
 
 .. code:: python
@@ -76,7 +75,6 @@ Furthermore, the population is located in four natural regions i.e. North, South
     assert size_nat_wald.samp_size["East"] == 115
     assert size_nat_wald.samp_size["West"] == 205
 
-|
 To select a sample of primary sampling units using PPS method,
 we can use code similar to:
 
@@ -99,7 +97,6 @@ we can use code similar to:
         psu_frame["number_households_census"]
         )
 
-|
 To adjust the design sample weight for nonresponse,
 we can use code similar to:
 
@@ -122,7 +119,6 @@ we can use code similar to:
         resp_dict=status_mapping
         )
 
-|
 To estimate population parameters, we can use code similar to:
 
 .. code:: python
@@ -148,7 +144,6 @@ To estimate population parameters, we can use code similar to:
         remove_nan = True
     )
 
-|
 To predict small area parameters, we can use code similar to:
 
 .. code:: python 
