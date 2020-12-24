@@ -13,7 +13,7 @@
 
 
 In large scale surveys, often complex random mechanisms are used to select
-samples. Estimations obtained from such samples must reflect the random
+samples. Estimates derived from such samples must reflect the random
 mechanism to ensure accurate calculations. *Samplics* is a python package that implements a set of
 sampling techniques for complex survey designs. In the package, these techniques are organized into the following four subpackages.
 
