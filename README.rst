@@ -44,7 +44,7 @@ Usage
 
 Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
 
-.. code_block:: python
+.. code:: python
 
     import samplics
     from samplics.sampling import SampleSize
