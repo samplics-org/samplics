@@ -61,14 +61,17 @@ Furthermore, the population is located in four natural regions i.e. North, South
 
     sample_size = SampleSize(parameter="proportion", method="wald", stratification=True)
 
-    target = {"North": 0.95, "South": 0.70, "East": 0.30, "West": 0.50}
-    precision = {"North": 0.30, "South": 0.10, "East": 0.15, "West": 0.10}
+    expected_proportions = {"North": 0.95, "South": 0.70, "East": 0.30, "West": 0.50}
+    half_ci = {"North": 0.30, "South": 0.10, "East": 0.15, "West": 0.10}
     deff = {"North": 1, "South": 1.5, "East": 2.5, "West": 2.0}
 
-    sample_size = SampleSize(parameter = "proportion")
-    sample_size.calculate(target=0.80, precision=0.10)
+    sample_size = SampleSize(parameter = "proportion", method="Fleiss", stratification=True)
+    sample_size.calculate(target=expected_proportions, precision=half_ci, deff=deff)
 
-    assert size_nat_wald.samp_size["__none__"] == 62
+    assert size_nat_wald.samp_size["North"] == 11
+    assert size_nat_wald.samp_size["South"] == 154
+    assert size_nat_wald.samp_size["East"] == 115
+    assert size_nat_wald.samp_size["West"] == 205
 
 To select a sample of primary sampling units using PPS method,
 we can use a code similar to:
