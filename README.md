@@ -1,4 +1,6 @@
-# <img src="./img/samplics-logo3.jpeg"> _SAMPLICS_
+<img src="./img/samplics_logo3.png" width="125" height="125" align="right" />
+
+# _SAMPLICS_
 
 [![Build Status](https://travis-ci.com/survey-methods/samplics.svg?branch=master)](https://travis-ci.com/survey-methods/samplics/branches)
 [![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics)
