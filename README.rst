@@ -11,7 +11,7 @@
   :target: https://samplics.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
-
+|
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimates derived from such samples must reflect the random
 mechanism. *Samplics* is a python package that implements a set of
@@ -40,7 +40,7 @@ sampling techniques for complex survey designs. These survey sampling techniques
 Usage
 ------
 
-[section1] Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
+Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
 
 .. code:: python
 
