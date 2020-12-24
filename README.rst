@@ -74,6 +74,7 @@ Furthermore, the population is located in four natural regions i.e. North, South
     assert size_nat_wald.samp_size["East"] == 115
     assert size_nat_wald.samp_size["West"] == 205
 
+|
 To select a sample of primary sampling units using PPS method,
 we can use a code similar to:
 
@@ -96,6 +97,7 @@ we can use a code similar to:
         psu_frame["number_households_census"]
         )
 
+|
 To adjust the design sample weight for nonresponse,
 we can use a code similar to:
 
