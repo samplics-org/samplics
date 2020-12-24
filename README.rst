@@ -37,7 +37,7 @@ sampling techniques for complex survey designs. These survey sampling techniques
 
 **Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to model the output variable of interest to produce domain level estimates. This subpackage provides Area-level and Unit-level SAE methods. 
 
-For more details, visit <https://samplics.readthedocs.io/en/latest/>
+For more details, visit https://samplics.readthedocs.io/en/latest/
 
 Usage
 ------
