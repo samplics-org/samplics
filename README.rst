@@ -50,6 +50,8 @@ Let's assume that we have a population and we would like to select a sample from
     sample_size = SampleSize(parameter = "proportion")
     sample_size.calculate(target=0.80, precision=0.10)
 
+    assert size_nat_wald.samp_size["__none__"] == 62
+
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. 
 
 To select a sample of primary sampling units using PPS method,
