@@ -109,17 +109,7 @@ Installation
 ------------
 ``pip install samplics``
 
-if both Python 2.x and python 3.x are installed on your computer, 
-you may have to use: ``pip3 install samplics``
-
-Dependencies
-------------
-Python versions 3.6.x or newer and the following packages:
-
-* `numpy <https://numpy.org/>`_
-* `pandas <https://pandas.pydata.org/>`_
-* `scpy <https://www.scipy.org/>`_
-* `statsmodels <https://www.statsmodels.org/stable/index.h.tml>`_
+Python 3.6 or newer is required and the main dependencies are `numpy <https://numpy.org/>`_, `pandas <https://pandas.pydata.org/>`_, `scpy <https://www.scipy.org/>`_, and `statsmodels <https://www.statsmodels.org/stable/index.h.tml>`_.
 
 Contributing
 ------------
