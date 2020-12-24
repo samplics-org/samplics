@@ -53,46 +53,47 @@ Let's assume that we have a population and we would like to select a sample from
 
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements e.g. expected proportions, desired precisions and associated design effects.
 
-.. code:: python
-
-    import samplics
-    from samplics.sampling import SampleSize
-
-    sample_size = SampleSize(parameter="proportion", method="wald", stratification=True)
-
-    expected_proportions = {"North": 0.95, "South": 0.70, "East": 0.30, "West": 0.50}
-    half_ci = {"North": 0.30, "South": 0.10, "East": 0.15, "West": 0.10}
-    deff = {"North": 1, "South": 1.5, "East": 2.5, "West": 2.0}
-
-    sample_size = SampleSize(parameter = "proportion", method="Fleiss", stratification=True)
-    sample_size.calculate(target=expected_proportions, precision=half_ci, deff=deff)
-
-    assert size_nat_wald.samp_size["North"] == 11
-    assert size_nat_wald.samp_size["South"] == 154
-    assert size_nat_wald.samp_size["East"] == 115
-    assert size_nat_wald.samp_size["West"] == 205
+> ```python
+> import samplics
+> from samplics.sampling import SampleSize
+>
+> sample_size = SampleSize(parameter="proportion", method="wald", stratification=True)
+>
+> expected_proportions = {"North": 0.95, "South": 0.70, "East": 0.30, "West": 0.50}
+> half_ci = {"North": 0.30, "South": 0.10, "East": 0.15, "West": 0.10}
+> deff = {"North": 1, "South": 1.5, "East": 2.5, "West": 2.0}
+>
+> sample_size = SampleSize(parameter = "proportion", method="Fleiss", stratification=True)
+> sample_size.calculate(target=expected_proportions, precision=half_ci, deff=deff)
+>
+> assert size_nat_wald.samp_size["North"] == 11
+> assert size_nat_wald.samp_size["South"] == 154
+> assert size_nat_wald.samp_size["East"] == 115
+> assert size_nat_wald.samp_size["West"] == 205
+> ```
 
 To select a sample of primary sampling units using PPS method,
 we can use code similar to:
 
-.. code:: python
-
-    import samplics
-    from samplics.sampling import SampleSelection
-
-    psu_frame = pd.read_csv("psu_frame.csv")
-    psu_sample_size = {"East":3, "West": 2, "North": 2, "South": 3}
-    pps_design = SampleSelection(
-      method="pps-sys",
-      stratification=True,
-      with_replacement=False
-      )
-    frame["psu_prob"] = pps_design.inclusion_probs(
-        psu_frame["cluster"],
-        psu_sample_size,
-        psu_frame["region"],
-        psu_frame["number_households_census"]
-        )
+> ```python
+> import samplics
+> from samplics.sampling import SampleSelection
+>
+> psu_frame = pd.read_csv("psu_frame.csv")
+> psu_sample_size = {"East":3, "West": 2, "North": 2, "South": 3}
+> pps_design = SampleSelection(
+>    method="pps-sys",
+>    stratification=True,
+>    with_replacement=False
+>    )
+>
+> frame["psu_prob"] = pps_design.inclusion_probs(
+>    psu_frame["cluster"],
+>    psu_sample_size,
+>    psu_frame["region"],
+>    psu_frame["number_households_census"]
+>    )
+> ```
 
 To adjust the design sample weight for nonresponse,
 we can use code similar to:
@@ -118,44 +119,47 @@ we can use code similar to:
 
 To estimate population parameters, we can use code similar to:
 
-.. code:: python
-
-    import samplics
-    from samplics.estimation import TaylorEstimation, ReplicateEstimator
-
-    # Taylor-based
-    zinc_mean_str = TaylorEstimator("mean").estimate(
-        y=nhanes2f["zinc"],
-        samp_weight=nhanes2f["finalwgt"],
-        stratum=nhanes2f["stratid"],
-        psu=nhanes2f["psuid"],
-        remove_nan=True
-    )
-
-    # Replicate-based
-    ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
-        y=nhanes2brr["weight"],
-        samp_weight=nhanes2brr["finalwgt"],
-        x=nhanes2brr["height"],
-        rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
-        remove_nan = True
-    )
+> ```python
+> import samplics
+> from samplics.estimation import TaylorEstimation, ReplicateEstimator
+>
+> # Taylor-based
+> zinc_mean_str = TaylorEstimator("mean").estimate(
+>    y=nhanes2f["zinc"],
+>    samp_weight=nhanes2f["finalwgt"],
+>    stratum=nhanes2f["stratid"],
+>    psu=nhanes2f["psuid"],
+>    remove_nan=True
+> )
+>
+> # Replicate-based
+> ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
+>    y=nhanes2brr["weight"],
+>    samp_weight=nhanes2brr["finalwgt"],
+>    x=nhanes2brr["height"],
+>    rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
+>    remove_nan = True
+> )
+> ```
 
 To predict small area parameters, we can use code similar to:
 
-.. code:: python
-
-    # Area-level basic method
-    fh_model_reml = EblupAreaModel(method="REML")
-    fh_model_reml.fit(
-        yhat=yhat, X=X, area=area, intercept=False, error_std=sigma_e, tol=1e-4,
-    )
-    fh_model_reml.predict(X=X, area=area, intercept=False)
-
-    # Unit-level basic method
-    eblup_bhf_reml = EblupUnitModel()
-    eblup_bhf_reml.fit(ys, Xs, areas,)
-    eblup_bhf_reml.predict(Xmean, areas_list)
+> ```python
+> import samplics
+> from samplics.estimation import EblupAreaModel, EblupUnitModel
+>
+> # Area-level basic method
+> fh_model_reml = EblupAreaModel(method="REML")
+> fh_model_reml.fit(
+>    yhat=yhat, X=X, area=area, intercept=False, error_std=sigma_e, tol=1e-4,
+> )
+> fh_model_reml.predict(X=X, area=area, intercept=False)
+>
+> # Unit-level basic method
+> eblup_bhf_reml = EblupUnitModel()
+> eblup_bhf_reml.fit(ys, Xs, areas,)
+> eblup_bhf_reml.predict(Xmean, areas_list)
+> ```
 
 ## Installation
 
