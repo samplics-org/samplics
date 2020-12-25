@@ -161,7 +161,7 @@ To predict small area parameters, we can use code similar to:
 
 `pip install samplics`
 
-Python 3.6 or newer is required and the main dependencies are [numpy](https://numpy.org), [pandas](https://pandas.pydata.org), [scpy](https://www.scipy.org), and [statsmodel](https://www.statsmodels.org/stable/index.html).
+Python 3.6.1 or newer is required and the main dependencies are [numpy](https://numpy.org), [pandas](https://pandas.pydata.org), [scpy](https://www.scipy.org), and [statsmodel](https://www.statsmodels.org/stable/index.html).
 
 ## License
 
