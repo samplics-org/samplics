@@ -65,6 +65,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+docs/_static/
 
 # PyBuilder
 target/
@@ -126,7 +127,6 @@ dmypy.json
 datasets
 reference_material
 notebooks/
-*.png
 *.ipynb_checkpoints/
 
 #Other

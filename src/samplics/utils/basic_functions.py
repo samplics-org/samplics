@@ -85,9 +85,14 @@ def transform(
         if inverse:
             return np.exp(y) - constant
         else:
-            return np.log(y + constant)
+            if ((y + constant) <= 0).any():
+                raise ValueError("log function not defined for negative numbers")
+            else: 
+                return np.log(y + constant)
     elif llambda != 0.0:
         if inverse:
+            if ((1 + y * llambda) <= 0).any(): 
+                raise ValueError("log function not defined for negative numbers")
             return np.exp(np.log(1 + y * llambda) / llambda)
         else:
             return np.power(y, llambda) / llambda
@@ -104,7 +109,8 @@ def skewness(y: Array, type: int = 1) -> float:
         n = y.shape[0]
         if n <= 3:
             raise ValueError("For type 2, y must be of size 3 or more.")
-        skewness = skewness * np.sqrt(n * (n - 1)) / (n - 2)
+        else:
+            skewness = skewness * np.sqrt(n * (n - 1)) / (n - 2)
     elif type == 3:
         n = y.shape[0]
         skewness = skewness * np.power(1 - 1 / n, 3 / 2)
@@ -146,6 +152,8 @@ def _plot_measure(
     coefs = np.zeros(lambda_range.size)
     measure_loc = None
     for k, ll in enumerate(lambda_range):
+        if (1 + y*ll < 0).any():
+            break
         y_ll = transform(y, ll)
         if measure.lower() == "skewness":
             coefs[k] = skewness(y_ll)
