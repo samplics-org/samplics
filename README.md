@@ -43,8 +43,6 @@ Let's assume that we have a population and we would like to select a sample from
 >
 > sample_size = SampleSize(parameter = "proportion")
 > sample_size.calculate(target=0.80, precision=0.10)
->
-> assert size_nat_wald.samp_size["__none__"] == 62
 > ```
 
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements e.g. expected proportions, desired precisions and associated design effects.
@@ -61,11 +59,6 @@ Furthermore, the population is located in four natural regions i.e. North, South
 >
 > sample_size = SampleSize(parameter = "proportion", method="Fleiss", stratification=True)
 > sample_size.calculate(target=expected_proportions, precision=half_ci, deff=deff)
->
-> assert size_nat_wald.samp_size["North"] == 11
-> assert size_nat_wald.samp_size["South"] == 154
-> assert size_nat_wald.samp_size["East"] == 115
-> assert size_nat_wald.samp_size["West"] == 205
 > ```
 
 To select a sample of primary sampling units using PPS method,
