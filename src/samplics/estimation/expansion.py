@@ -25,8 +25,7 @@ TypeTaylorEst = TypeVar("TypeTaylorEst", bound="TaylorEstimator")
 
 
 class _SurveyEstimator:
-    """ General approach for sample estimation of linear parameters. 
-    """
+    """General approach for sample estimation of linear parameters."""
 
     def __init__(self, parameter: str, alpha: float = 0.05, random_seed: int = None) -> None:
         """Initializes the instance """
@@ -124,7 +123,10 @@ class _SurveyEstimator:
         )
 
     def _degree_of_freedom(
-        self, samp_weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None,
+        self,
+        samp_weight: np.ndarray,
+        stratum: np.ndarray = None,
+        psu: np.ndarray = None,
     ) -> None:
 
         stratum = formats.numpy_array(stratum)
@@ -229,28 +231,28 @@ class _SurveyEstimator:
 
 
 class TaylorEstimator(_SurveyEstimator):
-    """*TaylorEstimate* implements taylor-based variance approximations. 
+    """*TaylorEstimate* implements taylor-based variance approximations.
 
     Attributes
         | point_est (dict): point estimate of the parameter of interest.
         | variance (dict): variance estimate of the parameter of interest.
         | stderror (dict): standard error of the parameter of interest.
-        | coef_var (dict): estimate of the coefficient of variation.  
+        | coef_var (dict): estimate of the coefficient of variation.
         | deff (dict): estimate of the design effect due to weighting.
-        | lower_ci (dict): estimate of the lower bound of the confidence interval. 
-        | upper_ci (dict): estimate of the upper bound of the confidence interval. 
+        | lower_ci (dict): estimate of the lower bound of the confidence interval.
+        | upper_ci (dict): estimate of the upper bound of the confidence interval.
         | degree_of_freedom (int): degree of freedom for the confidence interval.
         | alpha (float): significant level for the confidence interval
         | strata (list): list of the strata in the sample.
-        | domains (list): list of the domains in the sample. 
-        | method (str): variance estimation method. 
-        | parameter (str): the parameter of the population to estimate e.g. total. 
+        | domains (list): list of the domains in the sample.
+        | method (str): variance estimation method.
+        | parameter (str): the parameter of the population to estimate e.g. total.
         | number_strata (int): number of strata.
         | number_psus (int): number of primary sampling units (psus)
 
     Methods
         | estimate(): produces the point estimate of the parameter of interest with the associated
-        |   measures of precision. 
+        |   measures of precision.
     """
 
     def __init__(
@@ -268,8 +270,7 @@ class TaylorEstimator(_SurveyEstimator):
     def _score_variable(
         self, y: np.ndarray, samp_weight: np.ndarray, x: np.ndarray = None
     ) -> np.ndarray:
-        """Provides the scores used to calculate the variance
-        """
+        """Provides the scores used to calculate the variance"""
 
         y_weighted = y * samp_weight
         if self.parameter in ("proportion", "mean"):
@@ -311,7 +312,10 @@ class TaylorEstimator(_SurveyEstimator):
 
     @staticmethod
     def _variance_stratum_within(
-        y_score_s: np.ndarray, number_psus_in_s: int, psu_s: np.ndarray, ssu_s: np.ndarray,
+        y_score_s: np.ndarray,
+        number_psus_in_s: int,
+        psu_s: np.ndarray,
+        ssu_s: np.ndarray,
     ) -> np.float64:
 
         variance = 0.0
@@ -456,7 +460,7 @@ class TaylorEstimator(_SurveyEstimator):
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
-    ) -> TypeTaylorEst:
+    ) -> None:
         """[summary]
 
         Args:
@@ -537,5 +541,3 @@ class TaylorEstimator(_SurveyEstimator):
                 self.lower_ci[key] = self.point_est[key] - t_quantile * self.stderror[key]
                 self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
                 self.coef_var[key] = pow(self.variance[key], 0.5) / self.point_est[key]
-
-        return self
