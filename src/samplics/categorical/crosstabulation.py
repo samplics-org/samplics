@@ -60,6 +60,9 @@ class CrossTabulation:
             domain=row_var,
         )
 
+    def _twoway():
+        pass
+
     def tabulate(
         self,
         cat_vars: Array,
