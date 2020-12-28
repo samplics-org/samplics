@@ -1,6 +1,21 @@
 import pytest
 
-from samplics.utils.basic_functions import *
+import numpy as np
+
+from samplics.utils.basic_functions import (
+    averageby,
+    kurtosis,
+    plot_kurtosis,
+    plot_skewness,
+    skewness,
+    sumby,
+    transform,
+    averageby,
+    skewness,
+    kurtosis,
+    plot_skewness,
+    plot_kurtosis,
+)
 
 group1 = np.array([1, 2, 1, 3, 2, 1, 2, 2, 1, 3, 2])
 y1 = np.array([5, 3, 1, 2, 2, 3, 1, 3, 6, 21, 7])
@@ -78,15 +93,18 @@ def test_transform_exp_inverse(y):
     y_transformed = transform(y + constant, llambda, constant, inverse=True)
     assert np.isclose(y_transformed, np.exp(np.log(1 + (y + constant) * llambda) / llambda)).all()
 
+
 @pytest.mark.xfail
 @pytest.mark.parametrize("y", [y1, y2])
 def test_plot_skewness(y):
     plot_skewness(y, block=False)
 
+
 @pytest.mark.xfail
 @pytest.mark.parametrize("y", [y1, y2])
 def test_plot_kurtosis(y):
     plot_kurtosis(y, block=False)
+
 
 @pytest.mark.parametrize("y", [y1, y2])
 def test_plot_skewness(y):

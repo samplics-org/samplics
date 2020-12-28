@@ -7,7 +7,7 @@ Functions:
     | *dataframe_to_array()* returns a pandas dataframe from an np.ndarray.
 """
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Tuple
 
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ from samplics.utils.types import Array, Number, StringNumber
 
 
 def numpy_array(arr: Any) -> np.ndarray:
-    """Converts an array-like input data to np.ndarray. 
+    """Converts an array-like input data to np.ndarray.
 
     Args:
         arr (Any): array-like input data.
@@ -34,17 +34,17 @@ def numpy_array(arr: Any) -> np.ndarray:
 
 
 def array_to_dict(arr: np.ndarray, domain: np.ndarray = None) -> Dict[StringNumber, Number]:
-    """Converts an array to a dictionary where the keys are the unique values of the array and 
-    the values of the dictionary are the counts of the array values. 
+    """Converts an array to a dictionary where the keys are the unique values of the array and
+    the values of the dictionary are the counts of the array values.
 
     Args:
         arr (np.ndarray): an input area.
-        domain (np.ndarray, optional): an array to provide the group associated with the 
-            observations in arr. If not None, a dictionarry of dictionaries is produced. 
+        domain (np.ndarray, optional): an array to provide the group associated with the
+            observations in arr. If not None, a dictionarry of dictionaries is produced.
             Defaults to None.
 
     Returns:
-        Dict[StringNumber, Number]: a dictionary with the unique values of *arr* as keys. 
+        Dict[StringNumber, Number]: a dictionary with the unique values of *arr* as keys.
             The values of the dictionary correspond to the counts of the keys in *arr*.
     """
 
@@ -62,7 +62,7 @@ def array_to_dict(arr: np.ndarray, domain: np.ndarray = None) -> Dict[StringNumb
 
 
 def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
-    """Returns a pandas dataframe from an np.ndarray. 
+    """Returns a pandas dataframe from an np.ndarray.
 
     Args:
         df (pd.DataFrame): a pandas dataframe or series.
@@ -90,7 +90,9 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 
 
 def sample_size_dict(
-    sample_size: Union[Dict[Any, int], int], stratification: bool, stratum: Array,
+    sample_size: Union[Dict[Any, int], int],
+    stratification: bool,
+    stratum: Array,
 ) -> Dict[Any, int]:
     if not isinstance(sample_size, Dict) and stratification:
         return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
@@ -112,7 +114,7 @@ def dict_to_dataframe(col_names: List[str], *args: Dict[Any, Number]) -> pd.Data
 
     keys = list(args[0].keys())
     number_keys = len(keys)
-    values = []
+    values = list()
     for k, arg in enumerate(args):
         argk_keys = list(args[k].keys())
         if not isinstance(arg, dict) or (keys != argk_keys) or number_keys != len(argk_keys):
@@ -120,8 +122,19 @@ def dict_to_dataframe(col_names: List[str], *args: Dict[Any, Number]) -> pd.Data
 
         values.append(list(arg.values()))
 
-    values_df = pd.DataFrame(values,).T
+    values_df = pd.DataFrame(
+        values,
+    ).T
     values_df.insert(0, "00", keys)
     values_df.columns = col_names
 
     return values_df
+
+
+def remove_nans(excluded_units: Array, *args) -> Tuple:
+
+    vars = list()
+    for var in args:
+        vars.append(var[~excluded_units])
+
+    return vars
