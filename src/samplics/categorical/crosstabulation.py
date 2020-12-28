@@ -20,7 +20,7 @@ from samplics.estimation import TaylorEstimator
 
 
 class CrossTabulation:
-    """provides methods to analyse"""
+    """provides methods for analyzing cross-tabulations"""
 
     def __init__(self, table_type: str, alpha: float = 0.05) -> None:
         """[summary]
