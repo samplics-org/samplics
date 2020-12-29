@@ -5,11 +5,24 @@ from samplics.estimation import TaylorEstimator
 
 np.random.seed(12345)
 
-yrbs = pd.read_csv("./tests/estimation/yrbs_modified.csv")
+yrbs = pd.read_csv("./tests/estimation/yrbs.csv")
 
-# yrbs["y"] = yrbs["qn8"].replace({2: 0})
-# yrbs["x"] = 0.8 * yrbs["y"] + 0.5
-# yrbs["domain"] = np.random.choice(["d1", "d2", "d3"], size=yrbs.shape[0], p=[0.1, 0.3, 0.6])
+yrbs["y"] = yrbs["qn8"].replace({2: 0})
+yrbs["x"] = 0.8 * yrbs["y"] + 0.5
+yrbs["domain"] = np.random.choice(["d1", "d2", "d3"], size=yrbs.shape[0], p=[0.1, 0.3, 0.6])
+
+# yrbs["fpc"] = 1.0
+# yrbs.loc[yrbs["stratum"] == 101, "fpc"] = 0.95
+# yrbs.loc[yrbs["stratum"] == 202, "fpc"] = 0.95
+# yrbs.loc[yrbs["stratum"] == 214, "fpc"] = 0.95
+# yrbs.loc[yrbs["stratum"] == 102, "fpc"] = 0.90
+# yrbs.loc[yrbs["stratum"] == 111, "fpc"] = 0.90
+# yrbs.loc[yrbs["stratum"] == 213, "fpc"] = 0.90
+# yrbs.loc[yrbs["stratum"] == 103, "fpc"] = 0.85
+# yrbs.loc[yrbs["stratum"] == 112, "fpc"] = 0.85
+# yrbs.loc[yrbs["stratum"] == 212, "fpc"] = 0.85
+# yrbs.loc[yrbs["stratum"] == 201, "fpc"] = 0.50
+# yrbs.loc[yrbs["stratum"] == 113, "fpc"] = 0.50
 # yrbs.to_csv("./tests/estimation/yrbs_modified.csv", index=False)
 
 # print(pd.DataFrame((y,x)))
@@ -19,6 +32,8 @@ weight = yrbs["weight"]
 domain = yrbs["domain"]
 x = yrbs["x"]
 y = yrbs["y"]
+# fpc_array = yrbs["fpc"]
+# fpc_dict = dict(zip(stratum, fpc_array))
 
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
 svy_total_without_str = TaylorEstimator("total")
