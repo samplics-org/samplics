@@ -13,20 +13,20 @@ and Wolter, K.M. (2007) [#w2007]_.
 """
 
 import math
-from typing import TypeVar, Any, Dict, List, Optional, Tuple
+from typing import TypeVar, Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
+from numpy.lib.arraysetops import isin
 import pandas as pd
-from samplics.utils import formats
-from samplics.utils.types import Array, StringNumber
+from samplics.utils.formats import fpc_as_dict, numpy_array
+from samplics.utils.types import Array, Number, StringNumber
 from scipy.stats import t as student
 
 TypeTaylorEst = TypeVar("TypeTaylorEst", bound="TaylorEstimator")
 
 
 class _SurveyEstimator:
-    """ General approach for sample estimation of linear parameters. 
-    """
+    """General approach for sample estimation of linear parameters."""
 
     def __init__(self, parameter: str, alpha: float = 0.05, random_seed: int = None) -> None:
         """Initializes the instance """
@@ -49,6 +49,7 @@ class _SurveyEstimator:
         self.deff: Dict[StringNumber, Any] = {}
         self.lower_ci: Dict[StringNumber, Any] = {}
         self.upper_ci: Dict[StringNumber, Any] = {}
+        self.fpc: Dict[StringNumber, Any] = {}
         self.strata: List[StringNumber] = ["__none__"]
         self.domains: List[StringNumber] = ["__none__"]
         self.method: str = "taylor"
@@ -95,22 +96,22 @@ class _SurveyEstimator:
         Optional[np.ndarray],
         Optional[np.ndarray],
     ]:
-        y = formats.numpy_array(y)
-        samp_weight = formats.numpy_array(samp_weight)
+        y = numpy_array(y)
+        samp_weight = numpy_array(samp_weight)
         if x is not None:
-            x = formats.numpy_array(x)
+            x = numpy_array(x)
             x = x[~excluded_units]
         if stratum is not None:
-            stratum = formats.numpy_array(stratum)
+            stratum = numpy_array(stratum)
             stratum = stratum[~excluded_units]
         if domain is not None:
-            domain = formats.numpy_array(domain)
+            domain = numpy_array(domain)
             domain = domain[~excluded_units]
         if psu is not None:
-            psu = formats.numpy_array(psu)
+            psu = numpy_array(psu)
             psu = psu[~excluded_units]
         if ssu is not None:
-            ssu = formats.numpy_array(ssu)
+            ssu = numpy_array(ssu)
             ssu = ssu[~excluded_units]
 
         return (
@@ -124,11 +125,14 @@ class _SurveyEstimator:
         )
 
     def _degree_of_freedom(
-        self, samp_weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None,
+        self,
+        samp_weight: np.ndarray,
+        stratum: np.ndarray = None,
+        psu: np.ndarray = None,
     ) -> None:
 
-        stratum = formats.numpy_array(stratum)
-        psu = formats.numpy_array(psu)
+        stratum = numpy_array(stratum)
+        psu = numpy_array(psu)
 
         if stratum.size <= 1:
             self.number_psus = np.unique(psu).size if psu.size > 1 else samp_weight.size
@@ -137,7 +141,7 @@ class _SurveyEstimator:
             self.number_psus = np.unique([stratum, psu], axis=1).shape[1]
             self.number_strata = np.unique(stratum).size
         else:
-            samp_weight = formats.numpy_array(samp_weight)
+            samp_weight = numpy_array(samp_weight)
             self.number_psus = samp_weight.size
             self.number_strata = np.unique(stratum).size
 
@@ -229,28 +233,28 @@ class _SurveyEstimator:
 
 
 class TaylorEstimator(_SurveyEstimator):
-    """*TaylorEstimate* implements taylor-based variance approximations. 
+    """*TaylorEstimate* implements taylor-based variance approximations.
 
     Attributes
         | point_est (dict): point estimate of the parameter of interest.
         | variance (dict): variance estimate of the parameter of interest.
         | stderror (dict): standard error of the parameter of interest.
-        | coef_var (dict): estimate of the coefficient of variation.  
+        | coef_var (dict): estimate of the coefficient of variation.
         | deff (dict): estimate of the design effect due to weighting.
-        | lower_ci (dict): estimate of the lower bound of the confidence interval. 
-        | upper_ci (dict): estimate of the upper bound of the confidence interval. 
+        | lower_ci (dict): estimate of the lower bound of the confidence interval.
+        | upper_ci (dict): estimate of the upper bound of the confidence interval.
         | degree_of_freedom (int): degree of freedom for the confidence interval.
         | alpha (float): significant level for the confidence interval
         | strata (list): list of the strata in the sample.
-        | domains (list): list of the domains in the sample. 
-        | method (str): variance estimation method. 
-        | parameter (str): the parameter of the population to estimate e.g. total. 
+        | domains (list): list of the domains in the sample.
+        | method (str): variance estimation method.
+        | parameter (str): the parameter of the population to estimate e.g. total.
         | number_strata (int): number of strata.
         | number_psus (int): number of primary sampling units (psus)
 
     Methods
         | estimate(): produces the point estimate of the parameter of interest with the associated
-        |   measures of precision. 
+        |   measures of precision.
     """
 
     def __init__(
@@ -268,8 +272,7 @@ class TaylorEstimator(_SurveyEstimator):
     def _score_variable(
         self, y: np.ndarray, samp_weight: np.ndarray, x: np.ndarray = None
     ) -> np.ndarray:
-        """Provides the scores used to calculate the variance
-        """
+        """Provides the scores used to calculate the variance"""
 
         y_weighted = y * samp_weight
         if self.parameter in ("proportion", "mean"):
@@ -311,7 +314,10 @@ class TaylorEstimator(_SurveyEstimator):
 
     @staticmethod
     def _variance_stratum_within(
-        y_score_s: np.ndarray, number_psus_in_s: int, psu_s: np.ndarray, ssu_s: np.ndarray,
+        y_score_s: np.ndarray,
+        number_psus_in_s: int,
+        psu_s: np.ndarray,
+        ssu_s: np.ndarray,
     ) -> np.float64:
 
         variance = 0.0
@@ -339,14 +345,17 @@ class TaylorEstimator(_SurveyEstimator):
         stratum: np.ndarray,
         psu: np.ndarray,
         ssu: Optional[np.ndarray] = None,
+        fpc: Dict[StringNumber, Number] = {"__none__": 1},
     ) -> np.float64:
         """Computes the variance across stratum """
 
         if stratum is None:
             number_psus = np.unique(psu).size
-            var_est = self._variance_stratum_between(
+            var_est = fpc["__none__"] * self._variance_stratum_between(
                 y_score, samp_weight, number_psus, psu
-            ) + self._variance_stratum_within(y_score, number_psus, psu, ssu)
+            ) + (1 - fpc["__none__"]) * self._variance_stratum_within(
+                y_score, number_psus, psu, ssu
+            )
 
         else:
             var_est = 0.0
@@ -356,9 +365,11 @@ class TaylorEstimator(_SurveyEstimator):
                 psu_s = psu[stratum == s] if psu is not None else np.array([])
                 number_psus_in_s = np.size(np.unique(psu_s))
                 ssu_s = ssu[stratum == s] if ssu is not None else None
-                var_est += self._variance_stratum_between(
+                var_est += fpc[s] * self._variance_stratum_between(
                     y_score_s, samp_weight_s, number_psus_in_s, psu_s
-                ) + self._variance_stratum_within(y_score_s, number_psus_in_s, psu_s, ssu_s)
+                ) + (1 - fpc[s]) * self._variance_stratum_within(
+                    y_score_s, number_psus_in_s, psu_s, ssu_s
+                )
 
         return var_est
 
@@ -371,6 +382,7 @@ class TaylorEstimator(_SurveyEstimator):
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         domain: Optional[Array] = None,
+        fpc: Dict[StringNumber, Number] = {"__none__": 1},
         remove_nan: bool = False,
     ) -> Dict[StringNumber, Any]:
 
@@ -404,7 +416,7 @@ class TaylorEstimator(_SurveyEstimator):
                     cat_dict_k = dict(
                         {
                             categories[k]: self._taylor_variance(
-                                y_score_k, samp_weight, stratum, psu, ssu
+                                y_score_k, samp_weight, stratum, psu, ssu, fpc
                             )
                         }
                     )
@@ -413,7 +425,7 @@ class TaylorEstimator(_SurveyEstimator):
             else:
                 y_score = self._score_variable(y, samp_weight, x)
                 variance[self.domains[0]] = self._taylor_variance(
-                    y_score, samp_weight, stratum, psu, ssu
+                    y_score, samp_weight, stratum, psu, ssu, fpc
                 )
 
         else:
@@ -431,7 +443,7 @@ class TaylorEstimator(_SurveyEstimator):
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._taylor_variance(
-                                    y_score_d_k, weight_d, stratum, psu, ssu
+                                    y_score_d_k, weight_d, stratum, psu, ssu, fpc
                                 )
                             }
                         )
@@ -440,7 +452,9 @@ class TaylorEstimator(_SurveyEstimator):
                 else:
                     y_d = y * (domain == d)
                     y_score_d = self._score_variable(y_d, weight_d, x_d)
-                    variance[d] = self._taylor_variance(y_score_d, weight_d, stratum, psu, ssu)
+                    variance[d] = self._taylor_variance(
+                        y_score_d, weight_d, stratum, psu, ssu, fpc
+                    )
 
         return variance
 
@@ -453,10 +467,11 @@ class TaylorEstimator(_SurveyEstimator):
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         domain: Optional[Array] = None,
+        fpc: Union[Dict, Array, Number] = 1.0,
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
-    ) -> TypeTaylorEst:
+    ) -> None:
         """[summary]
 
         Args:
@@ -492,12 +507,22 @@ class TaylorEstimator(_SurveyEstimator):
             )
 
         if stratum is not None:
+            stratum = numpy_array(stratum)
             self.strata = np.unique(stratum).tolist()
+
         if domain is not None:
             self.domains = np.unique(domain).tolist()
 
+        if not isinstance(fpc, dict):
+            self.fpc = fpc_as_dict(stratum, fpc)
+        else:
+            if list(np.unique(stratum)) != list(fpc.keys()):
+                raise AssertionError("fpc dictionary keys must be the same as the strata!")
+            else:
+                self.fpc = fpc
+
         self.point_est = self._get_point(y, samp_weight, x, domain)
-        self.variance = self._get_variance(y, samp_weight, x, stratum, psu, ssu, domain)
+        self.variance = self._get_variance(y, samp_weight, x, stratum, psu, ssu, domain, self.fpc)
 
         self._degree_of_freedom(samp_weight, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
@@ -537,5 +562,3 @@ class TaylorEstimator(_SurveyEstimator):
                 self.lower_ci[key] = self.point_est[key] - t_quantile * self.stderror[key]
                 self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
                 self.coef_var[key] = pow(self.variance[key], 0.5) / self.point_est[key]
-
-        return self
