@@ -518,6 +518,8 @@ class TaylorEstimator(_SurveyEstimator):
         else:
             if list(np.unique(stratum)) != list(fpc.keys()):
                 raise AssertionError("fpc dictionary keys must be the same as the strata!")
+            else:
+                self.fpc = fpc
 
         self.point_est = self._get_point(y, samp_weight, x, domain)
         self.variance = self._get_variance(y, samp_weight, x, stratum, psu, ssu, domain, self.fpc)
