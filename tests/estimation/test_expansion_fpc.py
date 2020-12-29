@@ -15,6 +15,7 @@ weight = one_stage_fpc["weight"]
 domain = one_stage_fpc["domain"]
 x = one_stage_fpc["x"]
 y = one_stage_fpc["y"]
+z = one_stage_fpc["z"]
 fpc_psu = 1 - 5 / 44
 fpc_no_psu = 1 - 21 / 44
 
@@ -336,201 +337,155 @@ def test_ratio_estimator_with_str_nor_psu_domain():
     assert np.isclose(svy_ratio_with_str_domain.upper_ci[2], 1.898337)
 
 
-# """Taylor Approximation WITHOUT Stratification for PROPORTION"""
-# svy_prop_without_str = TaylorEstimator("proportion")
+"""Taylor Approximation WITHOUT Stratification for PROPORTION"""
+svy_prop_without_str = TaylorEstimator("proportion")
 
 
-# def test_prop_estimator_without_str():
-#     svy_prop_without_str.estimate(y, weight, psu=psu, remove_nan=True)
+def test_prop_estimator_without_str():
+    svy_prop_without_str.estimate(z, weight, psu=psu, fpc=fpc_psu)
 
-#     assert np.isclose(svy_prop_without_str.point_est["__none__"][0.0], 0.186_377_5)
-#     assert np.isclose(svy_prop_without_str.point_est["__none__"][1.0], 0.813_622_5)
-#     assert np.isclose(svy_prop_without_str.variance["__none__"][0.0], 0.020_285_6 ** 2)
-#     assert np.isclose(svy_prop_without_str.variance["__none__"][1.0], 0.020_285_6 ** 2)
-#     assert np.isclose(svy_prop_without_str.stderror["__none__"][0.0], 0.020_285_6)
-#     assert np.isclose(svy_prop_without_str.stderror["__none__"][1.0], 0.020_285_6)
-#     assert np.isclose(svy_prop_without_str.lower_ci["__none__"][0.0], 0.149_023)
-#     assert np.isclose(svy_prop_without_str.lower_ci["__none__"][1.0], 0.769_441_4)
-#     assert np.isclose(svy_prop_without_str.upper_ci["__none__"][0.0], 0.230_558_6)
-#     assert np.isclose(svy_prop_without_str.upper_ci["__none__"][1.0], 0.850_977)
-#     assert np.isclose(svy_prop_without_str.coef_var["__none__"][0.0], 0.020_285_6 / 0.186_377_5)
-#     assert np.isclose(svy_prop_without_str.coef_var["__none__"][1.0], 0.020_285_6 / 0.813_622_5)
+    assert np.isclose(svy_prop_without_str.point_est["__none__"][0.0], 0.3253012)
+    assert np.isclose(svy_prop_without_str.point_est["__none__"][1.0], 0.6746988)
+    assert np.isclose(svy_prop_without_str.stderror["__none__"][0.0], 0.1499394)
+    assert np.isclose(svy_prop_without_str.stderror["__none__"][1.0], 0.1499394)
+    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][0.0], 0.0674673)
+    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][1.0], 0.2373558)
+    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][0.0], 0.7626442)
+    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][1.0], 0.9325327)
 
 
-# def test_prop_estimator_without_str_nor_psu():
-#     svy_prop_without_str.estimate(y, weight, remove_nan=True)
+def test_prop_estimator_without_str_nor_psu():
+    svy_prop_without_str.estimate(z, weight, fpc=fpc_no_psu)
 
-#     assert np.isclose(svy_prop_without_str.point_est["__none__"][0.0], 0.1863775)
-#     assert np.isclose(svy_prop_without_str.point_est["__none__"][1.0], 0.8136225)
-#     assert np.isclose(svy_prop_without_str.variance["__none__"][0.0], 0.0066567 ** 2)
-#     assert np.isclose(svy_prop_without_str.variance["__none__"][1.0], 0.0066567 ** 2)
-#     assert np.isclose(svy_prop_without_str.stderror["__none__"][0.0], 0.0066567)
-#     assert np.isclose(svy_prop_without_str.stderror["__none__"][1.0], 0.0066567)
-#     assert np.isclose(svy_prop_without_str.lower_ci["__none__"][0.0], 0.1736793)
-#     assert np.isclose(svy_prop_without_str.lower_ci["__none__"][1.0], 0.8002204)
-#     assert np.isclose(svy_prop_without_str.upper_ci["__none__"][0.0], 0.1997796)
-#     assert np.isclose(svy_prop_without_str.upper_ci["__none__"][1.0], 0.8263207)
-#     assert np.isclose(svy_prop_without_str.coef_var["__none__"][0.0], 0.0066567 / 0.1863775)
-#     assert np.isclose(svy_prop_without_str.coef_var["__none__"][1.0], 0.0066567 / 0.8136225)
+    assert np.isclose(svy_prop_without_str.point_est["__none__"][0.0], 0.3253012)
+    assert np.isclose(svy_prop_without_str.point_est["__none__"][1.0], 0.6746988)
+    assert np.isclose(svy_prop_without_str.stderror["__none__"][0.0], 0.0776683)
+    assert np.isclose(svy_prop_without_str.stderror["__none__"][1.0], 0.0776683)
+    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][0.0], 0.1872951)
+    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][1.0], 0.4978368)
+    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][0.0], 0.5021632)
+    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][1.0], 0.8127049)
 
 
-# svy_prop_without_str_domain = TaylorEstimator("proportion")
+svy_prop_without_str_domain = TaylorEstimator("proportion")
 
 
-# def test_prop_estimator_without_str_domain():
-#     svy_prop_without_str_domain.estimate(y, weight, psu=psu, domain=domain, remove_nan=True)
+def test_prop_estimator_without_str_domain():
+    svy_prop_without_str_domain.estimate(z, weight, psu=psu, domain=domain, fpc=fpc_psu)
 
-#     assert np.isclose(svy_prop_without_str_domain.point_est[1][0.0], 0.1688402)
-#     assert np.isclose(svy_prop_without_str_domain.point_est[1][1.0], 0.8311598)
-#     assert np.isclose(svy_prop_without_str_domain.point_est[2][0.0], 0.202774)
-#     assert np.isclose(svy_prop_without_str_domain.point_est[2][1.0], 0.797226)
-#     assert np.isclose(svy_prop_without_str_domain.point_est["d3"][0.0], 0.1809641)
-#     assert np.isclose(svy_prop_without_str_domain.point_est["d3"][1.0], 0.8190359)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[1][0.0], 0.0203778)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[1][1.0], 0.0203778)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[2][0.0], 0.0260659)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[2][1.0], 0.0260659)
-#     assert np.isclose(svy_prop_without_str_domain.stderror["d3"][0.0], 0.0190814)
-#     assert np.isclose(svy_prop_without_str_domain.stderror["d3"][1.0], 0.0190814)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[1][0.0], 0.131771)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[1][1.0], 0.7862299)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[2][0.0], 0.155414)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[2][1.0], 0.7398788)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci["d3"][0.0], 0.1457555)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci["d3"][1.0], 0.7775374)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[1][0.0], 0.2137701)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[1][1.0], 0.868229)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[2][0.0], 0.2601212)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[2][1.0], 0.844586)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci["d3"][0.0], 0.2224624)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci["d3"][1.0], 0.8542445)
+    assert np.isclose(svy_prop_without_str_domain.point_est[1][0.0], 0.1132075)
+    assert np.isclose(svy_prop_without_str_domain.point_est[1][1.0], 0.8867925)
+    assert np.isclose(svy_prop_without_str_domain.point_est[2][0.0], 0.7)
+    assert np.isclose(svy_prop_without_str_domain.point_est[2][1.0], 0.3)
+    assert np.isclose(svy_prop_without_str_domain.stderror[1][0.0], 0.1140682)
+    assert np.isclose(svy_prop_without_str_domain.stderror[1][1.0], 0.1140682)
+    assert np.isclose(svy_prop_without_str_domain.stderror[2][0.0], 0.1042015)
+    assert np.isclose(svy_prop_without_str_domain.stderror[2][1.0], 0.1042015)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[1][0.0], 0.0054154)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[1][1.0], 0.2504337)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[2][0.0], 0.3704311)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[2][1.0], 0.0975311)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[1][0.0], 0.7495663)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[1][1.0], 0.9945846)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[2][0.0], 0.9024689)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[2][1.0], 0.6295689)
 
 
-# def test_prop_estimator_without_str_nor_psu_domain():
-#     svy_prop_without_str_domain.estimate(y, weight, domain=domain, remove_nan=True)
+def test_prop_estimator_without_str_nor_psu_domain():
+    svy_prop_without_str_domain.estimate(z, weight, domain=domain, fpc=fpc_no_psu)
 
-#     assert np.isclose(svy_prop_without_str_domain.point_est[1][0.0], 0.1688402)
-#     assert np.isclose(svy_prop_without_str_domain.point_est[1][1.0], 0.8311598)
-#     assert np.isclose(svy_prop_without_str_domain.point_est[2][0.0], 0.202774)
-#     assert np.isclose(svy_prop_without_str_domain.point_est[2][1.0], 0.797226)
-#     assert np.isclose(svy_prop_without_str_domain.point_est["d3"][0.0], 0.1809641)
-#     assert np.isclose(svy_prop_without_str_domain.point_est["d3"][1.0], 0.8190359)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[1][0.0], 0.0200196)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[1][1.0], 0.0200196)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[2][0.0], 0.0125303)
-#     assert np.isclose(svy_prop_without_str_domain.stderror[2][1.0], 0.0125303)
-#     assert np.isclose(svy_prop_without_str_domain.stderror["d3"][0.0], 0.0085047)
-#     assert np.isclose(svy_prop_without_str_domain.stderror["d3"][1.0], 0.0085047)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[1][0.0], 0.133136)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[1][1.0], 0.7882197)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[2][0.0], 0.179316)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci[2][1.0], 0.7715536)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci["d3"][0.0], 0.1648868)
-#     assert np.isclose(svy_prop_without_str_domain.lower_ci["d3"][1.0], 0.8017632)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[1][0.0], 0.2117803)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[1][1.0], 0.866864)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[2][0.0], 0.2284464)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci[2][1.0], 0.820684)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci["d3"][0.0], 0.1982368)
-#     assert np.isclose(svy_prop_without_str_domain.upper_ci["d3"][1.0], 0.8351132)
+    assert np.isclose(svy_prop_without_str_domain.point_est[1][0.0], 0.1132075)
+    assert np.isclose(svy_prop_without_str_domain.point_est[1][1.0], 0.8867925)
+    assert np.isclose(svy_prop_without_str_domain.point_est[2][0.0], 0.7)
+    assert np.isclose(svy_prop_without_str_domain.point_est[2][1.0], 0.3)
+    assert np.isclose(svy_prop_without_str_domain.stderror[1][0.0], 0.0573954)
+    assert np.isclose(svy_prop_without_str_domain.stderror[1][1.0], 0.0573954)
+    assert np.isclose(svy_prop_without_str_domain.stderror[2][0.0], 0.1147725)
+    assert np.isclose(svy_prop_without_str_domain.stderror[2][1.0], 0.1147725)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[1][0.0], 0.0372922)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[1][1.0], 0.7038733)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[2][0.0], 0.4273294)
+    assert np.isclose(svy_prop_without_str_domain.lower_ci[2][1.0], 0.1205374)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[1][0.0], 0.2961267)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[1][1.0], 0.9627078)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[2][0.0], 0.8794626)
+    assert np.isclose(svy_prop_without_str_domain.upper_ci[2][1.0], 0.5726706)
 
 
-# """Taylor Approximation WITH Stratification for PROPORTION"""
-# svy_prop_with_str = TaylorEstimator("proportion")
+"""Taylor Approximation WITH Stratification for PROPORTION"""
+svy_prop_with_str = TaylorEstimator("proportion")
 
 
-# def test_prop_estimator_with_str():
-#     svy_prop_with_str.estimate(y, weight, stratum=stratum, psu=psu, remove_nan=True)
+def test_prop_estimator_with_str():
+    svy_prop_with_str.estimate(z, weight, stratum=stratum, psu=psu, fpc=fpc_dict_psu)
 
-#     assert np.isclose(svy_prop_with_str.point_est["__none__"][0.0], 0.186_377_5)
-#     assert np.isclose(svy_prop_with_str.point_est["__none__"][1.0], 0.813_622_5)
-#     assert np.isclose(svy_prop_with_str.variance["__none__"][0.0], 0.019_862_1 ** 2)
-#     assert np.isclose(svy_prop_with_str.variance["__none__"][1.0], 0.019_862_1 ** 2)
-#     assert np.isclose(svy_prop_with_str.stderror["__none__"][0.0], 0.019_862_1)
-#     assert np.isclose(svy_prop_with_str.stderror["__none__"][1.0], 0.019_862_1)
-#     assert np.isclose(svy_prop_with_str.lower_ci["__none__"][0.0], 0.149_483_7)
-#     assert np.isclose(svy_prop_with_str.lower_ci["__none__"][1.0], 0.770_084_5)
-#     assert np.isclose(svy_prop_with_str.upper_ci["__none__"][0.0], 0.229_915_5)
-#     assert np.isclose(svy_prop_with_str.upper_ci["__none__"][1.0], 0.850_516_3)
-#     assert np.isclose(svy_prop_with_str.coef_var["__none__"][0.0], 0.019_862_1 / 0.186_377_5)
-#     assert np.isclose(svy_prop_with_str.coef_var["__none__"][1.0], 0.019_862_1 / 0.813_622_5)
+    assert np.isclose(svy_prop_with_str.point_est["__none__"][0.0], 0.3253012)
+    assert np.isclose(svy_prop_with_str.point_est["__none__"][1.0], 0.6746988)
+    assert np.isclose(svy_prop_with_str.stderror["__none__"][0.0], 0.130421)
+    assert np.isclose(svy_prop_with_str.stderror["__none__"][1.0], 0.130421)
+    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][0.0], 0.1116747)
+    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][1.0], 0.3509837)
+    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][0.0], 0.6490163)
+    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][1.0], 0.8883253)
 
 
-# def test_prop_estimator_with_str_without_psu():
-#     svy_prop_with_str.estimate(y, weight, stratum=stratum, remove_nan=True)
+def test_prop_estimator_with_str_without_psu():
+    svy_prop_with_str.estimate(z, weight, stratum=stratum, fpc=fpc_dict_no_psu)
 
-#     assert np.isclose(svy_prop_with_str.point_est["__none__"][0.0], 0.1863775)
-#     assert np.isclose(svy_prop_with_str.point_est["__none__"][1.0], 0.8136225)
-#     assert np.isclose(svy_prop_with_str.variance["__none__"][0.0], 0.0066091 ** 2)
-#     assert np.isclose(svy_prop_with_str.variance["__none__"][1.0], 0.0066091 ** 2)
-#     assert np.isclose(svy_prop_with_str.stderror["__none__"][0.0], 0.0066091)
-#     assert np.isclose(svy_prop_with_str.stderror["__none__"][1.0], 0.0066091)
-#     assert np.isclose(svy_prop_with_str.lower_ci["__none__"][0.0], 0.1737677)
-#     assert np.isclose(svy_prop_with_str.lower_ci["__none__"][1.0], 0.8003188)
-#     assert np.isclose(svy_prop_with_str.upper_ci["__none__"][0.0], 0.1996812)
-#     assert np.isclose(svy_prop_with_str.upper_ci["__none__"][1.0], 0.8262323)
-#     assert np.isclose(svy_prop_with_str.coef_var["__none__"][0.0], 0.0066091 / 0.1863775)
-#     assert np.isclose(svy_prop_with_str.coef_var["__none__"][1.0], 0.0066091 / 0.8136225)
+    assert np.isclose(svy_prop_with_str.point_est["__none__"][0.0], 0.3253012)
+    assert np.isclose(svy_prop_with_str.point_est["__none__"][1.0], 0.6746988)
+    assert np.isclose(svy_prop_with_str.stderror["__none__"][0.0], 0.0789747)
+    assert np.isclose(svy_prop_with_str.stderror["__none__"][1.0], 0.0789747)
+    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][0.0], 0.1846011)
+    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][1.0], 0.4933877)
+    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][0.0], 0.5066123)
+    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][1.0], 0.8153989)
 
 
-# svy_prop_with_str_domain = TaylorEstimator("proportion")
+svy_prop_with_str_domain = TaylorEstimator("proportion")
 
 
-# def test_prop_estimator_with_str_domain():
-#     svy_prop_with_str_domain.estimate(
-#         y, weight, psu=psu, stratum=stratum, domain=domain, remove_nan=True
-#     )
+def test_prop_estimator_with_str_domain():
+    svy_prop_with_str_domain.estimate(
+        z, weight, psu=psu, stratum=stratum, domain=domain, fpc=fpc_dict_psu
+    )
 
-#     assert np.isclose(svy_prop_with_str_domain.point_est[1][0.0], 0.1688402)
-#     assert np.isclose(svy_prop_with_str_domain.point_est[1][1.0], 0.8311598)
-#     assert np.isclose(svy_prop_with_str_domain.point_est[2][0.0], 0.202774)
-#     assert np.isclose(svy_prop_with_str_domain.point_est[2][1.0], 0.797226)
-#     assert np.isclose(svy_prop_with_str_domain.point_est["d3"][0.0], 0.1809641)
-#     assert np.isclose(svy_prop_with_str_domain.point_est["d3"][1.0], 0.8190359)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[1][0.0], 0.0200457)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[1][1.0], 0.0200457)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[2][0.0], 0.0263015)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[2][1.0], 0.0263015)
-#     assert np.isclose(svy_prop_with_str_domain.stderror["d3"][0.0], 0.0182081)
-#     assert np.isclose(svy_prop_with_str_domain.stderror["d3"][1.0], 0.0182081)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[1][0.0], 0.1320679)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[1][1.0], 0.7866654)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[2][0.0], 0.1547087)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[2][1.0], 0.7388414)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci["d3"][0.0], 0.1470016)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci["d3"][1.0], 0.7792576)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[1][0.0], 0.2133346)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[1][1.0], 0.8679321)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[2][0.0], 0.2611586)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[2][1.0], 0.8452913)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci["d3"][0.0], 0.2207424)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci["d3"][1.0], 0.8529984)
+    assert np.isclose(svy_prop_with_str_domain.point_est[1][0.0], 0.1132075)
+    assert np.isclose(svy_prop_with_str_domain.point_est[1][1.0], 0.8867925)
+    assert np.isclose(svy_prop_with_str_domain.point_est[2][0.0], 0.7)
+    assert np.isclose(svy_prop_with_str_domain.point_est[2][1.0], 0.3)
+    assert np.isclose(svy_prop_with_str_domain.stderror[1][0.0], 0.0705309)
+    assert np.isclose(svy_prop_with_str_domain.stderror[1][1.0], 0.0705309)
+    assert np.isclose(svy_prop_with_str_domain.stderror[2][0.0], 0.119861)
+    assert np.isclose(svy_prop_with_str_domain.stderror[2][1.0], 0.119861)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[1][0.0], 0.02539)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[1][1.0], 0.6151691)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[2][0.0], 0.3908201)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[2][1.0], 0.1054143)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[1][0.0], 0.3848309)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[1][1.0], 0.97461)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[2][0.0], 0.8945857)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[2][1.0], 0.6091799)
 
 
-# def test_prop_estimator_with_str_nor_psu_domain():
-#     svy_prop_with_str_domain.estimate(y, weight, stratum=stratum, domain=domain, remove_nan=True)
+def test_prop_estimator_with_str_nor_psu_domain():
+    svy_prop_with_str_domain.estimate(
+        z, weight, stratum=stratum, domain=domain, fpc=fpc_dict_no_psu
+    )
 
-#     assert np.isclose(svy_prop_with_str_domain.point_est[1][0.0], 0.1688402)
-#     assert np.isclose(svy_prop_with_str_domain.point_est[1][1.0], 0.8311598)
-#     assert np.isclose(svy_prop_with_str_domain.point_est[2][0.0], 0.202774)
-#     assert np.isclose(svy_prop_with_str_domain.point_est[2][1.0], 0.797226)
-#     assert np.isclose(svy_prop_with_str_domain.point_est["d3"][0.0], 0.1809641)
-#     assert np.isclose(svy_prop_with_str_domain.point_est["d3"][1.0], 0.8190359)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[1][0.0], 0.0200198)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[1][1.0], 0.0200198)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[2][0.0], 0.0125144)
-#     assert np.isclose(svy_prop_with_str_domain.stderror[2][1.0], 0.0125144)
-#     assert np.isclose(svy_prop_with_str_domain.stderror["d3"][0.0], 0.0084659)
-#     assert np.isclose(svy_prop_with_str_domain.stderror["d3"][1.0], 0.0084659)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[1][0.0], 0.1331356)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[1][1.0], 0.7882192)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[2][0.0], 0.1793444)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci[2][1.0], 0.7715876)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci["d3"][0.0], 0.1649573)
-#     assert np.isclose(svy_prop_with_str_domain.lower_ci["d3"][1.0], 0.8018446)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[1][0.0], 0.2117808)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[1][1.0], 0.8668644)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[2][0.0], 0.2284124)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci[2][1.0], 0.8206556)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci["d3"][0.0], 0.1981554)
-#     assert np.isclose(svy_prop_with_str_domain.upper_ci["d3"][1.0], 0.8350427)
+    assert np.isclose(svy_prop_with_str_domain.point_est[1][0.0], 0.1132075)
+    assert np.isclose(svy_prop_with_str_domain.point_est[1][1.0], 0.8867925)
+    assert np.isclose(svy_prop_with_str_domain.point_est[2][0.0], 0.7)
+    assert np.isclose(svy_prop_with_str_domain.point_est[2][1.0], 0.3)
+    assert np.isclose(svy_prop_with_str_domain.stderror[1][0.0], 0.0549169)
+    assert np.isclose(svy_prop_with_str_domain.stderror[1][1.0], 0.0549169)
+    assert np.isclose(svy_prop_with_str_domain.stderror[2][0.0], 0.1046741)
+    assert np.isclose(svy_prop_with_str_domain.stderror[2][1.0], 0.1046741)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[1][0.0], 0.0388789)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[1][1.0], 0.7128217)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[2][0.0], 0.4501901)
+    assert np.isclose(svy_prop_with_str_domain.lower_ci[2][1.0], 0.1307324)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[1][0.0], 0.2871783)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[1][1.0], 0.9611211)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[2][0.0], 0.8692676)
+    assert np.isclose(svy_prop_with_str_domain.upper_ci[2][1.0], 0.5498099)
