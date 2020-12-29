@@ -26,7 +26,9 @@ class CrossTabulation:
         """[summary]
 
         Args:
-            table (str): [description]
+            table_type (str): a string to indicate the type of the tabulation that is 'oneway'
+                or 'twoway'.
+            alpha (float): significant level for the confidence intervals
         """
 
         if table_type.lower() not in ("oneway", "twoway"):
