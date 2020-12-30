@@ -1,12 +1,15 @@
 import pytest
 
 import numpy as np
+import pandas as pd
+
 
 from samplics.utils.basic_functions import (
     averageby,
     kurtosis,
     plot_kurtosis,
     plot_skewness,
+    set_variables_names,
     skewness,
     sumby,
     transform,
@@ -16,6 +19,47 @@ from samplics.utils.basic_functions import (
     plot_skewness,
     plot_kurtosis,
 )
+
+
+def test_set_variables_names1():
+    vars = np.array([1, 2, 3])
+
+    name1 = set_variables_names(vars=vars, varnames=["One"], prefix="None")
+    assert name1 == ["One"]
+
+    name2 = set_variables_names(vars=vars, varnames=None, prefix="None")
+    assert name2 == ["None_1"]
+
+
+def test_set_variables_names2():
+    vars = pd.DataFrame(data={"one": [1, 2, 3], "two": [4, 5, 6]})
+
+    name1 = set_variables_names(vars=vars, varnames=None, prefix="None")
+    assert name1 == ["one", "two"]
+
+    name2 = set_variables_names(vars=vars, varnames=["1", "2"], prefix="None")
+    assert name2 == ["1", "2"]
+
+
+def test_set_variables_names_series_with_no_name():
+    vars = pd.Series(data={"one": [1, 2, 3]})
+
+    name1 = set_variables_names(vars=vars, varnames=None, prefix="None")
+    assert name1 == ["None_1"]  
+
+    name2 = set_variables_names(vars=vars, varnames=["1"], prefix="None")
+    assert name2 == ["1"]
+
+
+def test_set_variables_names_series_with_name():
+    vars = pd.Series(data={"one": [1, 2, 3]}, name="one")
+
+    name1 = set_variables_names(vars=vars, varnames=None, prefix="None")
+    assert name1 == ["one"]  
+
+    name2 = set_variables_names(vars=vars, varnames=["1"], prefix="None")
+    assert name2 == ["1"]
+
 
 group1 = np.array([1, 2, 1, 3, 2, 1, 2, 2, 1, 3, 2])
 y1 = np.array([5, 3, 1, 2, 2, 3, 1, 3, 6, 21, 7])

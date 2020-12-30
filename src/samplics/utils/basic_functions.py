@@ -28,9 +28,9 @@ def set_variables_names(vars: Array, varnames: List[str], prefix: str) -> List[s
         if isinstance(vars, pd.DataFrame):
             return list(vars.columns)
         elif isinstance(vars, pd.Series) and vars.name is not None:
-            return vars.name
+            return [vars.name]
         else:
-            return [prefix + "_" + k for k in range(len(vars.shape))]
+            return [prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)]
     else:
         return varnames
 
