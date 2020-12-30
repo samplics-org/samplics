@@ -8,6 +8,7 @@ The module implements the cross-tabulation analysis.
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
+from numpy.core.numeric import base_repr
 import pandas as pd
 
 from scipy.stats import t as student
@@ -36,6 +37,9 @@ class OneWay:
         self.stats = Dict[str, Number]
         # self.design = Dict[str, Number]
         self.alpha = alpha
+        self.ciprop_method = ciprop_method
+
+    # def _tabulate()
 
     def tabulate(
         self,
@@ -45,17 +49,31 @@ class OneWay:
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
+        domain: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
+        deff: bool = False,
+        coef_variation: bool = False,
         remove_nan: bool = False,
     ) -> None:
         """
         docstring
         """
 
+        vars_np = numpy_array(vars)
+        nb_vars = 1 if vars_np.shape[1] is None else vars_np.shape[1]
+
         if self.parameter == "proportion":
             pass
         elif self.parameter == "count":
-            pass
+            for _ in range(0, nb_vars):
+                count_est = TaylorEstimator(
+                    parameter=self.parameter, alpha=self.alpha, ciprop_method=self.ciprop_method
+                )
+                count_est.estimate(
+                    vars_np[0], samp_weight, stratum, psu, ssu, domain, fpc, deff, coef_variation
+                )
+                breakpoint()
+
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
 
