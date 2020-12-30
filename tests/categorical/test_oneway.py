@@ -12,7 +12,7 @@ age_cat = birthcat["agecat"]
 birth_cat = birthcat["birthcat"]
 pop = birthcat["pop"]
 
-print(birthcat)
+print(region.name)
 
 tbl_count = OneWay("count")
 

@@ -14,7 +14,8 @@ import pandas as pd
 from scipy.stats import t as student
 from scipy.stats.stats import f_oneway
 
-from samplics.utils.formats import numpy_array, remove_nans, sample_size_dict
+from samplics.utils.basic_functions import set_variables_names
+from samplics.utils.formats import numpy_array, remove_nans
 from samplics.utils.types import Array, Number, StringNumber
 
 from samplics.estimation import TaylorEstimator
@@ -98,6 +99,17 @@ class OneWay:
 
         vars_np = numpy_array(vars)
         nb_vars = 1 if len(vars_np.shape) == 1 else vars_np.shape[1]
+
+        if varnames is None:
+            prefix = "var"
+        elif isinstance(varnames, str):
+            prefix = varnames
+        elif isinstance(varnames, list):
+            prefix = varnames[0]
+        else:
+            raise AssertionError("varnames should be a string or a list of string")
+
+        vars_names = set_variables_names(vars, varnames, prefix)
 
         if samp_weight is None:
             samp_weight = np.ones(vars_np.shape[0])
