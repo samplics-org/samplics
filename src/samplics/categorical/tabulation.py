@@ -20,9 +20,44 @@ from samplics.estimation import TaylorEstimator
 
 
 class OneWay:
-    def __init__(self, parameter: str = "count", alpha: float = 0.05) -> None:
+    def __init__(
+        self,
+        parameter: str = "count",
+        alpha: float = 0.05,
+        ciprop_method: str = "logit",
+    ) -> None:
 
-        pass
+        if parameter.lower() not in ("count", "prop", "proportion"):
+            self.parameter = parameter.lower()
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
+        self.table_type = "oneway"
+        self.table = Dict[StringNumber, StringNumber]
+        self.stats = Dict[str, Number]
+        # self.design = Dict[str, Number]
+        self.alpha = alpha
+
+    def tabulate(
+        self,
+        vars: Array,
+        varnames: Optional[List[str]] = None,
+        samp_weight: Optional[Union[Array]] = None,
+        stratum: Optional[Array] = None,
+        psu: Optional[Array] = None,
+        ssu: Optional[Array] = None,
+        fpc: Union[Dict, float] = 1,
+        remove_nan: bool = False,
+    ) -> None:
+        """
+        docstring
+        """
+
+        if self.parameter == "proportion":
+            pass
+        elif self.parameter == "count":
+            pass
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
 
 
 class TwoWay:
