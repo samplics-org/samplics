@@ -94,13 +94,13 @@ def test_transform_exp_inverse(y):
     assert np.isclose(y_transformed, np.exp(np.log(1 + (y + constant) * llambda) / llambda)).all()
 
 
-@pytest.mark.xfail
+@pytest.mark.xfail(strict=True)
 @pytest.mark.parametrize("y", [y1, y2])
 def test_plot_skewness(y):
     plot_skewness(y, block=False)
 
 
-@pytest.mark.xfail
+@pytest.mark.xfail(strict=True)
 @pytest.mark.parametrize("y", [y1, y2])
 def test_plot_kurtosis(y):
     plot_kurtosis(y, block=False)
