@@ -19,7 +19,13 @@ from samplics.utils.types import Array, Number, StringNumber
 from samplics.estimation import TaylorEstimator
 
 
-class CrossTabulation:
+class OneWay:
+    def __init__(self, parameter: str = "count", alpha: float = 0.05) -> None:
+
+        pass
+
+
+class TwoWay:
     """provides methods for analyzing cross-tabulations"""
 
     def __init__(self, table_type: str, alpha: float = 0.05) -> None:
@@ -67,7 +73,7 @@ class CrossTabulation:
 
     def tabulate(
         self,
-        cat_vars: Array,
+        cat_vars: Array,  # Maybe a tuple or list of variables. If more than two than it can do all the possible 2x2 combinations
         samp_weight: Array,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
