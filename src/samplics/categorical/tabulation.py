@@ -28,13 +28,13 @@ class OneWay:
         ciprop_method: str = "logit",
     ) -> None:
 
-        if parameter.lower() in ("count", "prop", "proportion"):
+        if parameter.lower() in ("count", "proportion"):
             self.parameter = parameter.lower()
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.table_type = "oneway"
-        self.table = Dict[StringNumber, StringNumber]
-        self.stats = Dict[str, Number]
+        self.table = Dict[str, Dict[StringNumber, Number]]
+        self.stats = Dict[str, Dict[str, Number]]
         # self.design = Dict[str, Number]
         self.alpha = alpha
         self.ciprop_method = ciprop_method
