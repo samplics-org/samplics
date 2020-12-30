@@ -10,27 +10,42 @@ Functions:
 respectively. 
 
 """
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
+from numpy.lib.arraysetops import isin
 
 
 from samplics.utils import formats
 from samplics.utils.types import Array, Number
 
 
+def set_variables_names(vars: Array, varnames: List[str], prefix: str) -> List[str]:
+
+    if varnames is None:
+        if isinstance(vars, pd.DataFrame):
+            return list(vars.columns)
+        elif isinstance(vars, pd.Series) and vars.name is not None:
+            return vars.name
+        else:
+            return [prefix + "_" + k for k in range(len(vars.shape))]
+    else:
+        return varnames
+
+
 def sumby(
     group: np.ndarray, y: np.ndarray
 ) -> np.ndarray:  # Could use pd.grouby().sum(), may scale better
-    """Sums the numpy array by group. 
+    """Sums the numpy array by group.
 
     Args:
-        group (np.ndarray): provides the group associated to each observation. 
-        y (np.ndarray): variable of interest for the summation. 
+        group (np.ndarray): provides the group associated to each observation.
+        y (np.ndarray): variable of interest for the summation.
 
     Returns:
-        np.ndarray: the sums by group. 
+        np.ndarray: the sums by group.
     """
 
     groups = np.unique(group)
@@ -47,11 +62,11 @@ def averageby(
     """[summary]
 
     Args:
-        group (np.ndarray): provides the group associated to each observation. 
-        y (np.ndarray): variable of interest for the averaging. 
+        group (np.ndarray): provides the group associated to each observation.
+        y (np.ndarray): variable of interest for the averaging.
 
     Returns:
-        np.ndarray: the averages by group. 
+        np.ndarray: the averages by group.
     """
 
     groups = np.unique(group)
@@ -63,17 +78,20 @@ def averageby(
 
 
 def transform(
-    y: np.ndarray, llambda: Optional[Number] = None, constant: float = 0.0, inverse: bool = True,
+    y: np.ndarray,
+    llambda: Optional[Number] = None,
+    constant: float = 0.0,
+    inverse: bool = True,
 ) -> np.ndarray:
-    """Transforms the variable of interest using the Boxcox method or its inverse. 
+    """Transforms the variable of interest using the Boxcox method or its inverse.
 
     Args:
-        y (np.ndarray): variable of interest. 
+        y (np.ndarray): variable of interest.
         llambda (Optional[Number], optional): Boxcox parameter lambda. A value of zero indicates
         a logarithm transformation. Defaults to None.
-        constant (float, optional): An additive term to ensure that the logarithm function is 
+        constant (float, optional): An additive term to ensure that the logarithm function is
         applied to positive values. Defaults to 0.0.
-        inverse (bool, optional): indicates if the Boxcox transformation is applied or its 
+        inverse (bool, optional): indicates if the Boxcox transformation is applied or its
         inverse. Defaults to True.
 
     Returns:
@@ -87,11 +105,11 @@ def transform(
         else:
             if ((y + constant) <= 0).any():
                 raise ValueError("log function not defined for negative numbers")
-            else: 
+            else:
                 return np.log(y + constant)
     elif llambda != 0.0:
         if inverse:
-            if ((1 + y * llambda) <= 0).any(): 
+            if ((1 + y * llambda) <= 0).any():
                 raise ValueError("log function not defined for negative numbers")
             return np.exp(np.log(1 + y * llambda) / llambda)
         else:
@@ -152,7 +170,7 @@ def _plot_measure(
     coefs = np.zeros(lambda_range.size)
     measure_loc = None
     for k, ll in enumerate(lambda_range):
-        if (1 + y*ll < 0).any():
+        if (1 + y * ll < 0).any():
             break
         y_ll = transform(y, ll)
         if measure.lower() == "skewness":
@@ -167,17 +185,29 @@ def _plot_measure(
     normality = np.abs(coefs) < 2.0
 
     p1 = plt.scatter(
-        lambda_range[normality], coefs[normality], marker="D", c="green", s=25, alpha=0.3,
+        lambda_range[normality],
+        coefs[normality],
+        marker="D",
+        c="green",
+        s=25,
+        alpha=0.3,
     )
     p2 = plt.scatter(
-        lambda_range[~normality], coefs[~normality], c="red", s=10, alpha=0.6, edgecolors="none",
+        lambda_range[~normality],
+        coefs[~normality],
+        c="red",
+        s=10,
+        alpha=0.6,
+        edgecolors="none",
     )
     plt.axhline(0, color="blue", linestyle="--")
     plt.title(f"{measure.title()} by BoxCox lambda")
     plt.ylabel(f"{measure.title()}")
     plt.xlabel("Lambda (coefs)")
     plt.legend(
-        (p1, p2), ("Normality zone", "Non-normality zone"), loc=measure_loc,
+        (p1, p2),
+        ("Normality zone", "Non-normality zone"),
+        loc=measure_loc,
     )
     plt.show(block=block)
 
@@ -186,11 +216,11 @@ def plot_skewness(
     y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100, block=True
 ) -> None:
     """Plots a scatter plot of skewness coefficients and the lambda coefficients of the Boxcox
-    transformation. The plot helps identify the range of lambda values to minimize the 
-    skewness coefficient. 
+    transformation. The plot helps identify the range of lambda values to minimize the
+    skewness coefficient.
 
     Args:
-        y (np.ndarray): variable of interest. 
+        y (np.ndarray): variable of interest.
         coef_min (Number, optional): lowest value for the horizontal axis. Defaults to -5.
         coef_max (Number, optional): highest value for the horizontal axis. Defaults to 5.
         nb_points (int, optional): number of points in the plot. Defaults to 100.
@@ -209,11 +239,11 @@ def plot_kurtosis(
     y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100, block=True
 ) -> None:
     """Plots a scatter plot of skewness coefficients and the lambda coefficients of the Boxcox
-    transformation. The plot helps identify the range of lambda values to minimize the 
-    kurtosis coefficient. 
+    transformation. The plot helps identify the range of lambda values to minimize the
+    kurtosis coefficient.
 
     Args:
-        y (np.ndarray): variable of interest. 
+        y (np.ndarray): variable of interest.
         coef_min (Number, optional): lowest value for the horizontal axis. Defaults to -5.
         coef_max (Number, optional): highest value for the horizontal axis. Defaults to 5.
         nb_points (int, optional): number of points in the plot. Defaults to 100.
