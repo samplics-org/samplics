@@ -93,7 +93,7 @@ class OneWay:
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
-        by: Optional[Array] = None,
+        # by: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
@@ -146,6 +146,11 @@ class OneWay:
                 coef_variation=coef_variation,
                 remove_nan=remove_nan,
             )
+            self.stderror[vars_names[0]] = tbl_est.stderror
+            self.table[vars_names[0]] = tbl_est.point_est
+            self.lower_ci[vars_names[0]] = tbl_est.lower_ci
+            self.upper_ci[vars_names[0]] = tbl_est.upper_ci
+            self.deff[vars_names[0]] = tbl_est.deff
         else:
             y = np.ones(vars_np.shape[0])
             for k in range(0, nb_vars):
@@ -166,7 +171,6 @@ class OneWay:
                 self.lower_ci[vars_names[k]] = tbl_est.lower_ci
                 self.upper_ci[vars_names[k]] = tbl_est.upper_ci
                 self.deff[vars_names[k]] = tbl_est.deff
-            breakpoint()
 
 
 class TwoWay:
