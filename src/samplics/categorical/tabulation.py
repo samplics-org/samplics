@@ -34,16 +34,19 @@ class OneWay:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.table_type = "oneway"
-        self.table = Dict[str, Dict[StringNumber, Number]]
-        self.stats = Dict[str, Dict[str, Number]]
-        # self.design = Dict[str, Number]
+        self.table = {}  # Dict[str, Dict[StringNumber, Number]]
+        self.stats = {}  # Dict[str, Dict[str, Number]]
+        self.stderror = {}  # Dict[str, Dict[str, Number]]
+        self.lower_ci = {}  # Dict[str, Dict[str, Number]]
+        self.upper_ci = {}  # Dict[str, Dict[str, Number]]
+        self.deff = {}  # Dict[str, Dict[str, Number]]
         self.alpha = alpha
         self.ciprop_method = ciprop_method
 
     def _estimate(
         self,
         y: Array,
-        samp_weight: Optional[Union[Array, Number]] = None,
+        samp_weight: Array = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
@@ -60,6 +63,12 @@ class OneWay:
             tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
+
+        if remove_nan:
+            excluded_units = np.isnan(domain) | np.isnan(samp_weight)
+            y, samp_weight, stratum, domain, psu, ssu = remove_nans(
+                excluded_units, y, samp_weight, stratum, domain, psu, ssu
+            )
 
         tbl_est.estimate(
             y,
@@ -84,7 +93,7 @@ class OneWay:
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
-        domain: Optional[Array] = None,
+        by: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
@@ -99,6 +108,7 @@ class OneWay:
 
         vars_np = numpy_array(vars)
         nb_vars = 1 if len(vars_np.shape) == 1 else vars_np.shape[1]
+        # breakpoint()
 
         if varnames is None:
             prefix = "var"
@@ -111,6 +121,11 @@ class OneWay:
 
         vars_names = set_variables_names(vars, varnames, prefix)
 
+        if len(vars_names) != nb_vars:
+            raise AssertionError(
+                "Length of varnames must be the same as the number of columns of vars"
+            )
+
         if samp_weight is None:
             samp_weight = np.ones(vars_np.shape[0])
         elif isinstance(samp_weight, (int, float)):
@@ -120,31 +135,38 @@ class OneWay:
 
         if nb_vars == 1:
             tbl_est = self._estimate(
-                y=vars_np,
+                y=np.ones(vars_np.shape[0]),
                 samp_weight=samp_weight,
                 stratum=stratum,
                 psu=psu,
                 ssu=ssu,
-                domain=domain,
+                domain=vars_np,
                 fpc=fpc,
                 deff=deff,
                 coef_variation=coef_variation,
                 remove_nan=remove_nan,
             )
         else:
+            y = np.ones(vars_np.shape[0])
             for k in range(0, nb_vars):
                 tbl_est = self._estimate(
-                    y=vars_np[:, k],
+                    y=y,
                     samp_weight=samp_weight,
                     stratum=stratum,
                     psu=psu,
                     ssu=ssu,
-                    domain=domain,
+                    domain=vars_np[:, k],
                     fpc=fpc,
                     deff=deff,
                     coef_variation=coef_variation,
                     remove_nan=remove_nan,
                 )
+                self.stderror[vars_names[k]] = tbl_est.stderror
+                self.table[vars_names[k]] = tbl_est.point_est
+                self.lower_ci[vars_names[k]] = tbl_est.lower_ci
+                self.upper_ci[vars_names[k]] = tbl_est.upper_ci
+                self.deff[vars_names[k]] = tbl_est.deff
+            breakpoint()
 
 
 class TwoWay:

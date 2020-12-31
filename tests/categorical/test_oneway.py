@@ -12,9 +12,9 @@ age_cat = birthcat["agecat"]
 birth_cat = birthcat["birthcat"]
 pop = birthcat["pop"]
 
-print(region.name)
 
 tbl_count = OneWay("count")
+# print(tbl_count)
 
 
 @pytest.mark.xfail(strict=True, reason="Parameter not valid")
@@ -28,5 +28,8 @@ def test_not_valid_parameter(param):
 #     assert(tbl_count.table, nan)
 
 
-def test_one():
-    tbl_count.tabulate(birth_cat, remove_nan=True)
+# def test_one():
+#     tbl_count.tabulate(birth_cat, remove_nan=True)
+
+def test_two():
+    tbl_count.tabulate([birth_cat, region], remove_nan=True)
