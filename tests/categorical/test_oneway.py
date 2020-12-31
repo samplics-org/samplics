@@ -222,6 +222,7 @@ def test_oneway_count_three_vars_numpy_count():
     assert tbl3_count.table["var_3"][2] == 316
     assert tbl3_count.table["var_3"][3] == 133
 
+
 def test_oneway_count_three_vars_numpy_stderror():
     assert np.isclose(tbl3_count.stderror["var_2"][1], 13.3337, atol=1e-4)
     assert np.isclose(tbl3_count.stderror["var_2"][2], 15.1940, atol=1e-4)
@@ -235,3 +236,52 @@ def test_oneway_count_three_vars_numpy_stderror():
     assert np.isclose(tbl3_count.stderror["var_3"][1], 15.4392, atol=1e-4)
     assert np.isclose(tbl3_count.stderror["var_3"][2], 14.5523, atol=1e-4)
     assert np.isclose(tbl3_count.stderror["var_3"][3], 10.7059, atol=1e-4)
+
+
+tbl2_prop = OneWay("proportion")
+tbl2_pandas = birthcat[["region", "birthcat"]]
+tbl2_prop.tabulate(tbl2_pandas, remove_nan=True)
+
+
+def test_oneway_prop_two_vars_numpy():
+    assert np.isclose(tbl2_prop.table["birthcat"][1], 0.2600, atol=1e-4)
+    assert np.isclose(tbl2_prop.table["birthcat"][2], 0.4875, atol=1e-4)
+    assert np.isclose(tbl2_prop.table["birthcat"][3], 0.2524, atol=1e-4)
+
+    assert np.isclose(tbl2_prop.table["region"][1], 0.1736, atol=1e-4)
+    assert np.isclose(tbl2_prop.table["region"][2], 0.2971, atol=1e-4)
+    assert np.isclose(tbl2_prop.table["region"][3], 0.2615, atol=1e-4)
+    assert np.isclose(tbl2_prop.table["region"][4], 0.2678, atol=1e-4)
+
+
+def test_oneway_prop_two_vars_stderror():
+    assert np.isclose(tbl2_prop.stderror["birthcat"][1], 0.0144, atol=1e-4)
+    assert np.isclose(tbl2_prop.stderror["birthcat"][2], 0.0165, atol=1e-4)
+    assert np.isclose(tbl2_prop.stderror["birthcat"][3], 0.0143, atol=1e-4)
+
+    assert np.isclose(tbl2_prop.stderror["region"][1], 0.0123, atol=1e-4)
+    assert np.isclose(tbl2_prop.stderror["region"][2], 0.0148, atol=1e-4)
+    assert np.isclose(tbl2_prop.stderror["region"][3], 0.0142, atol=1e-4)
+    assert np.isclose(tbl2_prop.stderror["region"][4], 0.0143, atol=1e-4)
+
+
+def test_oneway_prop_two_vars_lower_ci():
+    assert np.isclose(tbl2_prop.lower_ci["birthcat"][1], 0.2327, atol=1e-4)
+    assert np.isclose(tbl2_prop.lower_ci["birthcat"][2], 0.4553, atol=1e-4)
+    assert np.isclose(tbl2_prop.lower_ci["birthcat"][3], 0.2254, atol=1e-4)
+
+    assert np.isclose(tbl2_prop.lower_ci["region"][1], 0.1509, atol=1e-4)
+    assert np.isclose(tbl2_prop.lower_ci["region"][2], 0.2689, atol=1e-4)
+    assert np.isclose(tbl2_prop.lower_ci["region"][3], 0.2346, atol=1e-4)
+    assert np.isclose(tbl2_prop.lower_ci["region"][4], 0.2406, atol=1e-4)
+
+
+def test_oneway_prop_two_vars_upper_ci():
+    assert np.isclose(tbl2_prop.upper_ci["birthcat"][1], 0.2894, atol=1e-4)
+    assert np.isclose(tbl2_prop.upper_ci["birthcat"][2], 0.5199, atol=1e-4)
+    assert np.isclose(tbl2_prop.upper_ci["birthcat"][3], 0.2815, atol=1e-4)
+
+    assert np.isclose(tbl2_prop.upper_ci["region"][1], 0.1990, atol=1e-4)
+    assert np.isclose(tbl2_prop.upper_ci["region"][2], 0.3269, atol=1e-4)
+    assert np.isclose(tbl2_prop.upper_ci["region"][3], 0.2904, atol=1e-4)
+    assert np.isclose(tbl2_prop.upper_ci["region"][4], 0.2968, atol=1e-4)
