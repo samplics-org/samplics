@@ -45,43 +45,53 @@ class OneWay:
 
     def _estimate(
         self,
-        y: Array,
+        var_of_ones: Array,
+        var: Array,
         samp_weight: Array = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
-        domain: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
     ) -> TaylorEstimator:
 
-        if self.parameter == "count":
-            tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
-        elif self.parameter == "proportion":
-            tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
-        else:
-            raise ValueError("parameter must be 'count' or 'proportion'")
-
         if remove_nan:
-            excluded_units = np.isnan(domain) | np.isnan(samp_weight)
-            y, samp_weight, stratum, domain, psu, ssu = remove_nans(
-                excluded_units, y, samp_weight, stratum, domain, psu, ssu
+            excluded_units = np.isnan(var) | np.isnan(samp_weight)
+            var_of_ones, samp_weight, stratum, var, psu, ssu = remove_nans(
+                excluded_units, var_of_ones, samp_weight, stratum, var, psu, ssu
             )
 
-        tbl_est.estimate(
-            y,
-            samp_weight=samp_weight,
-            stratum=stratum,
-            psu=psu,
-            ssu=ssu,
-            domain=domain,
-            fpc=fpc,
-            deff=deff,
-            coef_variation=coef_variation,
-            remove_nan=remove_nan,
-        )
+        if self.parameter == "count":
+            tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
+            tbl_est.estimate(
+                y=var_of_ones,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                domain=var,
+                fpc=fpc,
+                deff=deff,
+                coef_variation=coef_variation,
+                remove_nan=remove_nan,
+            )
+        elif self.parameter == "proportion":
+            tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
+            tbl_est.estimate(
+                y=var,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+                deff=deff,
+                coef_variation=coef_variation,
+                remove_nan=remove_nan,
+            )
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
 
         return tbl_est
 
@@ -93,7 +103,7 @@ class OneWay:
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
-        # by: Optional[Array] = None,
+        # Todo: by: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
@@ -135,42 +145,58 @@ class OneWay:
 
         if nb_vars == 1:
             tbl_est = self._estimate(
-                y=np.ones(vars_np.shape[0]),
+                var_of_ones=np.ones(vars_np.shape[0]),
+                var=vars_np,
                 samp_weight=samp_weight,
                 stratum=stratum,
                 psu=psu,
                 ssu=ssu,
-                domain=vars_np,
                 fpc=fpc,
                 deff=deff,
                 coef_variation=coef_variation,
                 remove_nan=remove_nan,
             )
-            self.stderror[vars_names[0]] = tbl_est.stderror
-            self.table[vars_names[0]] = tbl_est.point_est
-            self.lower_ci[vars_names[0]] = tbl_est.lower_ci
-            self.upper_ci[vars_names[0]] = tbl_est.upper_ci
-            self.deff[vars_names[0]] = tbl_est.deff
+            if self.parameter == "count":
+                self.stderror[vars_names[0]] = tbl_est.stderror
+                self.table[vars_names[0]] = tbl_est.point_est
+                self.lower_ci[vars_names[0]] = tbl_est.lower_ci
+                self.upper_ci[vars_names[0]] = tbl_est.upper_ci
+                self.deff[vars_names[0]] = {}  # todo: tbl_est.deff
+            elif self.parameter == "proportion":
+                self.stderror[vars_names[0]] = tbl_est.stderror["__none__"]
+                self.table[vars_names[0]] = tbl_est.point_est["__none__"]
+                self.lower_ci[vars_names[0]] = tbl_est.lower_ci["__none__"]
+                self.upper_ci[vars_names[0]] = tbl_est.upper_ci["__none__"]
+                self.deff[vars_names[0]] = {}  # todo: tbl_est.deff["__none__"]
+
+            # breakpoint()
         else:
-            y = np.ones(vars_np.shape[0])
+            var_of_ones = np.ones(vars_np.shape[0])
             for k in range(0, nb_vars):
                 tbl_est = self._estimate(
-                    y=y,
+                    var_of_ones=var_of_ones,
+                    var=vars_np[:, k],
                     samp_weight=samp_weight,
                     stratum=stratum,
                     psu=psu,
                     ssu=ssu,
-                    domain=vars_np[:, k],
                     fpc=fpc,
                     deff=deff,
                     coef_variation=coef_variation,
                     remove_nan=remove_nan,
                 )
-                self.stderror[vars_names[k]] = tbl_est.stderror
-                self.table[vars_names[k]] = tbl_est.point_est
-                self.lower_ci[vars_names[k]] = tbl_est.lower_ci
-                self.upper_ci[vars_names[k]] = tbl_est.upper_ci
-                self.deff[vars_names[k]] = tbl_est.deff
+                if self.parameter == "count":
+                    self.stderror[vars_names[k]] = tbl_est.stderror
+                    self.table[vars_names[k]] = tbl_est.point_est
+                    self.lower_ci[vars_names[k]] = tbl_est.lower_ci
+                    self.upper_ci[vars_names[k]] = tbl_est.upper_ci
+                    self.deff[vars_names[k]] = {}  # todo: tbl_est.deff
+                elif self.parameter == "proportion":
+                    self.stderror[vars_names[k]] = tbl_est.stderror["__none__"]
+                    self.table[vars_names[k]] = tbl_est.point_est["__none__"]
+                    self.lower_ci[vars_names[k]] = tbl_est.lower_ci["__none__"]
+                    self.upper_ci[vars_names[k]] = tbl_est.upper_ci["__none__"]
+                    self.deff[vars_names[k]] = {}  # todo: tbl_est.deff["__none__"]
 
 
 class TwoWay:
