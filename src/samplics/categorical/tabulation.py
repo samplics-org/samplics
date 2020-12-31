@@ -131,6 +131,8 @@ class OneWay:
 
         vars_names = set_variables_names(vars, varnames, prefix)
 
+        # breakpoint()
+
         if len(vars_names) != nb_vars:
             raise AssertionError(
                 "Length of varnames must be the same as the number of columns of vars"

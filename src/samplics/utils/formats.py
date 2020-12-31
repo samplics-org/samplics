@@ -29,7 +29,7 @@ def numpy_array(arr: Any) -> np.ndarray:
 
     if not isinstance(arr, np.ndarray):
         arr_np = np.asarray(arr)
-        if isinstance(arr, list) and len(arr_np.shape) == 2:
+        if isinstance(arr, (list, tuple)) and len(arr_np.shape) == 2:
             arr_np = np.transpose(arr_np)
         return arr_np
     else:
