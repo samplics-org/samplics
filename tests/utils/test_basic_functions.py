@@ -24,30 +24,30 @@ from samplics.utils.basic_functions import (
 def test_set_variables_names1():
     vars = np.array([1, 2, 3])
 
-    name1 = set_variables_names(vars=vars, varnames=["One"], prefix="None")
-    assert name1 == ["One"]
+    name1 = set_variables_names(vars=vars, varnames=["one"], prefix="var")
+    assert name1 == ["one"]
 
-    name2 = set_variables_names(vars=vars, varnames=None, prefix="None")
-    assert name2 == ["None_1"]
+    name2 = set_variables_names(vars=vars, varnames=None, prefix="var")
+    assert name2 == ["var_1"]
 
 
 def test_set_variables_names2():
     vars = pd.DataFrame(data={"one": [1, 2, 3], "two": [4, 5, 6]})
 
-    name1 = set_variables_names(vars=vars, varnames=None, prefix="None")
+    name1 = set_variables_names(vars=vars, varnames=None, prefix="var")
     assert name1 == ["one", "two"]
 
-    name2 = set_variables_names(vars=vars, varnames=["1", "2"], prefix="None")
+    name2 = set_variables_names(vars=vars, varnames=["1", "2"], prefix="var")
     assert name2 == ["1", "2"]
 
 
 def test_set_variables_names_series_with_no_name():
     vars = pd.Series(data={"one": [1, 2, 3]})
 
-    name1 = set_variables_names(vars=vars, varnames=None, prefix="None")
-    assert name1 == ["None_1"]  
+    name1 = set_variables_names(vars=vars, varnames=None, prefix="var")
+    assert name1 == ["var_1"]
 
-    name2 = set_variables_names(vars=vars, varnames=["1"], prefix="None")
+    name2 = set_variables_names(vars=vars, varnames=["1"], prefix="var")
     assert name2 == ["1"]
 
 
@@ -55,10 +55,24 @@ def test_set_variables_names_series_with_name():
     vars = pd.Series(data={"one": [1, 2, 3]}, name="one")
 
     name1 = set_variables_names(vars=vars, varnames=None, prefix="None")
-    assert name1 == ["one"]  
+    assert name1 == ["one"]
 
     name2 = set_variables_names(vars=vars, varnames=["1"], prefix="None")
     assert name2 == ["1"]
+
+
+def test_set_variables_names_numpy():
+    vars1 = np.array([[1, 2], [3, 4]])
+    name1 = set_variables_names(vars=vars1, varnames=None, prefix="var")
+    assert name1 == ["var_1", "var_2"]
+
+    vars2 = np.array([[1, 2, 3], [4, 5, 6]])
+    name2 = set_variables_names(vars=vars2, varnames=None, prefix="var")
+    assert name2 == ["var_1", "var_2", "var_3"]
+
+    vars3 = np.array([[1, 2, 3, 4], [5, 6, 7, 8]])
+    name3 = set_variables_names(vars=vars3, varnames=None, prefix="var")
+    assert name3 == ["var_1", "var_2", "var_3", "var_4"]
 
 
 group1 = np.array([1, 2, 1, 3, 2, 1, 2, 2, 1, 3, 2])
