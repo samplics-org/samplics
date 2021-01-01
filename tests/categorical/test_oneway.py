@@ -5,6 +5,7 @@ import pandas as pd
 from samplics.estimation import TaylorEstimator
 from samplics.categorical import OneWay
 
+
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
 region = birthcat["region"]
@@ -13,32 +14,13 @@ birth_cat = birthcat["birthcat"]
 pop = birthcat["pop"]
 
 
-# tbl2_count = OneWay("count")
-
-# tbl2_count.tabulate(birthcat[["region", "birthcat"]], remove_nan=True)
-
-# breakpoint()
-# exit()
-
-
-########
-
 tbl_count = OneWay("count")
-# print(tbl_count)
-
-# print(birthcat[["region", "birthcat"]])
-# exit()
 
 
 @pytest.mark.xfail(strict=True, reason="Parameter not valid")
 @pytest.mark.parametrize("param", ["total", "mean", "ratio", "other"])
 def test_not_valid_parameter(param):
     tbl = OneWay(param)
-
-
-@pytest.mark.xfail(strict=True, reason="Missing values to crash the program")
-def test_oneway_nans():
-    tbl_count.tabulate(birth_cat)
 
 
 tbl_count.tabulate(birth_cat, remove_nan=True)
@@ -285,3 +267,44 @@ def test_oneway_prop_two_vars_upper_ci():
     assert np.isclose(tbl2_prop.upper_ci["region"][2], 0.3269, atol=1e-4)
     assert np.isclose(tbl2_prop.upper_ci["region"][3], 0.2904, atol=1e-4)
     assert np.isclose(tbl2_prop.upper_ci["region"][4], 0.2968, atol=1e-4)
+
+
+nhanes = pd.read_csv("./tests/estimation/nhanes.csv")
+
+cholesterol = nhanes["HI_CHOL"]
+race = nhanes["race"]
+agecat = nhanes["agecat"]
+stratum = nhanes["SDMVSTRA"]
+psu = nhanes["SDMVPSU"]
+weight = nhanes["WTMEC2YR"]
+
+tbl1_nhanes = OneWay("count")
+tbl1_nhanes.tabulate(
+    vars=cholesterol, samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
+)
+
+
+def test_oneway_count_weighted_count():
+    assert np.isclose(tbl1_nhanes.table["HI_CHOL"][0], 226710664.8857, atol=1e-4)
+    assert np.isclose(tbl1_nhanes.table["HI_CHOL"][1], 28635245.2551, atol=1e-4)
+
+
+def test_oneway_count_weighted_sdterror():
+    assert np.isclose(tbl1_nhanes.stderror["HI_CHOL"][0], 12606884.9914, atol=1e-4)
+    assert np.isclose(tbl1_nhanes.stderror["HI_CHOL"][1], 2020710.7438, atol=1e-4)
+
+
+tbl2_nhanes = OneWay("proportion")
+tbl2_nhanes.tabulate(
+    vars=cholesterol, samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
+)
+
+
+def test_oneway_count_weighted_count():
+    assert np.isclose(tbl2_nhanes.table["HI_CHOL"][0], 0.8879, atol=1e-4)
+    assert np.isclose(tbl2_nhanes.table["HI_CHOL"][1], 0.1121, atol=1e-4)
+
+
+def test_oneway_count_weighted_sdterror():
+    assert np.isclose(tbl2_nhanes.stderror["HI_CHOL"][0], 0.0054, atol=1e-4)
+    assert np.isclose(tbl2_nhanes.stderror["HI_CHOL"][1], 0.0054, atol=1e-4)
