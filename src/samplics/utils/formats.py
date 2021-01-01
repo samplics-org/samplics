@@ -28,7 +28,10 @@ def numpy_array(arr: Any) -> np.ndarray:
     """
 
     if not isinstance(arr, np.ndarray):
-        return np.asarray(arr)
+        arr_np = np.asarray(arr)
+        if isinstance(arr, (list, tuple)) and len(arr_np.shape) == 2:
+            arr_np = np.transpose(arr_np)
+        return arr_np
     else:
         return arr
 
@@ -135,7 +138,10 @@ def remove_nans(excluded_units: Array, *args) -> Tuple:
 
     vars = list()
     for var in args:
-        vars.append(var[~excluded_units])
+        if var is not None:
+            vars.append(var[~excluded_units])
+        else:
+            vars.append(None)
 
     return vars
 
