@@ -5,6 +5,7 @@ The module implements the cross-tabulation analysis.
 """
 
 
+from functools import partial
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
@@ -15,8 +16,8 @@ from scipy.stats import t as student
 from scipy.stats.stats import f_oneway
 
 from samplics.utils.basic_functions import set_variables_names
-from samplics.utils.formats import numpy_array, remove_nans
-from samplics.utils.types import Array, Number, StringNumber
+from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
+from samplics.utils.types import Array, Number, Series
 
 from samplics.estimation import TaylorEstimator
 
@@ -204,84 +205,82 @@ class OneWay:
 class TwoWay:
     """provides methods for analyzing cross-tabulations"""
 
-    def __init__(self, table_type: str, alpha: float = 0.05) -> None:
-        """[summary]
-
-        Args:
-            table_type (str): a string to indicate the type of the tabulation that is 'oneway'
-                or 'twoway'.
-            alpha (float): significant level for the confidence intervals
-        """
-
-        if table_type.lower() not in ("oneway", "twoway"):
-            raise ValueError("table parameter must take values 'oneway' or 'twoway'!")
-
-        self.table_type = table_type.lower()
-        self.table = Dict[StringNumber, StringNumber]
-        self.stats = Dict[str, Number]
-        # self.design = Dict[str, Number]
-        self.alpha = alpha
-
-    def _oneway(
+    def __init__(
         self,
-        row_var: Array,
-        samp_weight: Array,
+        parameter: str = "count",
+        alpha: float = 0.05,
+        ciprop_method: str = "logit",
+    ) -> None:
+
+        if parameter.lower() in ("count", "proportion"):
+            self.parameter = parameter.lower()
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
+        self.table_type = "oneway"
+        self.table = {}  # Dict[str, Dict[StringNumber, Number]]
+        self.stats = {}  # Dict[str, Dict[str, Number]]
+        self.stderror = {}  # Dict[str, Dict[str, Number]]
+        self.lower_ci = {}  # Dict[str, Dict[str, Number]]
+        self.upper_ci = {}  # Dict[str, Dict[str, Number]]
+        self.deff = {}  # Dict[str, Dict[str, Number]]
+        self.alpha = alpha
+        self.ciprop_method = ciprop_method
+
+    def tabulate(
+        self,
+        vars: Array,
+        varnames: Optional[List[str]] = None,
+        samp_weight: Optional[Union[Array, Number]] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
+        # Todo: by: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
+        deff: bool = False,
+        coef_variation: bool = False,
+        remove_nan: bool = False,
     ) -> None:
 
-        levels, counts = np.unique(row_var, return_counts=True)
+        vars_np = numpy_array(vars)
 
-        tbl_estimator = TaylorEstimator(parameter="total", alpha=self.alpha)
-        tbl_estimator.estimate(
-            y=np.ones(row_var.shape[0]),
+        if samp_weight is None:
+            samp_weight = np.ones(vars_np.shape[0])
+        elif isinstance(samp_weight, (int, float)):
+            samp_weight = np.repeat(samp_weight, vars_np.shape[0])
+        else:
+            samp_weight = numpy_array(samp_weight)
+
+        if remove_nan:
+            excluded_units = np.prod(np.isnan(vars_np), axis=1).astype(bool) | np.isnan(
+                samp_weight
+            )
+            samp_weight, stratum, var, psu, ssu = remove_nans(
+                excluded_units, samp_weight, stratum, vars_np, psu, ssu
+            )
+
+        if len(vars_np.shape) == 2:
+            vars_for_oneway = np.apply_along_axis(
+                func1d=concatenate_series_to_str, axis=1, arr=vars_np
+            )
+        else:
+            vars_for_oneway = vars_np
+
+        # breakpoint()
+
+        tbl_oneway = OneWay(
+            parameter=self.parameter, alpha=self.alpha, ciprop_method=self.ciprop_method
+        )
+
+        tbl_oneway.tabulate(
+            vars=vars_for_oneway,
+            varnames=varnames,
             samp_weight=samp_weight,
             stratum=stratum,
             psu=psu,
             ssu=ssu,
-            domain=row_var,
+            fpc=fpc,
+            deff=deff,
+            coef_variation=coef_variation,
+            remove_nan=False,
         )
-
-    def _twoway():
-        pass
-
-    def tabulate(
-        self,
-        cat_vars: Array,  # Maybe a tuple or list of variables. If more than two than it can do all the possible 2x2 combinations
-        samp_weight: Array,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
-        fpc: Union[Dict, float] = 1,
-        remove_nan: bool = False,
-    ) -> None:
-
-        cat_vars = numpy_array(cat_vars)
-
-        if self.table_type == "oneway" and cat_vars.shape[0] > 1:
-            raise AssertionError("")
-
-        samp_weight = numpy_array(samp_weight)
-        if stratum is not None:
-            stratum = numpy_array(stratum)
-        if psu is not None:
-            psu = numpy_array(psu)
-        if ssu is not None:
-            ssu = numpy_array(ssu)
-        if fpc is not None:
-            fpc = numpy_array(fpc)
-
-        if remove_nan:
-            excluded_units = np.isnan(samp_weight)
-            samp_weight, stratum, psu, ssu, fpc = remove_nans(
-                excluded_units, samp_weight, stratum, psu, ssu, fpc
-            )
-
-        if self.table_type == "oneway":
-            self._oneway()
-        elif self.table_type == "twoway":
-            self._twoway()
-        else:
-            raise ValueError("Parameter 'table_type' is not valid!")
+        breakpoint()
