@@ -220,7 +220,7 @@ def saturated_two_ways_model(varsnames: List[str]) -> str:
     return " + ".join([main_effects, interactions])
 
 
-class TwoWay:
+class CrossTabulation:
     """provides methods for analyzing cross-tabulations"""
 
     def __init__(
@@ -234,8 +234,8 @@ class TwoWay:
             self.parameter = parameter.lower()
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
-        self.table_type = "oneway"
-        self.table = {}  # Dict[str, Dict[StringNumber, Number]]
+        self.table_type = "twoway"
+        self.point_est = {}  # Dict[str, Dict[StringNumber, Number]]
         self.stats = {}  # Dict[str, Dict[str, Number]]
         self.stderror = {}  # Dict[str, Dict[str, Number]]
         self.lower_ci = {}  # Dict[str, Dict[str, Number]]
@@ -296,6 +296,7 @@ class TwoWay:
         two_way_full_model = saturated_two_ways_model(vars_names)
         vars.columns = vars_names
         vars_levels = vars.drop_duplicates()
+        vars_levels.sort_values(by=vars_names, inplace=True)
         vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels))
 
         nrows = vars[vars_names[0]].unique().__len__()
@@ -329,6 +330,9 @@ class TwoWay:
                 fpc=fpc,
             )
             cell_est = np.asarray(list(tbl_est.point_est.values()))
+            cell_stderror = np.asarray(list(tbl_est.stderror.values()))
+            cell_lower_ci = np.asarray(list(tbl_est.lower_ci.values()))
+            cell_upper_ci = np.asarray(list(tbl_est.upper_ci.values()))
         elif self.parameter == "proportion":
             tbl_est_srs = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
             tbl_est_srs.estimate(
@@ -348,9 +352,12 @@ class TwoWay:
                 fpc=fpc,
             )
             cell_est = np.asarray(list(tbl_est.point_est["__none__"].values()))
+            cell_stderror = np.asarray(list(tbl_est.stderror["__none__"].values()))
+            cell_lower_ci = np.asarray(list(tbl_est.lower_ci["__none__"].values()))
+            cell_upper_ci = np.asarray(list(tbl_est.upper_ci["__none__"].values()))
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
-        # breakpoint()
+
         cov_srs = np.diag(cell_est_srs) - cell_est_srs.reshape(nrows * ncols, 1) @ np.transpose(
             cell_est_srs.reshape(nrows * ncols, 1)
         )
@@ -369,13 +376,40 @@ class TwoWay:
 
         df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
         df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
+        # breakpoint()
+        cov_srs = np.zeros((nrows, ncols))
+        # row_levels = vars_levels.iloc[:, 0].unique()
+        # col_levels = vars_levels.iloc[:, 1].unique()
+        for r in range(nrows):
+            point_est = {}
+            stderror = {}
+            lower_ci = {}
+            upper_ci = {}
+            for c in range(ncols):
+                point_est.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_est[r * ncols + c],
+                    }
+                )
+                stderror.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_stderror[r * ncols + c],
+                    }
+                )
+                lower_ci.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_lower_ci[r * ncols + c],
+                    }
+                )
+                upper_ci.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_upper_ci[r * ncols + c],
+                    }
+                )
 
-        # cov_srs = np.zeros((nrows, ncols))
-        # for r in range(nrows):
-        #     for c in range(ncols):
-        #         if r == c:
-        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
-        #         else:
-        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
+            self.point_est.update({vars_levels.iloc[r * ncols, 0]: point_est})
+            self.stderror.update({vars_levels.iloc[r * ncols, 0]: stderror})
+            self.lower_ci.update({vars_levels.iloc[r * ncols, 0]: lower_ci})
+            self.upper_ci.update({vars_levels.iloc[r * ncols, 0]: upper_ci})
 
         breakpoint()
