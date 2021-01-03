@@ -30,10 +30,13 @@ def test_not_valid_parameter(param):
 # tbl_count = TwoWay("count")
 # tbl_count.tabulate([region, birth_cat], remove_nan=True)
 
-tbl_count = TwoWay("count")
-tbl_count.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
+tbl_prop = TwoWay("proportion")
+tbl_prop.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
 
 breakpoint()
+
+tbl_count = TwoWay("count")
+tbl_count.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
 
 
 def test_oneway_count_one_var_count():

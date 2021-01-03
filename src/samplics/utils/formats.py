@@ -167,7 +167,7 @@ def concatenate_series_to_str(row: Series) -> str:
     Returns:
         str: [description]
     """
-    return "_".join([str(c) for c in row])
+    return "__***__".join([str(c) for c in row])
 
 
 def numpy_to_dummies(arr: np.ndarray, varsnames: List[str]) -> np.ndarray:
