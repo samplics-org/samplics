@@ -35,8 +35,8 @@ def set_variables_names(vars: Array, varnames: List[str], prefix: str) -> List[s
                     return [prefix + "_" + str(k) for k in range(1, vars.shape[1] + 1)]
                 else:
                     return [prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)]
-            elif isinstance(vars, (tuple, list)):
-                return [var.name for var in vars]
+            # elif isinstance(vars, (tuple, list)):
+            #     return [var.name for var in vars]
             else:
                 raise TypeError("vars should be an array-like")
     else:

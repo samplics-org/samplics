@@ -31,7 +31,7 @@ def test_not_valid_parameter(param):
 # tbl_count.tabulate([region, birth_cat], remove_nan=True)
 
 tbl_count = TwoWay("count")
-tbl_count.tabulate([age_cat, birth_cat], remove_nan=True)
+tbl_count.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
 
 breakpoint()
 
