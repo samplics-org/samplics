@@ -305,23 +305,26 @@ class TwoWay:
         else:
             vars_for_oneway = vars
 
-        main_effects = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]
-        interactions = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]
+        x1 = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]  # main_effects
+        x2 = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]  # interactions
+        x1_t = np.transpose(x1)
+        x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ x1) @ (x1_t @ x2)
 
-        tbl_oneway = OneWay(
-            parameter=self.parameter, alpha=self.alpha, ciprop_method=self.ciprop_method
-        )
-        breakpoint()
-        tbl_oneway.tabulate(
-            vars=vars_for_oneway,
-            varnames=varnames,
-            samp_weight=samp_weight,
-            stratum=stratum,
-            psu=psu,
-            ssu=ssu,
-            fpc=fpc,
-            deff=deff,
-            coef_variation=coef_variation,
-            remove_nan=False,
-        )
+        if self.parameter == "count":
+            tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
+            tbl_est.estimate(
+                y=vars_for_oneway,
+                samp_weight=samp_weight,
+                fpc=fpc,
+            )
+        elif self.parameter == "proportion":
+            tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
+            tbl_est.estimate(
+                y=vars_for_oneway,
+                samp_weight=samp_weight,
+                fpc=fpc,
+            )
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
+
         breakpoint()
