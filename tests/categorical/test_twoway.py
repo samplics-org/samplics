@@ -1,10 +1,9 @@
 import pytest
 import numpy as np
 import pandas as pd
-from samplics.categorical.tabulation import TwoWay
 
 from samplics.estimation import TaylorEstimator
-from samplics.categorical import OneWay
+from samplics.categorical import OneWay, CrossTabulation
 
 
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
@@ -18,24 +17,24 @@ pop = birthcat["pop"]
 @pytest.mark.xfail(strict=True, reason="Parameter not valid")
 @pytest.mark.parametrize("param", ["total", "mean", "ratio", "other"])
 def test_not_valid_parameter(param):
-    tbl = TwoWay(param)
+    tbl = CrossTabulation(param)
 
 
 # @pytest.mark.xfail(strict=True, reason="2way tables needs two variables")
 # def test_twoway_count_one_var_count():
-#     tbl = TwoWay("count")
+#     tbl = CrossTabulation("count")
 #     tbl.tabulate(region, remove_nan=True)
 
 
-# tbl_count = TwoWay("count")
+# tbl_count = CrossTabulation("count")
 # tbl_count.tabulate([region, birth_cat], remove_nan=True)
 
-tbl_prop = TwoWay("proportion")
-tbl_prop.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
+tbl_prop = CrossTabulation("proportion")
+tbl_prop.tabulate([region, birth_cat], varnames=["region", "birth_cat"], remove_nan=True)
 
 breakpoint()
 
-tbl_count = TwoWay("count")
+tbl_count = CrossTabulation("count")
 tbl_count.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
 
 
