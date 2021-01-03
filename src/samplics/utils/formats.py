@@ -14,14 +14,14 @@ import pandas as pd
 
 from samplics.utils import checks
 
-from samplics.utils.types import Array, Number, StringNumber
+from samplics.utils.types import Array, Number, Series, StringNumber
 
 
-def numpy_array(arr: Any) -> np.ndarray:
+def numpy_array(arr: Array) -> np.ndarray:
     """Converts an array-like input data to np.ndarray.
 
     Args:
-        arr (Any): array-like input data.
+        arr (Array): array-like input data.
 
     Returns:
         np.ndarray: an numpy array
@@ -156,3 +156,23 @@ def fpc_as_dict(stratum: Array, fpc: Union[Array, Number]):
         return dict(zip(stratum, fpc))
     else:
         raise TypeError("stratum and fpc are not compatible!")
+
+
+def concatenate_series_to_str(row: Series) -> str:
+    """concatenate the elements into one string using '_' to separate the elements
+
+    Args:
+        row (Array): [description]
+
+    Returns:
+        str: [description]
+    """
+    return "__***__".join([str(c) for c in row])
+
+
+def numpy_to_dummies(arr: np.ndarray, varsnames: List[str]) -> np.ndarray:
+
+    df = pd.DataFrame(arr.astype(str))
+    df.columns = varsnames
+
+    return pd.get_dummies(df, drop_first=True)
