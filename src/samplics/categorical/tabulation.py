@@ -5,18 +5,26 @@ The module implements the cross-tabulation analysis.
 """
 
 
-from typing import Any, Dict, List, Optional, Union
+from functools import partial
+from typing import Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
 from numpy.core.numeric import base_repr
+from numpy.lib.shape_base import apply_along_axis
 import pandas as pd
+from patsy import dmatrix
 
 from scipy.stats import t as student
 from scipy.stats.stats import f_oneway
 
 from samplics.utils.basic_functions import set_variables_names
-from samplics.utils.formats import numpy_array, remove_nans
-from samplics.utils.types import Array, Number, StringNumber
+from samplics.utils.formats import (
+    concatenate_series_to_str,
+    numpy_array,
+    numpy_to_dummies,
+    remove_nans,
+)
+from samplics.utils.types import Array, Number, Series
 
 from samplics.estimation import TaylorEstimator
 
@@ -201,87 +209,173 @@ class OneWay:
                     self.deff[vars_names[k]] = {}  # todo: tbl_est.deff["__none__"]
 
 
+def saturated_two_ways_model(varsnames: List[str]) -> str:
+    """
+    docstring
+    """
+
+    main_effects = " + ".join(varsnames)
+    interactions = ":".join(varsnames)
+
+    return " + ".join([main_effects, interactions])
+
+
 class TwoWay:
     """provides methods for analyzing cross-tabulations"""
 
-    def __init__(self, table_type: str, alpha: float = 0.05) -> None:
-        """[summary]
-
-        Args:
-            table_type (str): a string to indicate the type of the tabulation that is 'oneway'
-                or 'twoway'.
-            alpha (float): significant level for the confidence intervals
-        """
-
-        if table_type.lower() not in ("oneway", "twoway"):
-            raise ValueError("table parameter must take values 'oneway' or 'twoway'!")
-
-        self.table_type = table_type.lower()
-        self.table = Dict[StringNumber, StringNumber]
-        self.stats = Dict[str, Number]
-        # self.design = Dict[str, Number]
-        self.alpha = alpha
-
-    def _oneway(
+    def __init__(
         self,
-        row_var: Array,
-        samp_weight: Array,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
-        fpc: Union[Dict, float] = 1,
+        parameter: str = "count",
+        alpha: float = 0.05,
+        ciprop_method: str = "logit",
     ) -> None:
 
-        levels, counts = np.unique(row_var, return_counts=True)
-
-        tbl_estimator = TaylorEstimator(parameter="total", alpha=self.alpha)
-        tbl_estimator.estimate(
-            y=np.ones(row_var.shape[0]),
-            samp_weight=samp_weight,
-            stratum=stratum,
-            psu=psu,
-            ssu=ssu,
-            domain=row_var,
-        )
-
-    def _twoway():
-        pass
+        if parameter.lower() in ("count", "proportion"):
+            self.parameter = parameter.lower()
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
+        self.table_type = "oneway"
+        self.table = {}  # Dict[str, Dict[StringNumber, Number]]
+        self.stats = {}  # Dict[str, Dict[str, Number]]
+        self.stderror = {}  # Dict[str, Dict[str, Number]]
+        self.lower_ci = {}  # Dict[str, Dict[str, Number]]
+        self.upper_ci = {}  # Dict[str, Dict[str, Number]]
+        self.deff = {}  # Dict[str, Dict[str, Number]]
+        self.alpha = alpha
+        self.ciprop_method = ciprop_method
 
     def tabulate(
         self,
-        cat_vars: Array,  # Maybe a tuple or list of variables. If more than two than it can do all the possible 2x2 combinations
-        samp_weight: Array,
+        vars: Array,
+        varnames: Optional[List[str]] = None,
+        samp_weight: Optional[Union[Array, Number]] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
+        # Todo: by: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
+        deff: bool = False,
+        coef_variation: bool = False,
         remove_nan: bool = False,
     ) -> None:
 
-        cat_vars = numpy_array(cat_vars)
+        if vars is None:
+            raise AssertionError("vars need to be an array-like object")
+        elif not isinstance(vars, (np.ndarray, pd.DataFrame)):
+            vars = numpy_array(vars)
 
-        if self.table_type == "oneway" and cat_vars.shape[0] > 1:
-            raise AssertionError("")
+        if samp_weight is None:
+            samp_weight = np.ones(vars.shape[0])
+        elif isinstance(samp_weight, (int, float)):
+            samp_weight = np.repeat(samp_weight, vars.shape[0])
+        else:
+            samp_weight = numpy_array(samp_weight)
 
-        samp_weight = numpy_array(samp_weight)
-        if stratum is not None:
-            stratum = numpy_array(stratum)
-        if psu is not None:
-            psu = numpy_array(psu)
-        if ssu is not None:
-            ssu = numpy_array(ssu)
-        if fpc is not None:
-            fpc = numpy_array(fpc)
+        if isinstance(vars, np.ndarray):
+            vars = pd.DataFrame(vars)
+
+        if varnames is None:
+            prefix = "var"
+        elif isinstance(varnames, str):
+            prefix = varnames
+        elif isinstance(varnames, list):
+            prefix = varnames[0]
+        else:
+            raise AssertionError("varnames should be a string or a list of string")
 
         if remove_nan:
-            excluded_units = np.isnan(samp_weight)
-            samp_weight, stratum, psu, ssu, fpc = remove_nans(
-                excluded_units, samp_weight, stratum, psu, ssu, fpc
+            vars_nans = vars.isna()
+            excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
+            samp_weight, stratum, psu, ssu = remove_nans(
+                excluded_units, samp_weight, stratum, psu, ssu
             )
+            vars.dropna(inplace=True)
 
-        if self.table_type == "oneway":
-            self._oneway()
-        elif self.table_type == "twoway":
-            self._twoway()
+        vars = vars.astype(str)
+        vars_names = set_variables_names(vars, varnames, prefix)
+        two_way_full_model = saturated_two_ways_model(vars_names)
+        vars.columns = vars_names
+        vars_levels = vars.drop_duplicates()
+        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels))
+
+        nrows = vars[vars_names[0]].unique().__len__()
+        ncols = vars[vars_names[1]].unique().__len__()
+
+        if len(vars.shape) == 2:
+            vars_for_oneway = np.apply_along_axis(
+                func1d=concatenate_series_to_str, axis=1, arr=vars
+            )
         else:
-            raise ValueError("Parameter 'table_type' is not valid!")
+            vars_for_oneway = vars
+
+        if self.parameter == "count":
+            tbl_est_srs = TaylorEstimator(parameter="total", alpha=self.alpha)
+            tbl_est_srs.estimate(
+                y=np.ones(vars_for_oneway.shape[0]),
+                samp_weight=samp_weight,
+                domain=vars_for_oneway,
+                fpc=fpc,
+            )
+            cell_est_srs = np.asarray(list(tbl_est_srs.point_est.values()))
+
+            tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
+            tbl_est.estimate(
+                y=np.ones(vars_for_oneway.shape[0]),
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                domain=vars_for_oneway,
+                fpc=fpc,
+            )
+            cell_est = np.asarray(list(tbl_est.point_est.values()))
+        elif self.parameter == "proportion":
+            tbl_est_srs = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
+            tbl_est_srs.estimate(
+                y=vars_for_oneway,
+                samp_weight=samp_weight,
+                fpc=fpc,
+            )
+            cell_est_srs = np.asarray(list(tbl_est_srs.point_est["__none__"].values()))
+
+            tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
+            tbl_est.estimate(
+                y=vars_for_oneway,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+            )
+            cell_est = np.asarray(list(tbl_est.point_est["__none__"].values()))
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
+        # breakpoint()
+        cov_srs = np.diag(cell_est_srs) - cell_est_srs.reshape(nrows * ncols, 1) @ np.transpose(
+            cell_est_srs.reshape(nrows * ncols, 1)
+        )
+
+        cov = np.diag(cell_est) - cell_est.reshape(nrows * ncols, 1) @ np.transpose(
+            cell_est.reshape(nrows * ncols, 1)
+        )
+
+        # cov_srs = np.zeros((nrows, ncols))
+        # for r in range(nrows):
+        #     for c in range(ncols):
+        #         if r == c:
+        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
+        #         else:
+        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
+
+        x1 = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]  # main_effects
+        x2 = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]  # interactions
+        x1_t = np.transpose(x1)
+        x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_srs @ x1) @ (x1_t @ cov_srs @ x2)
+        delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_srs @ x2_tilde) @ (
+            np.transpose(x2_tilde) @ cov @ x2_tilde
+        )
+
+        df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
+        df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
+
+        breakpoint()
