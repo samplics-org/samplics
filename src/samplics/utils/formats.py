@@ -168,3 +168,11 @@ def concatenate_series_to_str(row: Series) -> str:
         str: [description]
     """
     return "_".join([str(c) for c in row])
+
+
+def numpy_to_dummies(arr: np.ndarray, varsnames: List[str]) -> np.ndarray:
+
+    df = pd.DataFrame(arr.astype(str))
+    df.columns = varsnames
+
+    return pd.get_dummies(df, drop_first=True)

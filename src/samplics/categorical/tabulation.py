@@ -6,17 +6,23 @@ The module implements the cross-tabulation analysis.
 
 
 from functools import partial
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
 from numpy.core.numeric import base_repr
 import pandas as pd
+from patsy import dmatrix
 
 from scipy.stats import t as student
 from scipy.stats.stats import f_oneway
 
 from samplics.utils.basic_functions import set_variables_names
-from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
+from samplics.utils.formats import (
+    concatenate_series_to_str,
+    numpy_array,
+    numpy_to_dummies,
+    remove_nans,
+)
 from samplics.utils.types import Array, Number, Series
 
 from samplics.estimation import TaylorEstimator
@@ -202,6 +208,17 @@ class OneWay:
                     self.deff[vars_names[k]] = {}  # todo: tbl_est.deff["__none__"]
 
 
+def saturated_two_ways_model(varsnames: List[str]) -> str:
+    """
+    docstring
+    """
+
+    main_effects = " + ".join(varsnames)
+    interactions = ":".join(varsnames)
+
+    return " + ".join([main_effects, interactions])
+
+
 class TwoWay:
     """provides methods for analyzing cross-tabulations"""
 
@@ -241,36 +258,60 @@ class TwoWay:
         remove_nan: bool = False,
     ) -> None:
 
-        vars_np = numpy_array(vars)
+        if vars is None:
+            raise AssertionError("vars need to be an array-like object")
+        elif not isinstance(vars, (np.ndarray, pd.DataFrame)):
+            vars = numpy_array(vars)
 
         if samp_weight is None:
-            samp_weight = np.ones(vars_np.shape[0])
+            samp_weight = np.ones(vars.shape[0])
         elif isinstance(samp_weight, (int, float)):
-            samp_weight = np.repeat(samp_weight, vars_np.shape[0])
+            samp_weight = np.repeat(samp_weight, vars.shape[0])
         else:
             samp_weight = numpy_array(samp_weight)
 
-        if remove_nan:
-            excluded_units = np.prod(np.isnan(vars_np), axis=1).astype(bool) | np.isnan(
-                samp_weight
-            )
-            samp_weight, stratum, var, psu, ssu = remove_nans(
-                excluded_units, samp_weight, stratum, vars_np, psu, ssu
-            )
+        if isinstance(vars, np.ndarray):
+            vars = pd.DataFrame(vars)
 
-        if len(vars_np.shape) == 2:
+        if remove_nan:
+            excluded_units = vars.isna().prod(axis=1).astype(bool) | np.isnan(samp_weight)
+            samp_weight, stratum, psu, ssu = remove_nans(
+                excluded_units, samp_weight, stratum, psu, ssu
+            )
+            vars.dropna(inplace=True)
+
+        if varnames is None:
+            prefix = "var"
+        elif isinstance(varnames, str):
+            prefix = varnames
+        elif isinstance(varnames, list):
+            prefix = varnames[0]
+        else:
+            raise AssertionError("varnames should be a string or a list of string")
+
+        vars = vars.astype(str)
+        vars_names = set_variables_names(vars, varnames, prefix)
+        two_way_full_model = saturated_two_ways_model(vars_names)
+        vars.columns = vars_names
+        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars))
+
+        nrows = vars[vars_names[0]].unique().__len__()
+        ncols = vars[vars_names[1]].unique().__len__()
+
+        if len(vars.shape) == 2:
             vars_for_oneway = np.apply_along_axis(
-                func1d=concatenate_series_to_str, axis=1, arr=vars_np
+                func1d=concatenate_series_to_str, axis=1, arr=vars
             )
         else:
-            vars_for_oneway = vars_np
+            vars_for_oneway = vars
 
-        # breakpoint()
+        main_effects = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]
+        interactions = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]
 
         tbl_oneway = OneWay(
             parameter=self.parameter, alpha=self.alpha, ciprop_method=self.ciprop_method
         )
-
+        breakpoint()
         tbl_oneway.tabulate(
             vars=vars_for_oneway,
             varnames=varnames,
