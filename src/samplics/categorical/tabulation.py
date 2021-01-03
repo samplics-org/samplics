@@ -359,14 +359,6 @@ class TwoWay:
             cell_est.reshape(nrows * ncols, 1)
         )
 
-        # cov_srs = np.zeros((nrows, ncols))
-        # for r in range(nrows):
-        #     for c in range(ncols):
-        #         if r == c:
-        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
-        #         else:
-        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
-
         x1 = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]  # interactions
         x1_t = np.transpose(x1)
@@ -377,5 +369,13 @@ class TwoWay:
 
         df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
         df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
+
+        # cov_srs = np.zeros((nrows, ncols))
+        # for r in range(nrows):
+        #     for c in range(ncols):
+        #         if r == c:
+        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
+        #         else:
+        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
 
         breakpoint()
