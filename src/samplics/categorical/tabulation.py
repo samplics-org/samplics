@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
 from numpy.core.numeric import base_repr
+from numpy.lib.shape_base import apply_along_axis
 import pandas as pd
 from patsy import dmatrix
 
@@ -273,13 +274,6 @@ class TwoWay:
         if isinstance(vars, np.ndarray):
             vars = pd.DataFrame(vars)
 
-        if remove_nan:
-            excluded_units = vars.isna().prod(axis=1).astype(bool) | np.isnan(samp_weight)
-            samp_weight, stratum, psu, ssu = remove_nans(
-                excluded_units, samp_weight, stratum, psu, ssu
-            )
-            vars.dropna(inplace=True)
-
         if varnames is None:
             prefix = "var"
         elif isinstance(varnames, str):
@@ -289,11 +283,20 @@ class TwoWay:
         else:
             raise AssertionError("varnames should be a string or a list of string")
 
+        if remove_nan:
+            vars_nans = vars.isna()
+            excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
+            samp_weight, stratum, psu, ssu = remove_nans(
+                excluded_units, samp_weight, stratum, psu, ssu
+            )
+            vars.dropna(inplace=True)
+
         vars = vars.astype(str)
         vars_names = set_variables_names(vars, varnames, prefix)
         two_way_full_model = saturated_two_ways_model(vars_names)
         vars.columns = vars_names
-        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars))
+        vars_levels = vars.drop_duplicates()
+        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels))
 
         nrows = vars[vars_names[0]].unique().__len__()
         ncols = vars[vars_names[1]].unique().__len__()
@@ -305,26 +308,74 @@ class TwoWay:
         else:
             vars_for_oneway = vars
 
-        x1 = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]  # main_effects
-        x2 = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]  # interactions
-        x1_t = np.transpose(x1)
-        x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ x1) @ (x1_t @ x2)
-
         if self.parameter == "count":
+            tbl_est_srs = TaylorEstimator(parameter="total", alpha=self.alpha)
+            tbl_est_srs.estimate(
+                y=np.ones(vars_for_oneway.shape[0]),
+                samp_weight=samp_weight,
+                domain=vars_for_oneway,
+                fpc=fpc,
+            )
+            cell_est_srs = np.asarray(list(tbl_est_srs.point_est.values()))
+
             tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
             tbl_est.estimate(
+                y=np.ones(vars_for_oneway.shape[0]),
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                domain=vars_for_oneway,
+                fpc=fpc,
+            )
+            cell_est = np.asarray(list(tbl_est.point_est.values()))
+        elif self.parameter == "proportion":
+            tbl_est_srs = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
+            tbl_est_srs.estimate(
                 y=vars_for_oneway,
                 samp_weight=samp_weight,
                 fpc=fpc,
             )
-        elif self.parameter == "proportion":
+            cell_est_srs = np.asarray(list(tbl_est_srs.point_est["__none__"].values()))
+
             tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
             tbl_est.estimate(
                 y=vars_for_oneway,
                 samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
                 fpc=fpc,
             )
+            cell_est = np.asarray(list(tbl_est.point_est["__none__"].values()))
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
+        # breakpoint()
+        cov_srs = np.diag(cell_est_srs) - cell_est_srs.reshape(nrows * ncols, 1) @ np.transpose(
+            cell_est_srs.reshape(nrows * ncols, 1)
+        )
+
+        cov = np.diag(cell_est) - cell_est.reshape(nrows * ncols, 1) @ np.transpose(
+            cell_est.reshape(nrows * ncols, 1)
+        )
+
+        # cov_srs = np.zeros((nrows, ncols))
+        # for r in range(nrows):
+        #     for c in range(ncols):
+        #         if r == c:
+        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
+        #         else:
+        #             cov_srs[r, c] = cell_srs_est[r * nrows + c]
+
+        x1 = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]  # main_effects
+        x2 = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]  # interactions
+        x1_t = np.transpose(x1)
+        x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_srs @ x1) @ (x1_t @ cov_srs @ x2)
+        delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_srs @ x2_tilde) @ (
+            np.transpose(x2_tilde) @ cov @ x2_tilde
+        )
+
+        df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
+        df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
 
         breakpoint()
