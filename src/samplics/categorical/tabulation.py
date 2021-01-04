@@ -5,15 +5,14 @@ The module implements the cross-tabulation analysis.
 """
 
 
-from functools import partial
 from typing import Any, Dict, List, Optional, Union, Tuple
 
-import numpy as np
-from numpy.core.numeric import base_repr
-from numpy.lib.shape_base import apply_along_axis
-import pandas as pd
-from patsy import dmatrix
+import itertools
 
+import numpy as np
+import pandas as pd
+
+from patsy import dmatrix
 from scipy.stats import t as student
 from scipy.stats.stats import f_oneway
 
@@ -295,12 +294,19 @@ class CrossTabulation:
         vars_names = set_variables_names(vars, varnames, prefix)
         two_way_full_model = saturated_two_ways_model(vars_names)
         vars.columns = vars_names
-        vars_levels = vars.drop_duplicates()
-        vars_levels.sort_values(by=vars_names, inplace=True)
-        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels))
+        row_levels = vars[vars_names[0]].unique()
+        col_levels = vars[vars_names[1]].unique()
 
-        nrows = vars[vars_names[0]].unique().__len__()
-        ncols = vars[vars_names[1]].unique().__len__()
+        both_levels = [row_levels, col_levels]
+        vars_levels = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
+        vars_levels.columns = vars_names
+
+        # vars_levels = {vars_names[0]: row_levels, vars_names[1]: col_levels}
+        # vars_levels = vars.drop_duplicates()
+        # vars_levels.sort_values(by=vars_names, inplace=True)
+
+        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels, NA_action="raise"))
+        # breakpoint()
 
         if len(vars.shape) == 2:
             vars_for_oneway = np.apply_along_axis(
@@ -309,15 +315,18 @@ class CrossTabulation:
         else:
             vars_for_oneway = vars
 
+        vars_levels_concat = np.apply_along_axis(
+            func1d=concatenate_series_to_str, axis=1, arr=vars_levels
+        )
+
         if self.parameter == "count":
             tbl_est_srs = TaylorEstimator(parameter="total", alpha=self.alpha)
             tbl_est_srs.estimate(
                 y=np.ones(vars_for_oneway.shape[0]),
-                samp_weight=samp_weight,
+                samp_weight=np.ones(vars_for_oneway.shape[0]),
                 domain=vars_for_oneway,
                 fpc=fpc,
             )
-            cell_est_srs = np.asarray(list(tbl_est_srs.point_est.values()))
 
             tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
             tbl_est.estimate(
@@ -329,18 +338,36 @@ class CrossTabulation:
                 domain=vars_for_oneway,
                 fpc=fpc,
             )
-            cell_est = np.asarray(list(tbl_est.point_est.values()))
-            cell_stderror = np.asarray(list(tbl_est.stderror.values()))
-            cell_lower_ci = np.asarray(list(tbl_est.lower_ci.values()))
-            cell_upper_ci = np.asarray(list(tbl_est.upper_ci.values()))
+            # cell_est = np.asarray(list(tbl_est.point_est.values()))
+            # cell_stderror = np.asarray(list(tbl_est.stderror.values()))
+            # cell_lower_ci = np.asarray(list(tbl_est.lower_ci.values()))
+            # cell_upper_ci = np.asarray(list(tbl_est.upper_ci.values()))
+
+            tbl_keys = list(tbl_est_srs.point_est.keys())
+            cell_est_srs = np.zeros(vars_levels.shape[0])
+            # cell_stderror_srs = np.zeros(vars_levels.shape[0])
+            cell_est = np.zeros(vars_levels.shape[0])
+            cell_stderror = np.zeros(vars_levels.shape[0])
+            cell_lower_ci = np.zeros(vars_levels.shape[0])
+            cell_upper_ci = np.zeros(vars_levels.shape[0])
+            for k in range(vars_levels.shape[0]):
+                if vars_levels_concat[k] in tbl_keys:
+                    cell_est_srs[k] = tbl_est_srs.point_est[vars_levels_concat[k]]
+                    # cell_stderror_srs[k] = tbl_est_srs.stderror[vars_levels_concat[k]]
+
+                    cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
+                    cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
+                    cell_stderror[k] = tbl_est.stderror[vars_levels_concat[k]]
+                    cell_lower_ci[k] = tbl_est.lower_ci[vars_levels_concat[k]]
+                    cell_upper_ci[k] = tbl_est.upper_ci[vars_levels_concat[k]]
+
         elif self.parameter == "proportion":
             tbl_est_srs = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
             tbl_est_srs.estimate(
                 y=vars_for_oneway,
-                samp_weight=samp_weight,
+                samp_weight=np.ones(vars_for_oneway.shape[0]),
                 fpc=fpc,
             )
-            cell_est_srs = np.asarray(list(tbl_est_srs.point_est["__none__"].values()))
 
             tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
             tbl_est.estimate(
@@ -351,25 +378,52 @@ class CrossTabulation:
                 ssu=ssu,
                 fpc=fpc,
             )
-            cell_est = np.asarray(list(tbl_est.point_est["__none__"].values()))
-            cell_stderror = np.asarray(list(tbl_est.stderror["__none__"].values()))
-            cell_lower_ci = np.asarray(list(tbl_est.lower_ci["__none__"].values()))
-            cell_upper_ci = np.asarray(list(tbl_est.upper_ci["__none__"].values()))
+            # cell_est = np.asarray(list(tbl_est.point_est["__none__"].values()))
+            # cell_stderror = np.asarray(list(tbl_est.stderror["__none__"].values()))
+            # cell_lower_ci = np.asarray(list(tbl_est.lower_ci["__none__"].values()))
+            # cell_upper_ci = np.asarray(list(tbl_est.upper_ci["__none__"].values()))
+
+            tbl_keys = list(tbl_est_srs.point_est["__none__"].keys())
+            cell_est_srs = np.zeros(vars_levels.shape[0])
+            # cell_stderror_srs = np.zeros(vars_levels.shape[0])
+            cell_est = np.zeros(vars_levels.shape[0])
+            cell_stderror = np.zeros(vars_levels.shape[0])
+            cell_lower_ci = np.zeros(vars_levels.shape[0])
+            cell_upper_ci = np.zeros(vars_levels.shape[0])
+            for k in range(vars_levels.shape[0]):
+                if vars_levels_concat[k] in tbl_keys:
+                    cell_est_srs[k] = tbl_est_srs.point_est["__none__"][vars_levels_concat[k]]
+                    # cell_stderror_srs[k] = tbl_est_srs.stderror["__none__"][vars_levels_concat[k]]
+
+                    cell_est[k] = tbl_est.point_est["__none__"][vars_levels_concat[k]]
+                    cell_stderror[k] = tbl_est.stderror["__none__"][vars_levels_concat[k]]
+                    cell_lower_ci[k] = tbl_est.lower_ci["__none__"][vars_levels_concat[k]]
+                    cell_upper_ci[k] = tbl_est.upper_ci["__none__"][vars_levels_concat[k]]
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
 
-        cov_srs = np.diag(cell_est_srs) - cell_est_srs.reshape(nrows * ncols, 1) @ np.transpose(
-            cell_est_srs.reshape(nrows * ncols, 1)
-        )
+        # breakpoint()
 
-        cov = np.diag(cell_est) - cell_est.reshape(nrows * ncols, 1) @ np.transpose(
-            cell_est.reshape(nrows * ncols, 1)
-        )
+        cov_srs = (
+            np.diag(cell_est_srs)
+            - cell_est_srs.reshape(vars_levels.shape[0], 1)
+            @ np.transpose(cell_est_srs.reshape(vars_levels.shape[0], 1))
+        ) / (vars.shape[0] - 1)
 
-        x1 = vars_dummies[:, 1 : (nrows - 1) * (ncols - 1) + 1]  # main_effects
-        x2 = vars_dummies[:, (nrows - 1) * (ncols - 1) + 1 :]  # interactions
+        cov = (
+            np.diag(cell_est)
+            - cell_est.reshape(vars_levels.shape[0], 1)
+            @ np.transpose(cell_est.reshape(vars_levels.shape[0], 1))
+        ) / (vars.shape[0] - 1)
+
+        nrows = row_levels.__len__()
+        ncols = col_levels.__len__()
+        x1 = vars_dummies[:, 1 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
+        x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
         x1_t = np.transpose(x1)
+        # breakpoint()
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_srs @ x1) @ (x1_t @ cov_srs @ x2)
+        # breakpoint()
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov @ x2_tilde
         )

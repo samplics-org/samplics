@@ -8,6 +8,8 @@ from samplics.categorical import OneWay, CrossTabulation
 
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
+# birthcat.loc[(birthcat["birthcat"] == 2) & (birthcat["region"]==3), "birthcat"] = 3
+
 region = birthcat["region"].to_numpy().astype(int)
 age_cat = birthcat["agecat"].to_numpy()
 birth_cat = birthcat["birthcat"].to_numpy()
@@ -24,6 +26,12 @@ def test_not_valid_parameter(param):
 # def test_twoway_count_one_var_count():
 #     tbl = CrossTabulation("count")
 #     tbl.tabulate(region, remove_nan=True)
+
+
+@pytest.mark.xfail(strict=True, reason="For now, the method will fail if there are missing values")
+def test_for_missing_values_in_the_design_matrix():
+    tbl_prop = CrossTabulation("proportion")
+    tbl_prop.tabulate([region, birth_cat], varnames=["region", "birth_cat"], remove_nan=False)
 
 
 # tbl_count = CrossTabulation("count")
