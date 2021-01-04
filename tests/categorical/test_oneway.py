@@ -100,27 +100,27 @@ tbl2_count = OneWay("count")
 def test_oneway_count_two_vars_list():
     tbl2_count.tabulate([region, birth_cat], remove_nan=True)
 
-    assert tbl2_count.table["birthcat"][1] == 240
-    assert tbl2_count.table["birthcat"][2] == 450
-    assert tbl2_count.table["birthcat"][3] == 233
+    assert tbl2_count.table["var_2"][1] == 240
+    assert tbl2_count.table["var_2"][2] == 450
+    assert tbl2_count.table["var_2"][3] == 233
 
-    assert tbl2_count.table["region"][1] == 166
-    assert tbl2_count.table["region"][2] == 284
-    assert tbl2_count.table["region"][3] == 250
-    assert tbl2_count.table["region"][4] == 256
+    assert tbl2_count.table["var_1"][1] == 166
+    assert tbl2_count.table["var_1"][2] == 284
+    assert tbl2_count.table["var_1"][3] == 250
+    assert tbl2_count.table["var_1"][4] == 256
 
 
 def test_oneway_count_two_vars_tuple():
     tbl2_count.tabulate((region, birth_cat), remove_nan=True)
 
-    assert tbl2_count.table["birthcat"][1] == 240
-    assert tbl2_count.table["birthcat"][2] == 450
-    assert tbl2_count.table["birthcat"][3] == 233
+    assert tbl2_count.table["var_2"][1] == 240
+    assert tbl2_count.table["var_2"][2] == 450
+    assert tbl2_count.table["var_2"][3] == 233
 
-    assert tbl2_count.table["region"][1] == 166
-    assert tbl2_count.table["region"][2] == 284
-    assert tbl2_count.table["region"][3] == 250
-    assert tbl2_count.table["region"][4] == 256
+    assert tbl2_count.table["var_1"][1] == 166
+    assert tbl2_count.table["var_1"][2] == 284
+    assert tbl2_count.table["var_1"][3] == 250
+    assert tbl2_count.table["var_1"][4] == 256
 
 
 def test_oneway_count_two_vars_pandas():
