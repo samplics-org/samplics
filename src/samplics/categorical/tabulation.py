@@ -481,5 +481,3 @@ class CrossTabulation:
                 "p-value": f.pdf(f_p, df_num, df_den),
             },
         }
-
-        breakpoint()
