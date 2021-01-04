@@ -13,8 +13,7 @@ import numpy as np
 import pandas as pd
 
 from patsy import dmatrix
-from scipy.stats import t as student
-from scipy.stats.stats import f_oneway
+from scipy.stats import chi2, f
 
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.formats import (
@@ -402,8 +401,6 @@ class CrossTabulation:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
 
-        # breakpoint()
-
         cov_srs = (
             np.diag(cell_est_srs)
             - cell_est_srs.reshape(vars_levels.shape[0], 1)
@@ -421,19 +418,12 @@ class CrossTabulation:
         x1 = vars_dummies[:, 1 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
         x1_t = np.transpose(x1)
-        # breakpoint()
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_srs @ x1) @ (x1_t @ cov_srs @ x2)
-        # breakpoint()
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov @ x2_tilde
         )
 
-        df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
-        df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
-        # breakpoint()
         cov_srs = np.zeros((nrows, ncols))
-        # row_levels = vars_levels.iloc[:, 0].unique()
-        # col_levels = vars_levels.iloc[:, 1].unique()
         for r in range(nrows):
             point_est = {}
             stderror = {}
@@ -465,5 +455,31 @@ class CrossTabulation:
             self.stderror.update({vars_levels.iloc[r * ncols, 0]: stderror})
             self.lower_ci.update({vars_levels.iloc[r * ncols, 0]: lower_ci})
             self.upper_ci.update({vars_levels.iloc[r * ncols, 0]: upper_ci})
+
+        point_est = pd.DataFrame.from_dict(self.point_est, orient="index")
+
+        point_est_null = point_est.sum(axis=1).values.reshape(nrows, 1) @ np.transpose(
+            point_est.sum(axis=0).values.reshape(ncols, 1)
+        )
+
+        chisq_p = vars.shape[0] * np.sum((point_est.values - point_est_null) ** 2 / point_est_null)
+        f_p = ((vars.shape[0] - 1) / vars.shape[0]) * chisq_p / np.trace(delta_est)
+
+        df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
+        df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
+
+        self.stats = {
+            "Pearson-Chisq": {
+                "df": (nrows - 1) * (ncols - 1),
+                "chisq_p": chisq_p,
+                "p-value": chi2.pdf(chisq_p, (nrows - 1) * (ncols - 1)),
+            },
+            "Pearson-F": {
+                "df_num": df_num,
+                "df_den": df_den,
+                "F_p": f_p,
+                "p-value": f.pdf(f_p, df_num, df_den),
+            },
+        }
 
         breakpoint()
