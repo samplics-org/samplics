@@ -49,6 +49,9 @@ class OneWay:
         self.alpha = alpha
         self.ciprop_method = ciprop_method
 
+    def __repr__(self):
+        return f"Tabulation(parameter={self.parameter}, alpha={self.alpha})"
+
     def _estimate(
         self,
         var_of_ones: Array,
@@ -241,6 +244,9 @@ class CrossTabulation:
         self.deff = {}  # Dict[str, Dict[str, Number]]
         self.alpha = alpha
         self.ciprop_method = ciprop_method
+
+    def __repr__(self):
+        return f"CrossTabulation(parameter={self.parameter}, alpha={self.alpha})"
 
     def tabulate(
         self,
@@ -456,14 +462,17 @@ class CrossTabulation:
             self.lower_ci.update({vars_levels.iloc[r * ncols, 0]: lower_ci})
             self.upper_ci.update({vars_levels.iloc[r * ncols, 0]: upper_ci})
 
-        point_est = pd.DataFrame.from_dict(self.point_est, orient="index")
+        point_est = pd.DataFrame.from_dict(self.point_est, orient="index").values
 
-        point_est_null = point_est.sum(axis=1).values.reshape(nrows, 1) @ np.transpose(
-            point_est.sum(axis=0).values.reshape(ncols, 1)
+        point_est_null = point_est.sum(axis=1).reshape(nrows, 1) @ np.transpose(
+            point_est.sum(axis=0).reshape(ncols, 1)
         )
 
-        chisq_p = vars.shape[0] * np.sum((point_est.values - point_est_null) ** 2 / point_est_null)
+        chisq_p = vars.shape[0] * np.sum((point_est - point_est_null) ** 2 / point_est_null)
         f_p = ((vars.shape[0] - 1) / vars.shape[0]) * chisq_p / np.trace(delta_est)
+
+        chisq_lr = 2 * vars.shape[0] * np.sum(point_est * np.log(point_est / point_est_null))
+        f_lr = ((vars.shape[0] - 1) / vars.shape[0]) * chisq_lr / np.trace(delta_est)
 
         df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
         df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
@@ -471,13 +480,24 @@ class CrossTabulation:
         self.stats = {
             "Pearson-Chisq": {
                 "df": (nrows - 1) * (ncols - 1),
-                "chisq_p": chisq_p,
-                "p-value": chi2.pdf(chisq_p, (nrows - 1) * (ncols - 1)),
+                "chisq_value": chisq_p,
+                "p_value": chi2.pdf(chisq_p, (nrows - 1) * (ncols - 1)),
             },
             "Pearson-F": {
                 "df_num": df_num,
                 "df_den": df_den,
-                "F_p": f_p,
-                "p-value": f.pdf(f_p, df_num, df_den),
+                "F_value": f_p,
+                "p_value": f.pdf(f_p, df_num, df_den),
+            },
+            "LR-Chisq": {
+                "df": (nrows - 1) * (ncols - 1),
+                "chisq_value": chisq_lr,
+                "p_value": chi2.pdf(chisq_lr, (nrows - 1) * (ncols - 1)),
+            },
+            "LR-F": {
+                "df_num": df_num,
+                "df_den": df_den,
+                "F_value": f_lr,
+                "p_value": f.pdf(f_lr, df_num, df_den),
             },
         }
