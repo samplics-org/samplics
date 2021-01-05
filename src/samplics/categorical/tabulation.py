@@ -195,6 +195,8 @@ class Tabulation:
                 self.upper_ci[vars_names[0]] = tbl_est.upper_ci["__none__"]
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff["__none__"]
         else:
+            nb_obs = 0
+            tbl_est = None
             var_of_ones = np.ones(vars_np.shape[0])
             for k in range(0, nb_vars):
                 tbl_est, var_levels, nb_obs = self._estimate(
