@@ -262,7 +262,7 @@ class CrossTabulation:
             table_subheader1 = f"Number of strata: {self.design_info['number_strata']}"
             table_subheader2 = f"Number of PSUs: {self.design_info['number_psus']}"
             table_subheader3 = f"Number of observations: {self.design_info['number_obs']}"
-            table_subheader4 = f"Design effect: {self.design_info['design_effect']}"
+            table_subheader4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']}"
 
             chisq_dist = f"chi2({self.stats['Pearson-Unadj']['df']})"
             f_dist = f"F({self.stats['Pearson-Adj']['df_num']:.2f}, {self.stats['Pearson-Adj']['df_den']:.2f}"
@@ -545,6 +545,7 @@ class CrossTabulation:
             "number_psus": tbl_est.number_psus,
             "number_obs": vars.shape[0],
             "design_effect": 0,
+            "degrees_of_freedom": tbl_est.number_psus - tbl_est.number_strata,
         }
 
         # breakpoint()

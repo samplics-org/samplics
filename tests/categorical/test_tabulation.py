@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.estimation import TaylorEstimator
-from samplics.categorical import OneWay
+from samplics.categorical import Tabulation
 
 
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
@@ -14,13 +14,13 @@ birth_cat = birthcat["birthcat"]
 pop = birthcat["pop"]
 
 
-tbl_count = OneWay("count")
+tbl_count = Tabulation("count")
 
 
 @pytest.mark.xfail(strict=True, reason="Parameter not valid")
 @pytest.mark.parametrize("param", ["total", "mean", "ratio", "other"])
 def test_not_valid_parameter(param):
-    tbl = OneWay(param)
+    tbl = Tabulation(param)
 
 
 tbl_count.tabulate(birth_cat, remove_nan=True)
@@ -62,7 +62,7 @@ def test_oneway_count_one_var_deff_false():
 #     assert tbl_count.deff["birthcat"][2] == 1
 #     assert tbl_count.deff["birthcat"][3] == 1
 
-tbl_prop = OneWay("proportion")
+tbl_prop = Tabulation("proportion")
 tbl_prop.tabulate(birth_cat, remove_nan=True)
 
 
@@ -94,7 +94,7 @@ def test_oneway_prop_one_var_deff_false():
     assert tbl_prop.deff["birthcat"] == {}
 
 
-tbl2_count = OneWay("count")
+tbl2_count = Tabulation("count")
 
 
 def test_oneway_count_two_vars_list():
@@ -136,7 +136,7 @@ def test_oneway_count_two_vars_pandas():
     assert tbl2_count.table["region"][4] == 256
 
 
-tbl22_count = OneWay("count")
+tbl22_count = Tabulation("count")
 tbl22_numpy = birthcat[["region", "birthcat"]].to_numpy()
 tbl22_count.tabulate(tbl22_numpy, remove_nan=True)
 
@@ -185,7 +185,7 @@ def test_oneway_count_two_vars_upper_ci():
     assert np.isclose(tbl22_count.upper_ci["var_1"][4], 282.8823, atol=1e-4)
 
 
-tbl3_count = OneWay("count")
+tbl3_count = Tabulation("count")
 tbl3_numpy = birthcat[["region", "birthcat", "agecat"]].to_numpy()
 tbl3_count.tabulate(tbl3_numpy, remove_nan=True)
 
@@ -220,7 +220,7 @@ def test_oneway_count_three_vars_numpy_stderror():
     assert np.isclose(tbl3_count.stderror["var_3"][3], 10.7059, atol=1e-4)
 
 
-tbl2_prop = OneWay("proportion")
+tbl2_prop = Tabulation("proportion")
 tbl2_pandas = birthcat[["region", "birthcat"]]
 tbl2_prop.tabulate(tbl2_pandas, remove_nan=True)
 
@@ -278,7 +278,7 @@ stratum = nhanes["SDMVSTRA"]
 psu = nhanes["SDMVPSU"]
 weight = nhanes["WTMEC2YR"]
 
-tbl1_nhanes = OneWay("count")
+tbl1_nhanes = Tabulation("count")
 tbl1_nhanes.tabulate(
     vars=cholesterol, samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
 )
@@ -294,7 +294,7 @@ def test_oneway_count_weighted_sdterror():
     assert np.isclose(tbl1_nhanes.stderror["HI_CHOL"][1], 2020710.7438, atol=1e-4)
 
 
-tbl2_nhanes = OneWay("proportion")
+tbl2_nhanes = Tabulation("proportion")
 tbl2_nhanes.tabulate(
     vars=cholesterol, samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
 )
