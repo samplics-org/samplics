@@ -247,6 +247,7 @@ class Tabulation:
             var_df["stderror"] = list(self.stderror[var].values())
             var_df["lower_ci"] = list(self.lower_ci[var].values())
             var_df["upper_ci"] = list(self.upper_ci[var].values())
+            var_df.sort_values(by=["variable", "levels"], inplace=True)
             oneway_df = oneway_df.append(var_df)
 
         return oneway_df
@@ -370,6 +371,7 @@ class CrossTabulation:
         vars = vars.astype(str)
         vars_names = set_variables_names(vars, varnames, prefix)
         two_way_full_model = saturated_two_ways_model(vars_names)
+        # vars.sort_values(by=vars_names, inplace=True)
         vars.columns = vars_names
         row_levels = vars[vars_names[0]].unique()
         col_levels = vars[vars_names[1]].unique()
@@ -484,7 +486,6 @@ class CrossTabulation:
             np.transpose(x2_tilde) @ cov @ x2_tilde
         )
 
-        cov_srs = np.zeros((nrows, ncols))
         for r in range(nrows):
             point_est = {}
             stderror = {}
@@ -532,6 +533,7 @@ class CrossTabulation:
 
         chisq_lr = 2 * vars.shape[0] * np.sum(point_est * np.log(point_est / point_est_null))
         f_lr = ((vars.shape[0] - 1) / vars.shape[0]) * chisq_lr / np.trace(delta_est)
+        # breakpoint()
 
         df_num = np.trace(delta_est) ** 2 / np.trace(delta_est * delta_est)
         df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
@@ -594,5 +596,6 @@ class CrossTabulation:
                 twoway_df["upper_ci"] = sum(
                     pd.DataFrame.from_dict(self.upper_ci, orient="index").values.tolist(), []
                 )
+        twoway_df.sort_values(by=self.vars_names, inplace=True)
 
         return twoway_df
