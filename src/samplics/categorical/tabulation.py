@@ -144,7 +144,6 @@ class Tabulation:
 
         vars_np = numpy_array(vars)
         nb_vars = 1 if len(vars_np.shape) == 1 else vars_np.shape[1]
-        # breakpoint()
 
         if varnames is None:
             prefix = "var"
@@ -156,8 +155,6 @@ class Tabulation:
             raise AssertionError("varnames should be a string or a list of string")
 
         vars_names = set_variables_names(vars, varnames, prefix)
-
-        # breakpoint()
 
         if len(vars_names) != nb_vars:
             raise AssertionError(
@@ -197,8 +194,6 @@ class Tabulation:
                 self.lower_ci[vars_names[0]] = tbl_est.lower_ci["__none__"]
                 self.upper_ci[vars_names[0]] = tbl_est.upper_ci["__none__"]
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff["__none__"]
-
-            # breakpoint()
         else:
             var_of_ones = np.ones(vars_np.shape[0])
             for k in range(0, nb_vars):
@@ -381,12 +376,7 @@ class CrossTabulation:
         vars_levels = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
         vars_levels.columns = vars_names
 
-        # vars_levels = {vars_names[0]: row_levels, vars_names[1]: col_levels}
-        # vars_levels = vars.drop_duplicates()
-        # vars_levels.sort_values(by=vars_names, inplace=True)
-
         vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels, NA_action="raise"))
-        # breakpoint()
 
         if len(vars.shape) == 2:
             vars_for_oneway = np.apply_along_axis(
@@ -418,14 +408,9 @@ class CrossTabulation:
                 domain=vars_for_oneway,
                 fpc=fpc,
             )
-            # cell_est = np.asarray(list(tbl_est.point_est.values()))
-            # cell_stderror = np.asarray(list(tbl_est.stderror.values()))
-            # cell_lower_ci = np.asarray(list(tbl_est.lower_ci.values()))
-            # cell_upper_ci = np.asarray(list(tbl_est.upper_ci.values()))
 
             tbl_keys = list(tbl_est_srs.point_est.keys())
             cell_est_srs = np.zeros(vars_levels.shape[0])
-            # cell_stderror_srs = np.zeros(vars_levels.shape[0])
             cell_est = np.zeros(vars_levels.shape[0])
             cell_stderror = np.zeros(vars_levels.shape[0])
             cell_lower_ci = np.zeros(vars_levels.shape[0])
@@ -433,7 +418,6 @@ class CrossTabulation:
             for k in range(vars_levels.shape[0]):
                 if vars_levels_concat[k] in tbl_keys:
                     cell_est_srs[k] = tbl_est_srs.point_est[vars_levels_concat[k]]
-                    # cell_stderror_srs[k] = tbl_est_srs.stderror[vars_levels_concat[k]]
 
                     cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
                     cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
@@ -458,14 +442,9 @@ class CrossTabulation:
                 ssu=ssu,
                 fpc=fpc,
             )
-            # cell_est = np.asarray(list(tbl_est.point_est["__none__"].values()))
-            # cell_stderror = np.asarray(list(tbl_est.stderror["__none__"].values()))
-            # cell_lower_ci = np.asarray(list(tbl_est.lower_ci["__none__"].values()))
-            # cell_upper_ci = np.asarray(list(tbl_est.upper_ci["__none__"].values()))
 
             tbl_keys = list(tbl_est_srs.point_est["__none__"].keys())
             cell_est_srs = np.zeros(vars_levels.shape[0])
-            # cell_stderror_srs = np.zeros(vars_levels.shape[0])
             cell_est = np.zeros(vars_levels.shape[0])
             cell_stderror = np.zeros(vars_levels.shape[0])
             cell_lower_ci = np.zeros(vars_levels.shape[0])
@@ -473,7 +452,6 @@ class CrossTabulation:
             for k in range(vars_levels.shape[0]):
                 if vars_levels_concat[k] in tbl_keys:
                     cell_est_srs[k] = tbl_est_srs.point_est["__none__"][vars_levels_concat[k]]
-                    # cell_stderror_srs[k] = tbl_est_srs.stderror["__none__"][vars_levels_concat[k]]
 
                     cell_est[k] = tbl_est.point_est["__none__"][vars_levels_concat[k]]
                     cell_stderror[k] = tbl_est.stderror["__none__"][vars_levels_concat[k]]
@@ -591,8 +569,6 @@ class CrossTabulation:
             "design_effect": 0,
             "degrees_of_freedom": tbl_est.number_psus - tbl_est.number_strata,
         }
-
-        # breakpoint()
 
     def to_dataframe(
         self,
