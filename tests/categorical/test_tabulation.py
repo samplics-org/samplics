@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.estimation import TaylorEstimator
-from samplics.categorical import OneWay
+from samplics.categorical import Tabulation
 
 
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
@@ -14,22 +14,22 @@ birth_cat = birthcat["birthcat"]
 pop = birthcat["pop"]
 
 
-tbl_count = OneWay("count")
+tbl_count = Tabulation("count")
 
 
 @pytest.mark.xfail(strict=True, reason="Parameter not valid")
 @pytest.mark.parametrize("param", ["total", "mean", "ratio", "other"])
 def test_not_valid_parameter(param):
-    tbl = OneWay(param)
+    tbl = Tabulation(param)
 
 
 tbl_count.tabulate(birth_cat, remove_nan=True)
 
 
 def test_oneway_count_one_var_count():
-    assert tbl_count.table["birthcat"][1] == 240
-    assert tbl_count.table["birthcat"][2] == 450
-    assert tbl_count.table["birthcat"][3] == 233
+    assert tbl_count.point_est["birthcat"][1] == 240
+    assert tbl_count.point_est["birthcat"][2] == 450
+    assert tbl_count.point_est["birthcat"][3] == 233
 
 
 def test_oneway_count_one_var_stderr():
@@ -62,14 +62,14 @@ def test_oneway_count_one_var_deff_false():
 #     assert tbl_count.deff["birthcat"][2] == 1
 #     assert tbl_count.deff["birthcat"][3] == 1
 
-tbl_prop = OneWay("proportion")
+tbl_prop = Tabulation("proportion")
 tbl_prop.tabulate(birth_cat, remove_nan=True)
 
 
 def test_oneway_prop_one_var_prop():
-    assert np.isclose(tbl_prop.table["birthcat"][1], 0.2600, atol=1e-4)
-    assert np.isclose(tbl_prop.table["birthcat"][2], 0.4875, atol=1e-4)
-    assert np.isclose(tbl_prop.table["birthcat"][3], 0.2524, atol=1e-4)
+    assert np.isclose(tbl_prop.point_est["birthcat"][1], 0.2600, atol=1e-4)
+    assert np.isclose(tbl_prop.point_est["birthcat"][2], 0.4875, atol=1e-4)
+    assert np.isclose(tbl_prop.point_est["birthcat"][3], 0.2524, atol=1e-4)
 
 
 def test_oneway_prop_one_var_stderr():
@@ -94,62 +94,62 @@ def test_oneway_prop_one_var_deff_false():
     assert tbl_prop.deff["birthcat"] == {}
 
 
-tbl2_count = OneWay("count")
+tbl2_count = Tabulation("count")
 
 
 def test_oneway_count_two_vars_list():
     tbl2_count.tabulate([region, birth_cat], remove_nan=True)
 
-    assert tbl2_count.table["var_2"][1] == 240
-    assert tbl2_count.table["var_2"][2] == 450
-    assert tbl2_count.table["var_2"][3] == 233
+    assert tbl2_count.point_est["var_2"][1] == 240
+    assert tbl2_count.point_est["var_2"][2] == 450
+    assert tbl2_count.point_est["var_2"][3] == 233
 
-    assert tbl2_count.table["var_1"][1] == 166
-    assert tbl2_count.table["var_1"][2] == 284
-    assert tbl2_count.table["var_1"][3] == 250
-    assert tbl2_count.table["var_1"][4] == 256
+    assert tbl2_count.point_est["var_1"][1] == 166
+    assert tbl2_count.point_est["var_1"][2] == 284
+    assert tbl2_count.point_est["var_1"][3] == 250
+    assert tbl2_count.point_est["var_1"][4] == 256
 
 
 def test_oneway_count_two_vars_tuple():
     tbl2_count.tabulate((region, birth_cat), remove_nan=True)
 
-    assert tbl2_count.table["var_2"][1] == 240
-    assert tbl2_count.table["var_2"][2] == 450
-    assert tbl2_count.table["var_2"][3] == 233
+    assert tbl2_count.point_est["var_2"][1] == 240
+    assert tbl2_count.point_est["var_2"][2] == 450
+    assert tbl2_count.point_est["var_2"][3] == 233
 
-    assert tbl2_count.table["var_1"][1] == 166
-    assert tbl2_count.table["var_1"][2] == 284
-    assert tbl2_count.table["var_1"][3] == 250
-    assert tbl2_count.table["var_1"][4] == 256
+    assert tbl2_count.point_est["var_1"][1] == 166
+    assert tbl2_count.point_est["var_1"][2] == 284
+    assert tbl2_count.point_est["var_1"][3] == 250
+    assert tbl2_count.point_est["var_1"][4] == 256
 
 
 def test_oneway_count_two_vars_pandas():
     tbl2_count.tabulate(birthcat[["region", "birthcat"]], remove_nan=True)
 
-    assert tbl2_count.table["birthcat"][1] == 240
-    assert tbl2_count.table["birthcat"][2] == 450
-    assert tbl2_count.table["birthcat"][3] == 233
+    assert tbl2_count.point_est["birthcat"][1] == 240
+    assert tbl2_count.point_est["birthcat"][2] == 450
+    assert tbl2_count.point_est["birthcat"][3] == 233
 
-    assert tbl2_count.table["region"][1] == 166
-    assert tbl2_count.table["region"][2] == 284
-    assert tbl2_count.table["region"][3] == 250
-    assert tbl2_count.table["region"][4] == 256
+    assert tbl2_count.point_est["region"][1] == 166
+    assert tbl2_count.point_est["region"][2] == 284
+    assert tbl2_count.point_est["region"][3] == 250
+    assert tbl2_count.point_est["region"][4] == 256
 
 
-tbl22_count = OneWay("count")
+tbl22_count = Tabulation("count")
 tbl22_numpy = birthcat[["region", "birthcat"]].to_numpy()
 tbl22_count.tabulate(tbl22_numpy, remove_nan=True)
 
 
 def test_oneway_count_two_vars_numpy():
-    assert tbl22_count.table["var_2"][1] == 240
-    assert tbl22_count.table["var_2"][2] == 450
-    assert tbl22_count.table["var_2"][3] == 233
+    assert tbl22_count.point_est["var_2"][1] == 240
+    assert tbl22_count.point_est["var_2"][2] == 450
+    assert tbl22_count.point_est["var_2"][3] == 233
 
-    assert tbl22_count.table["var_1"][1] == 166
-    assert tbl22_count.table["var_1"][2] == 284
-    assert tbl22_count.table["var_1"][3] == 250
-    assert tbl22_count.table["var_1"][4] == 256
+    assert tbl22_count.point_est["var_1"][1] == 166
+    assert tbl22_count.point_est["var_1"][2] == 284
+    assert tbl22_count.point_est["var_1"][3] == 250
+    assert tbl22_count.point_est["var_1"][4] == 256
 
 
 def test_oneway_count_two_vars_stderror():
@@ -185,24 +185,24 @@ def test_oneway_count_two_vars_upper_ci():
     assert np.isclose(tbl22_count.upper_ci["var_1"][4], 282.8823, atol=1e-4)
 
 
-tbl3_count = OneWay("count")
+tbl3_count = Tabulation("count")
 tbl3_numpy = birthcat[["region", "birthcat", "agecat"]].to_numpy()
 tbl3_count.tabulate(tbl3_numpy, remove_nan=True)
 
 
 def test_oneway_count_three_vars_numpy_count():
-    assert tbl3_count.table["var_1"][1] == 166
-    assert tbl3_count.table["var_1"][2] == 284
-    assert tbl3_count.table["var_1"][3] == 250
-    assert tbl3_count.table["var_1"][4] == 256
+    assert tbl3_count.point_est["var_1"][1] == 166
+    assert tbl3_count.point_est["var_1"][2] == 284
+    assert tbl3_count.point_est["var_1"][3] == 250
+    assert tbl3_count.point_est["var_1"][4] == 256
 
-    assert tbl3_count.table["var_2"][1] == 240
-    assert tbl3_count.table["var_2"][2] == 450
-    assert tbl3_count.table["var_2"][3] == 233
+    assert tbl3_count.point_est["var_2"][1] == 240
+    assert tbl3_count.point_est["var_2"][2] == 450
+    assert tbl3_count.point_est["var_2"][3] == 233
 
-    assert tbl3_count.table["var_3"][1] == 507
-    assert tbl3_count.table["var_3"][2] == 316
-    assert tbl3_count.table["var_3"][3] == 133
+    assert tbl3_count.point_est["var_3"][1] == 507
+    assert tbl3_count.point_est["var_3"][2] == 316
+    assert tbl3_count.point_est["var_3"][3] == 133
 
 
 def test_oneway_count_three_vars_numpy_stderror():
@@ -220,20 +220,20 @@ def test_oneway_count_three_vars_numpy_stderror():
     assert np.isclose(tbl3_count.stderror["var_3"][3], 10.7059, atol=1e-4)
 
 
-tbl2_prop = OneWay("proportion")
+tbl2_prop = Tabulation("proportion")
 tbl2_pandas = birthcat[["region", "birthcat"]]
 tbl2_prop.tabulate(tbl2_pandas, remove_nan=True)
 
 
 def test_oneway_prop_two_vars_numpy():
-    assert np.isclose(tbl2_prop.table["birthcat"][1], 0.2600, atol=1e-4)
-    assert np.isclose(tbl2_prop.table["birthcat"][2], 0.4875, atol=1e-4)
-    assert np.isclose(tbl2_prop.table["birthcat"][3], 0.2524, atol=1e-4)
+    assert np.isclose(tbl2_prop.point_est["birthcat"][1], 0.2600, atol=1e-4)
+    assert np.isclose(tbl2_prop.point_est["birthcat"][2], 0.4875, atol=1e-4)
+    assert np.isclose(tbl2_prop.point_est["birthcat"][3], 0.2524, atol=1e-4)
 
-    assert np.isclose(tbl2_prop.table["region"][1], 0.1736, atol=1e-4)
-    assert np.isclose(tbl2_prop.table["region"][2], 0.2971, atol=1e-4)
-    assert np.isclose(tbl2_prop.table["region"][3], 0.2615, atol=1e-4)
-    assert np.isclose(tbl2_prop.table["region"][4], 0.2678, atol=1e-4)
+    assert np.isclose(tbl2_prop.point_est["region"][1], 0.1736, atol=1e-4)
+    assert np.isclose(tbl2_prop.point_est["region"][2], 0.2971, atol=1e-4)
+    assert np.isclose(tbl2_prop.point_est["region"][3], 0.2615, atol=1e-4)
+    assert np.isclose(tbl2_prop.point_est["region"][4], 0.2678, atol=1e-4)
 
 
 def test_oneway_prop_two_vars_stderror():
@@ -278,15 +278,15 @@ stratum = nhanes["SDMVSTRA"]
 psu = nhanes["SDMVPSU"]
 weight = nhanes["WTMEC2YR"]
 
-tbl1_nhanes = OneWay("count")
+tbl1_nhanes = Tabulation("count")
 tbl1_nhanes.tabulate(
     vars=cholesterol, samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
 )
 
 
 def test_oneway_count_weighted_count():
-    assert np.isclose(tbl1_nhanes.table["HI_CHOL"][0], 226710664.8857, atol=1e-4)
-    assert np.isclose(tbl1_nhanes.table["HI_CHOL"][1], 28635245.2551, atol=1e-4)
+    assert np.isclose(tbl1_nhanes.point_est["HI_CHOL"][0], 226710664.8857, atol=1e-4)
+    assert np.isclose(tbl1_nhanes.point_est["HI_CHOL"][1], 28635245.2551, atol=1e-4)
 
 
 def test_oneway_count_weighted_sdterror():
@@ -294,15 +294,15 @@ def test_oneway_count_weighted_sdterror():
     assert np.isclose(tbl1_nhanes.stderror["HI_CHOL"][1], 2020710.7438, atol=1e-4)
 
 
-tbl2_nhanes = OneWay("proportion")
+tbl2_nhanes = Tabulation("proportion")
 tbl2_nhanes.tabulate(
     vars=cholesterol, samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
 )
 
 
 def test_oneway_count_weighted_count():
-    assert np.isclose(tbl2_nhanes.table["HI_CHOL"][0], 0.8879, atol=1e-4)
-    assert np.isclose(tbl2_nhanes.table["HI_CHOL"][1], 0.1121, atol=1e-4)
+    assert np.isclose(tbl2_nhanes.point_est["HI_CHOL"][0], 0.8879, atol=1e-4)
+    assert np.isclose(tbl2_nhanes.point_est["HI_CHOL"][1], 0.1121, atol=1e-4)
 
 
 def test_oneway_count_weighted_sdterror():
