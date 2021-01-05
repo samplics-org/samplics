@@ -18,6 +18,7 @@ from scipy.stats import chi2, f
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.formats import (
     concatenate_series_to_str,
+    dict_to_dataframe,
     numpy_array,
     numpy_to_dummies,
     remove_nans,
@@ -244,9 +245,39 @@ class CrossTabulation:
         self.deff = {}  # Dict[str, Dict[str, Number]]
         self.alpha = alpha
         self.ciprop_method = ciprop_method
+        self.design_info = {}
+        self.row_levels = []
+        self.col_levels = []
+        self.vars_names = []
 
     def __repr__(self):
         return f"CrossTabulation(parameter={self.parameter}, alpha={self.alpha})"
+
+    def __str__(self):
+
+        if self.vars_names == []:
+            return "Not variables to tabulate"
+        else:
+            table_header = f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
+            table_subheader1 = f"Number of strata: {self.design_info['number_strata']}"
+            table_subheader2 = f"Number of PSUs: {self.design_info['number_psus']}"
+            table_subheader3 = f"Number of observations: {self.design_info['number_obs']}"
+            table_subheader4 = f"Design effect: {self.design_info['design_effect']}"
+
+            chisq_dist = f"chi2({self.stats['Pearson-Unadj']['df']})"
+            f_dist = f"F({self.stats['Pearson-Adj']['df_num']:.2f}, {self.stats['Pearson-Adj']['df_den']:.2f}"
+
+            pearson_unadj = f"Unadjusted - {chisq_dist}: {self.stats['Pearson-Unadj']['chisq_value']:.4f} with p-value of {self.stats['Pearson-Unadj']['p_value']:.4f}"
+            pearson_adj = f"Adjusted - {f_dist}): {self.stats['Pearson-Adj']['f_value']:.4f}  with p-value of {self.stats['Pearson-Adj']['p_value']:.4f}"
+            pearson_test = (
+                f"Pearson (with Rao-Scott adjustment):\n\t{pearson_unadj}\n\t{pearson_adj}"
+            )
+
+            lr_unadj = f"Unadjusted - {chisq_dist}: {self.stats['LR-Unadj']['chisq_value']:.4f} with p-value of {self.stats['LR-Unadj']['p_value']:.4f}"
+            lr_adj = f"Adjusted - {f_dist}): {self.stats['LR-Adj']['f_value']:.4f}  with p-value of {self.stats['LR-Adj']['p_value']:.4f}"
+            lr_test = f"Likelihood ratio (with Rao-Scott adjustment):\n\t{lr_unadj}\n\t{lr_adj}"
+
+            return f"\n{table_header}\n {table_subheader1}\n {table_subheader2}\n {table_subheader3}\n {table_subheader4}\n\n {self.to_dataframe()}\n\n {pearson_test} \n\n {lr_test}"
 
     def tabulate(
         self,
@@ -478,26 +509,63 @@ class CrossTabulation:
         df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
 
         self.stats = {
-            "Pearson-Chisq": {
+            "Pearson-Unadj": {
                 "df": (nrows - 1) * (ncols - 1),
                 "chisq_value": chisq_p,
                 "p_value": chi2.pdf(chisq_p, (nrows - 1) * (ncols - 1)),
             },
-            "Pearson-F": {
+            "Pearson-Adj": {
                 "df_num": df_num,
                 "df_den": df_den,
-                "F_value": f_p,
+                "f_value": f_p,
                 "p_value": f.pdf(f_p, df_num, df_den),
             },
-            "LR-Chisq": {
+            "LR-Unadj": {
                 "df": (nrows - 1) * (ncols - 1),
                 "chisq_value": chisq_lr,
                 "p_value": chi2.pdf(chisq_lr, (nrows - 1) * (ncols - 1)),
             },
-            "LR-F": {
+            "LR-Adj": {
                 "df_num": df_num,
                 "df_den": df_den,
-                "F_value": f_lr,
+                "f_value": f_lr,
                 "p_value": f.pdf(f_lr, df_num, df_den),
             },
         }
+
+        self.row_levels = list(row_levels)
+        self.col_levels = list(col_levels)
+        self.vars_names = vars_names
+        self.design_info = {
+            "number_strata": tbl_est.number_strata,
+            "number_psus": tbl_est.number_psus,
+            "number_obs": vars.shape[0],
+            "design_effect": 0,
+        }
+
+        # breakpoint()
+
+    def to_dataframe(
+        self,
+    ) -> pd.DataFrame:
+
+        both_levels = [self.row_levels, self.col_levels]
+        twoway_df = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
+        twoway_df.columns = self.vars_names
+
+        for i, row in enumerate(self.row_levels):
+            for j, col in enumerate(self.col_levels):
+                twoway_df[self.parameter] = sum(
+                    pd.DataFrame.from_dict(self.point_est, orient="index").values.tolist(), []
+                )
+                twoway_df["stderror"] = sum(
+                    pd.DataFrame.from_dict(self.stderror, orient="index").values.tolist(), []
+                )
+                twoway_df["lower_ci"] = sum(
+                    pd.DataFrame.from_dict(self.lower_ci, orient="index").values.tolist(), []
+                )
+                twoway_df["upper_ci"] = sum(
+                    pd.DataFrame.from_dict(self.upper_ci, orient="index").values.tolist(), []
+                )
+
+        return twoway_df
