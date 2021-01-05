@@ -43,7 +43,9 @@ tbl_prop.tabulate([region, birth_cat], varnames=["region", "birth_cat"], remove_
 
 tbl_count = CrossTabulation("count")
 tbl_count.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
+tbl_df = tbl_count.to_dataframe()
 
+breakpoint()
 
 # def test_oneway_count_one_var_count():
 #     assert tbl_count.table["birthcat"][1] == 240
