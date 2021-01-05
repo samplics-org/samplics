@@ -202,3 +202,44 @@ def test_twoway_prop_design_info():
     assert tbl_prop.design_info["number_psus"] == 923
     assert tbl_prop.design_info["number_obs"] == 923
     assert tbl_prop.design_info["degrees_of_freedom"] == 922
+
+
+# nhanes = pd.read_csv("./tests/estimation/nhanes.csv")
+
+
+# agecat = nhanes["agecat"]
+# stratum = nhanes["SDMVSTRA"]
+# psu = nhanes["SDMVPSU"]
+# weight = nhanes["WTMEC2YR"]
+
+# tbl1_nhanes = CrossTabulation("proportion")
+# tbl1_nhanes.tabulate(
+#     vars=nhanes[["race", "HI_CHOL"]], samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
+# )
+# breakpoint()
+
+
+# def test_oneway_count_weighted_count():
+#     assert np.isclose(tbl1_nhanes.point_est["HI_CHOL"][0], 226710664.8857, atol=1e-4)
+#     assert np.isclose(tbl1_nhanes.point_est["HI_CHOL"][1], 28635245.2551, atol=1e-4)
+
+
+# def test_oneway_count_weighted_sdterror():
+#     assert np.isclose(tbl1_nhanes.stderror["HI_CHOL"][0], 12606884.9914, atol=1e-4)
+#     assert np.isclose(tbl1_nhanes.stderror["HI_CHOL"][1], 2020710.7438, atol=1e-4)
+
+
+# tbl2_nhanes = CrossTabulation("proportion")
+# tbl2_nhanes.tabulate(
+#     vars=nhanes[["race","HI_CHOL"]], samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
+# )
+
+
+# def test_oneway_count_weighted_count():
+#     assert np.isclose(tbl2_nhanes.point_est["HI_CHOL"][0], 0.8879, atol=1e-4)
+#     assert np.isclose(tbl2_nhanes.point_est["HI_CHOL"][1], 0.1121, atol=1e-4)
+
+
+# def test_oneway_count_weighted_sdterror():
+#     assert np.isclose(tbl2_nhanes.stderror["HI_CHOL"][0], 0.0054, atol=1e-4)
+#     assert np.isclose(tbl2_nhanes.stderror["HI_CHOL"][1], 0.0054, atol=1e-4)
