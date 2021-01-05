@@ -28,7 +28,7 @@ from samplics.utils.types import Array, Number, Series
 from samplics.estimation import TaylorEstimator
 
 
-class OneWay:
+class Tabulation:
     def __init__(
         self,
         parameter: str = "count",
@@ -256,7 +256,7 @@ class CrossTabulation:
     def __str__(self):
 
         if self.vars_names == []:
-            return "Not variables to tabulate"
+            return "No categorical variables to tabulate"
         else:
             table_header = f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
             table_subheader1 = f"Number of strata: {self.design_info['number_strata']}"
@@ -498,6 +498,10 @@ class CrossTabulation:
         point_est_null = point_est.sum(axis=1).reshape(nrows, 1) @ np.transpose(
             point_est.sum(axis=0).reshape(ncols, 1)
         )
+
+        if self.parameter == "count":
+            point_est = point_est / np.sum(point_est)
+            point_est_null = point_est_null / np.sum(point_est_null)
 
         chisq_p = vars.shape[0] * np.sum((point_est - point_est_null) ** 2 / point_est_null)
         f_p = ((vars.shape[0] - 1) / vars.shape[0]) * chisq_p / np.trace(delta_est)
