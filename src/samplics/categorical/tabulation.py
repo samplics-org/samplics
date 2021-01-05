@@ -28,7 +28,7 @@ from samplics.utils.types import Array, Number, Series
 from samplics.estimation import TaylorEstimator
 
 
-class OneWay:
+class Tabulation:
     def __init__(
         self,
         parameter: str = "count",
@@ -41,7 +41,7 @@ class OneWay:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.table_type = "oneway"
-        self.table = {}  # Dict[str, Dict[StringNumber, Number]]
+        self.point_est = {}  # Dict[str, Dict[StringNumber, Number]]
         self.stats = {}  # Dict[str, Dict[str, Number]]
         self.stderror = {}  # Dict[str, Dict[str, Number]]
         self.lower_ci = {}  # Dict[str, Dict[str, Number]]
@@ -49,9 +49,25 @@ class OneWay:
         self.deff = {}  # Dict[str, Dict[str, Number]]
         self.alpha = alpha
         self.ciprop_method = ciprop_method
+        self.design_info = {}
+        self.vars_names = []
+        self.vars_levels = {}
 
     def __repr__(self):
         return f"Tabulation(parameter={self.parameter}, alpha={self.alpha})"
+
+    def __str__(self):
+
+        if self.vars_names == []:
+            return "No categorical variables to tabulate"
+        else:
+            tbl_head = f"Tabulation of {self.vars_names[0]}"
+            tbl_subhead1 = f"Number of strata: {self.design_info['number_strata']}"
+            tbl_subhead2 = f"Number of PSUs: {self.design_info['number_psus']}"
+            tbl_subhead3 = f"Number of observations: {self.design_info['number_obs']}"
+            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']}"
+
+            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe()}"
 
     def _estimate(
         self,
@@ -65,7 +81,7 @@ class OneWay:
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
-    ) -> TaylorEstimator:
+    ) -> Tuple[TaylorEstimator, list, int]:
 
         if remove_nan:
             excluded_units = np.isnan(var) | np.isnan(samp_weight)
@@ -103,7 +119,7 @@ class OneWay:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
 
-        return tbl_est
+        return tbl_est, list(np.unique(var)), var_of_ones.shape[0]
 
     def tabulate(
         self,
@@ -128,7 +144,6 @@ class OneWay:
 
         vars_np = numpy_array(vars)
         nb_vars = 1 if len(vars_np.shape) == 1 else vars_np.shape[1]
-        # breakpoint()
 
         if varnames is None:
             prefix = "var"
@@ -140,8 +155,6 @@ class OneWay:
             raise AssertionError("varnames should be a string or a list of string")
 
         vars_names = set_variables_names(vars, varnames, prefix)
-
-        # breakpoint()
 
         if len(vars_names) != nb_vars:
             raise AssertionError(
@@ -156,7 +169,7 @@ class OneWay:
             samp_weight = numpy_array(samp_weight)
 
         if nb_vars == 1:
-            tbl_est = self._estimate(
+            tbl_est, var_levels, nb_obs = self._estimate(
                 var_of_ones=np.ones(vars_np.shape[0]),
                 var=vars_np,
                 samp_weight=samp_weight,
@@ -168,24 +181,25 @@ class OneWay:
                 coef_variation=coef_variation,
                 remove_nan=remove_nan,
             )
+            self.vars_levels[vars_names[0]] = var_levels
             if self.parameter == "count":
+                self.point_est[vars_names[0]] = tbl_est.point_est
                 self.stderror[vars_names[0]] = tbl_est.stderror
-                self.table[vars_names[0]] = tbl_est.point_est
                 self.lower_ci[vars_names[0]] = tbl_est.lower_ci
                 self.upper_ci[vars_names[0]] = tbl_est.upper_ci
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff
             elif self.parameter == "proportion":
+                self.point_est[vars_names[0]] = tbl_est.point_est["__none__"]
                 self.stderror[vars_names[0]] = tbl_est.stderror["__none__"]
-                self.table[vars_names[0]] = tbl_est.point_est["__none__"]
                 self.lower_ci[vars_names[0]] = tbl_est.lower_ci["__none__"]
                 self.upper_ci[vars_names[0]] = tbl_est.upper_ci["__none__"]
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff["__none__"]
-
-            # breakpoint()
         else:
+            nb_obs = 0
+            tbl_est = None
             var_of_ones = np.ones(vars_np.shape[0])
             for k in range(0, nb_vars):
-                tbl_est = self._estimate(
+                tbl_est, var_levels, nb_obs = self._estimate(
                     var_of_ones=var_of_ones,
                     var=vars_np[:, k],
                     samp_weight=samp_weight,
@@ -197,18 +211,45 @@ class OneWay:
                     coef_variation=coef_variation,
                     remove_nan=remove_nan,
                 )
+                self.vars_levels[vars_names[k]] = var_levels
                 if self.parameter == "count":
+                    self.point_est[vars_names[k]] = tbl_est.point_est
                     self.stderror[vars_names[k]] = tbl_est.stderror
-                    self.table[vars_names[k]] = tbl_est.point_est
                     self.lower_ci[vars_names[k]] = tbl_est.lower_ci
                     self.upper_ci[vars_names[k]] = tbl_est.upper_ci
                     self.deff[vars_names[k]] = {}  # todo: tbl_est.deff
                 elif self.parameter == "proportion":
+                    self.point_est[vars_names[k]] = tbl_est.point_est["__none__"]
                     self.stderror[vars_names[k]] = tbl_est.stderror["__none__"]
-                    self.table[vars_names[k]] = tbl_est.point_est["__none__"]
                     self.lower_ci[vars_names[k]] = tbl_est.lower_ci["__none__"]
                     self.upper_ci[vars_names[k]] = tbl_est.upper_ci["__none__"]
                     self.deff[vars_names[k]] = {}  # todo: tbl_est.deff["__none__"]
+
+        self.vars_names = vars_names
+        self.design_info = {
+            "number_strata": tbl_est.number_strata,
+            "number_psus": tbl_est.number_psus,
+            "number_obs": nb_obs,
+            "design_effect": 0,
+            "degrees_of_freedom": tbl_est.number_psus - tbl_est.number_strata,
+        }
+
+    def to_dataframe(
+        self,
+    ) -> pd.DataFrame:
+
+        oneway_df = pd.DataFrame([])
+
+        for var in self.vars_names:
+            var_df = pd.DataFrame(np.repeat(var, len(self.vars_levels[var])), columns=["variable"])
+            var_df["levels"] = self.vars_levels[var]
+            var_df[self.parameter] = list(self.point_est[var].values())
+            var_df["stderror"] = list(self.stderror[var].values())
+            var_df["lower_ci"] = list(self.lower_ci[var].values())
+            var_df["upper_ci"] = list(self.upper_ci[var].values())
+            oneway_df = oneway_df.append(var_df)
+
+        return oneway_df
 
 
 def saturated_two_ways_model(varsnames: List[str]) -> str:
@@ -256,13 +297,13 @@ class CrossTabulation:
     def __str__(self):
 
         if self.vars_names == []:
-            return "Not variables to tabulate"
+            return "No categorical variables to tabulate"
         else:
-            table_header = f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
-            table_subheader1 = f"Number of strata: {self.design_info['number_strata']}"
-            table_subheader2 = f"Number of PSUs: {self.design_info['number_psus']}"
-            table_subheader3 = f"Number of observations: {self.design_info['number_obs']}"
-            table_subheader4 = f"Design effect: {self.design_info['design_effect']}"
+            tbl_head = f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
+            tbl_subhead1 = f"Number of strata: {self.design_info['number_strata']}"
+            tbl_subhead2 = f"Number of PSUs: {self.design_info['number_psus']}"
+            tbl_subhead3 = f"Number of observations: {self.design_info['number_obs']}"
+            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']}"
 
             chisq_dist = f"chi2({self.stats['Pearson-Unadj']['df']})"
             f_dist = f"F({self.stats['Pearson-Adj']['df_num']:.2f}, {self.stats['Pearson-Adj']['df_den']:.2f}"
@@ -277,7 +318,7 @@ class CrossTabulation:
             lr_adj = f"Adjusted - {f_dist}): {self.stats['LR-Adj']['f_value']:.4f}  with p-value of {self.stats['LR-Adj']['p_value']:.4f}"
             lr_test = f"Likelihood ratio (with Rao-Scott adjustment):\n\t{lr_unadj}\n\t{lr_adj}"
 
-            return f"\n{table_header}\n {table_subheader1}\n {table_subheader2}\n {table_subheader3}\n {table_subheader4}\n\n {self.to_dataframe()}\n\n {pearson_test} \n\n {lr_test}"
+            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe()}\n\n {pearson_test} \n\n {lr_test}"
 
     def tabulate(
         self,
@@ -337,12 +378,7 @@ class CrossTabulation:
         vars_levels = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
         vars_levels.columns = vars_names
 
-        # vars_levels = {vars_names[0]: row_levels, vars_names[1]: col_levels}
-        # vars_levels = vars.drop_duplicates()
-        # vars_levels.sort_values(by=vars_names, inplace=True)
-
         vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels, NA_action="raise"))
-        # breakpoint()
 
         if len(vars.shape) == 2:
             vars_for_oneway = np.apply_along_axis(
@@ -374,14 +410,9 @@ class CrossTabulation:
                 domain=vars_for_oneway,
                 fpc=fpc,
             )
-            # cell_est = np.asarray(list(tbl_est.point_est.values()))
-            # cell_stderror = np.asarray(list(tbl_est.stderror.values()))
-            # cell_lower_ci = np.asarray(list(tbl_est.lower_ci.values()))
-            # cell_upper_ci = np.asarray(list(tbl_est.upper_ci.values()))
 
             tbl_keys = list(tbl_est_srs.point_est.keys())
             cell_est_srs = np.zeros(vars_levels.shape[0])
-            # cell_stderror_srs = np.zeros(vars_levels.shape[0])
             cell_est = np.zeros(vars_levels.shape[0])
             cell_stderror = np.zeros(vars_levels.shape[0])
             cell_lower_ci = np.zeros(vars_levels.shape[0])
@@ -389,7 +420,6 @@ class CrossTabulation:
             for k in range(vars_levels.shape[0]):
                 if vars_levels_concat[k] in tbl_keys:
                     cell_est_srs[k] = tbl_est_srs.point_est[vars_levels_concat[k]]
-                    # cell_stderror_srs[k] = tbl_est_srs.stderror[vars_levels_concat[k]]
 
                     cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
                     cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
@@ -414,14 +444,9 @@ class CrossTabulation:
                 ssu=ssu,
                 fpc=fpc,
             )
-            # cell_est = np.asarray(list(tbl_est.point_est["__none__"].values()))
-            # cell_stderror = np.asarray(list(tbl_est.stderror["__none__"].values()))
-            # cell_lower_ci = np.asarray(list(tbl_est.lower_ci["__none__"].values()))
-            # cell_upper_ci = np.asarray(list(tbl_est.upper_ci["__none__"].values()))
 
             tbl_keys = list(tbl_est_srs.point_est["__none__"].keys())
             cell_est_srs = np.zeros(vars_levels.shape[0])
-            # cell_stderror_srs = np.zeros(vars_levels.shape[0])
             cell_est = np.zeros(vars_levels.shape[0])
             cell_stderror = np.zeros(vars_levels.shape[0])
             cell_lower_ci = np.zeros(vars_levels.shape[0])
@@ -429,7 +454,6 @@ class CrossTabulation:
             for k in range(vars_levels.shape[0]):
                 if vars_levels_concat[k] in tbl_keys:
                     cell_est_srs[k] = tbl_est_srs.point_est["__none__"][vars_levels_concat[k]]
-                    # cell_stderror_srs[k] = tbl_est_srs.stderror["__none__"][vars_levels_concat[k]]
 
                     cell_est[k] = tbl_est.point_est["__none__"][vars_levels_concat[k]]
                     cell_stderror[k] = tbl_est.stderror["__none__"][vars_levels_concat[k]]
@@ -499,6 +523,10 @@ class CrossTabulation:
             point_est.sum(axis=0).reshape(ncols, 1)
         )
 
+        if self.parameter == "count":
+            point_est = point_est / np.sum(point_est)
+            point_est_null = point_est_null / np.sum(point_est_null)
+
         chisq_p = vars.shape[0] * np.sum((point_est - point_est_null) ** 2 / point_est_null)
         f_p = ((vars.shape[0] - 1) / vars.shape[0]) * chisq_p / np.trace(delta_est)
 
@@ -541,9 +569,8 @@ class CrossTabulation:
             "number_psus": tbl_est.number_psus,
             "number_obs": vars.shape[0],
             "design_effect": 0,
+            "degrees_of_freedom": tbl_est.number_psus - tbl_est.number_strata,
         }
-
-        # breakpoint()
 
     def to_dataframe(
         self,
@@ -553,8 +580,8 @@ class CrossTabulation:
         twoway_df = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
         twoway_df.columns = self.vars_names
 
-        for i, row in enumerate(self.row_levels):
-            for j, col in enumerate(self.col_levels):
+        for _ in range(len(self.row_levels)):
+            for _ in range(len(self.col_levels)):
                 twoway_df[self.parameter] = sum(
                     pd.DataFrame.from_dict(self.point_est, orient="index").values.tolist(), []
                 )
