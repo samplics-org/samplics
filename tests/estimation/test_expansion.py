@@ -35,6 +35,11 @@ y = yrbs["y"]
 # fpc_array = yrbs["fpc"]
 # fpc_dict = dict(zip(stratum, fpc_array))
 
+# svy_ratio_without_str = TaylorEstimator("ratio")
+# svy_ratio_without_str.estimate(y, weight, x, psu=psu, remove_nan=True)
+
+# breakpoint()
+
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
 svy_total_without_str = TaylorEstimator("total")
 
