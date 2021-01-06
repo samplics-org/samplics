@@ -138,7 +138,7 @@ def remove_nans(excluded_units: Array, *args) -> Tuple:
 
     vars = list()
     for var in args:
-        if var is not None:
+        if var is not None and len(var.shape) != 0:
             vars.append(var[~excluded_units])
         else:
             vars.append(None)
@@ -167,7 +167,7 @@ def concatenate_series_to_str(row: Series) -> str:
     Returns:
         str: [description]
     """
-    return "__***__".join([str(c) for c in row])
+    return "__by__".join([str(c) for c in row])
 
 
 def numpy_to_dummies(arr: np.ndarray, varsnames: List[str]) -> np.ndarray:
