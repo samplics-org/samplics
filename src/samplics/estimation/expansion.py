@@ -411,10 +411,6 @@ class TaylorEstimator(_SurveyEstimator):
             y = pd.get_dummies(y).astype(int)
             categories = list(y.columns)
             y = y.values
-        # else:
-        #     y_dummies = None
-        #     categories = None
-        #     y_dummies = None
 
         variance: Dict[StringNumber, Any] = {}
         covariance = {}
@@ -425,23 +421,7 @@ class TaylorEstimator(_SurveyEstimator):
                 variance["__none__"] = dict(zip(categories, np.diag(cov_score)))
                 for k, level in enumerate(categories):
                     covariance[level] = dict(zip(categories, cov_score[k, :]))
-                # cat_dict = dict()
-                # for k in range(categories.size):
-                #     y_score_k = self._score_variable(y_dummies[:, k], samp_weight)
-                #     cat_dict_k = dict(
-                #         {
-                #             categories[k]: self._taylor_variance(
-                #                 y_score_k, samp_weight, stratum, psu, ssu, fpc
-                #             )
-                #         }
-                #     )
-                #     cat_dict.update(cat_dict_k)
-                # variance["__none__"] = cat_dict
             else:
-                # y_score = self._score_variable(y, samp_weight, x)
-                # variance[self.domains[0]] = self._taylor_variance(
-                #     y_score, samp_weight, stratum, psu, ssu, fpc
-                # )
                 variance[self.domains[0]] = float(np.diag(cov_score))
                 covariance = variance  # Todo: generalize for multiple Y variables
         else:
@@ -462,25 +442,7 @@ class TaylorEstimator(_SurveyEstimator):
                     for k, level in enumerate(categories):
                         cov_d.update({level: dict(zip(categories, cov_score_d[k, :]))})
                     covariance.update({d: cov_d})
-                    # y_dummies_d = y_dummies * (domain == d)[:, None]
-                    # cat_dict = dict()
-                    # for k in range(categories.size):
-                    #     y_score_d_k = self._score_variable(y_dummies_d[:, k], weight_d)
-                    #     cat_dict_d_k = dict(
-                    #         {
-                    #             categories[k]: self._taylor_variance(
-                    #                 y_score_d_k, weight_d, stratum, psu, ssu, fpc
-                    #             )
-                    #         }
-                    #     )
-                    #     cat_dict.update(cat_dict_d_k)
-                    # variance[d] = cat_dict
                 else:
-                    # y_d = y * (domain == d)
-                    # y_score_d = self._score_variable(y_d, weight_d, x_d)
-                    # variance[d] = self._taylor_variance(
-                    #     y_score_d, weight_d, stratum, psu, ssu, fpc
-                    # )
                     variance[d] = float(np.diag(cov_score_d))
                     covariance[d] = variance[d]  # Todo: generalize for multiple Y variables
 
@@ -498,6 +460,7 @@ class TaylorEstimator(_SurveyEstimator):
         fpc: Union[Dict, Array, Number] = 1.0,
         deff: bool = False,
         coef_variation: bool = False,
+        as_factor: bool = False,
         remove_nan: bool = False,
     ) -> None:
         """[summary]
@@ -521,6 +484,9 @@ class TaylorEstimator(_SurveyEstimator):
         Returns:
             TypeTaylorEst: [description]
         """
+
+        if as_factor and self.parameter not in ("mean", "total"):
+            raise AssertionError("When as_factor is True, parameter must be mean or total!")
 
         if self.parameter == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
