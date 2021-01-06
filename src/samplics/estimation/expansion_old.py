@@ -273,18 +273,15 @@ class TaylorEstimator(_SurveyEstimator):
     ) -> np.ndarray:
         """Provides the scores used to calculate the variance"""
 
-        ncols = 1 if len(y.shape) == 1 else y.shape[1]
-        y = numpy_array(y)
-        y = y.reshape(y.shape[0], ncols)
-        y_weighted = y * samp_weight[:, None]
+        y_weighted = y * samp_weight
         if self.parameter in ("proportion", "mean"):
             scale_weights = np.sum(samp_weight)
-            location_weights = np.sum(y_weighted, axis=0) / scale_weights
-            return (y - location_weights) * samp_weight[:, None] / scale_weights
+            location_weights = np.sum(y_weighted) / scale_weights
+            return samp_weight * (y - location_weights) / scale_weights
         elif self.parameter == "ratio":
             weighted_sum_x = np.sum(x * samp_weight)
-            weighted_ratio = np.sum(y_weighted, axis=0) / weighted_sum_x
-            return samp_weight[:, None] * (y - x[:, None] * weighted_ratio) / weighted_sum_x
+            weighted_ratio = np.sum(y_weighted) / weighted_sum_x
+            return samp_weight * (y - x * weighted_ratio) / weighted_sum_x
         elif self.parameter == "total":
             return y_weighted
         else:
@@ -296,28 +293,23 @@ class TaylorEstimator(_SurveyEstimator):
     ) -> np.float64:
         """Computes the variance for one stratum """
 
+        variance = 0.0
         if number_psus_in_s > 1:
-            scores_s_mean = y_score_s.sum(axis=0) / number_psus_in_s  # new
+            scores_s_mean = y_score_s.sum() / number_psus_in_s
             psus = np.unique(psu_s)
-            scores_psus_sums = np.zeros((number_psus_in_s, scores_s_mean.shape[0]))
+            scores_psus_sums = np.zeros(number_psus_in_s)
             for k, psu in enumerate(np.unique(psus)):
-                scores_psus_sums[k, :] = y_score_s[psu_s == psu].sum(axis=0)
-            covariance = np.transpose(scores_psus_sums - scores_s_mean) @ (
-                scores_psus_sums - scores_s_mean
-            )
-            covariance = (number_psus_in_s / (number_psus_in_s - 1)) * covariance
+                scores_psus_sums[k] = y_score_s[psu_s == psu].sum()
+            variance = ((scores_psus_sums - scores_s_mean) ** 2).sum()
+            variance = (number_psus_in_s / (number_psus_in_s - 1)) * variance
         elif number_psus_in_s in (0, 1):
-            number_obs = y_score_s.shape[0]
-            y_score_s_mean = y_score_s.sum(axis=0) / number_obs
-            covariance = (
-                (number_obs / (number_obs - 1))
-                * np.transpose(y_score_s - y_score_s_mean)
-                @ (y_score_s - y_score_s_mean)
-            )
+            number_obs = y_score_s.size
+            y_score_s_mean = y_score_s.sum() / number_obs
+            variance = (number_obs / (number_obs - 1)) * ((y_score_s - y_score_s_mean) ** 2).sum()
         else:
             raise ValueError("Number of psus cannot be negative.")
 
-        return covariance
+        return variance
 
     @staticmethod
     def _variance_stratum_within(
@@ -358,28 +350,27 @@ class TaylorEstimator(_SurveyEstimator):
 
         if stratum is None:
             number_psus = np.unique(psu).size
-            covariance = fpc["__none__"] * self._variance_stratum_between(
+            var_est = fpc["__none__"] * self._variance_stratum_between(
                 y_score, samp_weight, number_psus, psu
+            ) + (1 - fpc["__none__"]) * self._variance_stratum_within(
+                y_score, number_psus, psu, ssu
             )
-            # + (1 - fpc["__none__"]) * self._variance_stratum_within(
-            #     y_score, number_psus, psu, ssu
-            # )
+
         else:
-            covariance = np.zeros((y_score.shape[1], y_score.shape[1]))
+            var_est = 0.0
             for s in np.unique(stratum):
                 y_score_s = y_score[stratum == s]
                 samp_weight_s = samp_weight[stratum == s]
                 psu_s = psu[stratum == s] if psu is not None else np.array([])
                 number_psus_in_s = np.size(np.unique(psu_s))
                 ssu_s = ssu[stratum == s] if ssu is not None else None
-                covariance += fpc[s] * self._variance_stratum_between(
+                var_est += fpc[s] * self._variance_stratum_between(
                     y_score_s, samp_weight_s, number_psus_in_s, psu_s
+                ) + (1 - fpc[s]) * self._variance_stratum_within(
+                    y_score_s, number_psus_in_s, psu_s, ssu_s
                 )
-                #  + (1 - fpc[s]) * self._variance_stratum_within(
-                #     y_score_s, number_psus_in_s, psu_s, ssu_s
-                # )
 
-        return covariance
+        return var_est
 
     def _get_variance(
         self,
@@ -392,7 +383,7 @@ class TaylorEstimator(_SurveyEstimator):
         domain: Optional[Array] = None,
         fpc: Dict[StringNumber, Number] = {"__none__": 1},
         remove_nan: bool = False,
-    ) -> Tuple[dict, dict]:
+    ) -> Dict[StringNumber, Any]:
 
         if self.parameter == "ratio" and x is None:
             raise AssertionError("Parameter x must be provided for ratio estimation.")
@@ -406,85 +397,65 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
             )
 
-        categories = None
         if self.parameter == "proportion":
-            y = pd.get_dummies(y).astype(int)
-            categories = list(y.columns)
-            y = y.values
-        # else:
-        #     y_dummies = None
-        #     categories = None
-        #     y_dummies = None
+            y_dummies = pd.get_dummies(y)
+            categories = y_dummies.columns
+            y_dummies = y_dummies.values
+        else:
+            y_dummies = None
+            categories = None
+            y_dummies = None
 
         variance: Dict[StringNumber, Any] = {}
-        covariance = {}
         if domain is None:
-            y_score = self._score_variable(y, samp_weight, x)  # new
-            cov_score = self._taylor_variance(y_score, samp_weight, stratum, psu, ssu, fpc)  # new
             if self.parameter == "proportion":
-                variance["__none__"] = dict(zip(categories, np.diag(cov_score)))
-                for k, level in enumerate(categories):
-                    covariance[level] = dict(zip(categories, cov_score[k, :]))
-                # cat_dict = dict()
-                # for k in range(categories.size):
-                #     y_score_k = self._score_variable(y_dummies[:, k], samp_weight)
-                #     cat_dict_k = dict(
-                #         {
-                #             categories[k]: self._taylor_variance(
-                #                 y_score_k, samp_weight, stratum, psu, ssu, fpc
-                #             )
-                #         }
-                #     )
-                #     cat_dict.update(cat_dict_k)
-                # variance["__none__"] = cat_dict
+                cat_dict = dict()
+                for k in range(categories.size):
+                    y_score_k = self._score_variable(y_dummies[:, k], samp_weight)
+                    cat_dict_k = dict(
+                        {
+                            categories[k]: self._taylor_variance(
+                                y_score_k, samp_weight, stratum, psu, ssu, fpc
+                            )
+                        }
+                    )
+                    cat_dict.update(cat_dict_k)
+                variance["__none__"] = cat_dict
             else:
-                # y_score = self._score_variable(y, samp_weight, x)
-                # variance[self.domains[0]] = self._taylor_variance(
-                #     y_score, samp_weight, stratum, psu, ssu, fpc
-                # )
-                variance[self.domains[0]] = float(np.diag(cov_score))
-                covariance = variance  # Todo: generalize for multiple Y variables
+                y_score = self._score_variable(y, samp_weight, x)
+                variance[self.domains[0]] = self._taylor_variance(
+                    y_score, samp_weight, stratum, psu, ssu, fpc
+                )
+
         else:
             for d in np.unique(domain):
-                domain_d = domain == d
-                weight_d = samp_weight * domain_d
+                weight_d = samp_weight * (domain == d)
                 if self.parameter == "ratio":
-                    x_d = x * domain_d
+                    x_d = x * (domain == d)
                 else:
                     x_d = x
-                y_d = y * domain_d if len(y.shape) == 1 else y * domain_d[:, None]
-                # breakpoint()
-                y_score_d = self._score_variable(y_d, weight_d, x_d)
-                cov_score_d = self._taylor_variance(y_score_d, weight_d, stratum, psu, ssu, fpc)
                 if self.parameter == "proportion":
-                    variance[d] = dict(zip(categories, np.diag(cov_score_d)))
-                    cov_d = {}
-                    for k, level in enumerate(categories):
-                        cov_d.update({level: dict(zip(categories, cov_score_d[k, :]))})
-                    covariance.update({d: cov_d})
-                    # y_dummies_d = y_dummies * (domain == d)[:, None]
-                    # cat_dict = dict()
-                    # for k in range(categories.size):
-                    #     y_score_d_k = self._score_variable(y_dummies_d[:, k], weight_d)
-                    #     cat_dict_d_k = dict(
-                    #         {
-                    #             categories[k]: self._taylor_variance(
-                    #                 y_score_d_k, weight_d, stratum, psu, ssu, fpc
-                    #             )
-                    #         }
-                    #     )
-                    #     cat_dict.update(cat_dict_d_k)
-                    # variance[d] = cat_dict
+                    y_dummies_d = y_dummies * (domain == d)[:, None]
+                    cat_dict = dict()
+                    for k in range(categories.size):
+                        y_score_d_k = self._score_variable(y_dummies_d[:, k], weight_d)
+                        cat_dict_d_k = dict(
+                            {
+                                categories[k]: self._taylor_variance(
+                                    y_score_d_k, weight_d, stratum, psu, ssu, fpc
+                                )
+                            }
+                        )
+                        cat_dict.update(cat_dict_d_k)
+                    variance[d] = cat_dict
                 else:
-                    # y_d = y * (domain == d)
-                    # y_score_d = self._score_variable(y_d, weight_d, x_d)
-                    # variance[d] = self._taylor_variance(
-                    #     y_score_d, weight_d, stratum, psu, ssu, fpc
-                    # )
-                    variance[d] = float(np.diag(cov_score_d))
-                    covariance[d] = variance[d]  # Todo: generalize for multiple Y variables
+                    y_d = y * (domain == d)
+                    y_score_d = self._score_variable(y_d, weight_d, x_d)
+                    variance[d] = self._taylor_variance(
+                        y_score_d, weight_d, stratum, psu, ssu, fpc
+                    )
 
-        return variance, covariance
+        return variance
 
     def estimate(
         self: TypeTaylorEst,
@@ -525,7 +496,6 @@ class TaylorEstimator(_SurveyEstimator):
         if self.parameter == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
-        y = numpy_array(y)
         if remove_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)
@@ -551,9 +521,7 @@ class TaylorEstimator(_SurveyEstimator):
                 self.fpc = fpc
 
         self.point_est = self._get_point(y, samp_weight, x, domain)
-        self.variance, self.covariance = self._get_variance(
-            y, samp_weight, x, stratum, psu, ssu, domain, self.fpc
-        )
+        self.variance = self._get_variance(y, samp_weight, x, stratum, psu, ssu, domain, self.fpc)
 
         self._degree_of_freedom(samp_weight, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
