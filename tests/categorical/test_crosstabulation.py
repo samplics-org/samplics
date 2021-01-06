@@ -6,6 +6,21 @@ from samplics.estimation import TaylorEstimator
 from samplics.categorical import CrossTabulation
 
 
+nhanes = pd.read_csv("./tests/estimation/nhanes.csv")
+
+
+agecat = nhanes["agecat"]
+stratum = nhanes["SDMVSTRA"]
+psu = nhanes["SDMVPSU"]
+weight = nhanes["WTMEC2YR"]
+
+tbl1_nhanes = CrossTabulation("proportion")
+tbl1_nhanes.tabulate(
+    vars=nhanes[["race", "HI_CHOL"]], samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
+)
+breakpoint()
+
+
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
 # birthcat.loc[(birthcat["birthcat"] == 2) & (birthcat["region"]==3), "birthcat"] = 3

@@ -446,6 +446,7 @@ class CrossTabulation:
                 ssu=ssu,
                 fpc=fpc,
             )
+            breakpoint()
 
             tbl_keys = list(tbl_est_srs.point_est["__none__"].keys())
             cell_est_srs = np.zeros(vars_levels.shape[0])
