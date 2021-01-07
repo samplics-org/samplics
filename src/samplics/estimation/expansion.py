@@ -225,8 +225,11 @@ class TaylorEstimator(_SurveyEstimator):
     ) -> np.ndarray:
         """Provides the scores used to calculate the variance"""
 
+        y = np.asarray(y)
+        samp_weight = np.asarray(samp_weight)
+        x = np.asarray(x)
+
         ncols = 1 if len(y.shape) == 1 else y.shape[1]
-        y = numpy_array(y)
         y = y.reshape(y.shape[0], ncols)
         y_weighted = y * samp_weight[:, None]  # .reshape(samp_weight.shape[0], 1)
         if self.parameter in ("proportion", "mean"):
@@ -336,7 +339,7 @@ class TaylorEstimator(_SurveyEstimator):
     def _get_variance(
         self,
         y: Array,
-        samp_weight: Array,
+        samp_weight: np.ndarray,
         x: Optional[Array] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
@@ -378,6 +381,7 @@ class TaylorEstimator(_SurveyEstimator):
                 variance[self.domains[0]] = float(np.diag(cov_score))
                 covariance = variance  # Todo: generalize for multiple Y variables
         else:
+            domain = np.asarray(domain)
             for d in np.unique(domain):
                 domain_d = domain == d
                 weight_d = samp_weight * domain_d
@@ -445,8 +449,6 @@ class TaylorEstimator(_SurveyEstimator):
             raise AssertionError("x must be provided for ratio estimation.")
 
         y = numpy_array(y)
-        samp_weight = numpy_array(samp_weight)
-
         if remove_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)
@@ -471,9 +473,11 @@ class TaylorEstimator(_SurveyEstimator):
             else:
                 self.fpc = fpc
 
+        weight_ndarray = numpy_array(samp_weight)
+
         self.point_est = self._get_point(
             y=y,
-            samp_weight=samp_weight,
+            samp_weight=weight_ndarray,
             x=x,
             domain=domain,
             as_factor=as_factor,
@@ -481,7 +485,7 @@ class TaylorEstimator(_SurveyEstimator):
         )
         self.variance, self.covariance = self._get_variance(
             y=y,
-            samp_weight=samp_weight,
+            samp_weight=weight_ndarray,
             x=x,
             stratum=stratum,
             psu=psu,
@@ -492,7 +496,7 @@ class TaylorEstimator(_SurveyEstimator):
             remove_nan=remove_nan,
         )
 
-        self._degree_of_freedom(samp_weight, stratum, psu)
+        self._degree_of_freedom(weight_ndarray, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
         for key in self.variance:
