@@ -163,6 +163,7 @@ class _SurveyEstimator:
         samp_weight: Array,
         x: Optional[Array] = None,
         domain: Optional[Array] = None,
+        as_factor: bool = False,
         remove_nan: bool = False,
     ) -> Dict[StringNumber, Any]:
         """Computes the parameter point estimates
@@ -192,7 +193,7 @@ class _SurveyEstimator:
                 excluded_units, y, samp_weight, x, domain=domain
             )
 
-        if self.parameter == "proportion":
+        if self.parameter == "proportion" or as_factor:
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
             y_dummies = y_dummies.values
@@ -203,7 +204,7 @@ class _SurveyEstimator:
 
         estimate: Dict[StringNumber, Any] = {}
         if domain is None:
-            if self.parameter == "proportion":
+            if self.parameter == "proportion" or as_factor:
                 cat_dict = dict()
                 for k in range(categories.size):
                     y_k = y_dummies[:, k]
@@ -216,7 +217,7 @@ class _SurveyEstimator:
             domain_ids = np.unique(domain)
             for d in domain_ids:
                 weight_d = samp_weight[domain == d]
-                if self.parameter == "proportion":
+                if self.parameter == "proportion" or as_factor:
                     cat_dict = dict()
                     for k in range(categories.size):
                         y_d_k = y_dummies[domain == d, k]
@@ -391,6 +392,7 @@ class TaylorEstimator(_SurveyEstimator):
         ssu: Optional[Array] = None,
         domain: Optional[Array] = None,
         fpc: Dict[StringNumber, Number] = {"__none__": 1},
+        as_factor: bool = False,
         remove_nan: bool = False,
     ) -> Tuple[dict, dict]:
 
@@ -407,7 +409,7 @@ class TaylorEstimator(_SurveyEstimator):
             )
 
         categories = None
-        if self.parameter == "proportion":
+        if self.parameter == "proportion" or as_factor:
             y = pd.get_dummies(y).astype(int)
             categories = list(y.columns)
             y = y.values
@@ -417,7 +419,7 @@ class TaylorEstimator(_SurveyEstimator):
         if domain is None:
             y_score = self._score_variable(y, samp_weight, x)  # new
             cov_score = self._taylor_variance(y_score, samp_weight, stratum, psu, ssu, fpc)  # new
-            if self.parameter == "proportion":
+            if self.parameter == "proportion" or as_factor:
                 variance["__none__"] = dict(zip(categories, np.diag(cov_score)))
                 for k, level in enumerate(categories):
                     covariance[level] = dict(zip(categories, cov_score[k, :]))
@@ -436,7 +438,7 @@ class TaylorEstimator(_SurveyEstimator):
                 # breakpoint()
                 y_score_d = self._score_variable(y_d, weight_d, x_d)
                 cov_score_d = self._taylor_variance(y_score_d, weight_d, stratum, psu, ssu, fpc)
-                if self.parameter == "proportion":
+                if self.parameter == "proportion" or as_factor:
                     variance[d] = dict(zip(categories, np.diag(cov_score_d)))
                     cov_d = {}
                     for k, level in enumerate(categories):
@@ -516,16 +518,32 @@ class TaylorEstimator(_SurveyEstimator):
             else:
                 self.fpc = fpc
 
-        self.point_est = self._get_point(y, samp_weight, x, domain)
+        self.point_est = self._get_point(
+            y=y,
+            samp_weight=samp_weight,
+            x=x,
+            domain=domain,
+            as_factor=as_factor,
+            remove_nan=remove_nan,
+        )
         self.variance, self.covariance = self._get_variance(
-            y, samp_weight, x, stratum, psu, ssu, domain, self.fpc
+            y=y,
+            samp_weight=samp_weight,
+            x=x,
+            stratum=stratum,
+            psu=psu,
+            ssu=ssu,
+            domain=domain,
+            fpc=self.fpc,
+            as_factor=as_factor,
+            remove_nan=remove_nan,
         )
 
         self._degree_of_freedom(samp_weight, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
         for key in self.variance:
-            if self.parameter == "proportion":
+            if self.parameter == "proportion" or (as_factor and self.parameter == "mean"):
                 stderror = {}
                 lower_ci = {}
                 upper_ci = {}
@@ -549,6 +567,22 @@ class TaylorEstimator(_SurveyEstimator):
                         lower_ci[level] = math.exp(ll) / (1 + math.exp(ll))
                         upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
                         coef_var[level] = stderror[level] / point_est
+
+                self.stderror[key] = stderror
+                self.coef_var[key] = coef_var
+                self.lower_ci[key] = lower_ci
+                self.upper_ci[key] = upper_ci
+            elif as_factor:
+                stderror = {}
+                lower_ci = {}
+                upper_ci = {}
+                coef_var = {}
+                # breakpoint()
+                for level in self.variance[key]:
+                    stderror[level] = pow(self.variance[key][level], 0.5)
+                    lower_ci[level] = self.point_est[key][level] - t_quantile * stderror[level]
+                    upper_ci[level] = self.point_est[key][level] + t_quantile * stderror[level]
+                    coef_var[level] = stderror[level] / self.point_est[key][level]
 
                 self.stderror[key] = stderror
                 self.coef_var[key] = coef_var

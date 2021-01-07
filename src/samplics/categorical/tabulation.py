@@ -376,6 +376,8 @@ class CrossTabulation:
 
         vars = vars.astype(str)
         vars_names = set_variables_names(vars, varnames, prefix)
+        # breakpoint()
+        vars.columns = vars_names
 
         vars.reset_index(inplace=True, drop=True)
         vars.sort_values(by=vars_names, inplace=True)
@@ -386,7 +388,6 @@ class CrossTabulation:
 
         two_way_full_model = saturated_two_ways_model(vars_names)
         # vars.sort_values(by=vars_names, inplace=True)
-        vars.columns = vars_names
         row_levels = vars[vars_names[0]].unique()
         col_levels = vars[vars_names[1]].unique()
 
@@ -408,62 +409,51 @@ class CrossTabulation:
         )
 
         if self.parameter == "count":
-            tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
-            tbl_est.estimate(
-                y=np.ones(vars_for_oneway.shape[0]),
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
-                domain=vars_for_oneway,
-                fpc=fpc,
-            )
-
-            tbl_keys = list(tbl_est.point_est.keys())
-            cell_est = np.zeros(vars_levels.shape[0])
-            cell_stderror = np.zeros(vars_levels.shape[0])
-            cell_lower_ci = np.zeros(vars_levels.shape[0])
-            cell_upper_ci = np.zeros(vars_levels.shape[0])
-            for k in range(vars_levels.shape[0]):
-                if vars_levels_concat[k] in tbl_keys:
-                    cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
-                    cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
-                    cell_stderror[k] = tbl_est.stderror[vars_levels_concat[k]]
-                    cell_lower_ci[k] = tbl_est.lower_ci[vars_levels_concat[k]]
-                    cell_upper_ci[k] = tbl_est.upper_ci[vars_levels_concat[k]]
-
+            parameter = "total"
         elif self.parameter == "proportion":
-            tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
-            tbl_est.estimate(
-                y=vars_for_oneway,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
-                fpc=fpc,
-            )
-
-            tbl_keys = list(tbl_est.point_est["__none__"].keys())
-            cell_est = np.zeros(vars_levels.shape[0])
-            cell_stderror = np.zeros(vars_levels.shape[0])
-            cell_lower_ci = np.zeros(vars_levels.shape[0])
-            cell_upper_ci = np.zeros(vars_levels.shape[0])
-            for k in range(vars_levels.shape[0]):
-                if vars_levels_concat[k] in tbl_keys:
-                    cell_est[k] = tbl_est.point_est["__none__"][vars_levels_concat[k]]
-                    cell_stderror[k] = tbl_est.stderror["__none__"][vars_levels_concat[k]]
-                    cell_lower_ci[k] = tbl_est.lower_ci["__none__"][vars_levels_concat[k]]
-                    cell_upper_ci[k] = tbl_est.upper_ci["__none__"][vars_levels_concat[k]]
+            parameter = "mean"
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
 
-        cov_srs = (
-            np.diag(cell_est)
-            - cell_est.reshape(vars_levels.shape[0], 1)
-            @ np.transpose(cell_est.reshape(vars_levels.shape[0], 1))
-        ) / vars.shape[0]
+        tbl_est = TaylorEstimator(parameter=parameter, alpha=self.alpha)
+        tbl_est.estimate(
+            y=vars_for_oneway,
+            samp_weight=samp_weight,
+            stratum=stratum,
+            psu=psu,
+            ssu=ssu,
+            fpc=fpc,
+            as_factor=True,
+        )
+        tbl_keys = list(tbl_est.point_est["__none__"].keys())
+        cell_est = np.zeros(vars_levels.shape[0])
+        cell_stderror = np.zeros(vars_levels.shape[0])
+        cell_lower_ci = np.zeros(vars_levels.shape[0])
+        cell_upper_ci = np.zeros(vars_levels.shape[0])
+        for k in range(vars_levels.shape[0]):
+            if vars_levels_concat[k] in tbl_keys:
+                cell_est[k] = tbl_est.point_est["__none__"][vars_levels_concat[k]]
+                cell_stderror[k] = tbl_est.stderror["__none__"][vars_levels_concat[k]]
+                cell_lower_ci[k] = tbl_est.lower_ci["__none__"][vars_levels_concat[k]]
+                cell_upper_ci[k] = tbl_est.upper_ci["__none__"][vars_levels_concat[k]]
 
-        self.cov = pd.DataFrame.from_dict(tbl_est.covariance, orient="index").to_numpy()
+        if self.parameter == "count":
+            cell_est_p = cell_est / sum(cell_est)
+            cov_srs = (
+                np.diag(cell_est_p)
+                - cell_est_p.reshape(vars_levels.shape[0], 1)
+                @ np.transpose(cell_est_p.reshape(vars_levels.shape[0], 1))
+            ) / vars_levels.shape[0]
+            self.cov = (
+                pd.DataFrame.from_dict(tbl_est.covariance, orient="index").to_numpy()
+            ) / vars_levels.shape[0]
+        else:
+            cov_srs = (
+                np.diag(cell_est)
+                - cell_est.reshape(vars_levels.shape[0], 1)
+                @ np.transpose(cell_est.reshape(vars_levels.shape[0], 1))
+            ) / vars.shape[0]
+            self.cov = pd.DataFrame.from_dict(tbl_est.covariance, orient="index").to_numpy()
 
         nrows = row_levels.__len__()
         ncols = col_levels.__len__()
@@ -471,7 +461,7 @@ class CrossTabulation:
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
         x1_t = np.transpose(x1)
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_srs @ x1) @ (x1_t @ cov_srs @ x2)
-        breakpoint()
+        # breakpoint()
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ self.cov @ x2_tilde
         )
@@ -508,14 +498,14 @@ class CrossTabulation:
             self.upper_ci.update({vars_levels.iloc[r * ncols, 0]: upper_ci})
 
         point_est = pd.DataFrame.from_dict(self.point_est, orient="index").values
-
+        # point_est_null = point_est.sum(axis=1).reshape(nrows, 1) @ np.transpose(
+        #     point_est.sum(axis=0).reshape(ncols, 1)
+        # )
+        if self.parameter == "count":
+            point_est = point_est / np.sum(point_est)
         point_est_null = point_est.sum(axis=1).reshape(nrows, 1) @ np.transpose(
             point_est.sum(axis=0).reshape(ncols, 1)
         )
-
-        if self.parameter == "count":
-            point_est = point_est / np.sum(point_est)
-            point_est_null = point_est_null / np.sum(point_est_null)
 
         chisq_p = vars.shape[0] * np.sum((point_est - point_est_null) ** 2 / point_est_null)
         f_p = chisq_p / np.trace(delta_est)
@@ -523,7 +513,7 @@ class CrossTabulation:
         chisq_lr = 2 * vars.shape[0] * np.sum(point_est * np.log(point_est / point_est_null))
         f_lr = chisq_lr / np.trace(delta_est)
 
-        df_num = np.trace(delta_est) ** 2 / np.trace(delta_est @ delta_est)
+        df_num = (np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est)
         df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
 
         self.stats = {
