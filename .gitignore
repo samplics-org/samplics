@@ -8,8 +8,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
+# C extensions and executables
 *.so
+*.sh
 run
 
 # Distribution / packaging
