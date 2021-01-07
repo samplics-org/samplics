@@ -346,8 +346,8 @@ def test_nhanes_twoway_count_stats_pearson():
     assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4)
     assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["p_value"], 0.0007, atol=1e-4)
 
-    # assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["df_num"], 1.9230, atol=1e-4)
-    # assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["df_den"], 30.7676, atol=1e-4)
+    assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["df_num"], 1.9230, atol=1e-4)
+    assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["df_den"], 30.7676, atol=1e-4)
     assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["f_value"], 3.1513, atol=1e-4)
     assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["p_value"], 0.0587, atol=1e-4)
 
