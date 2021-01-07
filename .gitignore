@@ -10,6 +10,7 @@ __pycache__/
 
 # C extensions
 *.so
+run
 
 # Distribution / packaging
 .Python
