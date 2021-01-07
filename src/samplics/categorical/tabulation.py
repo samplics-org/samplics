@@ -18,9 +18,7 @@ from scipy.stats import chi2, f
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.formats import (
     concatenate_series_to_str,
-    dict_to_dataframe,
     numpy_array,
-    numpy_to_dummies,
     remove_nans,
 )
 from samplics.utils.types import Array, Number, Series, StringNumber

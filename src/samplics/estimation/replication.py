@@ -166,7 +166,7 @@ class ReplicateEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, _, _ = self._remove_nans(
+            y, samp_weight, x, stratum, domain, _, _ = formats.remove_nans(
                 excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
