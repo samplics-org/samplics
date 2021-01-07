@@ -23,7 +23,7 @@ from samplics.utils.formats import (
     numpy_to_dummies,
     remove_nans,
 )
-from samplics.utils.types import Array, Number, Series
+from samplics.utils.types import Array, Number, Series, StringNumber
 
 from samplics.estimation import TaylorEstimator
 
@@ -41,22 +41,22 @@ class Tabulation:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.table_type = "oneway"
-        self.point_est = {}  # Dict[str, Dict[StringNumber, Number]]
-        self.stats = {}  # Dict[str, Dict[str, Number]]
-        self.stderror = {}  # Dict[str, Dict[str, Number]]
-        self.lower_ci = {}  # Dict[str, Dict[str, Number]]
-        self.upper_ci = {}  # Dict[str, Dict[str, Number]]
-        self.deff = {}  # Dict[str, Dict[str, Number]]
-        self.alpha = alpha
-        self.ciprop_method = ciprop_method
-        self.design_info = {}
-        self.vars_names = []
-        self.vars_levels = {}
+        self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
+        self.stats: Dict[str, Dict[str, Number]] = {}
+        self.stderror: Dict[str, Dict[str, Number]] = {}
+        self.lower_ci: Dict[str, Dict[str, Number]] = {}
+        self.upper_ci: Dict[str, Dict[str, Number]] = {}
+        self.deff: Dict[str, Dict[str, Number]] = {}
+        self.alpha: float = alpha
+        self.ciprop_method: str = ciprop_method
+        self.design_info: Dict[str, Number] = {}
+        self.vars_names: List[str] = []
+        self.vars_levels: Dict[str, StringNumber] = {}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Tabulation(parameter={self.parameter}, alpha={self.alpha})"
 
-    def __str__(self):
+    def __str__(self) -> str:
 
         if self.vars_names == []:
             return "No categorical variables to tabulate"
@@ -124,7 +124,7 @@ class Tabulation:
     def tabulate(
         self,
         vars: Array,
-        varnames: Optional[List[str]] = None,
+        varnames: Optional[Union[str, List[str]]] = None,
         samp_weight: Optional[Union[Array, Number]] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
@@ -279,24 +279,26 @@ class CrossTabulation:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.table_type = "twoway"
-        self.point_est = {}  # Dict[str, Dict[StringNumber, Number]]
-        self.stats = {}  # Dict[str, Dict[str, Number]]
-        self.stderror = {}  # Dict[str, Dict[str, Number]]
-        self.covariance = {}
-        self.lower_ci = {}  # Dict[str, Dict[str, Number]]
-        self.upper_ci = {}  # Dict[str, Dict[str, Number]]
-        self.deff = {}  # Dict[str, Dict[str, Number]]
-        self.alpha = alpha
-        self.ciprop_method = ciprop_method
-        self.design_info = {}
+        self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
+        self.stats: Dict[str, Dict[str, Number]] = {}
+        self.stderror: Dict[str, Dict[str, Number]] = {}
+        self.covariance: Dict[StringNumber, Dict[StringNumber, Number]] = {}
+        self.lower_ci: Dict[str, Dict[str, Number]] = {}
+        self.upper_ci: Dict[str, Dict[str, Number]] = {}
+        self.deff: Dict[str, Dict[str, Number]] = {}
+        self.alpha: float = alpha
+        self.ciprop_method: str = ciprop_method
+        self.design_info: Dict[str, Number] = {}
+        self.vars_names: List[str] = []
+        self.vars_levels: Dict[str, StringNumber] = {}
         self.row_levels = []
         self.col_levels = []
         self.vars_names = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"CrossTabulation(parameter={self.parameter}, alpha={self.alpha})"
 
-    def __str__(self):
+    def __str__(self) -> str:
 
         if self.vars_names == []:
             return "No categorical variables to tabulate"
@@ -325,7 +327,7 @@ class CrossTabulation:
     def tabulate(
         self,
         vars: Array,
-        varnames: Optional[List[str]] = None,
+        varnames: Optional[Union[str, List[str]]] = None,
         samp_weight: Optional[Union[Array, Number]] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,

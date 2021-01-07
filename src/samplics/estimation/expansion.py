@@ -17,7 +17,7 @@ from typing import TypeVar, Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
 import pandas as pd
-from samplics.utils.formats import fpc_as_dict, numpy_array
+from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans
 from samplics.utils.types import Array, Number, StringNumber
 from scipy.stats import t as student
 
@@ -75,53 +75,6 @@ class _SurveyEstimator:
 
     def __repr__(self) -> Any:
         return self.__str__()
-
-    def _remove_nans(
-        self,
-        excluded_units: Array,
-        y: Array,
-        samp_weight: Array,
-        x: Array = None,
-        stratum: Array = None,
-        domain: Array = None,
-        psu: Array = None,
-        ssu: Array = None,
-    ) -> Tuple[
-        np.ndarray,
-        np.ndarray,
-        np.ndarray,
-        Optional[np.ndarray],
-        Optional[np.ndarray],
-        Optional[np.ndarray],
-        Optional[np.ndarray],
-    ]:
-        y = numpy_array(y)
-        samp_weight = numpy_array(samp_weight)
-        if x is not None:
-            x = numpy_array(x)
-            x = x[~excluded_units]
-        if stratum is not None:
-            stratum = numpy_array(stratum)
-            stratum = stratum[~excluded_units]
-        if domain is not None:
-            domain = numpy_array(domain)
-            domain = domain[~excluded_units]
-        if psu is not None:
-            psu = numpy_array(psu)
-            psu = psu[~excluded_units]
-        if ssu is not None:
-            ssu = numpy_array(ssu)
-            ssu = ssu[~excluded_units]
-
-        return (
-            y[~excluded_units],
-            samp_weight[~excluded_units],
-            x,
-            stratum,
-            domain,
-            psu,
-            ssu,
-        )
 
     def _degree_of_freedom(
         self,
@@ -189,9 +142,7 @@ class _SurveyEstimator:
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, _, domain, _, _ = self._remove_nans(
-                excluded_units, y, samp_weight, x, domain=domain
-            )
+            y, samp_weight, x, domain = remove_nans(excluded_units, y, samp_weight, x, domain)
 
         if self.parameter == "proportion" or as_factor:
             y_dummies = pd.get_dummies(y)
@@ -277,7 +228,7 @@ class TaylorEstimator(_SurveyEstimator):
         ncols = 1 if len(y.shape) == 1 else y.shape[1]
         y = numpy_array(y)
         y = y.reshape(y.shape[0], ncols)
-        y_weighted = y * samp_weight[:, None]
+        y_weighted = y * samp_weight[:, None]  # .reshape(samp_weight.shape[0], 1)
         if self.parameter in ("proportion", "mean"):
             scale_weights = np.sum(samp_weight)
             location_weights = np.sum(y_weighted, axis=0) / scale_weights
@@ -404,7 +355,7 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, psu, ssu = self._remove_nans(
+            y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
                 excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
             )
 
@@ -494,12 +445,14 @@ class TaylorEstimator(_SurveyEstimator):
             raise AssertionError("x must be provided for ratio estimation.")
 
         y = numpy_array(y)
+        samp_weight = numpy_array(samp_weight)
+
         if remove_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, psu, ssu = self._remove_nans(
+            y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
                 excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
             )
 
