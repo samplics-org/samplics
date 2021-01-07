@@ -17,8 +17,8 @@ from typing import TypeVar, Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
 import pandas as pd
-from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, StringNumber
+from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans, sample_size_dict
+from samplics.utils.types import Array, Number, Series, StringNumber
 from scipy.stats import t as student
 
 TypeTaylorEst = TypeVar("TypeTaylorEst", bound="TaylorEstimator")
@@ -408,7 +408,7 @@ class TaylorEstimator(_SurveyEstimator):
     def estimate(
         self: TypeTaylorEst,
         y: Array,
-        samp_weight: Array,
+        samp_weight: Optional[Union[Series, Number]] = None,
         x: Optional[Array] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
@@ -449,6 +449,14 @@ class TaylorEstimator(_SurveyEstimator):
             raise AssertionError("x must be provided for ratio estimation.")
 
         y = numpy_array(y)
+
+        if samp_weight is None:
+            samp_weight = np.ones(y.shape[0])
+        elif isinstance(samp_weight, (float, int)):
+            samp_weight = samp_weight * np.ones(y.shape[0])
+        else:
+            samp_weight = np.asarray(samp_weight)
+
         if remove_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)

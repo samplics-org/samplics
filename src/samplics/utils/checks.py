@@ -11,14 +11,21 @@ Functions:
 from typing import Any, Dict
 
 import numpy as np
-from samplics.utils.types import Array
+import pandas as pd
+
+from samplics.utils.types import Array, Number, Series
 
 
-def assert_probabilities(probabilities: Array) -> None:
-    if probabilities.any() > 1:
-        raise ValueError("Probabilities cannot be greater than 1")
-    elif probabilities.any() < 0:
-        raise ValueError("Probabilities must be positive")
+def assert_probabilities(probs: Array) -> None:
+
+    err_msg = "Probabilities must be between 0 and 1, inclusively!"
+
+    if isinstance(probs, (int, float)):
+        if probs > 1 or probs < 0:
+            raise ValueError(err_msg)
+    elif isinstance(probs, (np.ndarray, pd.Series)):
+        if probs.any() > 1 or probs.any() < 0:
+            raise ValueError(err_msg)
 
 
 def assert_weights(weights: Array) -> None:

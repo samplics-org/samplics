@@ -38,7 +38,7 @@ class Tabulation:
             self.parameter = parameter.lower()
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
-        self.table_type = "oneway"
+        self.type = "oneway"
         self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
         self.stats: Dict[str, Dict[str, Number]] = {}
         self.stderror: Dict[str, Dict[str, Number]] = {}
@@ -276,7 +276,7 @@ class CrossTabulation:
             self.parameter = parameter.lower()
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
-        self.table_type = "twoway"
+        self.type = "twoway"
         self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
         self.stats: Dict[str, Dict[str, Number]] = {}
         self.stderror: Dict[str, Dict[str, Number]] = {}
