@@ -374,7 +374,7 @@ class CrossTabulation:
             samp_weight, stratum, psu, ssu = remove_nans(
                 excluded_units, samp_weight, stratum, psu, ssu
             )
-            vars.dropna(inplace=True)
+            vars = vars.dropna()
 
         vars = vars.astype(str)
         vars_names = set_variables_names(vars, varnames, prefix)

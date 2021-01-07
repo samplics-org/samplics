@@ -38,7 +38,8 @@ y = yrbs["y"]
 
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
 svy_total_without_str = TaylorEstimator("total")
-
+# svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
+# breakpoint()
 
 def test_total_estimator_without_str():
     svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
