@@ -35,10 +35,6 @@ y = yrbs["y"]
 # fpc_array = yrbs["fpc"]
 # fpc_dict = dict(zip(stratum, fpc_array))
 
-# svy_ratio_without_str = TaylorEstimator("ratio")
-# svy_ratio_without_str.estimate(y, weight, x, psu=psu, remove_nan=True)
-
-# breakpoint()
 
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
 svy_total_without_str = TaylorEstimator("total")
@@ -624,3 +620,387 @@ def test_prop_estimator_with_str_nor_psu_domain():
     assert np.isclose(svy_prop_with_str_domain.upper_ci["d2"][1.0], 0.8206556)
     assert np.isclose(svy_prop_with_str_domain.upper_ci["d3"][0.0], 0.1981554)
     assert np.isclose(svy_prop_with_str_domain.upper_ci["d3"][1.0], 0.8350427)
+
+
+"""Taylor Approximation WITHOUT Stratification for FACTOR-MEAN"""
+svy_factor_mean_without_str = TaylorEstimator("mean")
+
+
+def test_factor_mean_estimator_without_str():
+    svy_factor_mean_without_str.estimate(y, weight, psu=psu, as_factor=True, remove_nan=True)
+
+    assert np.isclose(svy_factor_mean_without_str.point_est["__none__"][0.0], 0.186_377_5)
+    assert np.isclose(svy_factor_mean_without_str.point_est["__none__"][1.0], 0.813_622_5)
+    assert np.isclose(svy_factor_mean_without_str.stderror["__none__"][0.0], 0.020_285_6)
+    assert np.isclose(svy_factor_mean_without_str.stderror["__none__"][1.0], 0.020_285_6)
+    assert np.isclose(svy_factor_mean_without_str.lower_ci["__none__"][0.0], 0.149_023)
+    assert np.isclose(svy_factor_mean_without_str.lower_ci["__none__"][1.0], 0.769_441_4)
+    assert np.isclose(svy_factor_mean_without_str.upper_ci["__none__"][0.0], 0.230_558_6)
+    assert np.isclose(svy_factor_mean_without_str.upper_ci["__none__"][1.0], 0.850_977)
+
+
+def test_factor_mean_estimator_without_str_nor_psu():
+    svy_factor_mean_without_str.estimate(y, weight, as_factor=True, remove_nan=True)
+
+    assert np.isclose(svy_factor_mean_without_str.point_est["__none__"][0.0], 0.1863775)
+    assert np.isclose(svy_factor_mean_without_str.point_est["__none__"][1.0], 0.8136225)
+    assert np.isclose(svy_factor_mean_without_str.stderror["__none__"][0.0], 0.0066567)
+    assert np.isclose(svy_factor_mean_without_str.stderror["__none__"][1.0], 0.0066567)
+    assert np.isclose(svy_factor_mean_without_str.lower_ci["__none__"][0.0], 0.1736793)
+    assert np.isclose(svy_factor_mean_without_str.lower_ci["__none__"][1.0], 0.8002204)
+    assert np.isclose(svy_factor_mean_without_str.upper_ci["__none__"][0.0], 0.1997796)
+    assert np.isclose(svy_factor_mean_without_str.upper_ci["__none__"][1.0], 0.8263207)
+
+
+svy_factor_mean_without_str_domain = TaylorEstimator("mean")
+
+
+def test_factor_mean_estimator_without_str_domain():
+    svy_factor_mean_without_str_domain.estimate(
+        y, weight, psu=psu, domain=domain, as_factor=True, remove_nan=True
+    )
+
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][0.0], 0.1688402)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][1.0], 0.8311598)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d2"][0.0], 0.202774)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d2"][1.0], 0.797226)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d3"][0.0], 0.1809641)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d3"][1.0], 0.8190359)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d1"][0.0], 0.0203778)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d1"][1.0], 0.0203778)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d2"][0.0], 0.0260659)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d2"][1.0], 0.0260659)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d3"][0.0], 0.0190814)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d3"][1.0], 0.0190814)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d1"][0.0], 0.131771)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d1"][1.0], 0.7862299)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d2"][0.0], 0.155414)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d2"][1.0], 0.7398788)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d3"][0.0], 0.1457555)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d3"][1.0], 0.7775374)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d1"][0.0], 0.2137701)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d1"][1.0], 0.868229)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d2"][0.0], 0.2601212)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d2"][1.0], 0.844586)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d3"][0.0], 0.2224624)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d3"][1.0], 0.8542445)
+
+
+def test_factor_mean_estimator_without_str_nor_psu_domain():
+    svy_factor_mean_without_str_domain.estimate(
+        y, weight, domain=domain, as_factor=True, remove_nan=True
+    )
+
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][0.0], 0.1688402)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][1.0], 0.8311598)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d2"][0.0], 0.202774)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d2"][1.0], 0.797226)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d3"][0.0], 0.1809641)
+    assert np.isclose(svy_factor_mean_without_str_domain.point_est["d3"][1.0], 0.8190359)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d1"][0.0], 0.0200196)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d1"][1.0], 0.0200196)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d2"][0.0], 0.0125303)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d2"][1.0], 0.0125303)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d3"][0.0], 0.0085047)
+    assert np.isclose(svy_factor_mean_without_str_domain.stderror["d3"][1.0], 0.0085047)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d1"][0.0], 0.133136)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d1"][1.0], 0.7882197)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d2"][0.0], 0.179316)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d2"][1.0], 0.7715536)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d3"][0.0], 0.1648868)
+    assert np.isclose(svy_factor_mean_without_str_domain.lower_ci["d3"][1.0], 0.8017632)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d1"][0.0], 0.2117803)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d1"][1.0], 0.866864)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d2"][0.0], 0.2284464)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d2"][1.0], 0.820684)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d3"][0.0], 0.1982368)
+    assert np.isclose(svy_factor_mean_without_str_domain.upper_ci["d3"][1.0], 0.8351132)
+
+
+"""Taylor Approximation WITH Stratification for FACTOR-MEAN"""
+svy_factor_mean_with_str = TaylorEstimator("mean")
+
+
+def test_factor_mean_estimator_with_str():
+    svy_factor_mean_with_str.estimate(
+        y, weight, stratum=stratum, psu=psu, as_factor=True, remove_nan=True
+    )
+
+    assert np.isclose(svy_factor_mean_with_str.point_est["__none__"][0.0], 0.186_377_5)
+    assert np.isclose(svy_factor_mean_with_str.point_est["__none__"][1.0], 0.813_622_5)
+    assert np.isclose(svy_factor_mean_with_str.stderror["__none__"][0.0], 0.019_862_1)
+    assert np.isclose(svy_factor_mean_with_str.stderror["__none__"][1.0], 0.019_862_1)
+    assert np.isclose(svy_factor_mean_with_str.lower_ci["__none__"][0.0], 0.149_483_7)
+    assert np.isclose(svy_factor_mean_with_str.lower_ci["__none__"][1.0], 0.770_084_5)
+    assert np.isclose(svy_factor_mean_with_str.upper_ci["__none__"][0.0], 0.229_915_5)
+    assert np.isclose(svy_factor_mean_with_str.upper_ci["__none__"][1.0], 0.850_516_3)
+
+
+def test_factor_estimator_with_str_without_psu():
+    svy_factor_mean_with_str.estimate(y, weight, stratum=stratum, as_factor=True, remove_nan=True)
+
+    assert np.isclose(svy_factor_mean_with_str.point_est["__none__"][0.0], 0.1863775)
+    assert np.isclose(svy_factor_mean_with_str.point_est["__none__"][1.0], 0.8136225)
+    assert np.isclose(svy_factor_mean_with_str.stderror["__none__"][0.0], 0.0066091)
+    assert np.isclose(svy_factor_mean_with_str.stderror["__none__"][1.0], 0.0066091)
+    assert np.isclose(svy_factor_mean_with_str.lower_ci["__none__"][0.0], 0.1737677)
+    assert np.isclose(svy_factor_mean_with_str.lower_ci["__none__"][1.0], 0.8003188)
+    assert np.isclose(svy_factor_mean_with_str.upper_ci["__none__"][0.0], 0.1996812)
+    assert np.isclose(svy_factor_mean_with_str.upper_ci["__none__"][1.0], 0.8262323)
+
+
+svy_factor_mean_with_str_domain = TaylorEstimator("mean")
+
+
+def test_factor_mean_estimator_with_str_domain():
+    svy_factor_mean_with_str_domain.estimate(
+        y, weight, psu=psu, stratum=stratum, domain=domain, as_factor=True, remove_nan=True
+    )
+
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d1"][0.0], 0.1688402)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d1"][1.0], 0.8311598)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d2"][0.0], 0.202774)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d2"][1.0], 0.797226)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d3"][0.0], 0.1809641)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d3"][1.0], 0.8190359)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d1"][0.0], 0.0200457)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d1"][1.0], 0.0200457)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d2"][0.0], 0.0263015)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d2"][1.0], 0.0263015)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d3"][0.0], 0.0182081)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d3"][1.0], 0.0182081)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d1"][0.0], 0.1320679)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d1"][1.0], 0.7866654)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d2"][0.0], 0.1547087)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d2"][1.0], 0.7388414)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d3"][0.0], 0.1470016)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d3"][1.0], 0.7792576)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d1"][0.0], 0.2133346)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d1"][1.0], 0.8679321)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d2"][0.0], 0.2611586)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d2"][1.0], 0.8452913)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d3"][0.0], 0.2207424)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d3"][1.0], 0.8529984)
+
+
+def test_factor_mean_estimator_with_str_nor_psu_domain():
+    svy_factor_mean_with_str_domain.estimate(
+        y, weight, stratum=stratum, as_factor=True, domain=domain, remove_nan=True
+    )
+
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d1"][0.0], 0.1688402)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d1"][1.0], 0.8311598)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d2"][0.0], 0.202774)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d2"][1.0], 0.797226)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d3"][0.0], 0.1809641)
+    assert np.isclose(svy_factor_mean_with_str_domain.point_est["d3"][1.0], 0.8190359)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d1"][0.0], 0.0200198)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d1"][1.0], 0.0200198)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d2"][0.0], 0.0125144)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d2"][1.0], 0.0125144)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d3"][0.0], 0.0084659)
+    assert np.isclose(svy_factor_mean_with_str_domain.stderror["d3"][1.0], 0.0084659)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d1"][0.0], 0.1331356)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d1"][1.0], 0.7882192)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d2"][0.0], 0.1793444)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d2"][1.0], 0.7715876)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d3"][0.0], 0.1649573)
+    assert np.isclose(svy_factor_mean_with_str_domain.lower_ci["d3"][1.0], 0.8018446)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d1"][0.0], 0.2117808)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d1"][1.0], 0.8668644)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d2"][0.0], 0.2284124)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d2"][1.0], 0.8206556)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d3"][0.0], 0.1981554)
+    assert np.isclose(svy_factor_mean_with_str_domain.upper_ci["d3"][1.0], 0.8350427)
+
+
+# """Taylor Approximation WITHOUT Stratification for FACTOR-TOTAL"""
+# svy_factor_total_without_str = TaylorEstimator("total")
+
+
+# def test_factor_total_estimator_without_str():
+#     svy_factor_total_without_str.estimate(y, weight, psu=psu, as_factor=True, remove_nan=True)
+
+#     assert np.isclose(svy_factor_total_without_str.point_est["__none__"][0.0], 0.186_377_5)
+#     assert np.isclose(svy_factor_total_without_str.point_est["__none__"][1.0], 0.813_622_5)
+#     assert np.isclose(svy_factor_total_without_str.stderror["__none__"][0.0], 0.020_285_6)
+#     assert np.isclose(svy_factor_total_without_str.stderror["__none__"][1.0], 0.020_285_6)
+#     assert np.isclose(svy_factor_total_without_str.lower_ci["__none__"][0.0], 0.149_023)
+#     assert np.isclose(svy_factor_total_without_str.lower_ci["__none__"][1.0], 0.769_441_4)
+#     assert np.isclose(svy_factor_total_without_str.upper_ci["__none__"][0.0], 0.230_558_6)
+#     assert np.isclose(svy_factor_total_without_str.upper_ci["__none__"][1.0], 0.850_977)
+
+
+# def test_factor_total_estimator_without_str_nor_psu():
+#     svy_factor_total_without_str.estimate(y, weight, as_factor=True, remove_nan=True)
+
+#     assert np.isclose(svy_factor_total_without_str.point_est["__none__"][0.0], 0.1863775)
+#     assert np.isclose(svy_factor_total_without_str.point_est["__none__"][1.0], 0.8136225)
+#     assert np.isclose(svy_factor_total_without_str.stderror["__none__"][0.0], 0.0066567)
+#     assert np.isclose(svy_factor_total_without_str.stderror["__none__"][1.0], 0.0066567)
+#     assert np.isclose(svy_factor_total_without_str.lower_ci["__none__"][0.0], 0.1736793)
+#     assert np.isclose(svy_factor_total_without_str.lower_ci["__none__"][1.0], 0.8002204)
+#     assert np.isclose(svy_factor_total_without_str.upper_ci["__none__"][0.0], 0.1997796)
+#     assert np.isclose(svy_factor_total_without_str.upper_ci["__none__"][1.0], 0.8263207)
+
+
+# svy_factor_total_without_str_domain = TaylorEstimator("total")
+
+
+# def test_factor_total_estimator_without_str_domain():
+#     svy_factor_total_without_str_domain.estimate(
+#         y, weight, psu=psu, domain=domain, as_factor=True, remove_nan=True
+#     )
+
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d1"][0.0], 0.1688402)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d1"][1.0], 0.8311598)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d2"][0.0], 0.202774)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d2"][1.0], 0.797226)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d3"][0.0], 0.1809641)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d3"][1.0], 0.8190359)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d1"][0.0], 0.0203778)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d1"][1.0], 0.0203778)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d2"][0.0], 0.0260659)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d2"][1.0], 0.0260659)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d3"][0.0], 0.0190814)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d3"][1.0], 0.0190814)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d1"][0.0], 0.131771)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d1"][1.0], 0.7862299)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d2"][0.0], 0.155414)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d2"][1.0], 0.7398788)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d3"][0.0], 0.1457555)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d3"][1.0], 0.7775374)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d1"][0.0], 0.2137701)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d1"][1.0], 0.868229)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d2"][0.0], 0.2601212)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d2"][1.0], 0.844586)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d3"][0.0], 0.2224624)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d3"][1.0], 0.8542445)
+
+
+# def test_factor_total_estimator_without_str_nor_psu_domain():
+#     svy_factor_total_without_str_domain.estimate(
+#         y, weight, domain=domain, as_factor=True, remove_nan=True
+#     )
+
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d1"][0.0], 0.1688402)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d1"][1.0], 0.8311598)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d2"][0.0], 0.202774)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d2"][1.0], 0.797226)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d3"][0.0], 0.1809641)
+#     assert np.isclose(svy_factor_total_without_str_domain.point_est["d3"][1.0], 0.8190359)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d1"][0.0], 0.0200196)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d1"][1.0], 0.0200196)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d2"][0.0], 0.0125303)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d2"][1.0], 0.0125303)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d3"][0.0], 0.0085047)
+#     assert np.isclose(svy_factor_total_without_str_domain.stderror["d3"][1.0], 0.0085047)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d1"][0.0], 0.133136)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d1"][1.0], 0.7882197)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d2"][0.0], 0.179316)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d2"][1.0], 0.7715536)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d3"][0.0], 0.1648868)
+#     assert np.isclose(svy_factor_total_without_str_domain.lower_ci["d3"][1.0], 0.8017632)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d1"][0.0], 0.2117803)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d1"][1.0], 0.866864)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d2"][0.0], 0.2284464)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d2"][1.0], 0.820684)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d3"][0.0], 0.1982368)
+#     assert np.isclose(svy_factor_total_without_str_domain.upper_ci["d3"][1.0], 0.8351132)
+
+
+# """Taylor Approximation WITH Stratification for FACTOR-TOTAL"""
+# svy_factor_total_with_str = TaylorEstimator("total")
+
+
+# def test_factor_total_estimator_with_str():
+#     svy_factor_total_with_str.estimate(
+#         y, weight, stratum=stratum, psu=psu, as_factor=True, remove_nan=True
+#     )
+
+#     assert np.isclose(svy_factor_total_with_str.point_est["__none__"][0.0], 0.186_377_5)
+#     assert np.isclose(svy_factor_total_with_str.point_est["__none__"][1.0], 0.813_622_5)
+#     assert np.isclose(svy_factor_total_with_str.stderror["__none__"][0.0], 0.019_862_1)
+#     assert np.isclose(svy_factor_total_with_str.stderror["__none__"][1.0], 0.019_862_1)
+#     assert np.isclose(svy_factor_total_with_str.lower_ci["__none__"][0.0], 0.149_483_7)
+#     assert np.isclose(svy_factor_total_with_str.lower_ci["__none__"][1.0], 0.770_084_5)
+#     assert np.isclose(svy_factor_total_with_str.upper_ci["__none__"][0.0], 0.229_915_5)
+#     assert np.isclose(svy_factor_total_with_str.upper_ci["__none__"][1.0], 0.850_516_3)
+
+
+# def test_factor_estimator_with_str_without_psu():
+#     svy_factor_total_with_str.estimate(y, weight, stratum=stratum, as_factor=True, remove_nan=True)
+
+#     assert np.isclose(svy_factor_total_with_str.point_est["__none__"][0.0], 0.1863775)
+#     assert np.isclose(svy_factor_total_with_str.point_est["__none__"][1.0], 0.8136225)
+#     assert np.isclose(svy_factor_total_with_str.stderror["__none__"][0.0], 0.0066091)
+#     assert np.isclose(svy_factor_total_with_str.stderror["__none__"][1.0], 0.0066091)
+#     assert np.isclose(svy_factor_total_with_str.lower_ci["__none__"][0.0], 0.1737677)
+#     assert np.isclose(svy_factor_total_with_str.lower_ci["__none__"][1.0], 0.8003188)
+#     assert np.isclose(svy_factor_total_with_str.upper_ci["__none__"][0.0], 0.1996812)
+#     assert np.isclose(svy_factor_total_with_str.upper_ci["__none__"][1.0], 0.8262323)
+
+
+# svy_factor_total_with_str_domain = TaylorEstimator("total")
+
+
+# def test_factor_total_estimator_with_str_domain():
+#     svy_factor_total_with_str_domain.estimate(
+#         y, weight, psu=psu, stratum=stratum, domain=domain, as_factor=True, remove_nan=True
+#     )
+
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d1"][0.0], 0.1688402)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d1"][1.0], 0.8311598)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d2"][0.0], 0.202774)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d2"][1.0], 0.797226)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d3"][0.0], 0.1809641)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d3"][1.0], 0.8190359)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d1"][0.0], 0.0200457)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d1"][1.0], 0.0200457)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d2"][0.0], 0.0263015)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d2"][1.0], 0.0263015)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d3"][0.0], 0.0182081)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d3"][1.0], 0.0182081)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d1"][0.0], 0.1320679)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d1"][1.0], 0.7866654)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d2"][0.0], 0.1547087)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d2"][1.0], 0.7388414)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d3"][0.0], 0.1470016)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d3"][1.0], 0.7792576)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d1"][0.0], 0.2133346)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d1"][1.0], 0.8679321)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d2"][0.0], 0.2611586)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d2"][1.0], 0.8452913)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d3"][0.0], 0.2207424)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d3"][1.0], 0.8529984)
+
+
+# def test_factor_total_estimator_with_str_nor_psu_domain():
+#     svy_factor_total_with_str_domain.estimate(
+#         y, weight, stratum=stratum, as_factor=True, domain=domain, remove_nan=True
+#     )
+
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d1"][0.0], 0.1688402)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d1"][1.0], 0.8311598)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d2"][0.0], 0.202774)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d2"][1.0], 0.797226)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d3"][0.0], 0.1809641)
+#     assert np.isclose(svy_factor_total_with_str_domain.point_est["d3"][1.0], 0.8190359)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d1"][0.0], 0.0200198)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d1"][1.0], 0.0200198)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d2"][0.0], 0.0125144)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d2"][1.0], 0.0125144)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d3"][0.0], 0.0084659)
+#     assert np.isclose(svy_factor_total_with_str_domain.stderror["d3"][1.0], 0.0084659)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d1"][0.0], 0.1331356)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d1"][1.0], 0.7882192)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d2"][0.0], 0.1793444)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d2"][1.0], 0.7715876)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d3"][0.0], 0.1649573)
+#     assert np.isclose(svy_factor_total_with_str_domain.lower_ci["d3"][1.0], 0.8018446)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d1"][0.0], 0.2117808)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d1"][1.0], 0.8668644)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d2"][0.0], 0.2284124)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d2"][1.0], 0.8206556)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d3"][0.0], 0.1981554)
+#     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d3"][1.0], 0.8350427)
