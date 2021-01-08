@@ -45,7 +45,7 @@ class Ttest:
     def _one_sample_one_group(
         self,
         y: np.ndarray,
-        known_mean: Number = None,
+        known_mean: Number,
         samp_weight: Array = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
@@ -152,12 +152,10 @@ class Ttest:
         )
 
         left_p_value_equal_variance = t.cdf(t_equal_variance, t_df_equal_variance)
-        both_p_value_equal_variance = 2 * t.cdf(-2 * abs(t_equal_variance), t_df_equal_variance)
+        both_p_value_equal_variance = 2 * t.cdf(-abs(t_equal_variance), t_df_equal_variance)
 
         left_p_value_unequal_variance = t.cdf(t_unequal_variance, t_df_unequal_variance)
-        both_p_value_unequal_variance = 2 * t.cdf(
-            -2 * abs(t_unequal_variance), t_df_unequal_variance
-        )
+        both_p_value_unequal_variance = 2 * t.cdf(-abs(t_unequal_variance), t_df_unequal_variance)
 
         self.stats = {
             "number_obs": {group1: nb_obs_group1, group2: nb_obs_group2},
@@ -168,12 +166,12 @@ class Ttest:
             "p_value_eq_variance": {
                 "less_than": left_p_value_equal_variance,
                 "greater_than": 1 - left_p_value_equal_variance,
-                "not_equal": 2 * both_p_value_equal_variance,
+                "not_equal": both_p_value_equal_variance,
             },
             "p_value_uneq_variance": {
                 "less_than": left_p_value_unequal_variance,
                 "greater_than": 1 - left_p_value_unequal_variance,
-                "not_equal": 2 * both_p_value_unequal_variance,
+                "not_equal": both_p_value_unequal_variance,
             },
         }
 
@@ -181,7 +179,10 @@ class Ttest:
         self.stderror = one_sample.stderror
         self.lower_ci = one_sample.lower_ci
         self.upper_ci = one_sample.upper_ci
-        self.stddev = {"__none__": samp_std_dev}
+        self.stddev = {
+            group1: math.sqrt(nb_obs_group1) * self.stderror[group1],
+            group2: math.sqrt(nb_obs_group2) * self.stderror[group2],
+        }
 
     def _two_samples_unpaired(
         self,
@@ -196,21 +197,9 @@ class Ttest:
 
         pass
 
-    def _two_samples_paired(
-        self,
-        y: np.ndarray,
-        group: Array = None,
-        samp_weight: Array = None,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
-        fpc: Union[Dict, float] = 1,
-    ) -> None:
-        pass
-
     def compare(
         self,
-        y: Series,
+        y: Union[Series, Array],
         known_mean: Number = None,
         group: Optional[Array] = None,
         samp_weight: Array = None,
@@ -228,10 +217,19 @@ class Ttest:
 
         y = numpy_array(y)
 
-        if self.type == "one-sample":
-            self._one_sample(
+        if self.type == "one-sample" and known_mean is not None:
+            self._one_sample_one_group(
                 y=y,
                 known_mean=known_mean,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+            )
+        elif self.type == "one-sample" and group is not None:
+            self._one_sample_two_groups(
+                y=y,
                 group=group,
                 samp_weight=samp_weight,
                 stratum=stratum,
@@ -239,10 +237,24 @@ class Ttest:
                 ssu=ssu,
                 fpc=fpc,
             )
-        elif self.type == "two-sample":
             pass
-        elif self.type == "many-sample":
+        elif self.type == "two-sample" and not self.paired:
             pass
+        elif self.type == "two-sample" and self.paired:
+            if len(y.shape) == 1 or y.shape[1] != 2:
+                raise AssertionError(
+                    "Parameter y must be an array-like object of dimension n by 2 for two-sample paired T-test"
+                )
+            d = y[:, 0] - y[:, 1]
+            self._one_sample_one_group(
+                y=d,
+                known_mean=0,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+            )
         else:
             raise ValueError("type must be equal to 'one-sample', 'two-sample'!")
 
