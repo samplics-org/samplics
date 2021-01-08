@@ -96,11 +96,11 @@ def sample_size_dict(
     sample_size: Union[Dict[Any, int], int],
     stratification: bool,
     stratum: Array,
-) -> Dict[Any, int]:
+) -> Union[Dict[StringNumber, int], int]:
     if not isinstance(sample_size, Dict) and stratification:
         return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
-    if not isinstance(sample_size, Dict) and not stratification:
-        return {"__none__": sample_size}
+    if isinstance(sample_size, (int, float)) and not stratification:
+        return sample_size
     elif isinstance(sample_size, Dict):
         return sample_size
 
@@ -122,7 +122,9 @@ def dict_to_dataframe(col_names: List[str], *args: Dict[Any, Number]) -> pd.Data
         for k, arg in enumerate(args):
             argk_keys = list(args[k].keys())
             if not isinstance(arg, dict) or (keys != argk_keys) or number_keys != len(argk_keys):
-                raise AssertionError("All input parameters must be dictionaries with the same keys.")
+                raise AssertionError(
+                    "All input parameters must be dictionaries with the same keys."
+                )
 
             values.append(list(arg.values()))
 
@@ -132,9 +134,8 @@ def dict_to_dataframe(col_names: List[str], *args: Dict[Any, Number]) -> pd.Data
         values_df.insert(0, "00", keys)
     else:
         values_df = pd.DataFrame({args})
-    
-    values_df.columns = col_names
 
+    values_df.columns = col_names
 
     return values_df
 

@@ -26,12 +26,13 @@ class SampleSize(Generic[Number, StringNumber]):
         self.method = method.lower()
         if self.method not in ("wald", "fleiss"):
             raise AssertionError("Sample size calculation method not valid.")
-
         self.stratification = stratification
-        self.deff_c: Union[Number, Dict[StringNumber, Number]] = 1
-        self.deff_w: Union[Number, Dict[StringNumber, Number]] = 1
-
-        self.samp_size: Union[int, Dict[StringNumber, int]]
+        # self.target: Union[Number, Dict[StringNumber, Number]] = 0
+        # self.samp_size: Union[int, Dict[StringNumber, int]] = 0
+        # self.deff_c: Union[Number, Dict[StringNumber, Number]] = 1
+        # self.deff_w: Union[Number, Dict[StringNumber, Number]] = 1
+        # self.precision: Union[Number, Dict[StringNumber, Number]] = 0
+        # self.resp_rate: Union[Number, Dict[StringNumber, Number]] = 1
 
     def icc(self) -> Union[Dict[StringNumber, Number], Number]:
         pass
@@ -105,7 +106,12 @@ class SampleSize(Generic[Number, StringNumber]):
             else:
                 raise ValueError("Parameters p or d not valid.")
 
-        if self.stratification:
+        if (
+            self.stratification
+            and isinstance(target, dict)
+            and isinstance(precision, dict)
+            and isinstance(self.deff_c, dict)
+        ):
             samp_size = {}
             for s in stratum:
                 fct = fleiss_factor(target[s], precision[s])
@@ -119,7 +125,12 @@ class SampleSize(Generic[Number, StringNumber]):
                     )
                 )
             return samp_size
-        else:
+        elif (
+            not self.stratification
+            and isinstance(target, (int, float))
+            and isinstance(precision, (int, float))
+            and isinstance(self.deff_c, (int, float))
+        ):
             fct = fleiss_factor(target, precision)
             return math.ceil(
                 self.deff_c
@@ -130,6 +141,8 @@ class SampleSize(Generic[Number, StringNumber]):
                     + (z_value + 2) / fct
                 )
             )
+        else:
+            raise TypeError("target and precision must be numbers or dictionnaires!")
 
     def calculate(
         self,
@@ -166,22 +179,34 @@ class SampleSize(Generic[Number, StringNumber]):
 
         number_dictionaries = is_target_dict + is_precision_dict + is_deff_dict + is_resp_rate_dict
 
-        if not self.stratification and number_dictionaries > 0:
+        if not self.stratification and (
+            isinstance(target, dict)
+            or isinstance(precision, dict)
+            or isinstance(deff, dict)
+            or isinstance(resp_rate, dict)
+        ):
             raise AssertionError("No python dictionary needed for non-stratified sample.")
-        elif not self.stratification and number_dictionaries == 0:
+        elif (
+            not self.stratification
+            and isinstance(target, (int, float))
+            and isinstance(precision, (int, float))
+            and isinstance(deff, (int, float))
+            and isinstance(resp_rate, (int, float))
+        ):
             stratum = None
-            if isinstance(deff, float):
-                self.deff_c = deff
-            if isinstance(target, (int, float)):
-                self.target = target
-            if isinstance(precision, (int, float)):
-                self.precision = precision
-            if isinstance(resp_rate, (int, float)):
-                self.resp_rate = resp_rate
+            self.deff_c: Number = deff
+            self.target: Number = target
+            self.precision: Number = precision
+            self.resp_rate: Number = resp_rate
 
         strata = None
         stratum = None
-        if self.stratification and number_dictionaries == 0:
+        if (
+            self.stratification
+            and isinstance(target, (int, float))
+            and isinstance(precision, (int, float))
+            and isinstance(deff, (int, float))
+        ):
             stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
             self.target = dict(zip(stratum, np.repeat(target, number_strata)))
             self.precision = dict(zip(stratum, np.repeat(precision, number_strata)))
