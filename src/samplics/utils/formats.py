@@ -155,7 +155,7 @@ def remove_nans(excluded_units: Array, *args) -> Tuple:
 def fpc_as_dict(stratum: Array, fpc: Union[Array, Number]):
 
     if stratum is None and isinstance(fpc, (int, float)):
-        return {"__none__": fpc}
+        return fpc
     elif stratum is not None and isinstance(fpc, (int, float)):
         return dict(zip(stratum, np.repeat(fpc, stratum.shape[0])))
     elif stratum is not None and isinstance(fpc, np.ndarray):
