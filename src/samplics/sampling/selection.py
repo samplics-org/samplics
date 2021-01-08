@@ -664,7 +664,7 @@ class SampleSelection:
             probs = self.inclusion_probs(samp_unit, samp_size, stratum, mos)
             sample, hits = self._pps_select(samp_unit, samp_size, stratum, mos)
         elif self.method == "sys":
-            # probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum)
+            # probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum) - Todo
             sample, hits = self._sys_select(samp_unit, samp_size, stratum, samp_rate)
         elif self.method == "grs":
             sample, hits = self._grs_select(probs, samp_unit, samp_size, stratum)
