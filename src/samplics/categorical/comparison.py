@@ -33,19 +33,69 @@ class Ttest:
         self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
         self.stats: Dict[str, Dict[str, Number]] = {}
         self.stderror: Dict[str, Dict[str, Number]] = {}
-
+        self.stderror: Dict[str, Dict[str, Number]] = {}
         self.lower_ci: Dict[str, Dict[str, Number]] = {}
         self.upper_ci: Dict[str, Dict[str, Number]] = {}
         self.deff: Dict[str, Dict[str, Number]] = {}
         self.alpha: float = alpha
-        self.design_info: Dict[str, Number] = {}
+        # self.design_info: Dict[str, Number] = {}
         self.group_names: List[str] = []
         self.group_levels: Dict[str, StringNumber] = {}
 
-    def _one_sample(
+    def _one_sample_one_group(
         self,
         y: np.ndarray,
         known_mean: Number = None,
+        samp_weight: Array = None,
+        stratum: Optional[Array] = None,
+        psu: Optional[Array] = None,
+        ssu: Optional[Array] = None,
+        fpc: Union[Dict, float] = 1,
+    ) -> None:
+
+        one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
+        one_sample.estimate(
+            y=y,
+            samp_weight=samp_weight,
+            stratum=stratum,
+            psu=psu,
+            ssu=ssu,
+            fpc=fpc,
+        )
+
+        samp_mean = one_sample.point_est["__none__"]
+        samp_std_dev = math.sqrt(y.shape[0]) * one_sample.stderror["__none__"]
+        samp_t_value = math.sqrt(y.shape[0]) * (samp_mean - known_mean) / samp_std_dev
+        left_p_value = t.cdf(samp_t_value, y.shape[0] - 1)
+
+        # self.design_info = {
+        #     "number_strata": one_sample.number_strata,
+        #     "number_psus": one_sample.number_psus,
+        #     "design_effect": 0,
+        #     "degrees_of_freedom": one_sample.number_psus - one_sample.number_strata,
+        # }
+
+        self.stats = {
+            "number_obs": y.shape[0],
+            "known_mean": known_mean,
+            "df": y.shape[0] - 1,
+            "t": samp_t_value,
+            "p_value": {
+                "less_than": left_p_value,
+                "greater_than": 1 - left_p_value,
+                "not_equal": 2 * t.cdf(-abs(samp_t_value), y.shape[0] - 1),
+            },
+        }
+
+        self.point_est = one_sample.point_est
+        self.stderror = one_sample.stderror
+        self.lower_ci = one_sample.lower_ci
+        self.upper_ci = one_sample.upper_ci
+        self.stddev = {"__none__": samp_std_dev}
+
+    def _one_sample_two_groups(
+        self,
+        y: np.ndarray,
         group: Array = None,
         samp_weight: Array = None,
         stratum: Optional[Array] = None,
@@ -55,60 +105,108 @@ class Ttest:
     ) -> None:
 
         one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
+        one_sample.estimate(
+            y=y,
+            domain=group,
+            samp_weight=samp_weight,
+            stratum=stratum,
+            psu=psu,
+            ssu=ssu,
+            fpc=fpc,
+        )
 
-        if known_mean is not None:
-            one_sample.estimate(
-                y=y,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
-                fpc=fpc,
+        group1 = one_sample.domains[0]
+        group2 = one_sample.domains[1]
+
+        mean_group1 = one_sample.point_est[group1]
+        mean_group2 = one_sample.point_est[group2]
+
+        nb_obs_group1 = np.sum(group == group1)
+        nb_obs_group2 = np.sum(group == group2)
+
+        stddev_group1 = math.sqrt(nb_obs_group1) * one_sample.stderror[group1]
+        stddev_group2 = math.sqrt(nb_obs_group2) * one_sample.stderror[group2]
+
+        t_equal_variance = (mean_group1 - mean_group2) / (
+            math.sqrt(
+                (
+                    (nb_obs_group1 - 1) * stddev_group1 ** 2
+                    + (nb_obs_group2 - 1) * stddev_group2 ** 2
+                )
+                / (nb_obs_group1 + nb_obs_group2 - 2)
             )
+            * math.sqrt(1 / nb_obs_group1 + 1 / nb_obs_group2)
+        )
 
-            samp_mean = one_sample.point_est["__none__"]
-            samp_std_dev = math.sqrt(y.shape[0]) * one_sample.stderror["__none__"]
-            samp_t_value = math.sqrt(y.shape[0]) * (samp_mean - known_mean) / samp_std_dev
-            left_p_value = t.cdf(samp_t_value, y.shape[0] - 1)
+        t_df_equal_variance = nb_obs_group1 + nb_obs_group2 - 2
 
-            self.design_info = {
-                "number_strata": one_sample.number_strata,
-                "number_psus": one_sample.number_psus,
-                "number_obs": y.shape[0],
-                "design_effect": 0,
-                "degrees_of_freedom": one_sample.number_psus - one_sample.number_strata,
-            }
+        t_unequal_variance = (mean_group1 - mean_group2) / math.sqrt(
+            stddev_group1 ** 2 / nb_obs_group1 + stddev_group2 ** 2 / nb_obs_group2
+        )
 
-            self.stats = {
-                "__none__": {
-                    "t_value": samp_t_value,
-                    "t_df": y.shape[0] - 1,
-                    "known_mean": known_mean,
-                    "p-value": {
-                        "less_than": left_p_value,
-                        "greather_than": 1 - left_p_value,
-                        "not_equal": 2 * t.cdf(-abs(samp_t_value), y.shape[0] - 1),
-                    },
-                }
-            }
+        t_df_unequal_variance = math.pow(
+            stddev_group1 ** 2 / nb_obs_group1 + stddev_group2 ** 2 / nb_obs_group2, 2
+        ) / (
+            math.pow(stddev_group1 ** 2 / nb_obs_group1, 2) / (nb_obs_group1 - 1)
+            + math.pow(stddev_group2 ** 2 / nb_obs_group2, 2) / (nb_obs_group2 - 1)
+        )
 
-            self.point_est = one_sample.point_est
-            self.stderror = one_sample.stderror
-            self.lower_ci = one_sample.lower_ci
-            self.upper_ci = one_sample.upper_ci
+        left_p_value_equal_variance = t.cdf(t_equal_variance, t_df_equal_variance)
+        both_p_value_equal_variance = 2 * t.cdf(-2 * abs(t_equal_variance), t_df_equal_variance)
 
-        if group is not None:
-            one_sample.estimate(
-                y=y,
-                domain=group,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
-                fpc=fpc,
-            )
+        left_p_value_unequal_variance = t.cdf(t_unequal_variance, t_df_unequal_variance)
+        both_p_value_unequal_variance = 2 * t.cdf(
+            -2 * abs(t_unequal_variance), t_df_unequal_variance
+        )
 
-        breakpoint()
+        self.stats = {
+            "number_obs": {group1: nb_obs_group1, group2: nb_obs_group2},
+            "t_eq_variance": t_equal_variance,
+            "df_eq_variance": t_df_equal_variance,
+            "t_uneq_variance": t_unequal_variance,
+            "df_uneq_variance": t_df_unequal_variance,
+            "p_value_eq_variance": {
+                "less_than": left_p_value_equal_variance,
+                "greater_than": 1 - left_p_value_equal_variance,
+                "not_equal": 2 * both_p_value_equal_variance,
+            },
+            "p_value_uneq_variance": {
+                "less_than": left_p_value_unequal_variance,
+                "greater_than": 1 - left_p_value_unequal_variance,
+                "not_equal": 2 * both_p_value_unequal_variance,
+            },
+        }
+
+        self.point_est = one_sample.point_est
+        self.stderror = one_sample.stderror
+        self.lower_ci = one_sample.lower_ci
+        self.upper_ci = one_sample.upper_ci
+        self.stddev = {"__none__": samp_std_dev}
+
+    def _two_samples_unpaired(
+        self,
+        y: np.ndarray,
+        group: Array = None,
+        samp_weight: Array = None,
+        stratum: Optional[Array] = None,
+        psu: Optional[Array] = None,
+        ssu: Optional[Array] = None,
+        fpc: Union[Dict, float] = 1,
+    ) -> None:
+
+        pass
+
+    def _two_samples_paired(
+        self,
+        y: np.ndarray,
+        group: Array = None,
+        samp_weight: Array = None,
+        stratum: Optional[Array] = None,
+        psu: Optional[Array] = None,
+        ssu: Optional[Array] = None,
+        fpc: Union[Dict, float] = 1,
+    ) -> None:
+        pass
 
     def compare(
         self,
