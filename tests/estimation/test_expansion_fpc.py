@@ -26,19 +26,19 @@ svy_total_without_str = TaylorEstimator("total")
 def test_total_estimator_without_str():
     svy_total_without_str.estimate(y, weight, psu=psu, fpc=fpc_psu)
 
-    assert np.isclose(svy_total_without_str.point_est["__none__"], 853.12)
-    assert np.isclose(svy_total_without_str.stderror["__none__"], 153.2627)
-    assert np.isclose(svy_total_without_str.lower_ci["__none__"], 427.5946)
-    assert np.isclose(svy_total_without_str.upper_ci["__none__"], 1278.645)
+    assert np.isclose(svy_total_without_str.point_est, 853.12)
+    assert np.isclose(svy_total_without_str.stderror, 153.2627)
+    assert np.isclose(svy_total_without_str.lower_ci, 427.5946)
+    assert np.isclose(svy_total_without_str.upper_ci, 1278.645)
 
 
 def test_total_estimator_without_str_nor_psu():
     svy_total_without_str.estimate(y, weight, fpc=fpc_no_psu)
 
-    assert np.isclose(svy_total_without_str.point_est["__none__"], 853.12)
-    assert np.isclose(svy_total_without_str.stderror["__none__"], 67.14785)
-    assert np.isclose(svy_total_without_str.lower_ci["__none__"], 713.052)
-    assert np.isclose(svy_total_without_str.upper_ci["__none__"], 993.188)
+    assert np.isclose(svy_total_without_str.point_est, 853.12)
+    assert np.isclose(svy_total_without_str.stderror, 67.14785)
+    assert np.isclose(svy_total_without_str.lower_ci, 713.052)
+    assert np.isclose(svy_total_without_str.upper_ci, 993.188)
 
 
 svy_total_without_str_domain = TaylorEstimator("total")
@@ -77,19 +77,19 @@ svy_total_with_str = TaylorEstimator("total")
 def test_total_estimator_with_str():
     svy_total_with_str.estimate(y, weight, stratum=stratum, psu=psu, fpc=fpc_dict_psu)
 
-    assert np.isclose(svy_total_with_str.point_est["__none__"], 853.12)
-    assert np.isclose(svy_total_with_str.stderror["__none__"], 97.41386)
-    assert np.isclose(svy_total_with_str.lower_ci["__none__"], 632.75452)
-    assert np.isclose(svy_total_with_str.upper_ci["__none__"], 1073.48547)
+    assert np.isclose(svy_total_with_str.point_est, 853.12)
+    assert np.isclose(svy_total_with_str.stderror, 97.41386)
+    assert np.isclose(svy_total_with_str.lower_ci, 632.75452)
+    assert np.isclose(svy_total_with_str.upper_ci, 1073.48547)
 
 
 def test_total_estimator_with_str_without_psu():
     svy_total_with_str.estimate(y, weight, stratum=stratum, fpc=fpc_dict_no_psu)
 
-    assert np.isclose(svy_total_with_str.point_est["__none__"], 853.12)
-    assert np.isclose(svy_total_with_str.stderror["__none__"], 50.8888)
-    assert np.isclose(svy_total_with_str.lower_ci["__none__"], 746.2066)
-    assert np.isclose(svy_total_with_str.upper_ci["__none__"], 960.0334)
+    assert np.isclose(svy_total_with_str.point_est, 853.12)
+    assert np.isclose(svy_total_with_str.stderror, 50.8888)
+    assert np.isclose(svy_total_with_str.lower_ci, 746.2066)
+    assert np.isclose(svy_total_with_str.upper_ci, 960.0334)
 
 
 svy_total_with_str_domain = TaylorEstimator("total")
@@ -132,19 +132,19 @@ svy_mean_without_str = TaylorEstimator("mean")
 def test_mean_estimator_without_str():
     svy_mean_without_str.estimate(y, weight, psu=psu, fpc=fpc_psu)
 
-    assert np.isclose(svy_mean_without_str.point_est["__none__"], 10.27855)
-    assert np.isclose(svy_mean_without_str.stderror["__none__"], 1.126881)
-    assert np.isclose(svy_mean_without_str.lower_ci["__none__"], 7.14983)
-    assert np.isclose(svy_mean_without_str.upper_ci["__none__"], 13.40728)
+    assert np.isclose(svy_mean_without_str.point_est, 10.27855)
+    assert np.isclose(svy_mean_without_str.stderror, 1.126881)
+    assert np.isclose(svy_mean_without_str.lower_ci, 7.14983)
+    assert np.isclose(svy_mean_without_str.upper_ci, 13.40728)
 
 
 def test_mean_estimator_without_str_nor_psu():
     svy_mean_without_str.estimate(y, weight, fpc=fpc_no_psu)
 
-    assert np.isclose(svy_mean_without_str.point_est["__none__"], 10.27855)
-    assert np.isclose(svy_mean_without_str.stderror["__none__"], 0.6177327)
-    assert np.isclose(svy_mean_without_str.lower_ci["__none__"], 8.989986)
-    assert np.isclose(svy_mean_without_str.upper_ci["__none__"], 11.56712)
+    assert np.isclose(svy_mean_without_str.point_est, 10.27855)
+    assert np.isclose(svy_mean_without_str.stderror, 0.6177327)
+    assert np.isclose(svy_mean_without_str.lower_ci, 8.989986)
+    assert np.isclose(svy_mean_without_str.upper_ci, 11.56712)
 
 
 svy_mean_without_str_domain = TaylorEstimator("mean")
@@ -183,19 +183,19 @@ svy_mean_with_str = TaylorEstimator("mean")
 def test_mean_estimator_with_str():
     svy_mean_with_str.estimate(y, weight, stratum=stratum, psu=psu, fpc=fpc_dict_psu)
 
-    assert np.isclose(svy_mean_with_str.point_est["__none__"], 10.27855)
-    assert np.isclose(svy_mean_with_str.stderror["__none__"], 0.7750964)
-    assert np.isclose(svy_mean_with_str.lower_ci["__none__"], 8.525164)
-    assert np.isclose(svy_mean_with_str.upper_ci["__none__"], 12.03194)
+    assert np.isclose(svy_mean_with_str.point_est, 10.27855)
+    assert np.isclose(svy_mean_with_str.stderror, 0.7750964)
+    assert np.isclose(svy_mean_with_str.lower_ci, 8.525164)
+    assert np.isclose(svy_mean_with_str.upper_ci, 12.03194)
 
 
 def test_mean_estimator_with_str_without_psu():
     svy_mean_with_str.estimate(y, weight, stratum=stratum, fpc=fpc_dict_no_psu)
 
-    assert np.isclose(svy_mean_with_str.point_est["__none__"], 10.27855)
-    assert np.isclose(svy_mean_with_str.stderror["__none__"], 0.6131181)
-    assert np.isclose(svy_mean_with_str.lower_ci["__none__"], 8.990441)
-    assert np.isclose(svy_mean_with_str.upper_ci["__none__"], 11.56667)
+    assert np.isclose(svy_mean_with_str.point_est, 10.27855)
+    assert np.isclose(svy_mean_with_str.stderror, 0.6131181)
+    assert np.isclose(svy_mean_with_str.lower_ci, 8.990441)
+    assert np.isclose(svy_mean_with_str.upper_ci, 11.56667)
 
 
 svy_mean_with_str_domain = TaylorEstimator("mean")
@@ -238,19 +238,19 @@ svy_ratio_without_str = TaylorEstimator("ratio")
 def test_ratio_estimator_without_str():
     svy_ratio_without_str.estimate(y, weight, x, psu=psu, fpc=fpc_psu)
 
-    assert np.isclose(svy_ratio_without_str.point_est["__none__"], 1.892038)
-    assert np.isclose(svy_ratio_without_str.stderror["__none__"], 0.0106065)
-    assert np.isclose(svy_ratio_without_str.lower_ci["__none__"], 1.86259)
-    assert np.isclose(svy_ratio_without_str.upper_ci["__none__"], 1.921486)
+    assert np.isclose(svy_ratio_without_str.point_est, 1.892038)
+    assert np.isclose(svy_ratio_without_str.stderror, 0.0106065)
+    assert np.isclose(svy_ratio_without_str.lower_ci, 1.86259)
+    assert np.isclose(svy_ratio_without_str.upper_ci, 1.921486)
 
 
 def test_ratio_estimator_without_str_nor_psu():
     svy_ratio_without_str.estimate(y, weight, x, fpc=fpc_no_psu)
 
-    assert np.isclose(svy_ratio_without_str.point_est["__none__"], 1.892038)
-    assert np.isclose(svy_ratio_without_str.stderror["__none__"], 0.0058142)
-    assert np.isclose(svy_ratio_without_str.lower_ci["__none__"], 1.87991)
-    assert np.isclose(svy_ratio_without_str.upper_ci["__none__"], 1.904166)
+    assert np.isclose(svy_ratio_without_str.point_est, 1.892038)
+    assert np.isclose(svy_ratio_without_str.stderror, 0.0058142)
+    assert np.isclose(svy_ratio_without_str.lower_ci, 1.87991)
+    assert np.isclose(svy_ratio_without_str.upper_ci, 1.904166)
 
 
 svy_ratio_without_str_domain = TaylorEstimator("ratio")
@@ -289,19 +289,19 @@ svy_ratio_with_str = TaylorEstimator("ratio")
 def test_ratio_estimator_with_str():
     svy_ratio_with_str.estimate(y, weight, x, stratum=stratum, psu=psu, fpc=fpc_dict_psu)
 
-    assert np.isclose(svy_ratio_with_str.point_est["__none__"], 1.892038)
-    assert np.isclose(svy_ratio_with_str.stderror["__none__"], 0.0072954)
-    assert np.isclose(svy_ratio_with_str.lower_ci["__none__"], 1.875535)
-    assert np.isclose(svy_ratio_with_str.upper_ci["__none__"], 1.908542)
+    assert np.isclose(svy_ratio_with_str.point_est, 1.892038)
+    assert np.isclose(svy_ratio_with_str.stderror, 0.0072954)
+    assert np.isclose(svy_ratio_with_str.lower_ci, 1.875535)
+    assert np.isclose(svy_ratio_with_str.upper_ci, 1.908542)
 
 
 def test_ratio_estimator_with_str_without_psu():
     svy_ratio_with_str.estimate(y, weight, x, stratum=stratum, fpc=fpc_dict_no_psu)
 
-    assert np.isclose(svy_ratio_with_str.point_est["__none__"], 1.892038)
-    assert np.isclose(svy_ratio_with_str.stderror["__none__"], 0.0057708)
-    assert np.isclose(svy_ratio_with_str.lower_ci["__none__"], 1.879914)
-    assert np.isclose(svy_ratio_with_str.upper_ci["__none__"], 1.904162)
+    assert np.isclose(svy_ratio_with_str.point_est, 1.892038)
+    assert np.isclose(svy_ratio_with_str.stderror, 0.0057708)
+    assert np.isclose(svy_ratio_with_str.lower_ci, 1.879914)
+    assert np.isclose(svy_ratio_with_str.upper_ci, 1.904162)
 
 
 svy_ratio_with_str_domain = TaylorEstimator("ratio")
@@ -344,27 +344,27 @@ svy_prop_without_str = TaylorEstimator("proportion")
 def test_prop_estimator_without_str():
     svy_prop_without_str.estimate(z, weight, psu=psu, fpc=fpc_psu)
 
-    assert np.isclose(svy_prop_without_str.point_est["__none__"][0.0], 0.3253012)
-    assert np.isclose(svy_prop_without_str.point_est["__none__"][1.0], 0.6746988)
-    assert np.isclose(svy_prop_without_str.stderror["__none__"][0.0], 0.1499394)
-    assert np.isclose(svy_prop_without_str.stderror["__none__"][1.0], 0.1499394)
-    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][0.0], 0.0674673)
-    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][1.0], 0.2373558)
-    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][0.0], 0.7626442)
-    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][1.0], 0.9325327)
+    assert np.isclose(svy_prop_without_str.point_est[0.0], 0.3253012)
+    assert np.isclose(svy_prop_without_str.point_est[1.0], 0.6746988)
+    assert np.isclose(svy_prop_without_str.stderror[0.0], 0.1499394)
+    assert np.isclose(svy_prop_without_str.stderror[1.0], 0.1499394)
+    assert np.isclose(svy_prop_without_str.lower_ci[0.0], 0.0674673)
+    assert np.isclose(svy_prop_without_str.lower_ci[1.0], 0.2373558)
+    assert np.isclose(svy_prop_without_str.upper_ci[0.0], 0.7626442)
+    assert np.isclose(svy_prop_without_str.upper_ci[1.0], 0.9325327)
 
 
 def test_prop_estimator_without_str_nor_psu():
     svy_prop_without_str.estimate(z, weight, fpc=fpc_no_psu)
 
-    assert np.isclose(svy_prop_without_str.point_est["__none__"][0.0], 0.3253012)
-    assert np.isclose(svy_prop_without_str.point_est["__none__"][1.0], 0.6746988)
-    assert np.isclose(svy_prop_without_str.stderror["__none__"][0.0], 0.0776683)
-    assert np.isclose(svy_prop_without_str.stderror["__none__"][1.0], 0.0776683)
-    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][0.0], 0.1872951)
-    assert np.isclose(svy_prop_without_str.lower_ci["__none__"][1.0], 0.4978368)
-    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][0.0], 0.5021632)
-    assert np.isclose(svy_prop_without_str.upper_ci["__none__"][1.0], 0.8127049)
+    assert np.isclose(svy_prop_without_str.point_est[0.0], 0.3253012)
+    assert np.isclose(svy_prop_without_str.point_est[1.0], 0.6746988)
+    assert np.isclose(svy_prop_without_str.stderror[0.0], 0.0776683)
+    assert np.isclose(svy_prop_without_str.stderror[1.0], 0.0776683)
+    assert np.isclose(svy_prop_without_str.lower_ci[0.0], 0.1872951)
+    assert np.isclose(svy_prop_without_str.lower_ci[1.0], 0.4978368)
+    assert np.isclose(svy_prop_without_str.upper_ci[0.0], 0.5021632)
+    assert np.isclose(svy_prop_without_str.upper_ci[1.0], 0.8127049)
 
 
 svy_prop_without_str_domain = TaylorEstimator("proportion")
@@ -419,27 +419,27 @@ svy_prop_with_str = TaylorEstimator("proportion")
 def test_prop_estimator_with_str():
     svy_prop_with_str.estimate(z, weight, stratum=stratum, psu=psu, fpc=fpc_dict_psu)
 
-    assert np.isclose(svy_prop_with_str.point_est["__none__"][0.0], 0.3253012)
-    assert np.isclose(svy_prop_with_str.point_est["__none__"][1.0], 0.6746988)
-    assert np.isclose(svy_prop_with_str.stderror["__none__"][0.0], 0.130421)
-    assert np.isclose(svy_prop_with_str.stderror["__none__"][1.0], 0.130421)
-    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][0.0], 0.1116747)
-    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][1.0], 0.3509837)
-    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][0.0], 0.6490163)
-    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][1.0], 0.8883253)
+    assert np.isclose(svy_prop_with_str.point_est[0.0], 0.3253012)
+    assert np.isclose(svy_prop_with_str.point_est[1.0], 0.6746988)
+    assert np.isclose(svy_prop_with_str.stderror[0.0], 0.130421)
+    assert np.isclose(svy_prop_with_str.stderror[1.0], 0.130421)
+    assert np.isclose(svy_prop_with_str.lower_ci[0.0], 0.1116747)
+    assert np.isclose(svy_prop_with_str.lower_ci[1.0], 0.3509837)
+    assert np.isclose(svy_prop_with_str.upper_ci[0.0], 0.6490163)
+    assert np.isclose(svy_prop_with_str.upper_ci[1.0], 0.8883253)
 
 
 def test_prop_estimator_with_str_without_psu():
     svy_prop_with_str.estimate(z, weight, stratum=stratum, fpc=fpc_dict_no_psu)
 
-    assert np.isclose(svy_prop_with_str.point_est["__none__"][0.0], 0.3253012)
-    assert np.isclose(svy_prop_with_str.point_est["__none__"][1.0], 0.6746988)
-    assert np.isclose(svy_prop_with_str.stderror["__none__"][0.0], 0.0789747)
-    assert np.isclose(svy_prop_with_str.stderror["__none__"][1.0], 0.0789747)
-    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][0.0], 0.1846011)
-    assert np.isclose(svy_prop_with_str.lower_ci["__none__"][1.0], 0.4933877)
-    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][0.0], 0.5066123)
-    assert np.isclose(svy_prop_with_str.upper_ci["__none__"][1.0], 0.8153989)
+    assert np.isclose(svy_prop_with_str.point_est[0.0], 0.3253012)
+    assert np.isclose(svy_prop_with_str.point_est[1.0], 0.6746988)
+    assert np.isclose(svy_prop_with_str.stderror[0.0], 0.0789747)
+    assert np.isclose(svy_prop_with_str.stderror[1.0], 0.0789747)
+    assert np.isclose(svy_prop_with_str.lower_ci[0.0], 0.1846011)
+    assert np.isclose(svy_prop_with_str.lower_ci[1.0], 0.4933877)
+    assert np.isclose(svy_prop_with_str.upper_ci[0.0], 0.5066123)
+    assert np.isclose(svy_prop_with_str.upper_ci[1.0], 0.8153989)
 
 
 svy_prop_with_str_domain = TaylorEstimator("proportion")
