@@ -2,7 +2,7 @@
 
 """
 
-from typing import Any, Dict, List, Union, Optional
+from typing import Any, Dict, List, Union, Optional, Generic, overload
 
 import math
 
@@ -12,12 +12,11 @@ import pandas as pd
 from scipy.stats import norm as normal
 
 from samplics.utils import formats
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, Number, StringNumber
 
 
-class SampleSize:
-    """*SampleSize* implements sample size calculation methods
-    """
+class SampleSize(Generic[Number, StringNumber]):
+    """*SampleSize* implements sample size calculation methods"""
 
     def __init__(
         self, parameter: str = "proportion", method: str = "wald", stratification: bool = False
@@ -27,26 +26,29 @@ class SampleSize:
         self.method = method.lower()
         if self.method not in ("wald", "fleiss"):
             raise AssertionError("Sample size calculation method not valid.")
-
         self.stratification = stratification
-        self.deff_c: Dict[Any, float] = {"__none__": 1.0}
-        self.deff_w: Dict[Any, float] = {"__none__": 1.0}
+        # self.target: Union[Number, Dict[StringNumber, Number]] = 0
+        # self.samp_size: Union[int, Dict[StringNumber, int]] = 0
+        # self.deff_c: Union[Number, Dict[StringNumber, Number]] = 1
+        # self.deff_w: Union[Number, Dict[StringNumber, Number]] = 1
+        # self.precision: Union[Number, Dict[StringNumber, Number]] = 0
+        # self.resp_rate: Union[Number, Dict[StringNumber, Number]] = 1
 
-        self.samp_size: Dict[Any, int]
-
-    def icc(self) -> Union[Dict[Any, Number], Number]:
+    def icc(self) -> Union[Dict[StringNumber, Number], Number]:
         pass
 
     def deff(
-        self, cluster_size: Union[Dict[Any, Number], Number], icc: Union[Dict[Any, Number], Number]
-    ) -> Union[Dict[Any, Number], Number]:
+        self,
+        cluster_size: Union[Dict[StringNumber, Number], Number],
+        icc: Union[Dict[StringNumber, Number], Number],
+    ) -> Union[Dict[StringNumber, Number], Number]:
 
         if isinstance(cluster_size, (int, float)) and isinstance(icc, (int, float)):
             return max(1 + (cluster_size - 1) * icc, 0)
         elif isinstance(cluster_size, dict) and isinstance(icc, dict):
             if cluster_size.keys() != icc.keys():
                 raise AssertionError("Parameters do not have the same dictionary keys.")
-            deff_c: Dict[Any, Number] = {}
+            deff_c: Dict[StringNumber, Number] = {}
             for s in cluster_size:
                 deff_c[s] = max(1 + (cluster_size[s] - 1) * icc[s], 0)
             return deff_c
@@ -54,31 +56,40 @@ class SampleSize:
             raise ValueError("Combination of types not supported.")
 
     def _calculate_wald(
-        self, target: Dict[Any, Number], precision: Dict[Any, Number], stratum: Optional[Array],
-    ) -> Dict[Any, int]:
+        self,
+        target: Union[Dict[StringNumber, Number], Number],
+        precision: Union[Dict[StringNumber, Number], Number],
+        stratum: Optional[Array],
+    ) -> Union[int, Dict[StringNumber, int]]:
 
         z_value = normal().ppf(1 - self.alpha / 2)
 
-        samp_size: Dict[Any, int] = {}
-        if self.stratification:
+        if (
+            isinstance(target, dict)
+            and isinstance(precision, dict)
+            and isinstance(self.deff_c, dict)
+        ):
+            samp_size: Dict[StringNumber, int] = {}
             for s in stratum:
                 samp_size[s] = math.ceil(
                     self.deff_c[s] * z_value ** 2 * target[s] * (1 - target[s]) / precision[s] ** 2
                 )
+            return samp_size
+        elif (
+            isinstance(target, (int, float))
+            and isinstance(precision, (int, float))
+            and isinstance(self.deff_c, (int, float))
+        ):
+            return math.ceil(self.deff_c * z_value ** 2 * target * (1 - target) / precision ** 2)
         else:
-            samp_size["__none__"] = math.ceil(
-                self.deff_c["__none__"]
-                * z_value ** 2
-                * target["__none__"]
-                * (1 - target["__none__"])
-                / precision["__none__"] ** 2
-            )
-
-        return samp_size
+            raise TypeError("target and precision must be numbers or dictionnaires!")
 
     def _calculate_fleiss(
-        self, target: Dict[Any, Number], precision: Dict[Any, Number], stratum: Optional[Array],
-    ) -> Dict[Any, int]:
+        self,
+        target: Dict[StringNumber, Number],
+        precision: Dict[StringNumber, Number],
+        stratum: Optional[Array],
+    ) -> Union[int, Dict[StringNumber, int]]:
 
         z_value = normal().ppf(1 - self.alpha / 2)
 
@@ -95,8 +106,13 @@ class SampleSize:
             else:
                 raise ValueError("Parameters p or d not valid.")
 
-        samp_size = {}
-        if self.stratification:
+        if (
+            self.stratification
+            and isinstance(target, dict)
+            and isinstance(precision, dict)
+            and isinstance(self.deff_c, dict)
+        ):
+            samp_size = {}
             for s in stratum:
                 fct = fleiss_factor(target[s], precision[s])
                 samp_size[s] = math.ceil(
@@ -108,39 +124,45 @@ class SampleSize:
                         + (z_value + 2) / fct
                     )
                 )
-        else:
-            fct = fleiss_factor(target["__none__"], precision["__none__"])
-            samp_size["__none__"] = math.ceil(
-                self.deff_c["__none__"]
+            return samp_size
+        elif (
+            not self.stratification
+            and isinstance(target, (int, float))
+            and isinstance(precision, (int, float))
+            and isinstance(self.deff_c, (int, float))
+        ):
+            fct = fleiss_factor(target, precision)
+            return math.ceil(
+                self.deff_c
                 * (
-                    fct * (z_value ** 2) / (4 * precision["__none__"] ** 2)
-                    + 1 / precision["__none__"]
+                    fct * (z_value ** 2) / (4 * precision ** 2)
+                    + 1 / precision
                     - 2 * z_value ** 2
                     + (z_value + 2) / fct
                 )
             )
-
-        return samp_size
+        else:
+            raise TypeError("target and precision must be numbers or dictionnaires!")
 
     def calculate(
         self,
-        target: Union[Dict[Any, Number], Number],
-        precision: Union[Dict[Any, Number], Number],
-        deff: Union[Dict[Any, float], float] = 1.0,
-        resp_rate: Union[Dict[Any, float], float] = 1.0,
+        target: Union[Dict[StringNumber, Number], Number],
+        precision: Union[Dict[StringNumber, Number], Number],
+        deff: Union[Dict[StringNumber, Number], Number] = 1.0,
+        resp_rate: Union[Dict[StringNumber, float], float] = 1.0,
         number_strata: Optional[int] = None,
         alpha: float = 0.05,
     ) -> None:
-        """calculate the sample allocation. 
+        """calculate the sample allocation.
 
         Args:
-            target (Union[Dict[Any, Number], Number]): the expected proportion used to calculate 
+            target (Union[Dict[Any, Number], Number]): the expected proportion used to calculate
                 the sample size. It can be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.
-            precision (Union[Dict[Any, Number], Number]): level of precision or half confidence 
+            precision (Union[Dict[Any, Number], Number]): level of precision or half confidence
                 interval. It can be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.
-            deff (Union[Dict[Any, float], float], optional): design effect. It can be a single 
+            deff (Union[Dict[Any, float], float], optional): design effect. It can be a single
                 number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.. Defaults to 1.0.
-            resp_rate (Union[Dict[Any, float], float], optional): expected response rate. It can 
+            resp_rate (Union[Dict[Any, float], float], optional): expected response rate. It can
                 be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.. Defaults to 1.0.
             number_strata (Optional[int], optional): number of strata. Defaults to None.
             alpha (float, optional): level of significance. Defaults to 0.05.
@@ -157,22 +179,34 @@ class SampleSize:
 
         number_dictionaries = is_target_dict + is_precision_dict + is_deff_dict + is_resp_rate_dict
 
-        if not self.stratification and number_dictionaries > 0:
+        if not self.stratification and (
+            isinstance(target, dict)
+            or isinstance(precision, dict)
+            or isinstance(deff, dict)
+            or isinstance(resp_rate, dict)
+        ):
             raise AssertionError("No python dictionary needed for non-stratified sample.")
-        elif not self.stratification and number_dictionaries == 0:
+        elif (
+            not self.stratification
+            and isinstance(target, (int, float))
+            and isinstance(precision, (int, float))
+            and isinstance(deff, (int, float))
+            and isinstance(resp_rate, (int, float))
+        ):
             stratum = None
-            if isinstance(deff, float):  # not necssary for the logic but will make mypy happy
-                self.deff_c = {"__none__": deff}
-            if isinstance(target, (int, float)):
-                self.target = {"__none__": target}
-            if isinstance(precision, (int, float)):
-                self.precision = {"__none__": precision}
-            if isinstance(resp_rate, (int, float)):
-                self.resp_rate = {"__none__": resp_rate}
+            self.deff_c: Number = deff
+            self.target: Number = target
+            self.precision: Number = precision
+            self.resp_rate: Number = resp_rate
 
         strata = None
         stratum = None
-        if self.stratification and number_dictionaries == 0:
+        if (
+            self.stratification
+            and isinstance(target, (int, float))
+            and isinstance(precision, (int, float))
+            and isinstance(deff, (int, float))
+        ):
             stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
             self.target = dict(zip(stratum, np.repeat(target, number_strata)))
             self.precision = dict(zip(stratum, np.repeat(precision, number_strata)))
@@ -207,13 +241,20 @@ class SampleSize:
             elif isinstance(resp_rate, dict):
                 self.resp_rate = resp_rate
 
-        target_values = np.array(list(self.target.values()))
-        precision_values = np.array(list(self.precision.values()))
+        if number_strata is not None and number_strata > 0:
+            target_values = np.array(list(self.target.values()))
+            precision_values = np.array(list(self.precision.values()))
+            resp_rate_values = np.array(list(self.resp_rate.values()))
+        else:
+            target_values = self.target
+            precision_values = self.precision
+            resp_rate_values = self.resp_rate
+
         if self.parameter == "proportion" and (
-            (0 > target_values).any()
-            or (target_values > 1).any()
-            or (0 > precision_values).any()
-            or (precision_values > 1).all()
+            np.asarray(0 > target_values).any()
+            or np.asarray(target_values > 1).any()
+            or np.asarray(0 > precision_values).any()
+            or np.asarray(precision_values > 1).all()
         ):
             raise ValueError("Proportion values must be between 0 and 1.")
 
@@ -229,10 +270,13 @@ class SampleSize:
                 target=self.target, precision=self.precision, stratum=stratum
             )
 
-        resp_rate_values = np.array(list(self.resp_rate.values()))
-        if (0 < resp_rate_values).all() and (resp_rate_values <= 1).all():
-            for s in samp_size:
-                samp_size[s] = math.ceil(samp_size[s] / self.resp_rate[s])
+        if np.asarray(0 < resp_rate_values).all() and np.asarray(resp_rate_values <= 1).all():
+            if number_strata is not None and number_strata > 0:
+                for s in samp_size:
+                    samp_size[s] = math.ceil(samp_size[s] / self.resp_rate[s])
+            else:
+                samp_size = math.ceil(samp_size / self.resp_rate)
+
         else:
             raise ValueError("Response rates must be between 0 and 1 (proportion).")
 
@@ -244,13 +288,11 @@ class SampleSize:
     def optimize(self):
         pass
 
-    def to_dataframe(
-        self, col_names: List[str] = ["_stratum", "_target", "_precision", "_samp_size"]
-    ) -> pd.DataFrame:
+    def to_dataframe(self, col_names: Optional[List[str]] = None) -> pd.DataFrame:
         """Coverts the dictionaries to a pandas dataframe
 
         Args:
-            col_names (List[str], optional): column names for the dataframe. Defaults to 
+            col_names (List[str], optional): column names for the dataframe. Defaults to
                 ["_stratum", "_target", "_precision", "_samp_size"].
 
         Raises:
@@ -263,6 +305,10 @@ class SampleSize:
         if self.samp_size is None:
             raise AssertionError("No sample size calculated.")
         else:
+            if self.stratification and col_names is None:
+                col_names = ["_stratum", "_target", "_precision", "_samp_size"]
+            if not self.stratification and col_names is None:
+                col_names = ["_target", "_precision", "_samp_size"]
             samp_size_df = formats.dict_to_dataframe(
                 col_names, self.target, self.precision, self.samp_size
             )

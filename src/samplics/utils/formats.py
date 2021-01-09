@@ -96,11 +96,11 @@ def sample_size_dict(
     sample_size: Union[Dict[Any, int], int],
     stratification: bool,
     stratum: Array,
-) -> Dict[Any, int]:
+) -> Union[Dict[StringNumber, int], int]:
     if not isinstance(sample_size, Dict) and stratification:
         return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
-    if not isinstance(sample_size, Dict) and not stratification:
-        return {"__none__": sample_size}
+    if isinstance(sample_size, (int, float)) and not stratification:
+        return sample_size
     elif isinstance(sample_size, Dict):
         return sample_size
 
@@ -115,20 +115,26 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
 
 def dict_to_dataframe(col_names: List[str], *args: Dict[Any, Number]) -> pd.DataFrame:
 
-    keys = list(args[0].keys())
-    number_keys = len(keys)
-    values = list()
-    for k, arg in enumerate(args):
-        argk_keys = list(args[k].keys())
-        if not isinstance(arg, dict) or (keys != argk_keys) or number_keys != len(argk_keys):
-            raise AssertionError("All input parameters must be dictionaries with the same keys.")
+    if isinstance(args[0], dict):
+        keys = list(args[0].keys())
+        number_keys = len(keys)
+        values = list()
+        for k, arg in enumerate(args):
+            argk_keys = list(args[k].keys())
+            if not isinstance(arg, dict) or (keys != argk_keys) or number_keys != len(argk_keys):
+                raise AssertionError(
+                    "All input parameters must be dictionaries with the same keys."
+                )
 
-        values.append(list(arg.values()))
+            values.append(list(arg.values()))
 
-    values_df = pd.DataFrame(
-        values,
-    ).T
-    values_df.insert(0, "00", keys)
+        values_df = pd.DataFrame(
+            values,
+        ).T
+        values_df.insert(0, "00", keys)
+    else:
+        values_df = pd.DataFrame({args})
+
     values_df.columns = col_names
 
     return values_df
@@ -149,7 +155,7 @@ def remove_nans(excluded_units: Array, *args) -> Tuple:
 def fpc_as_dict(stratum: Array, fpc: Union[Array, Number]):
 
     if stratum is None and isinstance(fpc, (int, float)):
-        return {"__none__": fpc}
+        return fpc
     elif stratum is not None and isinstance(fpc, (int, float)):
         return dict(zip(stratum, np.repeat(fpc, stratum.shape[0])))
     elif stratum is not None and isinstance(fpc, np.ndarray):

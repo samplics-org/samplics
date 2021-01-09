@@ -40,6 +40,7 @@ class _SurveyEstimator:
             self.parameter = parameter.lower()
         else:
             raise AssertionError("parameter must be 'proportion', 'mean', 'total' or 'ratio'")
+        self.alpha: float = alpha
 
         self.point_est: Dict[StringNumber, Any] = {}
         self.variance: Dict[StringNumber, Any] = {}
@@ -49,13 +50,12 @@ class _SurveyEstimator:
         self.lower_ci: Dict[StringNumber, Any] = {}
         self.upper_ci: Dict[StringNumber, Any] = {}
         self.fpc: Dict[StringNumber, Any] = {}
-        self.strata: List[StringNumber] = ["__none__"]
-        self.domains: List[StringNumber] = ["__none__"]
+        self.strata: List[StringNumber] = []
+        self.domains: Optional[List[StringNumber]] = None
         self.method: str = "taylor"
         self.number_strata: Optional[int] = None
         self.number_psus: Optional[int] = None
         self.degree_of_freedom: Optional[int] = None
-        self.alpha: float = alpha
 
     def __str__(self) -> Any:
         print(f"SAMPLICS - Estimation of {self.parameter.title()}\n")
@@ -153,7 +153,6 @@ class _SurveyEstimator:
             categories = None
             y_dummies = None
 
-        estimate: Dict[StringNumber, Any] = {}
         if domain is None:
             if self.parameter == "proportion" or as_factor:
                 cat_dict = dict()
@@ -161,10 +160,11 @@ class _SurveyEstimator:
                     y_k = y_dummies[:, k]
                     cat_dict_k = dict({categories[k]: self._get_point_d(y_k, samp_weight)})
                     cat_dict.update(cat_dict_k)
-                estimate["__none__"] = cat_dict
+                estimate = cat_dict
             else:
-                estimate["__none__"] = self._get_point_d(y, samp_weight, x)
+                estimate = self._get_point_d(y, samp_weight, x)
         else:
+            estimate: Dict[StringNumber, Any] = {}
             domain_ids = np.unique(domain)
             for d in domain_ids:
                 weight_d = samp_weight[domain == d]
@@ -307,16 +307,16 @@ class TaylorEstimator(_SurveyEstimator):
         stratum: np.ndarray,
         psu: np.ndarray,
         ssu: Optional[np.ndarray] = None,
-        fpc: Dict[StringNumber, Number] = {"__none__": 1},
+        fpc: Union[Dict[StringNumber, Number], Number] = 1,
     ) -> np.float64:
         """Computes the variance across stratum """
 
         if stratum is None:
             number_psus = np.unique(psu).size
-            covariance = fpc["__none__"] * self._variance_stratum_between(
+            covariance = fpc * self._variance_stratum_between(
                 y_score, samp_weight, number_psus, psu
             )
-            # + (1 - fpc["__none__"]) * self._variance_stratum_within(
+            # + (1 - fpc) * self._variance_stratum_within(
             #     y_score, number_psus, psu, ssu
             # )
         else:
@@ -345,10 +345,10 @@ class TaylorEstimator(_SurveyEstimator):
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         domain: Optional[Array] = None,
-        fpc: Dict[StringNumber, Number] = {"__none__": 1},
+        fpc: Dict[StringNumber, Number] = 1,
         as_factor: bool = False,
         remove_nan: bool = False,
-    ) -> Tuple[dict, dict]:
+    ) -> Tuple[Union[float, dict], Union[float, dict]]:
 
         if self.parameter == "ratio" and x is None:
             raise AssertionError("Parameter x must be provided for ratio estimation.")
@@ -368,19 +368,20 @@ class TaylorEstimator(_SurveyEstimator):
             categories = list(y.columns)
             y = y.values
 
-        variance: Dict[StringNumber, Any] = {}
-        covariance = {}
         if domain is None:
             y_score = self._score_variable(y, samp_weight, x)  # new
             cov_score = self._taylor_variance(y_score, samp_weight, stratum, psu, ssu, fpc)  # new
             if self.parameter == "proportion" or as_factor:
-                variance["__none__"] = dict(zip(categories, np.diag(cov_score)))
+                variance = dict(zip(categories, np.diag(cov_score)))
+                covariance = {}
                 for k, level in enumerate(categories):
                     covariance[level] = dict(zip(categories, cov_score[k, :]))
             else:
-                variance[self.domains[0]] = float(np.diag(cov_score))
+                variance = float(np.diag(cov_score))
                 covariance = variance  # Todo: generalize for multiple Y variables
         else:
+            variance: Dict[StringNumber, Any] = {}
+            covariance = {}
             domain = np.asarray(domain)
             for d in np.unique(domain):
                 domain_d = domain == d
@@ -507,15 +508,15 @@ class TaylorEstimator(_SurveyEstimator):
         self._degree_of_freedom(weight_ndarray, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
-        for key in self.variance:
+        if domain is None:
             if self.parameter == "proportion" or (as_factor and self.parameter == "mean"):
                 stderror = {}
                 lower_ci = {}
                 upper_ci = {}
                 coef_var = {}
-                for level in self.variance[key]:
-                    point_est = self.point_est[key][level]
-                    stderror[level] = pow(self.variance[key][level], 0.5)
+                for level in self.variance:
+                    point_est = self.point_est[level]
+                    stderror[level] = pow(self.variance[level], 0.5)
                     if point_est == 0:
                         lower_ci[level] = 0
                         upper_ci[level] = 0
@@ -533,28 +534,80 @@ class TaylorEstimator(_SurveyEstimator):
                         upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
                         coef_var[level] = stderror[level] / point_est
 
-                self.stderror[key] = stderror
-                self.coef_var[key] = coef_var
-                self.lower_ci[key] = lower_ci
-                self.upper_ci[key] = upper_ci
+                self.stderror = stderror
+                self.coef_var = coef_var
+                self.lower_ci = lower_ci
+                self.upper_ci = upper_ci
             elif as_factor:
                 stderror = {}
                 lower_ci = {}
                 upper_ci = {}
                 coef_var = {}
                 # breakpoint()
-                for level in self.variance[key]:
-                    stderror[level] = pow(self.variance[key][level], 0.5)
-                    lower_ci[level] = self.point_est[key][level] - t_quantile * stderror[level]
-                    upper_ci[level] = self.point_est[key][level] + t_quantile * stderror[level]
-                    coef_var[level] = stderror[level] / self.point_est[key][level]
+                for level in self.variance:
+                    stderror[level] = pow(self.variance[level], 0.5)
+                    lower_ci[level] = self.point_est[level] - t_quantile * stderror[level]
+                    upper_ci[level] = self.point_est[level] + t_quantile * stderror[level]
+                    coef_var[level] = stderror[level] / self.point_est[level]
 
-                self.stderror[key] = stderror
-                self.coef_var[key] = coef_var
-                self.lower_ci[key] = lower_ci
-                self.upper_ci[key] = upper_ci
+                self.stderror = stderror
+                self.coef_var = coef_var
+                self.lower_ci = lower_ci
+                self.upper_ci = upper_ci
             else:
-                self.stderror[key] = pow(self.variance[key], 0.5)
-                self.lower_ci[key] = self.point_est[key] - t_quantile * self.stderror[key]
-                self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
-                self.coef_var[key] = pow(self.variance[key], 0.5) / self.point_est[key]
+                self.stderror = pow(self.variance, 0.5)
+                self.lower_ci = self.point_est - t_quantile * self.stderror
+                self.upper_ci = self.point_est + t_quantile * self.stderror
+                self.coef_var = pow(self.variance, 0.5) / self.point_est
+        else:
+            for key in self.variance:
+                if self.parameter == "proportion" or (as_factor and self.parameter == "mean"):
+                    stderror = {}
+                    lower_ci = {}
+                    upper_ci = {}
+                    coef_var = {}
+                    for level in self.variance[key]:
+                        point_est = self.point_est[key][level]
+                        stderror[level] = pow(self.variance[key][level], 0.5)
+                        if point_est == 0:
+                            lower_ci[level] = 0
+                            upper_ci[level] = 0
+                            coef_var[level] = 0
+                        elif point_est == 1:
+                            lower_ci[level] = 1
+                            upper_ci[level] = 1
+                            coef_var[level] = 0
+                        else:
+                            location_ci = math.log(point_est / (1 - point_est))
+                            scale_ci = stderror[level] / (point_est * (1 - point_est))
+                            ll = location_ci - t_quantile * scale_ci
+                            uu = location_ci + t_quantile * scale_ci
+                            lower_ci[level] = math.exp(ll) / (1 + math.exp(ll))
+                            upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
+                            coef_var[level] = stderror[level] / point_est
+
+                    self.stderror[key] = stderror
+                    self.coef_var[key] = coef_var
+                    self.lower_ci[key] = lower_ci
+                    self.upper_ci[key] = upper_ci
+                elif as_factor:
+                    stderror = {}
+                    lower_ci = {}
+                    upper_ci = {}
+                    coef_var = {}
+                    # breakpoint()
+                    for level in self.variance[key]:
+                        stderror[level] = pow(self.variance[key][level], 0.5)
+                        lower_ci[level] = self.point_est[key][level] - t_quantile * stderror[level]
+                        upper_ci[level] = self.point_est[key][level] + t_quantile * stderror[level]
+                        coef_var[level] = stderror[level] / self.point_est[key][level]
+
+                    self.stderror[key] = stderror
+                    self.coef_var[key] = coef_var
+                    self.lower_ci[key] = lower_ci
+                    self.upper_ci[key] = upper_ci
+                else:
+                    self.stderror[key] = pow(self.variance[key], 0.5)
+                    self.lower_ci[key] = self.point_est[key] - t_quantile * self.stderror[key]
+                    self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
+                    self.coef_var[key] = pow(self.variance[key], 0.5) / self.point_est[key]

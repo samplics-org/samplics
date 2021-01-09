@@ -34,24 +34,24 @@ def test_size_nat_wald_basics():
 
 def test_size_nat_wald_size():
     size_nat_wald.calculate(0.80, 0.10)
-    assert size_nat_wald.samp_size["__none__"] == 62
-    assert size_nat_wald.deff_c["__none__"] == 1.0
-    assert size_nat_wald.target["__none__"] == 0.80
-    assert size_nat_wald.precision["__none__"] == 0.1
+    assert size_nat_wald.samp_size == 62
+    assert size_nat_wald.deff_c == 1.0
+    assert size_nat_wald.target == 0.80
+    assert size_nat_wald.precision == 0.1
 
 
 def test_size_nat_wald_size_with_deff():
     size_nat_wald.calculate(0.80, 0.10, deff=1.5)
-    assert size_nat_wald.samp_size["__none__"] == 93
-    assert size_nat_wald.deff_c["__none__"] == 1.5
-    assert size_nat_wald.target["__none__"] == 0.80
-    assert size_nat_wald.precision["__none__"] == 0.1
+    assert size_nat_wald.samp_size == 93
+    assert size_nat_wald.deff_c == 1.5
+    assert size_nat_wald.target == 0.80
+    assert size_nat_wald.precision == 0.1
 
 
 def test_size_nat_wald_df():
     size_nat_wald.calculate(0.80, 0.10)
     size_df = size_nat_wald.to_dataframe()
-    assert (size_df.columns == ["_stratum", "_target", "_precision", "_samp_size"]).all()
+    assert (size_df.columns == ["_target", "_precision", "_samp_size"]).all()
 
 
 ## Wald's method - stratified
@@ -125,104 +125,104 @@ def test_size_nat_fleiss_basics():
 
 def test_size_nat_fleiss_size1a():
     size_nat_fleiss.calculate(0.80, 0.10)
-    assert size_nat_fleiss.samp_size["__none__"] == 88
-    assert size_nat_fleiss.deff_c["__none__"] == 1.0
-    assert size_nat_fleiss.target["__none__"] == 0.80
-    assert size_nat_fleiss.precision["__none__"] == 0.1
+    assert size_nat_fleiss.samp_size == 88
+    assert size_nat_fleiss.deff_c == 1.0
+    assert size_nat_fleiss.target == 0.80
+    assert size_nat_fleiss.precision == 0.1
 
 
 def test_size_nat_fleiss_size1b():
     size_nat_fleiss.calculate(0.20, 0.10)
-    assert size_nat_fleiss.samp_size["__none__"] == 88
-    assert size_nat_fleiss.deff_c["__none__"] == 1.0
-    assert size_nat_fleiss.target["__none__"] == 0.20
-    assert size_nat_fleiss.precision["__none__"] == 0.1
+    assert size_nat_fleiss.samp_size == 88
+    assert size_nat_fleiss.deff_c == 1.0
+    assert size_nat_fleiss.target == 0.20
+    assert size_nat_fleiss.precision == 0.1
 
 
 def test_size_nat_fleiss_size2a():
     size_nat_fleiss.calculate(0.95, 0.06)
-    assert size_nat_fleiss.samp_size["__none__"] == 132
-    assert size_nat_fleiss.deff_c["__none__"] == 1.0
-    assert size_nat_fleiss.target["__none__"] == 0.95
-    assert size_nat_fleiss.precision["__none__"] == 0.06
+    assert size_nat_fleiss.samp_size == 132
+    assert size_nat_fleiss.deff_c == 1.0
+    assert size_nat_fleiss.target == 0.95
+    assert size_nat_fleiss.precision == 0.06
 
 
 def test_size_nat_fleiss_size2b():
     size_nat_fleiss.calculate(0.05, 0.06)
-    assert size_nat_fleiss.samp_size["__none__"] == 132
-    assert size_nat_fleiss.deff_c["__none__"] == 1.0
-    assert size_nat_fleiss.target["__none__"] == 0.05
-    assert size_nat_fleiss.precision["__none__"] == 0.06
+    assert size_nat_fleiss.samp_size == 132
+    assert size_nat_fleiss.deff_c == 1.0
+    assert size_nat_fleiss.target == 0.05
+    assert size_nat_fleiss.precision == 0.06
 
 
 def test_size_nat_fleiss_size3():
     size_nat_fleiss.calculate(0.70, 0.03)
-    assert size_nat_fleiss.samp_size["__none__"] == 1097
-    assert size_nat_fleiss.deff_c["__none__"] == 1.0
-    assert size_nat_fleiss.target["__none__"] == 0.70
-    assert size_nat_fleiss.precision["__none__"] == 0.03
+    assert size_nat_fleiss.samp_size == 1097
+    assert size_nat_fleiss.deff_c == 1.0
+    assert size_nat_fleiss.target == 0.70
+    assert size_nat_fleiss.precision == 0.03
 
 
 def test_size_nat_fleiss_size4():
     size_nat_fleiss.calculate(0.85, 0.03)
-    assert size_nat_fleiss.samp_size["__none__"] == 663
-    assert size_nat_fleiss.deff_c["__none__"] == 1.0
-    assert size_nat_fleiss.target["__none__"] == 0.85
-    assert size_nat_fleiss.precision["__none__"] == 0.03
+    assert size_nat_fleiss.samp_size == 663
+    assert size_nat_fleiss.deff_c == 1.0
+    assert size_nat_fleiss.target == 0.85
+    assert size_nat_fleiss.precision == 0.03
 
 
 def test_size_nat_fleiss_size_with_deff1a():
     size_nat_fleiss.calculate(0.80, 0.10, deff=1.5)
-    assert size_nat_fleiss.samp_size["__none__"] == 132
-    assert size_nat_fleiss.deff_c["__none__"] == 1.5
-    assert size_nat_fleiss.target["__none__"] == 0.80
-    assert size_nat_fleiss.precision["__none__"] == 0.1
+    assert size_nat_fleiss.samp_size == 132
+    assert size_nat_fleiss.deff_c == 1.5
+    assert size_nat_fleiss.target == 0.80
+    assert size_nat_fleiss.precision == 0.1
 
 
 def test_size_nat_fleiss_size_with_deff1b():
     size_nat_fleiss.calculate(0.20, 0.10, deff=1.5)
-    assert size_nat_fleiss.samp_size["__none__"] == 132
-    assert size_nat_fleiss.deff_c["__none__"] == 1.5
-    assert size_nat_fleiss.target["__none__"] == 0.20
-    assert size_nat_fleiss.precision["__none__"] == 0.1
+    assert size_nat_fleiss.samp_size == 132
+    assert size_nat_fleiss.deff_c == 1.5
+    assert size_nat_fleiss.target == 0.20
+    assert size_nat_fleiss.precision == 0.1
 
 
 def test_size_nat_fleiss_size_with_deff2a():
     size_nat_fleiss.calculate(0.95, 0.06, deff=1.5)
-    assert size_nat_fleiss.samp_size["__none__"] == 197
-    assert size_nat_fleiss.deff_c["__none__"] == 1.5
-    assert size_nat_fleiss.target["__none__"] == 0.95
-    assert size_nat_fleiss.precision["__none__"] == 0.06
+    assert size_nat_fleiss.samp_size == 197
+    assert size_nat_fleiss.deff_c == 1.5
+    assert size_nat_fleiss.target == 0.95
+    assert size_nat_fleiss.precision == 0.06
 
 
 def test_size_nat_fleiss_size_with_deff2b():
     size_nat_fleiss.calculate(0.05, 0.06, deff=1.5)
-    assert size_nat_fleiss.samp_size["__none__"] == 197
-    assert size_nat_fleiss.deff_c["__none__"] == 1.5
-    assert size_nat_fleiss.target["__none__"] == 0.05
-    assert size_nat_fleiss.precision["__none__"] == 0.06
+    assert size_nat_fleiss.samp_size == 197
+    assert size_nat_fleiss.deff_c == 1.5
+    assert size_nat_fleiss.target == 0.05
+    assert size_nat_fleiss.precision == 0.06
 
 
 def test_size_nat_fleiss_size_with_deff3():
     size_nat_fleiss.calculate(0.70, 0.03, deff=1.5)
-    assert size_nat_fleiss.samp_size["__none__"] == 1646
-    assert size_nat_fleiss.deff_c["__none__"] == 1.5
-    assert size_nat_fleiss.target["__none__"] == 0.70
-    assert size_nat_fleiss.precision["__none__"] == 0.03
+    assert size_nat_fleiss.samp_size == 1646
+    assert size_nat_fleiss.deff_c == 1.5
+    assert size_nat_fleiss.target == 0.70
+    assert size_nat_fleiss.precision == 0.03
 
 
 def test_size_nat_fleiss_size_with_deff4():
     size_nat_fleiss.calculate(0.85, 0.03, deff=1.5)
-    assert size_nat_fleiss.samp_size["__none__"] == 994
-    assert size_nat_fleiss.deff_c["__none__"] == 1.5
-    assert size_nat_fleiss.target["__none__"] == 0.85
-    assert size_nat_fleiss.precision["__none__"] == 0.03
+    assert size_nat_fleiss.samp_size == 994
+    assert size_nat_fleiss.deff_c == 1.5
+    assert size_nat_fleiss.target == 0.85
+    assert size_nat_fleiss.precision == 0.03
 
 
 def test_size_nat_fleiss_df():
     size_nat_fleiss.calculate(0.80, 0.10)
     size_df = size_nat_fleiss.to_dataframe()
-    assert (size_df.columns == ["_stratum", "_target", "_precision", "_samp_size"]).all()
+    assert (size_df.columns == ["_target", "_precision", "_samp_size"]).all()
 
 
 ## Fleiss' method - stratified
