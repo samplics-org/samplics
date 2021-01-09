@@ -82,9 +82,60 @@ def test_one_sample_known_mean_stats():
 
 ## One-sample with comparisons between groups
 
-# one_sample_two_group = Ttest(type="one-sample")
-# one_sample_two_group.compare(y, group=foreign)
-# breakpoint()
+one_sample_two_groups = Ttest(type="one-sample")
+one_sample_two_groups.compare(y, group=foreign)
+
+
+def test_one_sample_two_groups_means():
+    assert np.isclose(one_sample_two_groups.point_est["Domestic"], 19.82692, 1e-4)
+    assert np.isclose(one_sample_two_groups.point_est["Foreign"], 24.77273, 1e-4)
+
+
+def test_one_sample_two_groups_stderror():
+    assert np.isclose(one_sample_two_groups.stderror["Domestic"], 0.657777, 1e-4)
+    assert np.isclose(one_sample_two_groups.stderror["Foreign"], 1.40951, 1e-4)
+
+
+def test_one_sample_two_groups_stderror():
+    assert np.isclose(one_sample_two_groups.stddev["Domestic"], 4.72953, 1e-4)
+    assert np.isclose(one_sample_two_groups.stddev["Foreign"], 6.50328, 1e-4)
+
+
+def test_one_sample_two_groups_lower_ci():
+    assert np.isclose(one_sample_two_groups.lower_ci["Domestic"], 18.51978, 1e-4)
+    assert np.isclose(one_sample_two_groups.lower_ci["Foreign"], 22.00943, 1e-4)
+
+
+stats = one_sample_two_groups.stats
+
+
+def test_one_sample_two_groups_number_obs():
+    assert np.isclose(stats["number_obs"]["Domestic"], 52, 1e-4)
+    assert np.isclose(stats["number_obs"]["Foreign"], 22, 1e-4)
+
+
+def test_one_sample_two_groups_t_eq_variance():
+    assert np.isclose(stats["t_eq_variance"], -3.66326, 1e-4)
+    assert np.isclose(stats["df_eq_variance"], 72, 1e-4)
+    assert np.isclose(stats["p_value_eq_variance"]["less_than"], 0.0002362, 1e-4)
+    assert np.isclose(stats["p_value_eq_variance"]["greater_than"], 0.9997638, 1e-4)
+    assert np.isclose(stats["p_value_eq_variance"]["not_equal"], 0.0004725, 1e-4)
+
+
+def test_one_sample_two_groups_t_uneq_variance():
+    assert np.isclose(stats["t_uneq_variance"], -3.22454, 1e-4)
+    assert np.isclose(stats["df_uneq_variance"], 30.81429, 1e-4)
+    assert np.isclose(stats["p_value_uneq_variance"]["less_than"], 0.0014909, 1e-4)
+    assert np.isclose(stats["p_value_uneq_variance"]["greater_than"], 0.9985091, 1e-4)
+    assert np.isclose(stats["p_value_uneq_variance"]["not_equal"], 0.0029818, 1e-4)
+
+
+## Two-sample comparisons - UNPAIRED 
+
+two_samples_unpaired = Ttest(type="two-sample")
+two_samples_unpaired.compare(y, group=foreign)
+
+breakpoint()
 
 ## two-sample with paired observations
 
