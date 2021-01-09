@@ -37,14 +37,14 @@ samp_size = {"one": 11, "two": 22, 3: 33, 4: 44, 5: 55}
 
 def test_sample_size_dict1(sample_size=5, stratification=False, stratum=stratum):
     samp_dict1 = sample_size_dict(sample_size, stratification, stratum)
-    assert isinstance(samp_dict1, dict) == True
-    assert samp_dict1["__none__"] == 5
+    assert isinstance(samp_dict1, int) == True
+    assert samp_dict1 == 5
 
 
 def test_sample_size_dict1(sample_size=5, stratification=False, stratum=stratum):
     samp_dict2 = sample_size_dict(sample_size, stratification, stratum)
-    assert isinstance(samp_dict2, dict) == True
-    assert samp_dict2["__none__"] == 5
+    assert isinstance(samp_dict2, int) == True
+    assert samp_dict2 == 5
 
 
 def test_sample_size_dict_str1(sample_size=5, stratification=True, stratum=stratum):

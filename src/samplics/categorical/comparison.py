@@ -63,8 +63,8 @@ class Ttest:
             fpc=fpc,
         )
 
-        samp_mean = one_sample.point_est["__none__"]
-        samp_std_dev = math.sqrt(y.shape[0]) * one_sample.stderror["__none__"]
+        samp_mean = one_sample.point_est
+        samp_std_dev = math.sqrt(y.shape[0]) * one_sample.stderror
         samp_t_value = math.sqrt(y.shape[0]) * (samp_mean - known_mean) / samp_std_dev
         left_p_value = t.cdf(samp_t_value, y.shape[0] - 1)
 
@@ -91,7 +91,7 @@ class Ttest:
         self.stderror = one_sample.stderror
         self.lower_ci = one_sample.lower_ci
         self.upper_ci = one_sample.upper_ci
-        self.stddev = {"__none__": samp_std_dev}
+        self.stddev = samp_std_dev
 
     def _one_sample_two_groups(
         self,
