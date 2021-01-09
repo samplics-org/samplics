@@ -10,6 +10,7 @@ yrbs = pd.read_csv("./tests/estimation/yrbs.csv")
 yrbs["y"] = yrbs["qn8"].replace({2: 0})
 yrbs["x"] = 0.8 * yrbs["y"] + 0.5
 yrbs["domain"] = np.random.choice(["d1", "d2", "d3"], size=yrbs.shape[0], p=[0.1, 0.3, 0.6])
+yrbs["by"] = np.random.choice(["b1", "b2"], size=yrbs.shape[0], p=[0.4, 0.6])
 
 # yrbs["fpc"] = 1.0
 # yrbs.loc[yrbs["stratum"] == 101, "fpc"] = 0.95
@@ -30,6 +31,7 @@ stratum = yrbs["stratum"]
 psu = yrbs["psu"]
 weight = yrbs["weight"]
 domain = yrbs["domain"]
+by = yrbs["by"]
 x = yrbs["x"]
 y = yrbs["y"]
 # fpc_array = yrbs["fpc"]
@@ -38,7 +40,7 @@ y = yrbs["y"]
 
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
 svy_total_without_str = TaylorEstimator("total")
-svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
+# svy_total_without_str.estimate(y, weight, psu=psu, by=domain, remove_nan=True)
 # breakpoint()
 
 
@@ -428,6 +430,7 @@ def test_ratio_estimator_with_str_nor_psu_domain():
 svy_prop_without_str = TaylorEstimator("proportion")
 # svy_prop_without_str.estimate(y, weight, psu=psu, remove_nan=True)
 # breakpoint()
+
 
 def test_prop_estimator_without_str():
     svy_prop_without_str.estimate(y, weight, psu=psu, remove_nan=True)
