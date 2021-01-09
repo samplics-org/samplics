@@ -51,7 +51,7 @@ class _SurveyEstimator:
         self.upper_ci: Dict[StringNumber, Any] = {}
         self.fpc: Dict[StringNumber, Any] = {}
         self.strata: List[StringNumber] = []
-        self.domains: List[StringNumber] = []
+        self.domains: Optional[List[StringNumber]] = None
         self.method: str = "taylor"
         self.number_strata: Optional[int] = None
         self.number_psus: Optional[int] = None
