@@ -13,7 +13,8 @@ sampling algorithms.
    Springer-Verlag New York, Inc
 """
 
-from typing import Any, Dict, Tuple, Union, Optional
+from ast import Str
+from typing import Dict, Generic, Tuple, Union, Optional, overload
 
 import numpy as np
 import pandas as pd
@@ -21,10 +22,10 @@ import pandas as pd
 import math
 
 from samplics.utils import formats
-from samplics.utils.types import Array, StringNumber
+from samplics.utils.types import Array, Number, Series, StringNumber
 
 
-class SampleSelection:
+class SampleSelection(Generic[Number, StringNumber]):
     """*SampleSelection* implements a number of sampling selection algorithms.
 
     The implemented sampling algorithms are the simple random sampling (srs), the
@@ -43,18 +44,18 @@ class SampleSelection:
 
     Main functions:
         | inclusion_probs(): provides the inclusion probabilities.
-        | joint_inclusion_probs(): provides the joint probalities of selection.
+        | joNumber_inclusion_probs(): provides the joNumber probalities of selection.
         | select(): indicates the selected sample.
 
-    TODO: handling of certainties and implementation of joint_inclusion_probs().
+    TODO: handling of certaNumberies and implementation of joNumber_inclusion_probs().
     """
 
     def __init__(
         self,
-        method: str,
-        stratification: bool = False,
-        with_replacement: bool = True,
-    ) -> None:
+        method,
+        stratification=False,
+        with_replacement=True,
+    ):
         if method.lower() in (
             "srs",
             "sys",
@@ -72,16 +73,16 @@ class SampleSelection:
             )
         self.stratification = True if stratification else False
         self.with_replacement = with_replacement
-        self.fpc: Dict[Any, float] = {}
+        self.fpc = {}
 
     @staticmethod
     def _to_dataframe(
-        samp_unit: np.ndarray,
-        stratum: np.ndarray,
-        mos: np.ndarray,
-        sample: np.ndarray,
-        hits: np.ndarray,
-        probs: np.ndarray,
+        samp_unit,
+        stratum,
+        mos,
+        sample,
+        hits,
+        probs,
     ) -> pd.DataFrame:
 
         df = pd.DataFrame(
@@ -104,15 +105,15 @@ class SampleSelection:
 
     def _calculate_fpc(
         self,
-        samp_unit: np.ndarray,
-        samp_size: Union[Dict[Any, int], int],
-        stratum: np.ndarray,
-    ) -> None:
+        samp_unit,
+        samp_size,
+        stratum,
+    ):
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
-        if self.stratification:
+        if isinstance(samp_size, dict):
             self.fpc = dict()
             strata = np.unique(stratum)
             for k, s in enumerate(strata):
@@ -123,16 +124,16 @@ class SampleSelection:
 
     def _grs_select(
         self,
-        probs: np.ndarray,
-        samp_unit: np.ndarray,
-        samp_size: Union[Dict[Any, int], int],
-        stratum: Optional[np.ndarray] = None,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        probs,
+        samp_unit,
+        samp_size,
+        stratum=None,
+    ):
 
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
-        sample = hits = np.zeros(samp_unit.size).astype("int")
+        sample = hits = np.zeros(samp_unit.size).astype(int)
         self._calculate_fpc(samp_unit, samp_size, stratum)
-        if self.stratification:
+        if isinstance(samp_size, dict):
             all_indices = np.array(range(samp_unit.size))
             sampled_indices_list = []
             for s in np.unique(stratum):
@@ -163,10 +164,10 @@ class SampleSelection:
         return sample, hits
 
     @staticmethod
-    def _anycertainty(
-        samp_size: Dict[StringNumber, int],
-        stratum: np.ndarray,
-        mos: np.ndarray,
+    def _anycertaNumbery(
+        samp_size,
+        stratum,
+        mos,
     ) -> bool:
 
         if stratum is not None:
@@ -178,23 +179,23 @@ class SampleSelection:
         else:
             probs = samp_size * mos / np.sum(mos)
 
-        certainty: bool = (probs >= 1).any()
+        certaNumbery = (probs >= 1).any()
 
-        return certainty
+        return certaNumbery
 
     # SRS methods
     def _srs_inclusion_probs(
         self,
-        samp_unit: np.ndarray,
-        samp_size: Union[Dict[Any, int], int],
-        stratum: Optional[np.ndarray] = None,
+        samp_unit,
+        samp_size,
+        stratum=None,
     ) -> np.ndarray:
 
         samp_unit = formats.sample_units(samp_unit)
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
         number_units = samp_unit.size
-        if self.stratification:
+        if isinstance(samp_size, dict):
             incl_probs = np.zeros(number_units) * np.nan
             for s in np.unique(stratum):
                 number_units_s = samp_unit[stratum == s].size
@@ -208,16 +209,16 @@ class SampleSelection:
     # PPS methods
     def _pps_inclusion_probs(
         self,
-        samp_unit: np.ndarray,
-        samp_size: Dict[Any, int],
-        mos: np.ndarray,
-        stratum: Optional[np.ndarray] = None,
+        samp_unit,
+        samp_size,
+        mos,
+        stratum=None,
     ) -> np.ndarray:
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
-        if self.stratification:
+        if isinstance(samp_size, dict):
             number_units = samp_unit.size
             incl_probs = np.zeros(number_units) * np.nan
             for s in np.unique(stratum):
@@ -230,16 +231,14 @@ class SampleSelection:
         return incl_probs
 
     @staticmethod
-    def _pps_sys_select(
-        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def _pps_sys_select(samp_unit, samp_size, mos):
 
         cumsize = np.append(0, np.cumsum(mos))
-        samp_interval = cumsize[-1] / samp_size
-        random_start = np.random.random_sample() * samp_interval
-        random_picks = random_start + samp_interval * np.linspace(0, samp_size - 1, samp_size)
+        samp_Numbererval = cumsize[-1] / samp_size
+        random_start = np.random.random_sample() * samp_Numbererval
+        random_picks = random_start + samp_Numbererval * np.linspace(0, samp_size - 1, samp_size)
 
-        hits = np.zeros(samp_unit.size).astype("int")
+        hits = np.zeros(samp_unit.size).astype(int)
         for k in range(cumsize.size - 1):
             for ll in range(random_picks.size):
                 if cumsize[k] < random_picks[ll] <= cumsize[k + 1]:
@@ -248,9 +247,7 @@ class SampleSelection:
         return hits >= 1, hits
 
     @staticmethod
-    def _pps_hv_select(
-        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def _pps_hv_select(samp_unit, samp_size, mos):
 
         pop_size = samp_unit.size
         all_indices = np.arange(pop_size)
@@ -306,23 +303,21 @@ class SampleSelection:
             sampled_indices = np.append(sampled_indices, selected_j)
             start_j = indice_j + 1
             end_j += 1
-        sample = hits = np.zeros(samp_unit.size).astype("int")
+        sample = hits = np.zeros(samp_unit.size).astype(int)
         sample[sampled_indices] = True
         hits[sampled_indices] = 1
 
         return sample, hits
 
     @staticmethod
-    def _pps_brewer_select(
-        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def _pps_brewer_select(samp_unit, samp_size, mos):
 
         all_indices = np.arange(samp_unit.size)
         all_probs = mos / np.sum(mos)
         working_probs = all_probs * (1 - all_probs) / (1 - samp_size * all_probs)
         working_probs = working_probs / np.sum(working_probs)
         sampled_indices = np.random.choice(all_indices, 1, p=working_probs)
-        sample = hits = np.zeros(samp_unit.size).astype("int")
+        sample = hits = np.zeros(samp_unit.size).astype(int)
         for s in np.arange(1, samp_size):
             remaining_indices = np.delete(all_indices, sampled_indices)
             remaining_probs = np.delete(all_probs, sampled_indices)
@@ -339,9 +334,7 @@ class SampleSelection:
         return sample, hits
 
     @staticmethod
-    def _pps_murphy_select(
-        samp_unit: np.ndarray, samp_size: int, mos: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def _pps_murphy_select(samp_unit, samp_size, mos):
 
         if samp_size != 2:
             raise ValueError(
@@ -356,20 +349,20 @@ class SampleSelection:
         current_selection = np.random.choice(remaining_indices, 1, p=remaining_probs)
         sampled_indices = np.append(sampled_indices, current_selection)
 
-        sample = hits = np.zeros(samp_unit.size).astype("int")
+        sample = hits = np.zeros(samp_unit.size).astype(int)
         sample[sampled_indices] = True
         hits[sampled_indices] = 1
 
         return sample, hits
 
     @staticmethod
-    def _pps_rs_select(samp_unit: Array, samp_size: int, mos: Array) -> Tuple[Array, Array]:
+    def _pps_rs_select(samp_unit, samp_size, mos: Array) -> Tuple[Array, Array]:
 
-        all_indices = np.arange(samp_unit.size)
+        all_indices = np.arange(samp_unit.shape[0])
         all_probs = mos / np.sum(mos)
 
         stop = False
-        sample = hits = np.zeros(samp_unit.size).astype("int")
+        sample = hits = np.zeros(samp_unit.shape[0]).astype(int)
         sampled_indices = None
         while stop is not True:
             sampled_indices = np.random.choice(all_indices, 1, p=all_probs)
@@ -391,17 +384,17 @@ class SampleSelection:
 
     def _pps_select(
         self,
-        samp_unit: np.ndarray,
-        samp_size: Dict[Any, int],
-        stratum: np.ndarray,
-        mos: np.ndarray,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        samp_unit,
+        samp_size,
+        stratum,
+        mos,
+    ):
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
-        sample = hits = np.zeros(samp_unit.size).astype("int")
-        if self.stratification:
+        sample = hits = np.zeros(samp_unit.size).astype(int)
+        if isinstance(samp_size, dict):
             for s in np.unique(stratum):
                 stratum_units = stratum == s
                 if self.method in "pps-sys":  # systematic
@@ -452,18 +445,16 @@ class SampleSelection:
 
     def _sys_inclusion_probs(
         self,
-        samp_unit: np.ndarray,
-        samp_size: Union[Dict[Any, int], int, None] = None,
-        stratum: np.ndarray = None,
-        samp_rate: Union[Dict[Any, float], float, None] = None,
+        samp_unit,
+        samp_size: Optional[Dict[StringNumber, Number]] = None,
+        stratum=None,
+        samp_rate: Optional[Dict[StringNumber, Number]] = None,
     ) -> np.ndarray:
 
         pass
 
     @staticmethod
-    def _sys_selection_method(
-        samp_unit: np.ndarray, samp_size: int, samp_rate: float
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def _sys_selection_method(samp_unit, samp_size, samp_rate):
 
         if samp_size is not None and samp_rate is not None:
             raise AssertionError(
@@ -472,25 +463,25 @@ class SampleSelection:
 
         if samp_rate is not None:
             samp_size = math.floor(samp_rate * samp_unit.size)
-        samp_interval = math.floor(samp_unit.size / samp_size)  # same as 1 / samp_rate
-        random_start = np.random.choice(range(0, samp_interval))
-        random_picks = random_start + samp_interval * np.linspace(
+        samp_Numbererval = math.floor(samp_unit.size / samp_size)  # same as 1 / samp_rate
+        random_start = np.random.choice(range(0, samp_Numbererval))
+        random_picks = random_start + samp_Numbererval * np.linspace(
             0, samp_size - 1, samp_size
-        ).astype("int")
-        hits = np.zeros(samp_unit.size).astype("int")
+        ).astype(int)
+        hits = np.zeros(samp_unit.size).astype(int)
         hits[random_picks] = 1
 
         return hits == 1, hits
 
     def _sys_select(
         self,
-        samp_unit: np.ndarray,
-        samp_size: Dict[Any, int],
-        stratum: np.ndarray,
-        samp_rate: Dict[Any, float],
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        samp_unit,
+        samp_size,
+        stratum,
+        samp_rate,
+    ):
 
-        sample = hits = np.zeros(samp_unit.size).astype("int")
+        sample = hits = np.zeros(samp_unit.size).astype(int)
         if self.stratification:
             for s in np.unique(stratum):
                 samp_size_s = None if samp_size is None else samp_size[s]
@@ -511,44 +502,70 @@ class SampleSelection:
 
     def inclusion_probs(
         self,
-        samp_unit: Array,
-        samp_size: Union[Dict[Any, int], int],
-        stratum: Optional[Array] = None,
-        mos: Optional[Array] = None,
-        samp_rate: Union[Dict[Any, float], float, None] = None,
+        samp_unit,
+        samp_size=None,
+        stratum=None,
+        mos=None,
+        samp_rate=None,
     ) -> np.ndarray:
         """Computes the inclusion probabilities according to the sampling scheme.
 
         Args:
             samp_unit (Array): an array of all the observations in the target population.
-            samp_size (Union[Dict[Any, int], int, None], optional): the dictionary of sample
+            samp_size (Union[Dict[Any, Number], Number, None], optional): the dictionary of sample
             sizes by stratum, if applicable. Defaults to None.
             stratum (Optional[Array], optional): array of the strata associated to the
                 population units. Defaults to None.
             mos (Optional[Array], optional): array of the measure of size associated to the
                 population units. Defaults to None.
-            samp_rate (Union[Dict[Any, float], float, None], optional): sampling rate provided
+            samp_rate (Union[Dict[Any, Number], Number, None], optional): sampling rate provided
                 by stratum if applicable. Defaults to None.
 
         Raises:
-            AssertionError: raises an assertion error if some of the clusters are certainties.
+            AssertionError: raises an assertion error if some of the clusters are certaNumberies.
 
         Returns:
             np.ndarray: an array of the probabilities of inclusion.
         """
+        if samp_size is not None and samp_rate is not None:
+            raise AssertionError(
+                "Both samp_size and samp_rate are provided. Only one of the two parameters should be specified."
+            )
+
+        if self.stratification and stratum is None:
+            raise AssertionError("Stratum must be provided for stratified samples!")
+
         samp_unit = formats.sample_units(samp_unit, unique=True)
 
         if stratum is not None:
             stratum = formats.numpy_array(stratum)
+            if isinstance(samp_size, (int, float)):
+                strata = np.unique(stratum)
+                samp_size_temp = dict(zip(strata, np.repeat(samp_size, strata.shape[0])))
+            # elif isinstance(samp_rate, Number):
+            #     strata = np.unique(stratum)
+            #     samp_rate_temp = dict(zip(strata, np.repeat(samp_rate, strata.shape[0])))
+            elif isinstance(samp_size, dict):
+                samp_size_temp = samp_size.copy()
+            else:
+                raise TypeError("samp_size or samp_rate has the wrong type")
+        else:
+            if isinstance(samp_size, (int, float)):
+                samp_size_temp = samp_size  # {"__dummy__": samp_size}
+            # elif isinstance(samp_rate, (Number, Number)):
+            #     samp_rate_temp = samp_rate
+            else:
+                raise TypeError("samp_size or samp_rate has the wrong type")
+
         if mos is not None:
             mos = formats.numpy_array(mos)
 
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
 
         # if samp_size is not None:
-        #     samp_size = self._convert_to_dict(samp_size, int)
+        #     samp_size = self._convert_to_dict(samp_size, Number)
         # if samp_rate is not None:
-        #     samp_rate = self._convert_to_dict(samp_rate, float)
+        #     samp_rate = self._convert_to_dict(samp_rate, Number)
 
         if self.method == "srs":
             incl_probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum)
@@ -559,8 +576,8 @@ class SampleSelection:
             "pps-rs",
             "pps-sys",
         ):
-            if self._anycertainty(samp_size, stratum, mos):
-                raise AssertionError("Some clusters are certainties.")
+            if self._anycertaNumbery(samp_size, stratum, mos):
+                raise AssertionError("Some clusters are certaNumberies.")
             incl_probs = self._pps_inclusion_probs(samp_unit, samp_size, mos, stratum)
         elif self.method == "sys":
             incl_probs = self._sys_inclusion_probs(samp_unit, samp_size, stratum, samp_rate)
@@ -569,32 +586,32 @@ class SampleSelection:
 
         return incl_probs
 
-    def joint_inclusion_probs(self) -> None:
+    def joNumber_inclusion_probs(self):
         pass
 
     def select(
         self,
-        samp_unit: Array,
-        samp_size: Union[Dict[Any, int], int, None] = None,
-        stratum: Optional[Array] = None,
-        mos: Optional[Array] = None,
-        samp_rate: Union[Dict[Any, float], float, None] = None,
-        probs: Optional[Array] = None,
-        shuffle: bool = False,
-        to_dataframe: bool = False,
-        sample_only: bool = False,
-    ) -> Union[pd.DataFrame, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
+        samp_unit,
+        samp_size=None,
+        stratum=None,
+        mos=None,
+        samp_rate=None,
+        probs=None,
+        shuffle=False,
+        to_dataframe=False,
+        sample_only=False,
+    ):
         """Selects the random sample.
 
         Args:
             samp_unit (Array): an array of all the observations in the target population.
-            samp_size (Union[Dict[Any, int], int, None], optional): the dictionary of sample
+            samp_size (Union[Dict[Any, Number], Number, None], optional): the dictionary of sample
             sizes by stratum, if applicable. Defaults to None.
             stratum (Optional[Array], optional): array of the strata associated to the
                 population units. Defaults to None.
             mos (Optional[Array], optional): array of the measure of size associated to the
                 population units. Defaults to None.
-            samp_rate (Union[Dict[Any, float], float, None], optional): sampling rate provided
+            samp_rate (Union[Dict[Any, Number], Number, None], optional): sampling rate provided
                 by stratum if applicable. Defaults to None.
             probs (Optional[Array], optional): array of the probability of selection associated to  the population units. Defaults to None.
             shuffle (bool, optional): indicates whether to shuffle the data prior to running the
@@ -607,7 +624,7 @@ class SampleSelection:
         Raises:
             AssertionError: raises an assertion error if both samp_size and samp_rate is
                 provided as input.
-            AssertionError: raises an assertion error if some of the clusters are certainties.
+            AssertionError: raises an assertion error if some of the clusters are certaNumberies.
 
         Returns:
             Union[pd.DataFrame, Tuple[np.ndarray, np.ndarray, np.ndarray]]: [description]
@@ -625,12 +642,23 @@ class SampleSelection:
 
         if stratum is not None:
             stratum = formats.numpy_array(stratum)
-            if isinstance(samp_size, int):
+            if isinstance(samp_size, (int, float)):
                 strata = np.unique(stratum)
-                samp_size = dict(zip(strata, np.repeat(samp_size, strata.shape[0])))
-            if isinstance(samp_rate, float):
-                strata = np.unique(stratum)
-                samp_size = dict(zip(strata, np.repeat(samp_size, strata.shape[0])))
+                samp_size_temp = dict(zip(strata, np.repeat(samp_size, strata.shape[0])))
+            # elif isinstance(samp_rate, Number):
+            #     strata = np.unique(stratum)
+            #     samp_rate_temp = dict(zip(strata, np.repeat(samp_rate, strata.shape[0])))
+            elif isinstance(samp_size, dict):
+                samp_size_temp = samp_size.copy()
+            else:
+                raise TypeError("samp_size or samp_rate has the wrong type")
+        else:
+            if isinstance(samp_size, (int, float)):
+                samp_size_temp = samp_size  # {"__dummy__": samp_size}
+            # elif isinstance(samp_rate, (Number, Number)):
+            #     samp_rate_temp = samp_rate
+            else:
+                raise TypeError("samp_size or samp_rate has the wrong type")
 
         if mos is not None:
             mos = formats.numpy_array(mos)
@@ -659,10 +687,10 @@ class SampleSelection:
             "pps-rs",
             "pps-sys",
         ):
-            if self._anycertainty(samp_size, stratum, mos):
-                raise AssertionError("Some clusters are certainties.")
-            probs = self.inclusion_probs(samp_unit, samp_size, stratum, mos)
-            sample, hits = self._pps_select(samp_unit, samp_size, stratum, mos)
+            if self._anycertaNumbery(samp_size, stratum, mos):
+                raise AssertionError("Some clusters are certaNumberies.")
+            probs = self.inclusion_probs(samp_unit, samp_size_temp, stratum, mos)
+            sample, hits = self._pps_select(samp_unit, samp_size_temp, stratum, mos)
         elif self.method == "sys":
             # probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum) - Todo
             sample, hits = self._sys_select(samp_unit, samp_size, stratum, samp_rate)

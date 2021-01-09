@@ -13,7 +13,7 @@ and Wolter, K.M. (2007) [#w2007]_.
 """
 
 import math
-from typing import TypeVar, Any, Dict, List, Optional, Union, Tuple
+from typing import TypeVar, Generic, Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
 import pandas as pd
@@ -21,13 +21,11 @@ from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans, sample
 from samplics.utils.types import Array, Number, Series, StringNumber
 from scipy.stats import t as student
 
-TypeTaylorEst = TypeVar("TypeTaylorEst", bound="TaylorEstimator")
 
-
-class _SurveyEstimator:
+class _SurveyEstimator(Generic[Number, StringNumber]):
     """General approach for sample estimation of linear parameters."""
 
-    def __init__(self, parameter: str, alpha: float = 0.05, random_seed: int = None) -> None:
+    def __init__(self, parameter: str, alpha: float = 0.05, random_seed: Optional[int] = None):
         """Initializes the instance """
 
         if random_seed is not None:
@@ -40,22 +38,23 @@ class _SurveyEstimator:
             self.parameter = parameter.lower()
         else:
             raise AssertionError("parameter must be 'proportion', 'mean', 'total' or 'ratio'")
-        self.alpha: float = alpha
+        self.alpha = alpha
 
-        self.point_est: Dict[StringNumber, Any] = {}
-        self.variance: Dict[StringNumber, Any] = {}
-        self.stderror: Dict[StringNumber, Any] = {}
-        self.coef_var: Dict[StringNumber, Any] = {}
-        self.deff: Dict[StringNumber, Any] = {}
-        self.lower_ci: Dict[StringNumber, Any] = {}
-        self.upper_ci: Dict[StringNumber, Any] = {}
-        self.fpc: Dict[StringNumber, Any] = {}
-        self.strata: List[StringNumber] = []
-        self.domains: Optional[List[StringNumber]] = None
-        self.method: str = "taylor"
-        self.number_strata: Optional[int] = None
-        self.number_psus: Optional[int] = None
-        self.degree_of_freedom: Optional[int] = None
+        self.point_est: Any = {}
+        self.variance: Any = {}
+        self.covariance: Any = {}
+        self.stderror: Any = {}
+        self.coef_var: Any = {}
+        self.deff: Any = {}
+        self.lower_ci: Any = {}
+        self.upper_ci: Any = {}
+        self.fpc: Any = {}
+        self.strata: Any = []
+        self.domains: Any = None
+        self.method: Any = "taylor"
+        self.number_strata: Any = None
+        self.number_psus: Any = None
+        self.degree_of_freedom: Any = None
 
     def __str__(self) -> Any:
         print(f"SAMPLICS - Estimation of {self.parameter.title()}\n")
@@ -64,12 +63,25 @@ class _SurveyEstimator:
         print(f"Degree of freedom: {self.degree_of_freedom}\n")
         parameter = self.parameter.upper()
         estimation = pd.DataFrame()
-        estimation["DOMAINS"] = self.domains
-        estimation[parameter] = self.point_est.values()
-        estimation["SE"] = self.stderror.values()
-        estimation["LCI"] = self.lower_ci.values()
-        estimation["UCI"] = self.upper_ci.values()
-        estimation["CV"] = self.coef_var.values()
+        if (
+            isinstance(self.point_est, dict)
+            and isinstance(self.stderror, dict)
+            and isinstance(self.lower_ci, dict)
+            and isinstance(self.upper_ci, dict)
+            and isinstance(self.coef_var, dict)
+        ):
+            estimation["DOMAINS"] = self.domains
+            estimation[parameter] = self.point_est.values()
+            estimation["SE"] = self.stderror.values()
+            estimation["LCI"] = self.lower_ci.values()
+            estimation["UCI"] = self.upper_ci.values()
+            estimation["CV"] = self.coef_var.values()
+        else:
+            estimation[parameter] = self.point_est
+            estimation["SE"] = self.stderror
+            estimation["LCI"] = self.lower_ci
+            estimation["UCI"] = self.upper_ci
+            estimation["CV"] = self.coef_var
 
         return "%s" % estimation
 
@@ -100,25 +112,27 @@ class _SurveyEstimator:
         self.degree_of_freedom = self.number_psus - self.number_strata
 
     def _get_point_d(
-        self, y: np.ndarray, samp_weight: np.ndarray, x: np.ndarray = None
-    ) -> np.float64:
+        self, y: np.ndarray, samp_weight: np.ndarray, x: Optional[np.ndarray] = None
+    ) -> float:
 
         if self.parameter in ("proportion", "mean"):
-            return np.sum(samp_weight * y) / np.sum(samp_weight)
+            return float(np.sum(samp_weight * y) / np.sum(samp_weight))
         elif self.parameter == "total":
-            return np.sum(samp_weight * y)
+            return float(np.sum(samp_weight * y))
         elif self.parameter == "ratio":
-            return np.sum(samp_weight * y) / np.sum(samp_weight * x)
+            return float(np.sum(samp_weight * y) / np.sum(samp_weight * x))
+        else:
+            raise ValueError("Parameter not valid!")
 
     def _get_point(
         self,
-        y: Array,
-        samp_weight: Array,
-        x: Optional[Array] = None,
-        domain: Optional[Array] = None,
+        y: np.ndarray,
+        samp_weight: np.ndarray,
+        x: Optional[np.ndarray] = None,
+        domain: Optional[np.newaxis] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
-    ) -> Dict[StringNumber, Any]:
+    ) -> Union[Dict[StringNumber, Dict[StringNumber, float]], Dict[StringNumber, float], float]:
         """Computes the parameter point estimates
 
         Args:
@@ -155,35 +169,38 @@ class _SurveyEstimator:
 
         if domain is None:
             if self.parameter == "proportion" or as_factor:
-                cat_dict = dict()
+                cat_dict: Dict[StringNumber, float] = {}
                 for k in range(categories.size):
                     y_k = y_dummies[:, k]
                     cat_dict_k = dict({categories[k]: self._get_point_d(y_k, samp_weight)})
                     cat_dict.update(cat_dict_k)
-                estimate = cat_dict
+                return cat_dict
             else:
-                estimate = self._get_point_d(y, samp_weight, x)
+                return self._get_point_d(y, samp_weight, x)
         else:
-            estimate: Dict[StringNumber, Any] = {}
             domain_ids = np.unique(domain)
-            for d in domain_ids:
-                weight_d = samp_weight[domain == d]
-                if self.parameter == "proportion" or as_factor:
-                    cat_dict = dict()
+            if self.parameter == "proportion" or as_factor:
+                estimate1: Dict[StringNumber, Dict[StringNumber, float]] = {}
+                for d in domain_ids:
+                    weight_d = samp_weight[domain == d]
+                    cat_dict_d: Dict[StringNumber, float] = {}
                     for k in range(categories.size):
                         y_d_k = y_dummies[domain == d, k]
                         cat_dict_d_k = dict({categories[k]: self._get_point_d(y_d_k, weight_d)})
-                        cat_dict.update(cat_dict_d_k)
-                    estimate[d] = cat_dict
-                else:
+                        cat_dict_d.update(cat_dict_d_k)
+                    estimate1[d] = cat_dict_d
+                return estimate1
+            else:
+                estimate2: Dict[StringNumber, float] = {}
+                for d in domain_ids:
+                    weight_d = samp_weight[domain == d]
                     y_d = y[domain == d]
                     x_d = x[domain == d] if self.parameter == "ratio" else None
-                    estimate[d] = self._get_point_d(y_d, weight_d, x_d)
+                    estimate2[d] = self._get_point_d(y_d, weight_d, x_d)
+                return estimate2
 
-        return estimate
 
-
-class TaylorEstimator(_SurveyEstimator):
+class TaylorEstimator(_SurveyEstimator[Number, StringNumber]):
     """*TaylorEstimate* implements taylor-based variance approximations.
 
     Attributes
@@ -248,9 +265,10 @@ class TaylorEstimator(_SurveyEstimator):
     @staticmethod
     def _variance_stratum_between(
         y_score_s: np.ndarray, samp_weight_s: np.ndarray, number_psus_in_s: int, psu_s: np.ndarray
-    ) -> np.float64:
+    ) -> np.ndarray:
         """Computes the variance for one stratum """
 
+        covariance = np.asarray([])
         if number_psus_in_s > 1:
             scores_s_mean = y_score_s.sum(axis=0) / number_psus_in_s  # new
             psus = np.unique(psu_s)
@@ -277,10 +295,10 @@ class TaylorEstimator(_SurveyEstimator):
     @staticmethod
     def _variance_stratum_within(
         y_score_s: np.ndarray,
-        number_psus_in_s: int,
+        number_psus_in_s: np.ndarray,
         psu_s: np.ndarray,
         ssu_s: np.ndarray,
-    ) -> np.float64:
+    ) -> float:
 
         variance = 0.0
 
@@ -308,18 +326,16 @@ class TaylorEstimator(_SurveyEstimator):
         psu: np.ndarray,
         ssu: Optional[np.ndarray] = None,
         fpc: Union[Dict[StringNumber, Number], Number] = 1,
-    ) -> np.float64:
+    ) -> np.ndarray:
         """Computes the variance across stratum """
 
-        if stratum is None:
+        if stratum is None and isinstance(fpc, (int, float)):
             number_psus = np.unique(psu).size
-            covariance = fpc * self._variance_stratum_between(
-                y_score, samp_weight, number_psus, psu
-            )
+            return fpc * self._variance_stratum_between(y_score, samp_weight, number_psus, psu)
             # + (1 - fpc) * self._variance_stratum_within(
             #     y_score, number_psus, psu, ssu
             # )
-        else:
+        elif isinstance(fpc, dict):
             covariance = np.zeros((y_score.shape[1], y_score.shape[1]))
             for s in np.unique(stratum):
                 y_score_s = y_score[stratum == s]
@@ -333,22 +349,26 @@ class TaylorEstimator(_SurveyEstimator):
                 #  + (1 - fpc[s]) * self._variance_stratum_within(
                 #     y_score_s, number_psus_in_s, psu_s, ssu_s
                 # )
-
-        return covariance
+            return covariance
+        else:
+            raise TypeError
 
     def _get_variance(
         self,
-        y: Array,
+        y: np.ndarray,
         samp_weight: np.ndarray,
-        x: Optional[Array] = None,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
-        domain: Optional[Array] = None,
-        fpc: Dict[StringNumber, Number] = 1,
+        x: Optional[np.ndarray] = None,
+        stratum: Optional[np.ndarray] = None,
+        psu: Optional[np.ndarray] = None,
+        ssu: Optional[np.ndarray] = None,
+        domain: Optional[np.ndarray] = None,
+        fpc: Union[Dict[StringNumber, Number], Number] = 1,
         as_factor: bool = False,
         remove_nan: bool = False,
-    ) -> Tuple[Union[float, dict], Union[float, dict]]:
+    ) -> Tuple[
+        Union[Dict[StringNumber, Number], np.ndarray],
+        Union[Dict[StringNumber, Number], np.ndarray],
+    ]:
 
         if self.parameter == "ratio" and x is None:
             raise AssertionError("Parameter x must be provided for ratio estimation.")
@@ -358,9 +378,11 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
-                excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
-            )
+                y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
+                    excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
+                )
+
+        # if isinstance(y, np.ndarray):
 
         categories = None
         if self.parameter == "proportion" or as_factor:
@@ -371,77 +393,70 @@ class TaylorEstimator(_SurveyEstimator):
         if domain is None:
             y_score = self._score_variable(y, samp_weight, x)  # new
             cov_score = self._taylor_variance(y_score, samp_weight, stratum, psu, ssu, fpc)  # new
-            if self.parameter == "proportion" or as_factor:
-                variance = dict(zip(categories, np.diag(cov_score)))
-                covariance = {}
+            if (self.parameter == "proportion" or as_factor) and isinstance(cov_score, np.ndarray):
+                variance1: Dict[StringNumber, dict] = {}
+                covariance1: Dict[StringNumber, dict] = {}
+                variance1 = dict(zip(categories, np.diag(cov_score)))
                 for k, level in enumerate(categories):
-                    covariance[level] = dict(zip(categories, cov_score[k, :]))
+                    covariance1[level] = dict(zip(categories, cov_score[k, :]))
+                return variance1, covariance1
             else:
-                variance = float(np.diag(cov_score))
-                covariance = variance  # Todo: generalize for multiple Y variables
+                return cov_score, cov_score  # Todo: generalize for multiple Y variables
         else:
-            variance: Dict[StringNumber, Any] = {}
-            covariance = {}
             domain = np.asarray(domain)
-            for d in np.unique(domain):
-                domain_d = domain == d
-                weight_d = samp_weight * domain_d
-                if self.parameter == "ratio":
-                    x_d = x * domain_d
-                else:
-                    x_d = x
-                y_d = y * domain_d if len(y.shape) == 1 else y * domain_d[:, None]
-                # breakpoint()
-                y_score_d = self._score_variable(y_d, weight_d, x_d)
-                cov_score_d = self._taylor_variance(y_score_d, weight_d, stratum, psu, ssu, fpc)
-                if self.parameter == "proportion" or as_factor:
-                    variance[d] = dict(zip(categories, np.diag(cov_score_d)))
+            if self.parameter == "proportion" or as_factor:
+                variance2: Dict[StringNumber, dict] = {}
+                covariance2: Dict[StringNumber, dict] = {}
+                for d in np.unique(domain):
+                    domain_d = domain == d
+                    weight_d = samp_weight * domain_d
+                    if self.parameter == "ratio":
+                        x_d = x * domain_d
+                    else:
+                        x_d = x
+                    y_d = y * domain_d if len(y.shape) == 1 else y * domain_d[:, None]
+                    y_score_d = self._score_variable(y_d, weight_d, x_d)
+                    cov_score_d = self._taylor_variance(
+                        y_score_d, weight_d, stratum, psu, ssu, fpc
+                    )
+                    variance2[d] = dict(zip(categories, np.diag(cov_score_d)))
                     cov_d = {}
                     for k, level in enumerate(categories):
                         cov_d.update({level: dict(zip(categories, cov_score_d[k, :]))})
-                    covariance.update({d: cov_d})
-                else:
-                    variance[d] = float(np.diag(cov_score_d))
-                    covariance[d] = variance[d]  # Todo: generalize for multiple Y variables
-
-        return variance, covariance
+                    covariance2.update({d: cov_d})
+                return variance2, covariance2
+            else:
+                variance3: Dict[StringNumber, float] = {}
+                for d in np.unique(domain):
+                    domain_d = domain == d
+                    weight_d = samp_weight * domain_d
+                    if self.parameter == "ratio":
+                        x_d = x * domain_d
+                    else:
+                        x_d = x
+                    y_d = y * domain_d if len(y.shape) == 1 else y * domain_d[:, None]
+                    y_score_d = self._score_variable(y_d, weight_d, x_d)
+                    cov_score_d = self._taylor_variance(
+                        y_score_d, weight_d, stratum, psu, ssu, fpc
+                    )
+                    variance3[d] = float(cov_score_d)
+                return variance3, variance3
 
     def estimate(
-        self: TypeTaylorEst,
+        self,
         y: Array,
-        samp_weight: Optional[Union[Series, Number]] = None,
+        samp_weight: Optional[Array] = None,
         x: Optional[Array] = None,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
-        domain: Optional[Array] = None,
-        fpc: Union[Dict, Array, Number] = 1.0,
+        stratum: Optional[Series] = None,
+        psu: Optional[Series] = None,
+        ssu: Optional[Series] = None,
+        domain: Optional[Series] = None,
+        fpc: Union[Dict[StringNumber, Number], Series, Number] = 1.0,
         deff: bool = False,
         coef_variation: bool = False,
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> None:
-        """[summary]
-
-        Args:
-            self (TypeTaylorEst): [description]
-            y (Array): [description]
-            samp_weight (Array): [description]
-            x (Optional[Array], optional): [description]. Defaults to None.
-            stratum (Optional[Array], optional): [description]. Defaults to None.
-            psu (Optional[Array], optional): [description]. Defaults to None.
-            ssu (Optional[Array], optional): [description]. Defaults to None.
-            domain (Optional[Array], optional): [description]. Defaults to None.
-            deff (bool, optional): [description]. Defaults to False.
-            coef_variation (bool, optional): [description]. Defaults to False.
-            remove_nan (bool, optional): [description]. Defaults to False.
-
-        Raises:
-            AssertionError: [description]
-
-        Returns:
-            TypeTaylorEst: [description]
-        """
 
         if as_factor and self.parameter not in ("mean", "total"):
             raise AssertionError("When as_factor is True, parameter must be mean or total!")
@@ -450,11 +465,12 @@ class TaylorEstimator(_SurveyEstimator):
             raise AssertionError("x must be provided for ratio estimation.")
 
         y = numpy_array(y)
+        z = y.copy()
 
         if samp_weight is None:
-            samp_weight = np.ones(y.shape[0])
+            samp_weight = np.ones(z.shape[0])
         elif isinstance(samp_weight, (float, int)):
-            samp_weight = samp_weight * np.ones(y.shape[0])
+            samp_weight = samp_weight * np.ones(z.shape[0])
         else:
             samp_weight = np.asarray(samp_weight)
 
@@ -463,8 +479,8 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
-                excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
+            z, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
+                excluded_units, z, samp_weight, x, stratum, domain, psu, ssu
             )
 
         if stratum is not None:
@@ -485,7 +501,7 @@ class TaylorEstimator(_SurveyEstimator):
         weight_ndarray = numpy_array(samp_weight)
 
         self.point_est = self._get_point(
-            y=y,
+            y=z,
             samp_weight=weight_ndarray,
             x=x,
             domain=domain,
@@ -493,7 +509,7 @@ class TaylorEstimator(_SurveyEstimator):
             remove_nan=remove_nan,
         )
         self.variance, self.covariance = self._get_variance(
-            y=y,
+            y=z,
             samp_weight=weight_ndarray,
             x=x,
             stratum=stratum,
@@ -509,23 +525,29 @@ class TaylorEstimator(_SurveyEstimator):
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
         if domain is None:
-            if self.parameter == "proportion" or (as_factor and self.parameter == "mean"):
-                stderror = {}
-                lower_ci = {}
-                upper_ci = {}
-                coef_var = {}
+            # breakpoint()
+            if (
+                (self.parameter == "proportion" or as_factor and self.parameter == "mean")
+                and isinstance(self.point_est, dict)
+                and isinstance(self.variance, dict)
+            ):
+                stderror: Dict[StringNumber, float] = {}
+                lower_ci: Dict[StringNumber, float] = {}
+                upper_ci: Dict[StringNumber, float] = {}
+                coef_var: Dict[StringNumber, float] = {}
+                # breakpoint()
                 for level in self.variance:
                     point_est = self.point_est[level]
-                    stderror[level] = pow(self.variance[level], 0.5)
+                    stderror[level] = math.sqrt(self.variance[level])
                     if point_est == 0:
-                        lower_ci[level] = 0
-                        upper_ci[level] = 0
-                        coef_var[level] = 0
+                        lower_ci[level] = 0.0
+                        upper_ci[level] = 0.0
+                        coef_var[level] = 0.0
                     elif point_est == 1:
-                        lower_ci[level] = 1
-                        upper_ci[level] = 1
-                        coef_var[level] = 0
-                    else:
+                        lower_ci[level] = 1.0
+                        upper_ci[level] = 1.0
+                        coef_var[level] = 0.0
+                    elif isinstance(point_est, float):
                         location_ci = math.log(point_est / (1 - point_est))
                         scale_ci = stderror[level] / (point_est * (1 - point_est))
                         ll = location_ci - t_quantile * scale_ci
@@ -538,14 +560,16 @@ class TaylorEstimator(_SurveyEstimator):
                 self.coef_var = coef_var
                 self.lower_ci = lower_ci
                 self.upper_ci = upper_ci
-            elif as_factor:
+            elif (
+                as_factor and isinstance(self.point_est, dict) and isinstance(self.variance, dict)
+            ):
                 stderror = {}
                 lower_ci = {}
                 upper_ci = {}
                 coef_var = {}
                 # breakpoint()
                 for level in self.variance:
-                    stderror[level] = pow(self.variance[level], 0.5)
+                    stderror[level] = math.sqrt(self.variance[level])
                     lower_ci[level] = self.point_est[level] - t_quantile * stderror[level]
                     upper_ci[level] = self.point_est[level] + t_quantile * stderror[level]
                     coef_var[level] = stderror[level] / self.point_est[level]
@@ -554,50 +578,64 @@ class TaylorEstimator(_SurveyEstimator):
                 self.coef_var = coef_var
                 self.lower_ci = lower_ci
                 self.upper_ci = upper_ci
-            else:
-                self.stderror = pow(self.variance, 0.5)
+            elif isinstance(self.variance, (int, float, np.ndarray)) and isinstance(
+                self.point_est, (int, float, np.ndarray)
+            ):
+                self.stderror = math.sqrt(self.variance)
                 self.lower_ci = self.point_est - t_quantile * self.stderror
                 self.upper_ci = self.point_est + t_quantile * self.stderror
-                self.coef_var = pow(self.variance, 0.5) / self.point_est
-        else:
+                self.coef_var = math.sqrt(self.variance) / self.point_est
+        elif isinstance(self.variance, dict):
             for key in self.variance:
-                if self.parameter == "proportion" or (as_factor and self.parameter == "mean"):
+                if (
+                    (self.parameter == "proportion" or as_factor and self.parameter == "mean")
+                    and isinstance(self.point_est, dict)
+                    and isinstance(self.variance, dict)
+                ):
                     stderror = {}
                     lower_ci = {}
                     upper_ci = {}
                     coef_var = {}
                     for level in self.variance[key]:
-                        point_est = self.point_est[key][level]
-                        stderror[level] = pow(self.variance[key][level], 0.5)
-                        if point_est == 0:
-                            lower_ci[level] = 0
-                            upper_ci[level] = 0
-                            coef_var[level] = 0
-                        elif point_est == 1:
-                            lower_ci[level] = 1
-                            upper_ci[level] = 1
-                            coef_var[level] = 0
-                        else:
-                            location_ci = math.log(point_est / (1 - point_est))
-                            scale_ci = stderror[level] / (point_est * (1 - point_est))
-                            ll = location_ci - t_quantile * scale_ci
-                            uu = location_ci + t_quantile * scale_ci
-                            lower_ci[level] = math.exp(ll) / (1 + math.exp(ll))
-                            upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
-                            coef_var[level] = stderror[level] / point_est
+                        point_est1 = self.point_est[key]
+                        variance1 = self.variance[key]
+                        if isinstance(point_est1, dict) and isinstance(variance1, dict):
+                            stderror[level] = math.sqrt(variance1[level])
+                            if point_est1[level] == 0:
+                                lower_ci[level] = 0
+                                upper_ci[level] = 0
+                                coef_var[level] = 0
+                            elif point_est1[level] == 1:
+                                lower_ci[level] = 1
+                                upper_ci[level] = 1
+                                coef_var[level] = 0
+                            else:
+                                location_ci = math.log(point_est1[level] / (1 - point_est1[level]))
+                                scale_ci = stderror[level] / (
+                                    point_est1[level] * (1 - point_est1[level])
+                                )
+                                ll = location_ci - t_quantile * scale_ci
+                                uu = location_ci + t_quantile * scale_ci
+                                lower_ci[level] = math.exp(ll) / (1 + math.exp(ll))
+                                upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
+                                coef_var[level] = stderror[level] / point_est1[level]
 
                     self.stderror[key] = stderror
                     self.coef_var[key] = coef_var
                     self.lower_ci[key] = lower_ci
                     self.upper_ci[key] = upper_ci
-                elif as_factor:
+                elif (
+                    as_factor
+                    and isinstance(self.point_est, dict)
+                    and isinstance(self.variance, dict)
+                ):
                     stderror = {}
                     lower_ci = {}
                     upper_ci = {}
                     coef_var = {}
                     # breakpoint()
                     for level in self.variance[key]:
-                        stderror[level] = pow(self.variance[key][level], 0.5)
+                        stderror[level] = math.sqrt(self.variance[key][level])
                         lower_ci[level] = self.point_est[key][level] - t_quantile * stderror[level]
                         upper_ci[level] = self.point_est[key][level] + t_quantile * stderror[level]
                         coef_var[level] = stderror[level] / self.point_est[key][level]
@@ -606,8 +644,8 @@ class TaylorEstimator(_SurveyEstimator):
                     self.coef_var[key] = coef_var
                     self.lower_ci[key] = lower_ci
                     self.upper_ci[key] = upper_ci
-                else:
-                    self.stderror[key] = pow(self.variance[key], 0.5)
+                elif isinstance(self.point_est, dict):
+                    self.stderror[key] = math.sqrt(self.variance[key])
                     self.lower_ci[key] = self.point_est[key] - t_quantile * self.stderror[key]
                     self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
-                    self.coef_var[key] = pow(self.variance[key], 0.5) / self.point_est[key]
+                    self.coef_var[key] = math.sqrt(self.variance[key]) / self.point_est[key]
