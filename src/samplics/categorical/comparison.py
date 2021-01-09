@@ -5,7 +5,7 @@ The module implements comparisons of groups.
 """
 
 from __future__ import annotations
-from typing import Any, Generic, Dict, List, Optional, Union
+from typing import Any, Generic, Dict, List, Optional, Union, Tuple
 
 import math
 import numpy as np
@@ -21,7 +21,7 @@ from samplics.estimation import TaylorEstimator
 
 
 class Ttest(Generic[Number, StringNumber]):
-    def __init__(self, type: str, paired: Optional[bool] = None, alpha: float = 0.05) -> None:
+    def __init__(self, type: str, paired: bool = False, alpha: float = 0.05) -> None:
 
         if type.lower() not in ("one-sample", "two-sample"):
             raise ValueError("Parameter 'type' must be equal to 'one-sample', 'two-sample'!")
@@ -92,39 +92,27 @@ class Ttest(Generic[Number, StringNumber]):
         self.upper_ci = one_sample.upper_ci
         self.stddev = samp_std_dev
 
-    def _one_sample_two_groups(
-        self,
-        y: np.ndarray,
-        group: Array = None,
-        samp_weight: Array = None,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
-        fpc: Union[Dict, float] = 1,
-    ) -> None:
+    def _two_groups_unpaired(
+        self, mean_est: TaylorEstimator, group: np.ndarray
+    ) -> Tuple[Any, Any, Any, Any, Any, Any]:
 
-        one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
-        one_sample.estimate(
-            y=y,
-            domain=group,
-            samp_weight=samp_weight,
-            stratum=stratum,
-            psu=psu,
-            ssu=ssu,
-            fpc=fpc,
-        )
+        if self.type == "one-sample":
+            group1 = mean_est.domains[0]
+            group2 = mean_est.domains[1]
+        elif self.type == "two-sample":
+            group1 = mean_est.by[0]
+            group2 = mean_est.by[1]
+        else:
+            raise ValueError("Parameter type is not valid!")
 
-        group1 = one_sample.domains[0]
-        group2 = one_sample.domains[1]
-
-        mean_group1 = one_sample.point_est[group1]
-        mean_group2 = one_sample.point_est[group2]
+        mean_group1 = mean_est.point_est[group1]
+        mean_group2 = mean_est.point_est[group2]
 
         nb_obs_group1 = np.sum(group == group1)
         nb_obs_group2 = np.sum(group == group2)
 
-        stddev_group1 = math.sqrt(nb_obs_group1) * one_sample.stderror[group1]
-        stddev_group2 = math.sqrt(nb_obs_group2) * one_sample.stderror[group2]
+        stddev_group1 = math.sqrt(nb_obs_group1) * mean_est.stderror[group1]
+        stddev_group2 = math.sqrt(nb_obs_group2) * mean_est.stderror[group2]
 
         t_equal_variance = (mean_group1 - mean_group2) / (
             math.sqrt(
@@ -156,7 +144,7 @@ class Ttest(Generic[Number, StringNumber]):
         left_p_value_unequal_variance = t.cdf(t_unequal_variance, t_df_unequal_variance)
         both_p_value_unequal_variance = 2 * t.cdf(-abs(t_unequal_variance), t_df_unequal_variance)
 
-        self.stats = {
+        stats = {
             "number_obs": {group1: nb_obs_group1, group2: nb_obs_group2},
             "t_eq_variance": t_equal_variance,
             "df_eq_variance": t_df_equal_variance,
@@ -174,14 +162,51 @@ class Ttest(Generic[Number, StringNumber]):
             },
         }
 
-        self.point_est = one_sample.point_est
-        self.stderror = one_sample.stderror
-        self.lower_ci = one_sample.lower_ci
-        self.upper_ci = one_sample.upper_ci
-        self.stddev = {
-            group1: math.sqrt(nb_obs_group1) * self.stderror[group1],
-            group2: math.sqrt(nb_obs_group2) * self.stderror[group2],
+        if (
+            isinstance(mean_est.point_est, dict)
+            and isinstance(mean_est.stderror, dict)
+            and isinstance(mean_est.lower_ci, dict)
+            and isinstance(mean_est.upper_ci, dict)
+        ):
+            point_est = mean_est.point_est.copy()
+            stderror = mean_est.stderror.copy()
+            lower_ci = mean_est.lower_ci.copy()
+            upper_ci = mean_est.upper_ci.copy()
+        else:
+            point_est = mean_est.point_est
+            stderror = mean_est.stderror
+            lower_ci = mean_est.lower_ci
+            upper_ci = mean_est.upper_ci
+
+        stddev = {
+            group1: math.sqrt(nb_obs_group1) * stderror[group1],
+            group2: math.sqrt(nb_obs_group2) * stderror[group2],
         }
+
+        return point_est, stderror, stddev, lower_ci, upper_ci, stats
+
+    # def _one_sample_two_groups(
+    #     self,
+    #     y: np.ndarray,
+    #     group: Array = None,
+    #     samp_weight: Array = None,
+    #     stratum: Optional[Array] = None,
+    #     psu: Optional[Array] = None,
+    #     ssu: Optional[Array] = None,
+    #     fpc: Union[Dict, float] = 1,
+    # ) -> None:
+
+    #     one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
+    #     one_sample.estimate(
+    #         y=y,
+    #         domain=group,
+    #         samp_weight=samp_weight,
+    #         stratum=stratum,
+    #         psu=psu,
+    #         ssu=ssu,
+    #         fpc=fpc,
+    #     )
+    #     self._two_groups_unpaired(mean_est=one_sample, group=group)
 
     def _two_samples_unpaired(
         self,
@@ -194,7 +219,17 @@ class Ttest(Generic[Number, StringNumber]):
         fpc: Union[Dict, float] = 1,
     ) -> None:
 
-        pass
+        two_samples_unpaired = TaylorEstimator(parameter="mean", alpha=self.alpha)
+        two_samples_unpaired.estimate(
+            y=y,
+            by=group,
+            samp_weight=samp_weight,
+            stratum=stratum,
+            psu=psu,
+            ssu=ssu,
+            fpc=fpc,
+        )
+        self._two_groups_unpaired(mean_est=two_samples_unpaired, group=group)
 
     def compare(
         self,
@@ -227,7 +262,35 @@ class Ttest(Generic[Number, StringNumber]):
                 fpc=fpc,
             )
         elif self.type == "one-sample" and group is not None:
-            self._one_sample_two_groups(
+            # self._one_sample_two_groups(
+            #     y=y,
+            #     group=group,
+            #     samp_weight=samp_weight,
+            #     stratum=stratum,
+            #     psu=psu,
+            #     ssu=ssu,
+            #     fpc=fpc,
+            # )
+            one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
+            one_sample.estimate(
+                y=y,
+                domain=group,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+            )
+            (
+                self.point_est,
+                self.stderror,
+                self.stddev,
+                self.lower_ci,
+                self.upper_ci,
+                self.stats,
+            ) = self._two_groups_unpaired(mean_est=one_sample, group=group)
+        elif self.type == "two-sample" and not self.paired:
+            self._two_samples_unpaired(
                 y=y,
                 group=group,
                 samp_weight=samp_weight,
@@ -236,9 +299,25 @@ class Ttest(Generic[Number, StringNumber]):
                 ssu=ssu,
                 fpc=fpc,
             )
-            pass
-        elif self.type == "two-sample" and not self.paired:
-            pass
+
+            two_samples_unpaired = TaylorEstimator(parameter="mean", alpha=self.alpha)
+            two_samples_unpaired.estimate(
+                y=y,
+                by=group,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+            )
+            (
+                self.point_est,
+                self.stderror,
+                self.stddev,
+                self.lower_ci,
+                self.upper_ci,
+                self.stats,
+            ) = self._two_groups_unpaired(mean_est=two_samples_unpaired, group=group)
         elif self.type == "two-sample" and self.paired:
             if len(y.shape) == 1 or y.shape[1] != 2:
                 raise AssertionError(
@@ -257,5 +336,5 @@ class Ttest(Generic[Number, StringNumber]):
         else:
             raise ValueError("type must be equal to 'one-sample', 'two-sample'!")
 
-    def by(self, by_var: Array) -> Dict[StringNumber, Ttest]:
-        pass
+    # def by(self, by_var: Array) -> Dict[StringNumber, Ttest]:
+    #     pass
