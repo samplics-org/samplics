@@ -53,20 +53,20 @@ one_sample_know_mean.compare(y, known_mean=20)
 
 
 def test_one_sample_known_mean_mean():
-    assert np.isclose(one_sample_know_mean.point_est["__none__"], 21.2973, atol=1e-4)
+    assert np.isclose(one_sample_know_mean.point_est, 21.2973, atol=1e-4)
 
 
 def test_one_sample_known_mean_stderror():
-    assert np.isclose(one_sample_know_mean.stderror["__none__"], 0.67255, atol=1e-4)
+    assert np.isclose(one_sample_know_mean.stderror, 0.67255, atol=1e-4)
 
 
 def test_one_sample_known_mean_stddev():
-    assert np.isclose(one_sample_know_mean.stddev["__none__"], 5.78550, atol=1e-4)
+    assert np.isclose(one_sample_know_mean.stddev, 5.78550, atol=1e-4)
 
 
 def test_one_sample_known_mean_ci():
-    assert np.isclose(one_sample_know_mean.lower_ci["__none__"], 19.9569, atol=1e-4)
-    assert np.isclose(one_sample_know_mean.upper_ci["__none__"], 22.63769, atol=1e-4)
+    assert np.isclose(one_sample_know_mean.lower_ci, 19.9569, atol=1e-4)
+    assert np.isclose(one_sample_know_mean.upper_ci, 22.63769, atol=1e-4)
 
 
 def test_one_sample_known_mean_stats():

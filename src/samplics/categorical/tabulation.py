@@ -187,11 +187,11 @@ class Tabulation:
                 self.upper_ci[vars_names[0]] = tbl_est.upper_ci
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff
             elif self.parameter == "proportion":
-                self.point_est[vars_names[0]] = tbl_est.point_est["__none__"]
-                self.stderror[vars_names[0]] = tbl_est.stderror["__none__"]
-                self.lower_ci[vars_names[0]] = tbl_est.lower_ci["__none__"]
-                self.upper_ci[vars_names[0]] = tbl_est.upper_ci["__none__"]
-                self.deff[vars_names[0]] = {}  # todo: tbl_est.deff["__none__"]
+                self.point_est[vars_names[0]] = tbl_est.point_est
+                self.stderror[vars_names[0]] = tbl_est.stderror
+                self.lower_ci[vars_names[0]] = tbl_est.lower_ci
+                self.upper_ci[vars_names[0]] = tbl_est.upper_ci
+                self.deff[vars_names[0]] = {}  # todo: tbl_est.deff
         else:
             nb_obs = 0
             tbl_est = None
@@ -217,11 +217,11 @@ class Tabulation:
                     self.upper_ci[vars_names[k]] = tbl_est.upper_ci
                     self.deff[vars_names[k]] = {}  # todo: tbl_est.deff
                 elif self.parameter == "proportion":
-                    self.point_est[vars_names[k]] = tbl_est.point_est["__none__"]
-                    self.stderror[vars_names[k]] = tbl_est.stderror["__none__"]
-                    self.lower_ci[vars_names[k]] = tbl_est.lower_ci["__none__"]
-                    self.upper_ci[vars_names[k]] = tbl_est.upper_ci["__none__"]
-                    self.deff[vars_names[k]] = {}  # todo: tbl_est.deff["__none__"]
+                    self.point_est[vars_names[k]] = tbl_est.point_est
+                    self.stderror[vars_names[k]] = tbl_est.stderror
+                    self.lower_ci[vars_names[k]] = tbl_est.lower_ci
+                    self.upper_ci[vars_names[k]] = tbl_est.upper_ci
+                    self.deff[vars_names[k]] = {}  # todo: tbl_est.deff
 
         self.vars_names = vars_names
         self.design_info = {
@@ -418,7 +418,7 @@ class CrossTabulation:
             as_factor=True,
         )
         tbl_est = tbl_est_prop
-        cell_est = np.array(list(tbl_est_prop.point_est["__none__"].values()))
+        cell_est = np.array(list(tbl_est_prop.point_est.values()))
         cov_prop_srs = (
             np.diag(cell_est)
             - cell_est.reshape(vars_levels.shape[0], 1)
@@ -448,17 +448,17 @@ class CrossTabulation:
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_prop_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov_prop @ x2_tilde
         )
-        tbl_keys = list(tbl_est.point_est["__none__"].keys())
+        tbl_keys = list(tbl_est.point_est.keys())
         cell_est = np.zeros(vars_levels.shape[0])
         cell_stderror = np.zeros(vars_levels.shape[0])
         cell_lower_ci = np.zeros(vars_levels.shape[0])
         cell_upper_ci = np.zeros(vars_levels.shape[0])
         for k in range(vars_levels.shape[0]):
             if vars_levels_concat[k] in tbl_keys:
-                cell_est[k] = tbl_est.point_est["__none__"][vars_levels_concat[k]]
-                cell_stderror[k] = tbl_est.stderror["__none__"][vars_levels_concat[k]]
-                cell_lower_ci[k] = tbl_est.lower_ci["__none__"][vars_levels_concat[k]]
-                cell_upper_ci[k] = tbl_est.upper_ci["__none__"][vars_levels_concat[k]]
+                cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
+                cell_stderror[k] = tbl_est.stderror[vars_levels_concat[k]]
+                cell_lower_ci[k] = tbl_est.lower_ci[vars_levels_concat[k]]
+                cell_upper_ci[k] = tbl_est.upper_ci[vars_levels_concat[k]]
 
         for r in range(nrows):
             point_est = {}
