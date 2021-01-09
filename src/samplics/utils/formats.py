@@ -7,7 +7,7 @@ Functions:
     | *dataframe_to_array()* returns a pandas dataframe from an np.ndarray.
 """
 
-from typing import Any, Dict, List, Union, Tuple
+from typing import Dict, List, Union, Tuple
 
 import numpy as np
 import pandas as pd
@@ -93,10 +93,10 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 
 
 def sample_size_dict(
-    sample_size: Union[Dict[Any, int], int],
+    sample_size: Union[Dict[StringNumber, Number], Number],
     stratification: bool,
     stratum: Array,
-) -> Union[Dict[StringNumber, int], int]:
+) -> Union[Dict[StringNumber, Number], Number]:
     if not isinstance(sample_size, Dict) and stratification:
         return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
     if isinstance(sample_size, (int, float)) and not stratification:
@@ -113,7 +113,7 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     return all_units
 
 
-def dict_to_dataframe(col_names: List[str], *args: Dict[Any, Number]) -> pd.DataFrame:
+def dict_to_dataframe(col_names: List[str], *args: Dict[StringNumber, Number]) -> pd.DataFrame:
 
     if isinstance(args[0], dict):
         keys = list(args[0].keys())

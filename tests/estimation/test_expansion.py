@@ -38,7 +38,7 @@ y = yrbs["y"]
 
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
 svy_total_without_str = TaylorEstimator("total")
-# svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
+svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
 # breakpoint()
 
 
@@ -426,7 +426,8 @@ def test_ratio_estimator_with_str_nor_psu_domain():
 
 """Taylor Approximation WITHOUT Stratification for PROPORTION"""
 svy_prop_without_str = TaylorEstimator("proportion")
-
+# svy_prop_without_str.estimate(y, weight, psu=psu, remove_nan=True)
+# breakpoint()
 
 def test_prop_estimator_without_str():
     svy_prop_without_str.estimate(y, weight, psu=psu, remove_nan=True)
