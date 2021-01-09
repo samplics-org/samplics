@@ -5,7 +5,7 @@ The module implements comparisons of groups.
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Union
+from typing import Any, Generic, Dict, List, Optional, Union
 
 import math
 import numpy as np
@@ -20,7 +20,7 @@ from samplics.utils.types import Array, Number, Series, StringNumber
 from samplics.estimation import TaylorEstimator
 
 
-class Ttest:
+class Ttest(Generic[Number, StringNumber]):
     def __init__(self, type: str, paired: Optional[bool] = None, alpha: float = 0.05) -> None:
 
         if type.lower() not in ("one-sample", "two-sample"):
@@ -30,13 +30,12 @@ class Ttest:
         self.type = type.lower()
         self.paired = paired
 
-        self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
-        self.stats: Dict[str, Dict[str, Number]] = {}
-        self.stderror: Dict[str, Dict[str, Number]] = {}
-        self.stderror: Dict[str, Dict[str, Number]] = {}
-        self.lower_ci: Dict[str, Dict[str, Number]] = {}
-        self.upper_ci: Dict[str, Dict[str, Number]] = {}
-        self.deff: Dict[str, Dict[str, Number]] = {}
+        self.point_est: Any = {}
+        self.stats: Any = {}
+        self.stderror: Any = {}
+        self.lower_ci: Any = {}
+        self.upper_ci: Any = {}
+        self.deff: Any = {}
         self.alpha: float = alpha
         # self.design_info: Dict[str, Number] = {}
         self.group_names: List[str] = []
