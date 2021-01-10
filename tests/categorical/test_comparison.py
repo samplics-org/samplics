@@ -48,7 +48,7 @@ def test_one_sample_wrong_specifications3():
 
 ## One-sample with known mean for comparison
 
-one_sample_know_mean = Ttest(type="one-sample")
+one_sample_know_mean = Ttest(samp_type="one-sample")
 one_sample_know_mean.compare(y, known_mean=20)
 
 
@@ -82,7 +82,7 @@ def test_one_sample_known_mean_stats():
 
 ## One-sample with comparisons between groups
 
-one_sample_two_groups = Ttest(type="one-sample")
+one_sample_two_groups = Ttest(samp_type="one-sample")
 one_sample_two_groups.compare(y, group=foreign)
 
 
@@ -137,7 +137,7 @@ def test_one_sample_two_groups_t_uneq_variance():
 
 ## Two-sample comparisons - UNPAIRED
 
-two_samples_unpaired = Ttest(type="two-sample")
+two_samples_unpaired = Ttest(samp_type="two-sample")
 two_samples_unpaired.compare(y, group=foreign)
 
 
@@ -166,7 +166,7 @@ def test_two_samples_unpaired_upper_ci():
     assert np.isclose(two_samples_unpaired.upper_ci["Foreign"], 27.7039633, 1e-4)
 
 
-two_samples_stats= two_samples_unpaired.stats
+two_samples_stats = two_samples_unpaired.stats
 
 
 def test_two_samples_unpaired_number_obs():
@@ -190,18 +190,36 @@ def test_two_samples_unpaired_t_uneq_variance():
     assert np.isclose(two_samples_stats["p_value_uneq_variance"]["not_equal"], 0.0033701, 1e-4)
 
 
-# breakpoint()
-
 ## two-sample with paired observations
 
 
-# two_sample_paired = Ttest(type="two-sample", paired=True)
-# two_sample_paired.compare([y1, y2], group=foreign)
+two_samples_paired = Ttest(samp_type="two-sample", paired=True)
+two_samples_paired.compare([y1, y2], group=foreign)
 
 
-# @pytest.mark.xfail(
-#     strict=True, reason="Parameter y must be an array-like object of dimension n by 2!"
-# )
-# def test_two_sample_wrong_specifications1():
-#     two_sample_paired = Ttest(type="two-sample", paired=True)
-#     two_sample_paired.compare(y, group=foreign)
+def test_two_samples_paired_mean():
+    assert np.isclose(two_samples_paired.point_est, 0.000000405405, atol=1e-8)
+
+
+def test_two_samples_paired_stderror():
+    assert np.isclose(two_samples_paired.stderror, 0.00000046419, atol=1e-8)
+
+
+def test_two_samples_paired_stddev():
+    assert np.isclose(two_samples_paired.stddev, 0.0000039932, atol=1e-8)
+
+
+def test_two_samples_paired_ci():
+    assert np.isclose(two_samples_paired.lower_ci, -0.00000051974, atol=1e-8)
+    assert np.isclose(two_samples_paired.upper_ci, 0.0000013305, atol=1e-8)
+
+
+def test_two_samples_paired_stats():
+    stats = two_samples_paired.stats
+    assert np.isclose(stats["number_obs"], 74, atol=1e-4)
+    assert np.isclose(stats["t"], 0.873349, atol=1e-4)
+    assert np.isclose(stats["df"], 73, atol=1e-4)
+    assert np.isclose(stats["known_mean"], 0, atol=1e-4)
+    assert np.isclose(stats["p_value"]["less_than"], 0.80733168, atol=1e-4)
+    assert np.isclose(stats["p_value"]["greater_than"], 0.1926683, atol=1e-4)
+    assert np.isclose(stats["p_value"]["not_equal"], 0.38533664, atol=1e-4)
