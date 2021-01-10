@@ -14,7 +14,9 @@ foreign = auto["foreign"]
 y1 = auto["y1"]
 y2 = auto["y2"]
 
-# breakpoint()
+one_sample_known_mean = Ttest(samp_type="one-sample")
+one_sample_known_mean.compare(y, known_mean=20)
+breakpoint()
 
 # np.random.seed(seed=12345)
 # y1 = y / 100 + np.random.rand(y.shape[0]) * 1e-5
@@ -48,29 +50,29 @@ def test_one_sample_wrong_specifications3():
 
 ## One-sample with known mean for comparison
 
-one_sample_know_mean = Ttest(samp_type="one-sample")
-one_sample_know_mean.compare(y, known_mean=20)
+one_sample_known_mean = Ttest(samp_type="one-sample")
+one_sample_known_mean.compare(y, known_mean=20)
 
 
 def test_one_sample_known_mean_mean():
-    assert np.isclose(one_sample_know_mean.point_est, 21.2973, atol=1e-4)
+    assert np.isclose(one_sample_known_mean.point_est, 21.2973, atol=1e-4)
 
 
 def test_one_sample_known_mean_stderror():
-    assert np.isclose(one_sample_know_mean.stderror, 0.67255, atol=1e-4)
+    assert np.isclose(one_sample_known_mean.stderror, 0.67255, atol=1e-4)
 
 
 def test_one_sample_known_mean_stddev():
-    assert np.isclose(one_sample_know_mean.stddev, 5.78550, atol=1e-4)
+    assert np.isclose(one_sample_known_mean.stddev, 5.78550, atol=1e-4)
 
 
 def test_one_sample_known_mean_ci():
-    assert np.isclose(one_sample_know_mean.lower_ci, 19.9569, atol=1e-4)
-    assert np.isclose(one_sample_know_mean.upper_ci, 22.63769, atol=1e-4)
+    assert np.isclose(one_sample_known_mean.lower_ci, 19.9569, atol=1e-4)
+    assert np.isclose(one_sample_known_mean.upper_ci, 22.63769, atol=1e-4)
 
 
 def test_one_sample_known_mean_stats():
-    stats = one_sample_know_mean.stats
+    stats = one_sample_known_mean.stats
     assert np.isclose(stats["number_obs"], 74, atol=1e-4)
     assert np.isclose(stats["t"], 1.92889, atol=1e-4)
     assert np.isclose(stats["df"], 73, atol=1e-4)

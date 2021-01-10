@@ -42,6 +42,9 @@ class Ttest(Generic[Number, StringNumber]):
         self.group_names: List[str] = []
         self.group_levels: Dict[str, StringNumber] = {}
 
+    def __repr__(self) -> str:
+        return f"T-test(samp_type={self.samp_type}, paired={self.paired}, alpha={self.alpha})"
+
     def _one_sample_one_group(
         self,
         y: np.ndarray,
@@ -186,29 +189,6 @@ class Ttest(Generic[Number, StringNumber]):
 
         return point_est, stderror, stddev, lower_ci, upper_ci, stats
 
-    # def _one_sample_two_groups(
-    #     self,
-    #     y: np.ndarray,
-    #     group: Array = None,
-    #     samp_weight: Array = None,
-    #     stratum: Optional[Array] = None,
-    #     psu: Optional[Array] = None,
-    #     ssu: Optional[Array] = None,
-    #     fpc: Union[Dict, float] = 1,
-    # ) -> None:
-
-    #     one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
-    #     one_sample.estimate(
-    #         y=y,
-    #         domain=group,
-    #         samp_weight=samp_weight,
-    #         stratum=stratum,
-    #         psu=psu,
-    #         ssu=ssu,
-    #         fpc=fpc,
-    #     )
-    #     self._two_groups_unpaired(mean_est=one_sample, group=group)
-
     def _two_samples_unpaired(
         self,
         y: np.ndarray,
@@ -263,15 +243,6 @@ class Ttest(Generic[Number, StringNumber]):
                 fpc=fpc,
             )
         elif self.samp_type == "one-sample" and group is not None:
-            # self._one_sample_two_groups(
-            #     y=y,
-            #     group=group,
-            #     samp_weight=samp_weight,
-            #     stratum=stratum,
-            #     psu=psu,
-            #     ssu=ssu,
-            #     fpc=fpc,
-            # )
             one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
             one_sample.estimate(
                 y=y,
@@ -338,4 +309,4 @@ class Ttest(Generic[Number, StringNumber]):
             raise ValueError("type must be equal to 'one-sample', 'two-sample'!")
 
     # def by(self, by_var: Array) -> Dict[StringNumber, Ttest]:
-    #     pass
+    #     passl
