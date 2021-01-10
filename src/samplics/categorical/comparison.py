@@ -21,18 +21,19 @@ from samplics.estimation import TaylorEstimator
 
 
 class Ttest(Generic[Number, StringNumber]):
-    def __init__(self, type: str, paired: bool = False, alpha: float = 0.05) -> None:
+    def __init__(self, samp_type: str, paired: bool = False, alpha: float = 0.05) -> None:
 
-        if type.lower() not in ("one-sample", "two-sample"):
+        if samp_type.lower() not in ("one-sample", "two-sample"):
             raise ValueError("Parameter 'type' must be equal to 'one-sample', 'two-sample'!")
         assert_probabilities(alpha)
 
-        self.type = type.lower()
+        self.samp_type = samp_type.lower()
         self.paired = paired
 
         self.point_est: Any = {}
         self.stats: Any = {}
         self.stderror: Any = {}
+        self.stddev: Any = {}
         self.lower_ci: Any = {}
         self.upper_ci: Any = {}
         self.deff: Any = {}
@@ -96,10 +97,10 @@ class Ttest(Generic[Number, StringNumber]):
         self, mean_est: TaylorEstimator, group: np.ndarray
     ) -> Tuple[Any, Any, Any, Any, Any, Any]:
 
-        if self.type == "one-sample":
+        if self.samp_type == "one-sample":
             group1 = mean_est.domains[0]
             group2 = mean_est.domains[1]
-        elif self.type == "two-sample":
+        elif self.samp_type == "two-sample":
             group1 = mean_est.by[0]
             group2 = mean_est.by[1]
         else:
@@ -251,7 +252,7 @@ class Ttest(Generic[Number, StringNumber]):
 
         y = numpy_array(y)
 
-        if self.type == "one-sample" and known_mean is not None:
+        if self.samp_type == "one-sample" and known_mean is not None:
             self._one_sample_one_group(
                 y=y,
                 known_mean=known_mean,
@@ -261,7 +262,7 @@ class Ttest(Generic[Number, StringNumber]):
                 ssu=ssu,
                 fpc=fpc,
             )
-        elif self.type == "one-sample" and group is not None:
+        elif self.samp_type == "one-sample" and group is not None:
             # self._one_sample_two_groups(
             #     y=y,
             #     group=group,
@@ -289,7 +290,7 @@ class Ttest(Generic[Number, StringNumber]):
                 self.upper_ci,
                 self.stats,
             ) = self._two_groups_unpaired(mean_est=one_sample, group=group)
-        elif self.type == "two-sample" and not self.paired:
+        elif self.samp_type == "two-sample" and not self.paired:
             self._two_samples_unpaired(
                 y=y,
                 group=group,
@@ -318,7 +319,7 @@ class Ttest(Generic[Number, StringNumber]):
                 self.upper_ci,
                 self.stats,
             ) = self._two_groups_unpaired(mean_est=two_samples_unpaired, group=group)
-        elif self.type == "two-sample" and self.paired:
+        elif self.samp_type == "two-sample" and self.paired:
             if len(y.shape) == 1 or y.shape[1] != 2:
                 raise AssertionError(
                     "Parameter y must be an array-like object of dimension n by 2 for two-sample paired T-test"
