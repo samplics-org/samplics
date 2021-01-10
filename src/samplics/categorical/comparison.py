@@ -13,6 +13,7 @@ import pandas as pd
 
 from scipy.stats import t
 
+from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
 from samplics.utils.formats import numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber
@@ -44,6 +45,59 @@ class Ttest(Generic[Number, StringNumber]):
 
     def __repr__(self) -> str:
         return f"T-test(samp_type={self.samp_type}, paired={self.paired}, alpha={self.alpha})"
+
+    def __str__(self) -> str:
+
+        if self.point_est == {}:
+            return "No table to display"
+        else:
+            tbl_head = f"Design-based {self.samp_type.title()} T-test"
+            if (self.samp_type == "one-sample" and self.group_names == []) or self.paired:
+                if self.samp_type == "one-sample":
+                    tbl_subhead1 = f" Null hypothesis (Ho): mean = {self.stats['known_mean']}"
+                else:
+                    tbl_subhead1 = f" Null hypothesis (Ho): mean(Diff = {self.vars_names[0]} - {self.vars_names[1]}) = 0"
+                tbl_subhead2 = f" t statictics: {self.stats['t']:.4f}"
+                tbl_subhead3 = f" Degrees of freedom: {self.stats['df']:.2f}"
+                tbl_subhead4 = f" Alternative hypothesis (Ha):"
+                tbl_subhead4a = f"  Prob(T < t) = {self.stats['p_value']['less_than']:.4f}"
+                tbl_subhead4b = f"  Prob(|T| > |t|) = {self.stats['p_value']['not_equal']:.4f}"
+                tbl_subhead4c = f"  Prob(T > t) = {self.stats['p_value']['greater_than']:.4f}"
+
+                return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n{tbl_subhead4a}\n{tbl_subhead4b}\n{tbl_subhead4c} \n\n{self.to_dataframe().to_string(index=False)}\n"
+
+            elif (self.samp_type == "one-sample" and self.group_names != []) or (
+                self.samp_type == "two-sample" and not self.paired
+            ):
+                tbl_subhead1 = f" Null hypothesis (Ho): mean({self.group_names[0]}) = mean({self.group_names[1]}) "
+                tbl_subhead2 = f" Equal variance assumption:"
+                tbl_subhead2a = f"  t statictics: {self.stats['t_eq_variance']:.4f}"
+                tbl_subhead2b = f"  Degrees of freedom: {self.stats['df_eq_variance']:.2f}"
+                tbl_subhead3 = f"  Alternative hypothesis (Ha):"
+                tbl_subhead3a = (
+                    f"   Prob(T < t) = {self.stats['p_value_eq_variance']['less_than']:.4f}"
+                )
+                tbl_subhead3b = (
+                    f"   Prob(|T| > |t|) = {self.stats['p_value_eq_variance']['not_equal']:.4f}"
+                )
+                tbl_subhead3c = (
+                    f"   Prob(T > t) = {self.stats['p_value_eq_variance']['greater_than']:.4f}"
+                )
+                tbl_subhead4 = f" Unequal variance assumption:"
+                tbl_subhead4a = f"  t statictics: {self.stats['t_uneq_variance']:.4f}"
+                tbl_subhead4b = f"  Degrees of freedom: {self.stats['df_uneq_variance']:.2f}"
+                tbl_subhead5 = f"  Alternative hypothesis (Ha):"
+                tbl_subhead5a = (
+                    f"   Prob(T < t) = {self.stats['p_value_uneq_variance']['less_than']:.4f}"
+                )
+                tbl_subhead5b = (
+                    f"   Prob(|T| > |t|) = {self.stats['p_value_uneq_variance']['not_equal']:.4f}"
+                )
+                tbl_subhead5c = (
+                    f"   Prob(T > t) = {self.stats['p_value_uneq_variance']['greater_than']:.4f}"
+                )
+
+                return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead2a}\n{tbl_subhead2b}\n{tbl_subhead3}\n{tbl_subhead3a}\n{tbl_subhead3b}\n{tbl_subhead3c}\n{tbl_subhead4}\n{tbl_subhead4a}\n{tbl_subhead4b}\n{tbl_subhead5}\n{tbl_subhead5a}\n{tbl_subhead5b}\n{tbl_subhead5c} \n\n{self.to_dataframe().to_string(index=False)}\n"
 
     def _one_sample_one_group(
         self,
@@ -217,6 +271,7 @@ class Ttest(Generic[Number, StringNumber]):
         y: Union[Series, Array],
         known_mean: Number = None,
         group: Optional[Array] = None,
+        varnames: Optional[Union[str, List[str]]] = None,
         samp_weight: Array = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
@@ -225,11 +280,24 @@ class Ttest(Generic[Number, StringNumber]):
         remove_nan: bool = False,
     ) -> None:
 
+
+        if y is None:
+            raise AssertionError("vars need to be an array-like object")
         if known_mean is None and group is None:
             raise AssertionError("Parameters 'known_mean' or 'group' must be provided!")
         if known_mean is not None and group is not None:
             raise AssertionError("Only one parameter 'known_mean' or 'group' should be provided!")
 
+        if varnames is None:
+            prefix = "var"
+        elif isinstance(varnames, str):
+            prefix = varnames
+        elif isinstance(varnames, list):
+            prefix = varnames[0]
+        else:
+            raise AssertionError("varnames should be a string or a list of string")
+
+        self.vars_names = set_variables_names(y, varnames, prefix)
         y = numpy_array(y)
 
         if self.samp_type == "one-sample" and known_mean is not None:
@@ -261,6 +329,7 @@ class Ttest(Generic[Number, StringNumber]):
                 self.upper_ci,
                 self.stats,
             ) = self._two_groups_unpaired(mean_est=one_sample, group=group)
+            self.group_names = list(self.point_est.keys())
         elif self.samp_type == "two-sample" and not self.paired:
             self._two_samples_unpaired(
                 y=y,
@@ -290,6 +359,7 @@ class Ttest(Generic[Number, StringNumber]):
                 self.upper_ci,
                 self.stats,
             ) = self._two_groups_unpaired(mean_est=two_samples_unpaired, group=group)
+            self.group_names = list(self.point_est.keys())
         elif self.samp_type == "two-sample" and self.paired:
             if len(y.shape) == 1 or y.shape[1] != 2:
                 raise AssertionError(
@@ -308,5 +378,31 @@ class Ttest(Generic[Number, StringNumber]):
         else:
             raise ValueError("type must be equal to 'one-sample', 'two-sample'!")
 
-    # def by(self, by_var: Array) -> Dict[StringNumber, Ttest]:
-    #     passl
+    def to_dataframe(
+        self,
+    ) -> pd.DataFrame:
+
+        if (self.samp_type == "one-sample" and self.group_names == []) or self.paired:
+            return pd.DataFrame(
+                data={
+                    "Nb. Obs": [self.stats["number_obs"]],
+                    "Mean": [self.point_est],
+                    "Std. Error": [self.stderror],
+                    "Std. Dev.": [self.stddev],
+                    "Lower CI": [self.lower_ci],
+                    "Upper CI": [self.upper_ci],
+                }
+            )
+        else:
+            groups = list(self.point_est.keys())
+            return pd.DataFrame(
+                data={
+                    "Group": groups,
+                    "Nb. Obs": list(self.stats["number_obs"].values()),
+                    "Mean": list(self.point_est.values()),
+                    "Std. Error": list(self.stderror.values()),
+                    "Std. Dev.": list(self.stddev.values()),
+                    "Lower CI": list(self.lower_ci.values()),
+                    "Upper CI": list(self.upper_ci.values()),
+                }
+            )

@@ -65,7 +65,7 @@ class Tabulation:
             tbl_subhead3 = f"Number of observations: {self.design_info['number_obs']}"
             tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']}"
 
-            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe()}"
+            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}"
 
     def _estimate(
         self,
@@ -320,7 +320,7 @@ class CrossTabulation:
             lr_adj = f"Adjusted - {f_dist}): {self.stats['LR-Adj']['f_value']:.4f}  with p-value of {self.stats['LR-Adj']['p_value']:.4f}"
             lr_test = f"Likelihood ratio (with Rao-Scott adjustment):\n\t{lr_unadj}\n\t{lr_adj}"
 
-            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe()}\n\n {pearson_test} \n\n {lr_test}"
+            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n\n {pearson_test} \n\n {lr_test}"
 
     def tabulate(
         self,
