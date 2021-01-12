@@ -416,8 +416,10 @@ class ReplicateEstimator(_SurveyEstimator):
         if self.parameter == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
-        if not isinstance(rep_weights, np.ndarray):
-            rep_weights = formats.numpy_array(rep_weights)
+        y = formats.numpy_array(y)
+        samp_weight = formats.numpy_array(samp_weight)
+        rep_weights = formats.numpy_array(rep_weights)
+        x = formats.numpy_array(x) if x is not None else None
 
         if remove_nan:
             if self.parameter == "ratio":

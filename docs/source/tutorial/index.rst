@@ -85,7 +85,6 @@ SAE techniques can be considered as extensions of the survey estimation techniqu
    
    eblup_area_model
    eblup_unit_model
-   eb_unit_model
 
 Generalized linear mixed model are the statistical framework used to develop the SAE methods, for an introduction to GLMM see McCulloch, C.E.and Searle, S.R. (2001) [#ms2001]_. For a comprehensive review of the small area estimation models and its applications, see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_. 
 

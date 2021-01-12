@@ -77,13 +77,13 @@ class _SurveyEstimator(Generic[Number, StringNumber]):
             estimation["UCI"] = self.upper_ci.values()
             estimation["CV"] = self.coef_var.values()
         else:
-            estimation[parameter] = self.point_est
-            estimation["SE"] = self.stderror
-            estimation["LCI"] = self.lower_ci
-            estimation["UCI"] = self.upper_ci
-            estimation["CV"] = self.coef_var
+            estimation[parameter] = [self.point_est]
+            estimation["SE"] = [self.stderror]
+            estimation["LCI"] = [self.lower_ci]
+            estimation["UCI"] = [self.upper_ci]
+            estimation["CV"] = [self.coef_var]
 
-        return "%s" % estimation
+        return "%s" % estimation.to_string(index=False)
 
     def __repr__(self) -> Any:
         return self.__str__()
@@ -659,6 +659,7 @@ class TaylorEstimator(_SurveyEstimator[Number, StringNumber]):
             self.strata = np.unique(stratum).tolist()
 
         if domain is not None:
+            domain = numpy_array(domain)
             self.domains = np.unique(domain).tolist()
 
         if by is not None:
