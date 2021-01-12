@@ -14,6 +14,7 @@ sampling algorithms.
 """
 
 from ast import Str
+from operator import index
 from typing import Dict, Generic, Tuple, Union, Optional, overload
 
 import numpy as np
@@ -44,10 +45,10 @@ class SampleSelection(Generic[Number, StringNumber]):
 
     Main functions:
         | inclusion_probs(): provides the inclusion probabilities.
-        | joNumber_inclusion_probs(): provides the joNumber probalities of selection.
+        | joint_inclusion_probs(): provides the joint probalities of selection.
         | select(): indicates the selected sample.
 
-    TODO: handling of certaNumberies and implementation of joNumber_inclusion_probs().
+    TODO: handling of certaNumberies and implementation of joint_inclusion_probs().
     """
 
     def __init__(
@@ -95,6 +96,7 @@ class SampleSelection(Generic[Number, StringNumber]):
                 "_probs": probs,
             }
         )
+        df.reset_index(drop=True, inplace=True)
 
         if stratum is None:
             df.drop(columns=["_stratum"], inplace=True)
@@ -164,7 +166,7 @@ class SampleSelection(Generic[Number, StringNumber]):
         return sample, hits
 
     @staticmethod
-    def _anycertaNumbery(
+    def _anycertainty(
         samp_size,
         stratum,
         mos,
@@ -179,9 +181,9 @@ class SampleSelection(Generic[Number, StringNumber]):
         else:
             probs = samp_size * mos / np.sum(mos)
 
-        certaNumbery = (probs >= 1).any()
+        certainty = (probs >= 1).any()
 
-        return certaNumbery
+        return certainty
 
     # SRS methods
     def _srs_inclusion_probs(
@@ -234,9 +236,9 @@ class SampleSelection(Generic[Number, StringNumber]):
     def _pps_sys_select(samp_unit, samp_size, mos):
 
         cumsize = np.append(0, np.cumsum(mos))
-        samp_Numbererval = cumsize[-1] / samp_size
-        random_start = np.random.random_sample() * samp_Numbererval
-        random_picks = random_start + samp_Numbererval * np.linspace(0, samp_size - 1, samp_size)
+        samp_interval = cumsize[-1] / samp_size
+        random_start = np.random.random_sample() * samp_interval
+        random_picks = random_start + samp_interval * np.linspace(0, samp_size - 1, samp_size)
 
         hits = np.zeros(samp_unit.size).astype(int)
         for k in range(cumsize.size - 1):
@@ -463,9 +465,9 @@ class SampleSelection(Generic[Number, StringNumber]):
 
         if samp_rate is not None:
             samp_size = math.floor(samp_rate * samp_unit.size)
-        samp_Numbererval = math.floor(samp_unit.size / samp_size)  # same as 1 / samp_rate
-        random_start = np.random.choice(range(0, samp_Numbererval))
-        random_picks = random_start + samp_Numbererval * np.linspace(
+        samp_interval = math.floor(samp_unit.size / samp_size)  # same as 1 / samp_rate
+        random_start = np.random.choice(range(0, samp_interval))
+        random_picks = random_start + samp_interval * np.linspace(
             0, samp_size - 1, samp_size
         ).astype(int)
         hits = np.zeros(samp_unit.size).astype(int)
@@ -522,7 +524,7 @@ class SampleSelection(Generic[Number, StringNumber]):
                 by stratum if applicable. Defaults to None.
 
         Raises:
-            AssertionError: raises an assertion error if some of the clusters are certaNumberies.
+            AssertionError: raises an assertion error if some of the clusters are certainties.
 
         Returns:
             np.ndarray: an array of the probabilities of inclusion.
@@ -576,8 +578,8 @@ class SampleSelection(Generic[Number, StringNumber]):
             "pps-rs",
             "pps-sys",
         ):
-            if self._anycertaNumbery(samp_size, stratum, mos):
-                raise AssertionError("Some clusters are certaNumberies.")
+            if self._anycertainty(samp_size, stratum, mos):
+                raise AssertionError("Some clusters are certainties.")
             incl_probs = self._pps_inclusion_probs(samp_unit, samp_size, mos, stratum)
         elif self.method == "sys":
             incl_probs = self._sys_inclusion_probs(samp_unit, samp_size, stratum, samp_rate)
@@ -586,7 +588,7 @@ class SampleSelection(Generic[Number, StringNumber]):
 
         return incl_probs
 
-    def joNumber_inclusion_probs(self):
+    def joint_inclusion_probs(self) -> None:
         pass
 
     def select(
@@ -624,7 +626,7 @@ class SampleSelection(Generic[Number, StringNumber]):
         Raises:
             AssertionError: raises an assertion error if both samp_size and samp_rate is
                 provided as input.
-            AssertionError: raises an assertion error if some of the clusters are certaNumberies.
+            AssertionError: raises an assertion error if some of the clusters are certainties.
 
         Returns:
             Union[pd.DataFrame, Tuple[np.ndarray, np.ndarray, np.ndarray]]: [description]
@@ -640,23 +642,28 @@ class SampleSelection(Generic[Number, StringNumber]):
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
 
+        samp_size_temp = None
+        samp_rate_temp = None
+
         if stratum is not None:
             stratum = formats.numpy_array(stratum)
             if isinstance(samp_size, (int, float)):
                 strata = np.unique(stratum)
                 samp_size_temp = dict(zip(strata, np.repeat(samp_size, strata.shape[0])))
-            # elif isinstance(samp_rate, Number):
-            #     strata = np.unique(stratum)
-            #     samp_rate_temp = dict(zip(strata, np.repeat(samp_rate, strata.shape[0])))
             elif isinstance(samp_size, dict):
                 samp_size_temp = samp_size.copy()
+            elif isinstance(samp_rate, (int, float)):
+                strata = np.unique(stratum)
+                samp_rate_temp = dict(zip(strata, np.repeat(samp_rate, strata.shape[0])))
+            elif isinstance(samp_rate, dict):
+                samp_rate_temp = samp_rate.copy()
             else:
                 raise TypeError("samp_size or samp_rate has the wrong type")
         else:
             if isinstance(samp_size, (int, float)):
                 samp_size_temp = samp_size  # {"__dummy__": samp_size}
-            # elif isinstance(samp_rate, (Number, Number)):
-            #     samp_rate_temp = samp_rate
+            elif isinstance(samp_rate, (int, float)):
+                samp_rate_temp = samp_rate
             else:
                 raise TypeError("samp_size or samp_rate has the wrong type")
 
@@ -677,9 +684,20 @@ class SampleSelection(Generic[Number, StringNumber]):
 
         sample = None
         hits = None
-        if self.method == "srs":
-            probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum=stratum)
-            sample, hits = self._grs_select(probs, samp_unit, samp_size, stratum)
+        if self.method == "srs" and samp_size_temp is not None:
+            probs = self._srs_inclusion_probs(
+                samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum
+            )
+            sample, hits = self._grs_select(
+                probs=probs, samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum
+            )
+        elif self.method == "sys" and samp_rate_temp is not None:
+            # probs = self._sys_inclusion_probs(
+            #     samp_unit=samp_unit, samp_rate=samp_rate_temp, stratum=stratum
+            # )
+            sample, hits = self._sys_select(
+                samp_unit=samp_unit, samp_size=None, samp_rate=samp_rate_temp, stratum=stratum
+            )
         elif self.method in (
             "pps-brewer",
             "pps-hv",
@@ -687,25 +705,52 @@ class SampleSelection(Generic[Number, StringNumber]):
             "pps-rs",
             "pps-sys",
         ):
-            if self._anycertaNumbery(samp_size, stratum, mos):
-                raise AssertionError("Some clusters are certaNumberies.")
-            probs = self.inclusion_probs(samp_unit, samp_size_temp, stratum, mos)
-            sample, hits = self._pps_select(samp_unit, samp_size_temp, stratum, mos)
+            if self._anycertainty(samp_size, stratum, mos):
+                raise AssertionError("Some clusters are certainties.")
+            probs = self.inclusion_probs(
+                samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum, mos=mos
+            )
+            sample, hits = self._pps_select(
+                samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum, mos=mos
+            )
         elif self.method == "sys":
             # probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum) - Todo
-            sample, hits = self._sys_select(samp_unit, samp_size, stratum, samp_rate)
+            sample, hits = self._sys_select(
+                samp_unit=samp_unit,
+                samp_size=samp_size_temp,
+                stratum=stratum,
+                samp_rate=samp_rate_temp,
+            )
         elif self.method == "grs":
-            sample, hits = self._grs_select(probs, samp_unit, samp_size, stratum)
+            sample, hits = self._grs_select(
+                probs, samp_unit, samp_size=samp_size_temp, stratum=stratum
+            )
 
         if shuffle:
             sample = sample[suffled_order]
             hits = hits[suffled_order]
 
-        if sample_only:
-            frame = self._to_dataframe(samp_unit, stratum, mos, sample, hits, probs)
-            return frame.loc[frame["_sample"] == 1]
-        elif to_dataframe:
-            frame = self._to_dataframe(samp_unit, stratum, mos, sample, hits, probs)
+        if to_dataframe and sample_only:
+            frame = self._to_dataframe(
+                samp_unit=samp_unit,
+                stratum=stratum,
+                mos=mos,
+                sample=sample,
+                hits=hits,
+                probs=probs,
+            )
+            return frame.loc[frame["_sample"] == 1].reset_index(drop=True)
+        elif to_dataframe and not sample_only:
+            frame = self._to_dataframe(
+                samp_unit=samp_unit,
+                stratum=stratum,
+                mos=mos,
+                sample=sample,
+                hits=hits,
+                probs=probs,
+            )
             return frame
+        elif not to_dataframe and sample_only:
+            return sample[sample], hits[sample], probs[sample]
         else:
             return sample, hits, probs

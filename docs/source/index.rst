@@ -67,4 +67,4 @@ Index and search
 
 **Contact Information**
 | `Mamadou S. Diallo <https://twitter.com/MamadouSDiallo>`_
-| msdiallo@QuantifyAfrica.org
+| msdiallo@samplics.org

@@ -63,7 +63,7 @@ class Tabulation:
             tbl_subhead1 = f"Number of strata: {self.design_info['number_strata']}"
             tbl_subhead2 = f"Number of PSUs: {self.design_info['number_psus']}"
             tbl_subhead3 = f"Number of observations: {self.design_info['number_obs']}"
-            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']}"
+            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
 
             return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}"
 
@@ -82,10 +82,14 @@ class Tabulation:
     ) -> Tuple[TaylorEstimator, list, int]:
 
         if remove_nan:
-            excluded_units = np.isnan(var) | np.isnan(samp_weight)
-            var_of_ones, samp_weight, stratum, var, psu, ssu = remove_nans(
-                excluded_units, var_of_ones, samp_weight, stratum, var, psu, ssu
+            excluded_units = var.isna().values.ravel()
+            var_of_ones, samp_weight, stratum, psu, ssu = remove_nans(
+                excluded_units, var_of_ones, samp_weight, stratum, psu, ssu
             )
+            var = var.dropna().astype(str)
+        else:
+            var.fillna("nan", inplace=True)
+        var = var.to_numpy().ravel()
 
         if self.parameter == "count":
             tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
@@ -99,7 +103,7 @@ class Tabulation:
                 fpc=fpc,
                 deff=deff,
                 coef_variation=coef_variation,
-                remove_nan=remove_nan,
+                remove_nan=False,
             )
         elif self.parameter == "proportion":
             tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
@@ -112,7 +116,7 @@ class Tabulation:
                 fpc=fpc,
                 deff=deff,
                 coef_variation=coef_variation,
-                remove_nan=remove_nan,
+                remove_nan=False,
             )
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
@@ -140,8 +144,8 @@ class Tabulation:
         if vars is None:
             raise AssertionError("vars need to be an array-like object")
 
-        vars_np = numpy_array(vars)
-        nb_vars = 1 if len(vars_np.shape) == 1 else vars_np.shape[1]
+        vars_df = pd.DataFrame(numpy_array(vars))
+        nb_vars = 1 if len(vars_df.shape) == 1 else vars_df.shape[1]
 
         if varnames is None:
             prefix = "var"
@@ -160,16 +164,16 @@ class Tabulation:
             )
 
         if samp_weight is None:
-            samp_weight = np.ones(vars_np.shape[0])
+            samp_weight = np.ones(vars_df.shape[0])
         elif isinstance(samp_weight, (int, float)):
-            samp_weight = np.repeat(samp_weight, vars_np.shape[0])
+            samp_weight = np.repeat(samp_weight, vars_df.shape[0])
         else:
             samp_weight = numpy_array(samp_weight)
 
         if nb_vars == 1:
             tbl_est, var_levels, nb_obs = self._estimate(
-                var_of_ones=np.ones(vars_np.shape[0]),
-                var=vars_np,
+                var_of_ones=np.ones(vars_df.shape[0]),
+                var=vars_df,
                 samp_weight=samp_weight,
                 stratum=stratum,
                 psu=psu,
@@ -195,11 +199,11 @@ class Tabulation:
         else:
             nb_obs = 0
             tbl_est = None
-            var_of_ones = np.ones(vars_np.shape[0])
+            var_of_ones = np.ones(vars_df.shape[0])
             for k in range(0, nb_vars):
                 tbl_est, var_levels, nb_obs = self._estimate(
                     var_of_ones=var_of_ones,
-                    var=vars_np[:, k],
+                    var=vars_df.iloc[:, k],
                     samp_weight=samp_weight,
                     stratum=stratum,
                     psu=psu,
@@ -240,12 +244,12 @@ class Tabulation:
 
         for var in self.vars_names:
             var_df = pd.DataFrame(np.repeat(var, len(self.vars_levels[var])), columns=["variable"])
-            var_df["levels"] = self.vars_levels[var]
+            var_df["category"] = self.vars_levels[var]
             var_df[self.parameter] = list(self.point_est[var].values())
             var_df["stderror"] = list(self.stderror[var].values())
             var_df["lower_ci"] = list(self.lower_ci[var].values())
             var_df["upper_ci"] = list(self.upper_ci[var].values())
-            var_df.sort_values(by=["variable", "levels"], inplace=True)
+            var_df.sort_values(by=["variable", "category"], inplace=True)
             oneway_df = oneway_df.append(var_df)
 
         return oneway_df
@@ -305,7 +309,7 @@ class CrossTabulation:
             tbl_subhead1 = f"Number of strata: {self.design_info['number_strata']}"
             tbl_subhead2 = f"Number of PSUs: {self.design_info['number_psus']}"
             tbl_subhead3 = f"Number of observations: {self.design_info['number_obs']}"
-            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']}"
+            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
 
             chisq_dist = f"chi2({self.stats['Pearson-Unadj']['df']})"
             f_dist = f"F({self.stats['Pearson-Adj']['df_num']:.2f}, {self.stats['Pearson-Adj']['df_den']:.2f}"
@@ -372,7 +376,9 @@ class CrossTabulation:
             samp_weight, stratum, psu, ssu = remove_nans(
                 excluded_units, samp_weight, stratum, psu, ssu
             )
-            vars = vars.dropna()
+            vars.dropna(inplace=True)
+        else:
+            vars.fillna("nan", inplace=True)
 
         vars = vars.astype(str)
         vars_names = set_variables_names(vars, varnames, prefix)
