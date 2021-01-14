@@ -119,7 +119,7 @@ dmypy.json
 *.code-workspace
 .vim
 
-#MaCOS
+#MacOS
 .DS_Store
 
 # Github 

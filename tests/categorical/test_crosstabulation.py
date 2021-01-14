@@ -5,15 +5,15 @@ import pandas as pd
 from samplics.estimation import TaylorEstimator
 from samplics.categorical import CrossTabulation
 
-
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
-# birthcat.loc[(birthcat["birthcat"] == 2) & (birthcat["region"]==3), "birthcat"] = 3
 
 region = birthcat["region"].to_numpy().astype(int)
 age_cat = birthcat["agecat"].to_numpy()
 birth_cat = birthcat["birthcat"].to_numpy()
 pop = birthcat["pop"]
+
+nhanes = pd.read_csv("./tests/estimation/nhanes.csv")
 
 
 @pytest.mark.xfail(strict=True, reason="Parameter not valid")
