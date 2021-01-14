@@ -60,12 +60,12 @@ class Tabulation:
             return "No categorical variables to tabulate"
         else:
             tbl_head = f"Tabulation of {self.vars_names[0]}"
-            tbl_subhead1 = f"Number of strata: {self.design_info['number_strata']}"
-            tbl_subhead2 = f"Number of PSUs: {self.design_info['number_psus']}"
-            tbl_subhead3 = f"Number of observations: {self.design_info['number_obs']}"
-            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
+            tbl_subhead1 = f" Number of strata: {self.design_info['number_strata']}"
+            tbl_subhead2 = f" Number of PSUs: {self.design_info['number_psus']}"
+            tbl_subhead3 = f" Number of observations: {self.design_info['number_obs']}"
+            tbl_subhead4 = f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
 
-            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}"
+            return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n{self.to_dataframe().to_string(index=False)}\n"
 
     def _estimate(
         self,
@@ -260,8 +260,9 @@ def saturated_two_ways_model(varsnames: List[str]) -> str:
     docstring
     """
 
-    main_effects = " + ".join(varsnames)
-    interactions = ":".join(varsnames)
+    varsnames_temp = [str(x) for x in varsnames]
+    main_effects = " + ".join(varsnames_temp)
+    interactions = ":".join(varsnames_temp)
 
     return " + ".join([main_effects, interactions])
 
@@ -353,9 +354,6 @@ class CrossTabulation:
         else:
             samp_weight = numpy_array(samp_weight)
 
-        if isinstance(vars, np.ndarray):
-            vars = pd.DataFrame(vars)
-
         if varnames is None:
             prefix = "var"
         elif isinstance(varnames, str):
@@ -364,6 +362,11 @@ class CrossTabulation:
             prefix = varnames[0]
         else:
             raise AssertionError("varnames should be a string or a list of string")
+
+        vars_names = set_variables_names(vars, varnames, prefix)
+
+        if isinstance(vars, np.ndarray):
+            vars = pd.DataFrame(vars)
 
         samp_weight = numpy_array(samp_weight)
         stratum = numpy_array(stratum)
@@ -376,12 +379,11 @@ class CrossTabulation:
             samp_weight, stratum, psu, ssu = remove_nans(
                 excluded_units, samp_weight, stratum, psu, ssu
             )
-            vars.dropna(inplace=True)
+            vars = vars.dropna()
         else:
-            vars.fillna("nan", inplace=True)
+            vars = vars.fillna("nan")
 
         vars = vars.astype(str)
-        vars_names = set_variables_names(vars, varnames, prefix)
         vars.columns = vars_names
 
         vars.reset_index(inplace=True, drop=True)
@@ -391,14 +393,15 @@ class CrossTabulation:
         psu = psu[vars.index] if psu is not None else None
         ssu = ssu[vars.index] if ssu is not None else None
 
-        two_way_full_model = saturated_two_ways_model(vars_names)
+        vars_names_str = ["var_" + str(x) for x in vars_names]
+        two_way_full_model = saturated_two_ways_model(vars_names_str)
         # vars.sort_values(by=vars_names, inplace=True)
         row_levels = vars[vars_names[0]].unique()
         col_levels = vars[vars_names[1]].unique()
 
         both_levels = [row_levels, col_levels]
         vars_levels = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
-        vars_levels.columns = vars_names
+        vars_levels.columns = vars_names_str
 
         vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels, NA_action="raise"))
 
