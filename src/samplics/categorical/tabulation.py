@@ -65,7 +65,7 @@ class Tabulation:
             tbl_subhead3 = f" Number of observations: {self.design_info['number_obs']}"
             tbl_subhead4 = f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
 
-            return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n{self.to_dataframe().to_string(index=False)}\n"
+            return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n"
 
     def _estimate(
         self,
@@ -307,10 +307,10 @@ class CrossTabulation:
             return "No categorical variables to tabulate"
         else:
             tbl_head = f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
-            tbl_subhead1 = f"Number of strata: {self.design_info['number_strata']}"
-            tbl_subhead2 = f"Number of PSUs: {self.design_info['number_psus']}"
-            tbl_subhead3 = f"Number of observations: {self.design_info['number_obs']}"
-            tbl_subhead4 = f"Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
+            tbl_subhead1 = f" Number of strata: {self.design_info['number_strata']}"
+            tbl_subhead2 = f" Number of PSUs: {self.design_info['number_psus']}"
+            tbl_subhead3 = f" Number of observations: {self.design_info['number_obs']}"
+            tbl_subhead4 = f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
 
             chisq_dist = f"chi2({self.stats['Pearson-Unadj']['df']})"
             f_dist = f"F({self.stats['Pearson-Adj']['df_num']:.2f}, {self.stats['Pearson-Adj']['df_den']:.2f}"
@@ -321,11 +321,11 @@ class CrossTabulation:
                 f"Pearson (with Rao-Scott adjustment):\n\t{pearson_unadj}\n\t{pearson_adj}"
             )
 
-            lr_unadj = f"Unadjusted - {chisq_dist}: {self.stats['LR-Unadj']['chisq_value']:.4f} with p-value of {self.stats['LR-Unadj']['p_value']:.4f}"
-            lr_adj = f"Adjusted - {f_dist}): {self.stats['LR-Adj']['f_value']:.4f}  with p-value of {self.stats['LR-Adj']['p_value']:.4f}"
-            lr_test = f"Likelihood ratio (with Rao-Scott adjustment):\n\t{lr_unadj}\n\t{lr_adj}"
+            lr_unadj = f" Unadjusted - {chisq_dist}: {self.stats['LR-Unadj']['chisq_value']:.4f} with p-value of {self.stats['LR-Unadj']['p_value']:.4f}"
+            lr_adj = f" Adjusted - {f_dist}): {self.stats['LR-Adj']['f_value']:.4f}  with p-value of {self.stats['LR-Adj']['p_value']:.4f}"
+            lr_test = f" Likelihood ratio (with Rao-Scott adjustment):\n\t{lr_unadj}\n\t{lr_adj}"
 
-            return f"\n{tbl_head}\n {tbl_subhead1}\n {tbl_subhead2}\n {tbl_subhead3}\n {tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n\n {pearson_test} \n\n {lr_test}"
+            return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n\n{pearson_test}\n\n {lr_test}\n"
 
     def tabulate(
         self,
