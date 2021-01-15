@@ -74,6 +74,20 @@ Often the goal of conducting a survey is to estimate parameters of the target po
 
 .. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, 
    Springer-Verlag New York, Inc
+   
+Categorical
+-----------
+
+TBD  
+
+.. toctree::
+   :maxdepth: 1
+   
+   tabulation
+   ttest
+
+.. [#w2007] Agresti, Alan (2013), *Categorical Data Analysis, 3rd edn.*, 
+    Hoboken, NJ and Chichester: Wiley; John Wiley [distributor]
 
 Small Area Estimation (SAE)
 ---------------------------
