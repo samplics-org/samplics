@@ -15,8 +15,7 @@ y1 = auto["y1"]
 y2 = auto["y2"]
 
 one_sample_known_mean = Ttest(samp_type="one-sample")
-# one_sample_known_mean.compare(auto[["y1", "y2"]], group=foreign)
-# breakpoint()
+
 
 # np.random.seed(seed=12345)
 # y1 = y / 100 + np.random.rand(y.shape[0]) * 1e-5
