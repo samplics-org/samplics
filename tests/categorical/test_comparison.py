@@ -17,15 +17,6 @@ y2 = auto["y2"]
 one_sample_known_mean = Ttest(samp_type="one-sample")
 
 
-# np.random.seed(seed=12345)
-# y1 = y / 100 + np.random.rand(y.shape[0]) * 1e-5
-# y2 = y / 100 + np.random.rand(y.shape[0]) * 1e-5
-
-# auto["y1"] = y1
-# auto["y2"] = y2
-# auto.to_csv("./tests/categorical/auto2.csv")
-
-
 @pytest.mark.xfail(strict=True, reason="Parameters 'known_mean' or 'group' must be provided!")
 def test_one_sample_wrong_specifications1():
     one_sample_wrong = Ttest()
