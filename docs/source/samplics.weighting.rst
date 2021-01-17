@@ -1,5 +1,5 @@
-Weighting
-=========
+sample weighting
+================
 
 samplics.weighting.adjustment
 -----------------------------

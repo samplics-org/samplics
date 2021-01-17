@@ -28,7 +28,7 @@ of interest. The sample size calculation and selection methods in *samplics* are
 * Equal probability of selection: simple random sampling (SRS) and systematic selection (SYS)
 * Probability proportional to size (PPS): Systematic, Brewer's method, Hanurav-Vijayan method, Murphy's method, and Rao-Sampford's method.
 
-**Weighting.** Sample weighting is the main mechanism used in surveys to formalize the
+**Sample weighting.** Sample weighting is the main mechanism used in surveys to formalize the
 representivity of the sample. The design/base weights are usually
 adjusted to compensate for distortions due nonresponse and other shortcomings
 of the the sampling design implementation.
@@ -37,12 +37,18 @@ of the the sampling design implementation.
 * Weight poststratification, calibration and normalization
 * Weight replication i.e. Bootstrap, BRR, and Jackknife
 
-**Estimation.** The estimation of the parameters of interest must reflect the sampling
+**Population parameters estimation.** The estimation of the parameters of interest must reflect the sampling
 mechanism and the weight adjustments.
 
 * Taylor-based procedures
 * Replication-based estimation i.e. Boostrap, BRR, and Jackknife
 * Regression-based e.g. generalized regression (GREG)
+
+**Categorical data analysis.** The estimation of the parameters of interest must reflect the sampling
+mechanism and the weight adjustments.
+
+* one-way and two-way tabulation
+* T-test including Rao-Scott adjustment
 
 **Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to model the output variable of interest to produce domain level estimates.
 
