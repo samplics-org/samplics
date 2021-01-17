@@ -22,7 +22,7 @@ def test_jkn_mean():
     jkn_mean = ReplicateEstimator("jackknife", "mean")
     jkn_mean.estimate(y_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True)
     jkn_var = jkn_mean.variance
-    jkn_stderr = pow(jkn_var.get("__none__"), 0.5)
+    jkn_stderr = pow(jkn_var, 0.5)
     assert np.isclose(jkn_stderr, 0.2320822, atol=1e-7)
 
 
@@ -51,7 +51,7 @@ def test_jkn_total():
         female_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True,
     )
     jkn_var = jkn_total.variance
-    jkn_stderr = pow(jkn_var.get("__none__"), 0.5)
+    jkn_stderr = pow(jkn_var, 0.5)
     assert np.isclose(jkn_stderr, 1958480.0, atol=1e-1)
 
 
@@ -80,9 +80,9 @@ def test_jkn_prop():
     jkn_prop = ReplicateEstimator("jackknife", "proportion")
     jkn_prop.estimate(z_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True)
     jkn_var = jkn_prop.variance
-    jkn_stderr_1 = pow(jkn_var.get("__none__")[1], 0.5)
-    jkn_stderr_2 = pow(jkn_var.get("__none__")[2], 0.5)
-    jkn_stderr_3 = pow(jkn_var.get("__none__")[3], 0.5)
+    jkn_stderr_1 = pow(jkn_var[1], 0.5)
+    jkn_stderr_2 = pow(jkn_var[2], 0.5)
+    jkn_stderr_3 = pow(jkn_var[3], 0.5)
     assert np.isclose(jkn_stderr_1, 0.0234118, atol=1e-7)
     assert np.isclose(jkn_stderr_2, 0.0178846, atol=1e-7)
     assert np.isclose(jkn_stderr_3, 0.0147892, atol=1e-7)
@@ -126,7 +126,7 @@ def test_jkn_ratio():
         y_jkn, sample_wgt_jkn, rep_wgt_jkn, x=x_jkn, conservative=False, remove_nan=True,
     )
     jkn_var = jkn_ratio.variance
-    jkn_stderr = pow(jkn_var.get("__none__"), 0.5)
+    jkn_stderr = pow(jkn_var, 0.5)
     assert np.isclose(jkn_stderr, 0.0012466, atol=1e-7)
 
 
@@ -172,7 +172,7 @@ def test_brr_mean():
     brr_mean = ReplicateEstimator("brr", "mean")
     brr_mean.estimate(y_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True)
     brr_var = brr_mean.variance
-    brr_stderr = pow(brr_var.get("__none__"), 0.5)
+    brr_stderr = pow(brr_var, 0.5)
     assert np.isclose(brr_stderr, 0.1656454, atol=1e-7)
 
 
@@ -204,7 +204,7 @@ def test_brr_total():
         female_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True,
     )
     brr_var = brr_total.variance
-    brr_stderr = pow(brr_var.get("__none__"), 0.5)
+    brr_stderr = pow(brr_var, 0.5)
     assert np.isclose(brr_stderr, 1396159, atol=1e-1)
 
 
@@ -234,8 +234,8 @@ def test_brr_prop():
     brr_prop = ReplicateEstimator("brr", "proportion")
     brr_prop.estimate(z_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True)
     brr_var = brr_prop.variance
-    brr_stderr_0 = pow(brr_var.get("__none__")[0.0], 0.5)
-    brr_stderr_1 = pow(brr_var.get("__none__")[1.0], 0.5)
+    brr_stderr_0 = pow(brr_var[0.0], 0.5)
+    brr_stderr_1 = pow(brr_var[1.0], 0.5)
     assert np.isclose(brr_stderr_0, 0.0018145, atol=1e-7)
     assert np.isclose(brr_stderr_1, 0.0018145, atol=1e-7)
 
@@ -270,7 +270,7 @@ def test_brr_ratio():
         y_brr, sample_wgt_brr, rep_wgt_brr, x=x_brr, conservative=False, remove_nan=True,
     )
     brr_var = brr_ratio.variance
-    brr_stderr = pow(brr_var.get("__none__"), 0.5)
+    brr_stderr = pow(brr_var, 0.5)
     assert np.isclose(brr_stderr, 0.0008904, atol=1e-7)
 
 
@@ -317,7 +317,7 @@ def test_fay_mean():
     fay_mean = ReplicateEstimator("brr", "mean", fay_coef=fay_coef)
     fay_mean.estimate(y_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True)
     fay_var = fay_mean.variance
-    fay_stderr = pow(fay_var.get("__none__"), 0.5)
+    fay_stderr = pow(fay_var, 0.5)
     assert np.isclose(fay_stderr, 0.1655723, atol=1e-6)
 
 
@@ -343,7 +343,7 @@ def test_fay_total():
         female_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True,
     )
     fay_var = fay_total.variance
-    fay_stderr = pow(fay_var.get("__none__"), 0.5)
+    fay_stderr = pow(fay_var, 0.5)
     assert np.isclose(fay_stderr, 1396159, atol=1e-1)
 
 
@@ -372,8 +372,8 @@ def test_fay_prop():
     fay_prop = ReplicateEstimator("brr", "proportion", fay_coef=fay_coef)
     fay_prop.estimate(z_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True)
     fay_var = fay_prop.variance
-    fay_stderr_0 = pow(fay_var.get("__none__")[0.0], 0.5)
-    fay_stderr_1 = pow(fay_var.get("__none__")[1.0], 0.5)
+    fay_stderr_0 = pow(fay_var[0.0], 0.5)
+    fay_stderr_1 = pow(fay_var[1.0], 0.5)
     assert np.isclose(fay_stderr_0, 0.0018143, atol=1e-7)
     assert np.isclose(fay_stderr_1, 0.0018143, atol=1e-7)
 
@@ -408,7 +408,7 @@ def test_fay_ratio():
         y_fay, sample_wgt_fay, rep_wgt_fay, x=x_fay, conservative=False, remove_nan=True,
     )
     fay_var = fay_ratio.variance
-    fay_stderr = pow(fay_var.get("__none__"), 0.5)
+    fay_stderr = pow(fay_var, 0.5)
     assert np.isclose(fay_stderr, 0.0008898, atol=1e-7)
 
 
@@ -455,7 +455,7 @@ def test_boot_mean():
         y_boot, sample_wgt_boot, rep_wgt_boot, conservative=False, remove_nan=True,
     )
     boot_var = boot_mean.variance
-    boot_stderr = pow(boot_var.get("__none__"), 0.5)
+    boot_stderr = pow(boot_var, 0.5)
     assert np.isclose(boot_stderr, 6.520637, atol=1e-6)
 
 
@@ -488,7 +488,7 @@ def test_boot_total():
         married_boot, sample_wgt_boot, rep_wgt_boot, conservative=False, remove_nan=True,
     )
     boot_var = boot_total.variance
-    boot_stderr = pow(boot_var.get("__none__"), 0.5)
+    boot_stderr = pow(boot_var, 0.5)
     assert np.isclose(boot_stderr, 18911.01, atol=1e-2)
 
 
@@ -521,8 +521,8 @@ def test_boot_prop():
         z_boot, sample_wgt_boot, rep_wgt_boot, conservative=False, remove_nan=True,
     )
     boot_var = boot_prop.variance
-    boot_stderr_0 = pow(boot_var.get("__none__")[0.0], 0.5)
-    boot_stderr_1 = pow(boot_var.get("__none__")[1.0], 0.5)
+    boot_stderr_0 = pow(boot_var[0.0], 0.5)
+    boot_stderr_1 = pow(boot_var[1.0], 0.5)
     assert np.isclose(boot_stderr_0, 0.0028152, atol=1e-7)
     assert np.isclose(boot_stderr_1, 0.0028152, atol=1e-7)
 
@@ -566,7 +566,7 @@ def test_boot_ratio():
         y_boot, sample_wgt_boot, rep_wgt_boot, x=x_boot, conservative=False, remove_nan=True,
     )
     boot_var = boot_ratio.variance
-    boot_stderr = pow(boot_var.get("__none__"), 0.5)
+    boot_stderr = pow(boot_var, 0.5)
     assert np.isclose(boot_stderr, 0.0005163, atol=1e-7)
 
 

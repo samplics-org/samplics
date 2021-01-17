@@ -74,6 +74,20 @@ Often the goal of conducting a survey is to estimate parameters of the target po
 
 .. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, 
    Springer-Verlag New York, Inc
+   
+Categorical
+-----------
+
+TBD  
+
+.. toctree::
+   :maxdepth: 1
+   
+   tabulation
+   ttest
+
+.. [#w2007] Agresti, Alan (2013), *Categorical Data Analysis, 3rd edn.*, 
+    Hoboken, NJ and Chichester: Wiley; John Wiley [distributor]
 
 Small Area Estimation (SAE)
 ---------------------------
@@ -85,7 +99,6 @@ SAE techniques can be considered as extensions of the survey estimation techniqu
    
    eblup_area_model
    eblup_unit_model
-   eb_unit_model
 
 Generalized linear mixed model are the statistical framework used to develop the SAE methods, for an introduction to GLMM see McCulloch, C.E.and Searle, S.R. (2001) [#ms2001]_. For a comprehensive review of the small area estimation models and its applications, see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_. 
 
