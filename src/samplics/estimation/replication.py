@@ -19,27 +19,27 @@ class ReplicateEstimator(_SurveyEstimator):
         | point_est (dict): point estimate of the parameter of interest.
         | variance (dict): variance estimate of the parameter of interest.
         | stderror (dict): standard error of the parameter of interest.
-        | coef_var (dict): estimate of the coefficient of variation.  
+        | coef_var (dict): estimate of the coefficient of variation.
         | deff (dict): estimate of the design effect due to weighting.
-        | lower_ci (dict): estimate of the lower bound of the confidence interval. 
-        | upper_ci (dict): estimate of the upper bound of the confidence interval. 
+        | lower_ci (dict): estimate of the lower bound of the confidence interval.
+        | upper_ci (dict): estimate of the upper bound of the confidence interval.
         | degree_of_freedom (int): degree of freedom for the confidence interval.
         | alpha (float): significant level for the confidence interval
         | strata (list): list of the strata in the sample.
-        | domains (list): list of the domains in the sample. 
-        | method (str): variance estimation method. 
-        | parameter (str): the parameter of the population to estimate e.g. total. 
+        | domains (list): list of the domains in the sample.
+        | method (str): variance estimation method.
+        | parameter (str): the parameter of the population to estimate e.g. total.
         | number_strata (int): number of strata.
         | number_psus (int): number of primary sampling units (psus).
-        | conservative (bool): indicate whether to produce conservative variance estimates. 
+        | conservative (bool): indicate whether to produce conservative variance estimates.
         | number_reps (int): number of replicate weights.
-        | rep_coefs (array): coefficients associated to the replicate weights. 
+        | rep_coefs (array): coefficients associated to the replicate weights.
         | fay_coef (float): Fay coefficient for the the BRR-Fay algorithm.
-        | random_seed (int): random seed for reproducibility. 
+        | random_seed (int): random seed for reproducibility.
 
     Methods
         | estimate(): produces the point estimate of the parameter of interest with the associated
-        |   measures of precision. 
+        |   measures of precision.
     """
 
     def __init__(
@@ -83,10 +83,14 @@ class ReplicateEstimator(_SurveyEstimator):
             )
 
     def _bias(
-        self, y: np.ndarray, samp_weight: np.ndarray, rep_weights: np.ndarray, x: np.ndarray,
+        self,
+        y: np.ndarray,
+        samp_weight: np.ndarray,
+        rep_weights: np.ndarray,
+        x: np.ndarray,
     ) -> float:
 
-        estimate = self._get_point(y, samp_weight, x).get("__none__")
+        estimate = self._get_point(y, samp_weight, x)
         rep_estimates = self._rep_point(y, rep_weights, x)
 
         return float(np.sum(np.mean(rep_estimates) - estimate))
@@ -132,7 +136,10 @@ class ReplicateEstimator(_SurveyEstimator):
                 variance = float(
                     np.sum(
                         rep_coefs
-                        * pow((pseudo_estimates - np.mean(pseudo_estimates)) / (jk_factor - 1), 2,)
+                        * pow(
+                            (pseudo_estimates - np.mean(pseudo_estimates)) / (jk_factor - 1),
+                            2,
+                        )
                     )
                 )
         else:
@@ -159,7 +166,7 @@ class ReplicateEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, _, _ = self._remove_nans(
+            y, samp_weight, x, stratum, domain, _, _ = formats.remove_nans(
                 excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
@@ -184,9 +191,9 @@ class ReplicateEstimator(_SurveyEstimator):
                         }
                     )
                     cat_dict.update(cat_dict_k)
-                bias["__none__"] = cat_dict
+                bias = cat_dict
             else:
-                bias["__none__"] = self._bias(y, samp_weight, rep_weights, x)
+                bias = self._bias(y, samp_weight, rep_weights, x)
         else:
             for d in np.unique(domain):
                 samp_weight_d = samp_weight * (domain == d)
@@ -202,7 +209,10 @@ class ReplicateEstimator(_SurveyEstimator):
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._bias(
-                                    y_dummies_d[:, k], samp_weight_d, rep_weights_d, None,
+                                    y_dummies_d[:, k],
+                                    samp_weight_d,
+                                    rep_weights_d,
+                                    None,
                                 )
                             }
                         )
@@ -238,7 +248,7 @@ class ReplicateEstimator(_SurveyEstimator):
             if self.parameter == "proportion":
                 cat_dict = dict()
                 for k in range(categories.size):
-                    estimate_k = self._get_point(y_dummies[:, k], samp_weight, x)["__none__"][1]
+                    estimate_k = self._get_point(y_dummies[:, k], samp_weight, x)[1]
                     cat_dict_k = dict(
                         {
                             categories[k]: self._variance(
@@ -252,12 +262,10 @@ class ReplicateEstimator(_SurveyEstimator):
                         }
                     )
                     cat_dict.update(cat_dict_k)
-                variance["__none__"] = cat_dict
+                variance = cat_dict
             else:
-                estimate = self._get_point(y, samp_weight, x).get("__none__")
-                variance["__none__"] = self._variance(
-                    y, rep_weights, rep_coefs, x, estimate, conservative
-                )
+                estimate = self._get_point(y, samp_weight, x)
+                variance = self._variance(y, rep_weights, rep_coefs, x, estimate, conservative)
         else:
             for d in np.unique(domain):
                 samp_weight_d = samp_weight * (domain == d)
@@ -270,9 +278,7 @@ class ReplicateEstimator(_SurveyEstimator):
                     y_dummies_d = y_dummies * (domain == d)[:, None]
                     cat_dict = dict()
                     for k in range(categories.size):
-                        estimate_d_k = self._get_point(y_dummies_d[:, k], samp_weight_d, x_d).get(
-                            "__none__"
-                        )[1]
+                        estimate_d_k = self._get_point(y_dummies_d[:, k], samp_weight_d, x_d)[1]
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._variance(
@@ -289,59 +295,90 @@ class ReplicateEstimator(_SurveyEstimator):
                     variance[d] = cat_dict
                 else:
                     y_d = y * (domain == d)
-                    estimate_d = self._get_point(y_d, samp_weight_d, x_d).get("__none__")
+                    estimate_d = self._get_point(y_d, samp_weight_d, x_d)
                     variance[d] = self._variance(
-                        y_d, rep_weights_d, rep_coefs, x_d, estimate_d, conservative,
+                        y_d,
+                        rep_weights_d,
+                        rep_coefs,
+                        x_d,
+                        estimate_d,
+                        conservative,
                     )
 
         return variance
 
-    @staticmethod
     def _get_confint(
+        self,
         parameter: str,
-        estimate: Dict[StringNumber, Any],
-        variance: Dict[StringNumber, Any],
+        estimate: Union[Dict[StringNumber, Number], Number],
+        variance: Union[Dict[StringNumber, Number], Number],
         quantile: float,
     ) -> Tuple[Dict[StringNumber, Any], Dict[StringNumber, Any]]:
 
-        lower_ci: Dict[StringNumber, Any] = {}
-        upper_ci: Dict[StringNumber, Any] = {}
-        for key in variance:
+        if self.domains is None:
             if parameter == "proportion":
-                lower_ci_k = {}
-                upper_ci_k = {}
-                for level in variance[key]:
-                    point_est = estimate[key][level]
-                    std_est = pow(variance[key][level], 0.5)
+                lower_ci = {}
+                upper_ci = {}
+                for level in variance:
+                    point_est = estimate[level]
+                    std_est = pow(variance[level], 0.5)
                     location_ci = math.log(point_est / (1 - point_est))
                     scale_ci = std_est / (point_est * (1 - point_est))
                     ll = location_ci - quantile * scale_ci
-                    lower_ci_k[level] = math.exp(ll) / (1 + math.exp(ll))
+                    lower_ci[level] = math.exp(ll) / (1 + math.exp(ll))
                     uu = location_ci + quantile * scale_ci
-                    upper_ci_k[level] = math.exp(uu) / (1 + math.exp(uu))
-                lower_ci[key] = lower_ci_k
-                upper_ci[key] = upper_ci_k
+                    upper_ci[level] = math.exp(uu) / (1 + math.exp(uu))
             else:
-                lower_ci[key] = estimate[key] - quantile * pow(variance[key], 0.5)
-                upper_ci[key] = estimate[key] + quantile * pow(variance[key], 0.5)
+                lower_ci = estimate - quantile * pow(variance, 0.5)
+                upper_ci = estimate + quantile * pow(variance, 0.5)
+        else:
+            lower_ci: Dict[StringNumber, Any] = {}
+            upper_ci: Dict[StringNumber, Any] = {}
+            for key in variance:
+                if parameter == "proportion":
+                    lower_ci_k = {}
+                    upper_ci_k = {}
+                    for level in variance[key]:
+                        point_est = estimate[key][level]
+                        std_est = pow(variance[key][level], 0.5)
+                        location_ci = math.log(point_est / (1 - point_est))
+                        scale_ci = std_est / (point_est * (1 - point_est))
+                        ll = location_ci - quantile * scale_ci
+                        lower_ci_k[level] = math.exp(ll) / (1 + math.exp(ll))
+                        uu = location_ci + quantile * scale_ci
+                        upper_ci_k[level] = math.exp(uu) / (1 + math.exp(uu))
+                    lower_ci[key] = lower_ci_k
+                    upper_ci[key] = upper_ci_k
+                else:
+                    lower_ci[key] = estimate[key] - quantile * pow(variance[key], 0.5)
+                    upper_ci[key] = estimate[key] + quantile * pow(variance[key], 0.5)
 
         return lower_ci, upper_ci
 
-    @staticmethod
     def _get_coefvar(
-        parameter: str, estimate: Dict[StringNumber, Any], variance: Dict[StringNumber, Any],
+        self,
+        parameter: str,
+        estimate: Dict[StringNumber, Any],
+        variance: Dict[StringNumber, Any],
     ) -> Dict[StringNumber, Any]:
 
-        coef_var = {}
-        for key in variance:
+        if self.domains is None:
             if parameter == "proportion":
-                coef_var_k = {}
-                for level in variance[key]:
-                    coef_var_k[level] = pow(variance[key][level], 0.5) / estimate[key][level]
-                coef_var[key] = coef_var_k
+                coef_var = {}
+                for level in variance:
+                    coef_var[level] = pow(variance[level], 0.5) / estimate[level]
             else:
-                coef_var[key] = pow(variance[key], 0.5) / estimate[key]
-
+                coef_var = pow(variance, 0.5) / estimate
+        else:
+            coef_var = {}
+            for key in variance:
+                if parameter == "proportion":
+                    coef_var_k = {}
+                    for level in variance[key]:
+                        coef_var_k[level] = pow(variance[key][level], 0.5) / estimate[key][level]
+                    coef_var[key] = coef_var_k
+                else:
+                    coef_var[key] = pow(variance[key], 0.5) / estimate[key]
         return coef_var
 
     def estimate(
@@ -379,16 +416,22 @@ class ReplicateEstimator(_SurveyEstimator):
         if self.parameter == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
-        if not isinstance(rep_weights, np.ndarray):
-            rep_weights = formats.numpy_array(rep_weights)
+        y = formats.numpy_array(y)
+        samp_weight = formats.numpy_array(samp_weight)
+        rep_weights = formats.numpy_array(rep_weights)
+        x = formats.numpy_array(x) if x is not None else None
 
         if remove_nan:
             if self.parameter == "ratio":
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, _, domain, _, _ = self._remove_nans(
-                excluded_units, y, samp_weight, x, None, domain, None, None
+            y, samp_weight, x, domain = formats.remove_nans(
+                excluded_units,
+                y,
+                samp_weight,
+                x,
+                domain,
             )
             rep_weights = rep_weights[~excluded_units, :]
 
@@ -401,6 +444,8 @@ class ReplicateEstimator(_SurveyEstimator):
 
         if domain is not None:
             self.domains = np.unique(domain)
+        else:
+            self.domains = None
 
         self.point_est = self._get_point(y, samp_weight, x, domain)
         self.variance = self._get_variance(
@@ -426,13 +471,21 @@ class ReplicateEstimator(_SurveyEstimator):
         )
         self.coef_var = self._get_coefvar(self.parameter, self.point_est, self.variance)
 
-        for key in self.variance:
+        if self.domains is None:
             if self.parameter == "proportion":
-                stderror = {}
-                for level in self.variance[key]:
-                    stderror[level] = pow(self.variance[key][level], 0.5)
-                self.stderror[key] = stderror
+                self.stderror = {}
+                for level in self.variance:
+                    self.stderror[level] = pow(self.variance[level], 0.5)
             else:
-                self.stderror[key] = pow(self.variance[key], 0.5)
+                self.stderror = pow(self.variance, 0.5)
+        else:
+            for key in self.variance:
+                if self.parameter == "proportion":
+                    stderror = {}
+                    for level in self.variance[key]:
+                        stderror[level] = pow(self.variance[key][level], 0.5)
+                    self.stderror[key] = stderror
+                else:
+                    self.stderror[key] = pow(self.variance[key], 0.5)
 
         return self
