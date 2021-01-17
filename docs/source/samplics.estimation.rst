@@ -1,5 +1,5 @@
-Estimation
-==========
+Population parameters estimation
+================================
 
 samplics.estimation.expansion
 -----------------------------
