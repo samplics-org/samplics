@@ -78,7 +78,7 @@ Often the goal of conducting a survey is to estimate parameters of the target po
 Categorical data analysis
 -------------------------
 
-The categorical data analysis refers to the set of methods for analyzing categorical response variables. This is a large topic in data analysis and often used in the context of complex survey sampling. Contingency tables or cross-tabulations with associated statistics are well-known categorical data analysis. But it extends to more areas such as modeling techniques for categorical response variables. Agresti, Alan (2013) [#agresti2013] provides an overview of these methods. 
+Categorical data analysis refers to the set of methods for analyzing categorical response variables. This is a large topic in data analysis and used in the context of complex survey sampling. Contingency tables or cross-tabulations with associated statistics are well-known categorical data analysis techniques. But categorical data analysis extends to more areas such as modeling techniques for categorical response variables e.g. logistic/logit/loglinear regressions and generalized linear mixed models for categorical responses. Agresti, Alan (2013) [#agresti2013]_ provides an overview of these methods. 
 
 .. toctree::
    :maxdepth: 1
