@@ -126,7 +126,6 @@ dmypy.json
 .github
 
 #Extra
-img
 datasets
 reference_material
 notebooks/
