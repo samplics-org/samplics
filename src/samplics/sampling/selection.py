@@ -31,7 +31,7 @@ class SampleSelection(Generic[Number, StringNumber]):
 
     The implemented sampling algorithms are the simple random sampling (srs), the
     systematic selection (sys), five different algorithms of probability proportional
-    to size (pps), and the generic selection based on probabilities of selection.
+    to size (pps), and the generic selection.
 
     Attributes of the class:
         | method (str): a string specifying the sampling algorithm. The available
