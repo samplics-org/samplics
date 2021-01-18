@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  Testing-current-py-version-with-coverage:
+  code-coverage:
     runs-on: ubuntu-latest
     strategy:
       matrix:
