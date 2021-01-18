@@ -2,7 +2,7 @@
 SAMPLICS: sample analytics
 ==========================
 .. image:: ![CI](https://github.com/survey-methods/samplics/tree/main/.github/workflows/Testing-Samplics/badge.svg?branch=master)
-  :target: https://travis-ci.com/survey-methods/samplics
+  :target: https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting-Samplics
 
 .. image:: https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg?token=7C0LBB5N8Y
   :target: https://codecov.io/gh/survey-methods/samplics  
