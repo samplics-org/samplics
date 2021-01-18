@@ -38,4 +38,4 @@ script: nox --non-interactive --session "$NOXSESSION"
 #   branch: master
 
 notifications:
-  email: msdiallo@quantifyafrica.org
+  email: msdiallo@samplics.org
