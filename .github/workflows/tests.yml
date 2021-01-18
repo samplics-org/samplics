@@ -34,7 +34,7 @@ jobs:
       run: |
         python -m poetry run python -m pytest -v tests
         
-  Testing-cuurent-py-version-with-coverage:
+  Testing-current-py-version-with-coverage:
     runs-on: ubuntu-latest
     strategy:
       matrix:
