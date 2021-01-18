@@ -13,7 +13,7 @@ if both Python 2.x and python 3.x are installed on your computer, you may have t
 
 Dependencies
 ============
-Python versions 3.6.x or newer and the following packages:
+Python versions 3.7.x or newer and the following packages:
 
 * `numpy <https://numpy.org/>`_
 * `pandas <https://pandas.pydata.org/>`_
