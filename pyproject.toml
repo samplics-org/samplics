@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "samplics"
-version = "0.2.6"
+version = "0.3.0"
 description = "Select, weight and analyze complex sample data"
 authors = ["Mamadou S Diallo <msdiallo@quantifyafrica.org>"]
 license = "MIT"
@@ -27,7 +27,6 @@ classifiers = [
 packages = [
     { include = "samplics", from = "src" }
 ]
-#exclude = ["tests", "docs", "datasets"] - exclude by default since not inside src
 
 [tool.poetry.dependencies]
 python = "^3.6.1" #Pandas 1.0 requires at least Python 3.6.1
