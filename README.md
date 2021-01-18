@@ -2,7 +2,7 @@
 
 # _Sample Analytics_
 
-[![Build Status](https://travis-ci.com/survey-methods/samplics.svg?branch=master)](https://travis-ci.com/survey-methods/samplics/branches)
+[https://github.com/survey-methods/samplics/workflows/Testing-Coverage/badge.svg](https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting-Samplics)
 [![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics)
 [![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)](https://samplics.readthedocs.io/en/latest/?badge=latest)
 
