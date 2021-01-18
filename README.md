@@ -2,8 +2,8 @@
 
 # _Sample Analytics_
 
-[https://github.com/survey-methods/samplics/workflows/Testing-Coverage/badge.svg](https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting-Samplics)
-[![codecov](https://codecov.io/gh/survey-methods/samplics/branch/master/graph/badge.svg)](https://codecov.io/gh/survey-methods/samplics)
+[<img src="https://github.com/survey-methods/samplics/workflows/Testing/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting)
+[<img src="https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage)
 [![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)](https://samplics.readthedocs.io/en/latest/?badge=latest)
 
 In large scale surveys, often complex random mechanisms are used to select
