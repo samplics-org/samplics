@@ -1,6 +1,3 @@
-.. samplics documentation master file, created by
-   sphinx-quickstart on Sat Nov  2 14:38:05 2019.
-
 ==========================
 SAMPLICS: sample analytics
 ==========================
