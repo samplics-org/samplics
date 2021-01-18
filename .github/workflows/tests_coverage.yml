@@ -11,9 +11,3 @@ jobs:
   uses: codecov/codecov-action@v1
     with:
       token: ${{ secrets.CODECOV_TOKEN }}
-      codecov:
-        require_ci_to_pass: yes
-      coverage:
-        precision: 0
-        round: down
-        range: "70...100"
