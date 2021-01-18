@@ -1,10 +1,10 @@
 ==========================
 SAMPLICS: sample analytics
 ==========================
-.. image:: ![Testing](https://github.com/survey-methods/samplics/workflows/Testing-Samplics/badge.svg)
+.. image:: https://github.com/survey-methods/samplics/workflows/Testing-Samplics/badge.svg
   :target: https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting-Samplics
 
-.. image:: ![Coverage](https://github.com/survey-methods/samplics/workflows/Testing-Coverage/badge.svg)
+.. image:: https://github.com/survey-methods/samplics/workflows/Testing-Coverage/badge.svg
   :target: https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting-Coverage
 
 .. image:: https://readthedocs.org/projects/samplics/badge/?version=latest
