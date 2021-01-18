@@ -1,4 +1,4 @@
-language: python
+pylanguage: python
 
 before_install:
   - pip install poetry
