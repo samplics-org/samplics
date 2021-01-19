@@ -90,10 +90,7 @@ License
 =======
 `MIT <https://github.com/survey-methods/samplics/blob/master/license.txt>`_
 
-Project status
-==============
-This is a beta version. At this stage, this project is not recommended to be
-used for production or any project that the user depend on.
+
 
 
 
