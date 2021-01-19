@@ -11,7 +11,7 @@ authors:
 	  affiliation: 1
 affiliations:
         - name: UNICEF, The United Nations Children's Fund
-	  index: 1
+          index: 1
 date: 12 December 2020
 bibliography: paper.bib
 ---
