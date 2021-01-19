@@ -6,10 +6,7 @@
 [<img src="https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage)
 [![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)](https://samplics.readthedocs.io/en/latest/?badge=latest)
 
-In large scale surveys, often complex random mechanisms are used to select
-samples. Estimates derived from such samples must reflect the random
-mechanism. _Samplics_ is a python package that implements a set of
-sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four subpackages.
+In large scale surveys, often complex random mechanisms are used to select samples. Estimates derived from such samples must reflect the random mechanism. _Samplics_ is a python package that implements a set of sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four subpackages.
 
 **Sampling** provides a set of random selection techniques used to draw a sample from a population. It also provides procedures for calculating sample sizes. The sampling subpackage contains:
 
