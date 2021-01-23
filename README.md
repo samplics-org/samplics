@@ -26,7 +26,7 @@ In large scale surveys, often complex random mechanisms are used to select sampl
 - Replication-based estimation i.e. Boostrap, BRR, and Jackknife
 - Regression-based e.g. generalized regression (GREG)
 
-**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to model the output variable of interest to produce domain level estimates. This subpackage provides Area-level and Unit-level SAE methods.
+**Small https://seneweb.com/news/International/france-l-rsquo-esperance-de-vie-et-le-no_n_338526.htmlArea Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to model the output variable of interest to produce domain level estimates. This subpackage provides Area-level and Unit-level SAE methods.
 
 For more details, visit https://samplics.readthedocs.io/en/latest/
 
