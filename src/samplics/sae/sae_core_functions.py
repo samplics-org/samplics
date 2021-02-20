@@ -25,15 +25,15 @@ def area_stats(
     scale: Dict[Any, float],
     samp_weight: Optional[np.ndarray],
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Computes area level aggregated statistics. 
+    """Computes area level aggregated statistics.
 
     Args:
-        y (np.ndarray): an array of the variable of interest. 
-        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        y (np.ndarray): an array of the variable of interest.
+        X (np.ndarray): a multi-dimensional array of the information matrix.
         area (np.ndarray): an array of the areas associated with each observation.
-        error_std (float): standard error of the unit level residuals. 
-        re_std (float): standard error of the area level random errors. 
-        afactor (Dict[Any, float]): 
+        error_std (float): standard error of the unit level residuals.
+        re_std (float): standard error of the area level random errors.
+        afactor (Dict[Any, float]):
         samp_weight (Optional[np.ndarray]): [description]
 
     Returns:
@@ -73,18 +73,18 @@ def fixed_coefficients(
     re_std: float,
     scale: np.ndarray,
 ) -> np.ndarray:  # Tuple[np.ndarray, np.ndarray]:
-    """Computes the fixed effects of the linear mixed model. 
+    """Computes the fixed effects of the linear mixed model.
 
     Args:
-        y (np.ndarray): an array of the variable of interest. 
-        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        y (np.ndarray): an array of the variable of interest.
+        X (np.ndarray): a multi-dimensional array of the information matrix.
         area (np.ndarray): an array of the areas associated with each observation.
-        error_std (float): standard error of the unit level residuals. 
-        re_std (float): standard error of the area level random errors. 
-        scale (np.ndarray): scaling factor for the unit level errors. 
+        error_std (float): standard error of the unit level residuals.
+        re_std (float): standard error of the area level random errors.
+        scale (np.ndarray): scaling factor for the unit level errors.
 
     Returns:
-        np.ndarray: array of the fixed effect coefficients. 
+        np.ndarray: array of the fixed effect coefficients.
     """
 
     V_inv = inverse_covariance(area, error_std, re_std, scale)
@@ -98,15 +98,18 @@ def fixed_coefficients(
 
 
 def covariance(
-    area: np.ndarray, error_std: float, re_std: float, scale: np.ndarray,
+    area: np.ndarray,
+    error_std: float,
+    re_std: float,
+    scale: np.ndarray,
 ) -> np.ndarray:
     """Computes the covariance matrix.
 
     Args:
         area (np.ndarray): an array of the areas associated with each observation.
-        error_std (float): standard error of the unit level residuals. 
-        re_std (float): standard error of the area level random errors. 
-        scale (np.ndarray): scaling factor for the unit level errors. 
+        error_std (float): standard error of the unit level residuals.
+        re_std (float): standard error of the area level random errors.
+        scale (np.ndarray): scaling factor for the unit level errors.
 
     Returns:
         np.ndarray: covariance matrix
@@ -127,15 +130,18 @@ def covariance(
 
 
 def inverse_covariance(
-    area: np.ndarray, error_std: float, re_std: float, scale: np.ndarray,
+    area: np.ndarray,
+    error_std: float,
+    re_std: float,
+    scale: np.ndarray,
 ) -> np.ndarray:
     """Computes the inverse of the covariance matrix.
 
     Args:
         area (np.ndarray): an array of the areas associated with each observation.
-        error_std (float): standard error of the unit level residuals. 
-        re_std (float): standard error of the area level random errors. 
-        scale (np.ndarray): scaling factor for the unit level errors. 
+        error_std (float): standard error of the unit level residuals.
+        re_std (float): standard error of the area level random errors.
+        scale (np.ndarray): scaling factor for the unit level errors.
 
     Returns:
         np.ndarray: inverse of the covariance matrix
@@ -168,9 +174,9 @@ def log_det_covariance(
 
     Args:
         area (np.ndarray): an array of the areas associated with each observation.
-        error_std (float): standard error of the unit level residuals. 
-        re_std (float): standard error of the area level random errors. 
-        scale (np.ndarray): scaling factor for the unit level errors. 
+        error_std (float): standard error of the unit level residuals.
+        re_std (float): standard error of the area level random errors.
+        scale (np.ndarray): scaling factor for the unit level errors.
 
     Returns:
         float: logarithm of the determinant of the covariance matrix.
@@ -194,12 +200,12 @@ def log_likelihood(
     inv_covariance: np.ndarray,
     log_det_covariance: float,
 ) -> float:
-    """Computes the logarithm of the log-likelihood. 
+    """Computes the logarithm of the log-likelihood.
 
     Args:
-        method (str): fitting method used to computes the objective log-likelihood function. 
-        y (np.ndarray): an array of the variable of interest. 
-        X (np.ndarray): a multi-dimensional array of the information matrix. 
+        method (str): fitting method used to computes the objective log-likelihood function.
+        y (np.ndarray): an array of the variable of interest.
+        X (np.ndarray): a multi-dimensional array of the information matrix.
         beta (np.ndarray): array of fixed effect coefficients.
         inv_covariance (np.ndarray): [description]
         log_det_covariance (float): [description]
@@ -208,7 +214,7 @@ def log_likelihood(
         AssertionError: return an exception of the fitting method is not REML nor ML.
 
     Returns:
-        float: logarithm of the log-likelihood. 
+        float: logarithm of the log-likelihood.
     """
 
     n = y.size
@@ -243,18 +249,18 @@ def partial_derivatives(
     """Computes the partial derivatives.
 
     Args:
-        method (str): fitting method used to computes the objective log-likelihood function. 
-        y (np.ndarray): an array of the variable of interest. 
-        X (np.ndarray): a multi-dimensional array of the information matrix. 
-        error_std (float): standard error of the unit level residuals. 
-        re_std (float): standard error of the area level random errors. 
-        scale (np.ndarray): scaling factor for the unit level errors. 
+        method (str): fitting method used to computes the objective log-likelihood function.
+        y (np.ndarray): an array of the variable of interest.
+        X (np.ndarray): a multi-dimensional array of the information matrix.
+        error_std (float): standard error of the unit level residuals.
+        re_std (float): standard error of the area level random errors.
+        scale (np.ndarray): scaling factor for the unit level errors.
 
     Raises:
         AssertionError: return an exception of the fitting method is not REML nor ML.
 
     Returns:
-        float: logarithm of the log-likelihood. 
+        float: logarithm of the log-likelihood.
     """
 
     derivatives = np.zeros(2)
@@ -331,21 +337,21 @@ def iterative_fisher_scoring(
     reltol: float,
     maxiter: int,
 ) -> Tuple[float, float, int, float, bool]:  # May not need variance
-    """ Fisher-scroring algorithm for estimating variance components.
+    """Fisher-scroring algorithm for estimating variance components.
 
     Args:
-        method (str): fitting method used to computes the objective log-likelihood function. 
-        y (np.ndarray): an array of the variable of interest. 
-        X (np.ndarray): a multi-dimensional array of the information matrix. 
-        error_std (float): standard error of the unit level residuals. 
-        re_std (float): standard error of the area level random errors. 
-        scale (np.ndarray): scaling factor for the unit level errors. 
-        abstol (float): absolute precision required. 
+        method (str): fitting method used to computes the objective log-likelihood function.
+        y (np.ndarray): an array of the variable of interest.
+        X (np.ndarray): a multi-dimensional array of the information matrix.
+        error_std (float): standard error of the unit level residuals.
+        re_std (float): standard error of the area level random errors.
+        scale (np.ndarray): scaling factor for the unit level errors.
+        abstol (float): absolute precision required.
         reltol (float): relative precision required.
-        maxiter (int): maximun number of iterations. 
+        maxiter (int): maximun number of iterations.
 
     return:
-        Tuple[float, float, int, float, bool]: a tuple of variance components, covariance of 
+        Tuple[float, float, int, float, bool]: a tuple of variance components, covariance of
         variance components, number of iterations, tolerance, and convergence.
     """
 
@@ -356,7 +362,13 @@ def iterative_fisher_scoring(
     info_matrix = None
     while tolerance > tol:
         derivatives, info_matrix = partial_derivatives(
-            method, area=area, y=y, X=X, error_std=error_std, re_std=re_std, scale=scale,
+            method,
+            area=area,
+            y=y,
+            X=X,
+            error_std=error_std,
+            re_std=re_std,
+            scale=scale,
         )
 
         # print(np.matmul(np.linalg.inv(info_matrix), derivatives))

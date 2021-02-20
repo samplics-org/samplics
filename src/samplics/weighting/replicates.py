@@ -24,23 +24,23 @@ from samplics.utils.types import Array, Number
 
 
 class ReplicateWeight:
-    """*ReplicateWeight* implements Boostrap, Jackknife and BRR to derive replicate weights. 
+    """*ReplicateWeight* implements Boostrap, Jackknife and BRR to derive replicate weights.
     When possible design weights should be used as the input weights for creating the replicate
-    weights, hence the weight adjustments can be applied to the replicates. 
+    weights, hence the weight adjustments can be applied to the replicates.
 
     Attributes:
-        | method (str): replicate method. 
+        | method (str): replicate method.
         | fay_coef (float): Fay coefficient when implementing BRR-Fay.
-        | number_reps (int): number of replicates. 
-        | rep_coefs (np.ndarray): coefficients associated to the replicates. 
+        | number_reps (int): number of replicates.
+        | rep_coefs (np.ndarray): coefficients associated to the replicates.
         | stratification (bool): stratification indicator.
         | number_psus (int): number of primary sampling units.
-        | number_strata (int): number of strata. 
-        | random_seed (int): random seed. 
+        | number_strata (int): number of strata.
+        | random_seed (int): random seed.
 
 
     Methods:
-        | replicate(): computes the replicate weights. 
+        | replicate(): computes the replicate weights.
 
     """
 
@@ -100,7 +100,10 @@ class ReplicateWeight:
         return rep_prefix
 
     def _degree_of_freedom(
-        self, weight: np.ndarray, stratum: np.ndarray = None, psu: np.ndarray = None,
+        self,
+        weight: np.ndarray,
+        stratum: np.ndarray = None,
+        psu: np.ndarray = None,
     ) -> None:
 
         stratum = formats.numpy_array(stratum)
@@ -117,7 +120,10 @@ class ReplicateWeight:
     # Bootstrap methods
     @staticmethod
     def _boot_psus_replicates(
-        number_psus: int, number_reps: int, samp_rate: Number = 0, size_gap: int = 1,
+        number_psus: int,
+        number_reps: int,
+        samp_rate: Number = 0,
+        size_gap: int = 1,
     ) -> np.ndarray:
         """Creates the bootstrap replicates structure"""
 
@@ -137,7 +143,11 @@ class ReplicateWeight:
         return 1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
 
     def _boot_replicates(
-        self, psu: np.ndarray, stratum: np.ndarray, samp_rate: Number = 0, size_gap: int = 1,
+        self,
+        psu: np.ndarray,
+        stratum: np.ndarray,
+        samp_rate: Number = 0,
+        size_gap: int = 1,
     ) -> np.ndarray:
 
         boot_coefs = None
@@ -259,21 +269,21 @@ class ReplicateWeight:
         psu_varname: str = "_psu",
         str_varname: str = "_stratum",
     ) -> pd.DataFrame:
-        """Computes replicate sample weights. 
+        """Computes replicate sample weights.
 
         Args:
-            samp_weight (Array): array of sample weights. To incorporate the weights adjustment 
-                in the replicate weights, first replicate the design sample weights then apply 
-                the adjustments to the replicates. 
-            psu (Array): 
+            samp_weight (Array): array of sample weights. To incorporate the weights adjustment
+                in the replicate weights, first replicate the design sample weights then apply
+                the adjustments to the replicates.
+            psu (Array):
             stratum (Array, optional): array of the strata. Defaults to None.
             rep_coefs (Union[Array, Number], optional): coefficients associated to the replicates.
                 Defaults to False.
-            rep_prefix (str, optional): prefix to apply to the replicate weights names. 
+            rep_prefix (str, optional): prefix to apply to the replicate weights names.
                 Defaults to None.
-            psu_varname (str, optional): name of the psu variable in the output dataframe. 
+            psu_varname (str, optional): name of the psu variable in the output dataframe.
                 Defaults to "_psu".
-            str_varname (str, optional): name of the stratum variable in the output dataframe. 
+            str_varname (str, optional): name of the stratum variable in the output dataframe.
                 Defaults to "_stratum".
 
         Raises:

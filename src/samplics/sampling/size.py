@@ -33,7 +33,7 @@ class SampleSize:
         self.samp_size: Union[DictStrNum, Number] = 0
         self.deff_c: Union[DictStrNum, Number] = 1.0
         self.deff_w: Union[DictStrNum, Number] = 1.0
-        self.precision: Union[DictStrNum, Number] 
+        self.precision: Union[DictStrNum, Number]
         self.resp_rate: Union[DictStrNum, Number] = 1.0
 
     def icc(self) -> Union[DictStrNum, Number]:
@@ -183,7 +183,7 @@ class SampleSize:
 
         number_dictionaries = is_target_dict + is_precision_dict + is_deff_dict + is_resp_rate_dict
 
-        stratum : Optional[list[StringNumber]] = None
+        stratum: Optional[list[StringNumber]] = None
         if not self.stratification and (
             isinstance(target, dict)
             or isinstance(precision, dict)
@@ -230,35 +230,51 @@ class SampleSize:
             number_strata = len(stratum) if stratum is not None else 0
             if not is_target_dict and isinstance(target, (int, float)) and stratum is not None:
                 self.target = dict(zip(stratum, np.repeat(target, number_strata)))
-            elif isinstance(target, dict) :  
+            elif isinstance(target, dict):
                 self.target = target
-            if not is_precision_dict and isinstance(precision, (int, float)) and stratum is not None:
+            if (
+                not is_precision_dict
+                and isinstance(precision, (int, float))
+                and stratum is not None
+            ):
                 self.precision = dict(zip(stratum, np.repeat(precision, number_strata)))
-            elif isinstance(precision, dict) :
+            elif isinstance(precision, dict):
                 self.precision = precision
             if not is_deff_dict and isinstance(deff, (int, float)) and stratum is not None:
                 self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
             elif isinstance(deff, dict):
                 self.deff_c = deff
-            if not is_resp_rate_dict and isinstance(resp_rate, (int, float)) and stratum is not None:
+            if (
+                not is_resp_rate_dict
+                and isinstance(resp_rate, (int, float))
+                and stratum is not None
+            ):
                 self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
             elif isinstance(resp_rate, dict):
                 self.resp_rate = resp_rate
 
-        target_values : Union[np.ndarray, Number]
-        precision_values : Union[np.ndarray, Number]
-        resp_rate_values : Union[np.ndarray, Number]
-        if isinstance(self.target, dict) and isinstance(self.precision, dict) and isinstance(self.resp_rate,dict):
+        target_values: Union[np.ndarray, Number]
+        precision_values: Union[np.ndarray, Number]
+        resp_rate_values: Union[np.ndarray, Number]
+        if (
+            isinstance(self.target, dict)
+            and isinstance(self.precision, dict)
+            and isinstance(self.resp_rate, dict)
+        ):
             target_values = np.array(list(self.target.values()))
             precision_values = np.array(list(self.precision.values()))
             resp_rate_values = np.array(list(self.resp_rate.values()))
-        elif isinstance(self.target, (int, float)) and isinstance(self.precision, (int, float)) and isinstance(self.resp_rate, (int, float)):
+        elif (
+            isinstance(self.target, (int, float))
+            and isinstance(self.precision, (int, float))
+            and isinstance(self.resp_rate, (int, float))
+        ):
             target_values = self.target
             precision_values = self.precision
             resp_rate_values = self.resp_rate
         else:
             raise TypeError("Wrong type for self.target, self.precision, or self.resp_rate")
- 
+
         if self.parameter == "proportion" and (
             np.asarray(0 > target_values).any()
             or np.asarray(target_values > 1).any()
@@ -315,10 +331,16 @@ class SampleSize:
             raise AssertionError("No sample size calculated.")
         else:
             if self.stratification:
-                return  formats.dict_to_dataframe(
-                        ["_stratum", "_target", "_precision", "_samp_size"], self.target, self.precision, self.samp_size
-                    )
+                return formats.dict_to_dataframe(
+                    ["_stratum", "_target", "_precision", "_samp_size"],
+                    self.target,
+                    self.precision,
+                    self.samp_size,
+                )
             if not self.stratification:
                 return formats.dict_to_dataframe(
-                        ["_target", "_precision", "_samp_size"], self.target, self.precision, self.samp_size
-                    )
+                    ["_target", "_precision", "_samp_size"],
+                    self.target,
+                    self.precision,
+                    self.samp_size,
+                )

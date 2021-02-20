@@ -36,72 +36,75 @@ from samplics.utils.types import Array, Number
 class EbUnitModel:
     """*EbUnitModel* implements the basic Unit level model for complex indicators.
 
-    *EbUnitModel* takes the sample data as input and fits the basic linear mixed model. 
-    The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML) 
-    to fit the model parameters. Also, EbUnitModel predicts the areas means and provides 
-    the point and mean squared error (MSE) estimates of the empirical Bayes linear 
+    *EbUnitModel* takes the sample data as input and fits the basic linear mixed model.
+    The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML)
+    to fit the model parameters. Also, EbUnitModel predicts the areas means and provides
+    the point and mean squared error (MSE) estimates of the empirical Bayes linear
     unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.
 
-    *EbUnitModel* requires the user to provide the indicator function. The indicator function is 
-    expected to take the array of output sample observations as input and possibly some additional 
+    *EbUnitModel* requires the user to provide the indicator function. The indicator function is
+    expected to take the array of output sample observations as input and possibly some additional
     parameters needed to compute the indicator. The indicator function outputs an aggregated value.
-    For example, the poverty gap indicator can have the following signature 
-    pov_gap(y: array, pov_line: float) -> float. If the indicator function different outputs by 
+    For example, the poverty gap indicator can have the following signature
+    pov_gap(y: array, pov_line: float) -> float. If the indicator function different outputs by
     area then the self.area_list can be used to incorporate different logics across areas.
 
-    Also, *EbUnitModel* can use Boxcox to transform the output sample values in order to reduce 
-    the asymmetry in the datawhen fitting the linear mixed model. 
+    Also, *EbUnitModel* can use Boxcox to transform the output sample values in order to reduce
+    the asymmetry in the datawhen fitting the linear mixed model.
 
     Setting attributes
-        | method (str): the fitting method of the model parameters which can take the possible 
-        |   values restricted maximum likelihood (REML) or maximum likelihood (ML). 
-        |   If not specified, "REML" is used as default.  
-        | indicator (function): a user defined function to compute the indicator. 
-        | boxcox (dict): contains the *lambda* parameter of the Boxcox and a constant for the 
+        | method (str): the fitting method of the model parameters which can take the possible
+        |   values restricted maximum likelihood (REML) or maximum likelihood (ML).
+        |   If not specified, "REML" is used as default.
+        | indicator (function): a user defined function to compute the indicator.
+        | boxcox (dict): contains the *lambda* parameter of the Boxcox and a constant for the
         | log-transformation of the Boxcox.
 
     Sample related attributes
-        | ys (array): the output sample observations. 
-        | Xs (ndarray): the auxiliary information. 
+        | ys (array): the output sample observations.
+        | Xs (ndarray): the auxiliary information.
         | scales (array): an array of scaling parameters for the unit levels errors.
         | afactors (array): sum of the inverse squared of scale.
-        | areas (array): the full vector of small areas from the sampled observations.  
+        | areas (array): the full vector of small areas from the sampled observations.
         | areas_list (array): the list of small areas from the sample data.
-        | samp_size (dict): the sample size per small areas from the sample. 
-        | ys_mean (array): sample area means of the output variable. 
+        | samp_size (dict): the sample size per small areas from the sample.
+        | ys_mean (array): sample area means of the output variable.
         | Xs_mean (ndarray): sample area means of the auxiliary variables.
 
     Model fitting attributes
-        | fitted (boolean): indicates whether the model has been fitted or not. 
-        | fixed_effects (array): the estimated fixed effects of the regression model. 
-        | fe_std (array): the estimated standard errors of the fixed effects. 
+        | fitted (boolean): indicates whether the model has been fitted or not.
+        | fixed_effects (array): the estimated fixed effects of the regression model.
+        | fe_std (array): the estimated standard errors of the fixed effects.
         | random_effects (array): the estimated area level random effects.
-        |   associated with the small areas. 
-        | re_std (number): the estimated standard error of the random effects. 
-        | error_std (number): standard error of the unit level residuals. 
-        | convergence (dict): a dictionnary holding the convergence status and the number of 
-        |   iterations from the model fitting algorithm. 
+        |   associated with the small areas.
+        | re_std (number): the estimated standard error of the random effects.
+        | error_std (number): standard error of the unit level residuals.
+        | convergence (dict): a dictionnary holding the convergence status and the number of
+        |   iterations from the model fitting algorithm.
         | goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.
-        | gamma (dict): ratio of the between-area variability (re_std**2) to the total 
-        |   variability (re_std**2 + error_std**2 / a_factor). 
+        | gamma (dict): ratio of the between-area variability (re_std**2) to the total
+        |   variability (re_std**2 + error_std**2 / a_factor).
 
     Prediction related attributes
-        | areap (array): the list of areas for the prediction. 
-        | number_reps (int): number of replicates for the bootstrap MSE estimation. 
-        | area_est (array): area level EBLUP estimates. 
-        | area_mse (array): area level taylor estimation of the MSE. 
+        | areap (array): the list of areas for the prediction.
+        | number_reps (int): number of replicates for the bootstrap MSE estimation.
+        | area_est (array): area level EBLUP estimates.
+        | area_mse (array): area level taylor estimation of the MSE.
         | area_mse_boot (array): area level bootstrap estimation of the MSE.
 
     Main methods
         | fit(): fits the linear mixed model to estimate the model parameters using REMl or ML
-        |   methods. 
-        | predict(): predicts the area level indicator estimates which includes both the point 
-        |   estimates and the taylor MSE estimate. 
+        |   methods.
+        | predict(): predicts the area level indicator estimates which includes both the point
+        |   estimates and the taylor MSE estimate.
         | bootstrap_mse(): computes the area level bootstrap MSE estimates of the indicator.
     """
 
     def __init__(
-        self, method: str = "REML", boxcox: Optional[float] = None, constant: Number = 0,
+        self,
+        method: str = "REML",
+        boxcox: Optional[float] = None,
+        constant: Number = 0,
     ):
 
         # Setting
@@ -166,30 +169,35 @@ class EbUnitModel:
         maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the model parameters that is the fixed
-        effects, the random effects standard error and the unit level residuals' standard error. 
-        In addition, the method provides statistics related to the model fitting e.g. convergence 
+        effects, the random effects standard error and the unit level residuals' standard error.
+        In addition, the method provides statistics related to the model fitting e.g. convergence
         status, log-likelihood, AIC, BIC, and more.
 
         Args:
-            ys (Array): An array of the output sample observations. 
-            Xs (Array): An multi-dimensional array of the sample auxiliary information. 
-            areas (Array): provides the area of the sampled observations. 
-            samp_weight (Optional[Array], optional): An array of the sample weights. 
+            ys (Array): An array of the output sample observations.
+            Xs (Array): An multi-dimensional array of the sample auxiliary information.
+            areas (Array): provides the area of the sampled observations.
+            samp_weight (Optional[Array], optional): An array of the sample weights.
                 Defaults to None.
-            scales (Union[Array, Number], optional): the scale factor for the unit level errors. 
+            scales (Union[Array, Number], optional): the scale factor for the unit level errors.
                 If a single number of provided, the same number will be applied to all observations. Defaults to 1.
-            intercept (bool, optional): An boolean to indicate whether an intercept need to be 
+            intercept (bool, optional): An boolean to indicate whether an intercept need to be
                 added to Xs. Defaults to True
             tol (float, optional): tolerance used for convergence criteria. Defaults to 1.0e-4.
-            maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
+            maxiter (int, optional): maximum number of iterations for the fitting algorithm.
             Defaults to 100.
         """
 
         ys_transformed = basic_functions.transform(
-            ys, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=False,
+            ys,
+            llambda=self.boxcox["lambda"],
+            constant=self.boxcox["constant"],
+            inverse=False,
         )
 
-        eblup_ul = EblupUnitModel(method=self.method,)
+        eblup_ul = EblupUnitModel(
+            method=self.method,
+        )
         eblup_ul.fit(
             ys_transformed, Xs, areas, samp_weight, scales, intercept, tol=tol, maxiter=maxiter
         )
@@ -273,7 +281,8 @@ class EbUnitModel:
                 if j == number_cycles:
                     cycle_size = last_cycle_size
                 re_effects = np.random.normal(
-                    scale=(sigma2u * (1 - self.gamma[d])) ** 0.5, size=cycle_size,
+                    scale=(sigma2u * (1 - self.gamma[d])) ** 0.5,
+                    size=cycle_size,
                 )
                 errors = np.random.normal(
                     scale=scale_dr * (sigma2e ** 0.5), size=(cycle_size, N_dr)
@@ -295,7 +304,10 @@ class EbUnitModel:
 
             y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
             z_d = basic_functions.transform(
-                y_d, llambda=self.boxcox["lambda"], constant=self.boxcox["constant"], inverse=True,
+                y_d,
+                llambda=self.boxcox["lambda"],
+                constant=self.boxcox["constant"],
+                inverse=True,
             )
             eta[:, i] = np.apply_along_axis(indicator, axis=1, arr=z_d, **kwargs)  # *)
 
@@ -317,24 +329,24 @@ class EbUnitModel:
         **kwargs: Any,
     ) -> None:
         """Predicts the area level means and provides the taylor MSE estimation of the estimated
-        area means. 
+        area means.
 
         Args:
             Xr (Array): an multi-dimensional array of the out of sample auxiliary variables.
             arear (Array): provides the area of the out of sample units.
             indicator (Callable[..., Array]): a user defined function which computes the area level
-                indicators. The function should take y (output variable) as the first parameters, 
-                additional parameters can be used. Use ***kwargs* to transfer the additional 
+                indicators. The function should take y (output variable) as the first parameters,
+                additional parameters can be used. Use ***kwargs* to transfer the additional
                 parameters.
-            number_samples (int): number of replicates for the Monte-Carlo (MC) algorithm.  
-            scaler (Union[Array, Number], optional): the scale factor for the unit level errors. 
+            number_samples (int): number of replicates for the Monte-Carlo (MC) algorithm.
+            scaler (Union[Array, Number], optional): the scale factor for the unit level errors.
                 If a single number of provided, the same number will be applied to all observations. Defaults to 1.
-            intercept (bool, optional): An boolean to indicate whether an intercept need to be 
+            intercept (bool, optional): An boolean to indicate whether an intercept need to be
                 added to Xr. Defaults to True.
-            max_array_length (int, optional): controls the number of replicates to generate at 
-                the same time. This parameter helps with performance. The number can be reduce or 
+            max_array_length (int, optional): controls the number of replicates to generate at
+                the same time. This parameter helps with performance. The number can be reduce or
                 increase based on the user's computer RAM capacity. Defaults to int(100e6).
-            show_progress (bool, optional): shows a bar progress of the MC replicates 
+            show_progress (bool, optional): shows a bar progress of the MC replicates
                 calculations. Defaults to True.
 
         Raises:
@@ -412,10 +424,10 @@ class EbUnitModel:
             scaler (Union[Array, Number], optional): [description]. Defaults to 1.
             intercept (bool, optional): [description]. Defaults to True.
             tol (float, optional): tolerance used for convergence criteria. Defaults to 1.0e-4.
-            maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
+            maxiter (int, optional): maximum number of iterations for the fitting algorithm.
             Defaults to 100.
             max_array_length (int, optional): [description]. Defaults to int(100e6).
-            show_progress (bool, optional): shows a bar progress of the bootstrap replicates 
+            show_progress (bool, optional): shows a bar progress of the bootstrap replicates
                 calculations. Defaults to True.
 
         """
@@ -497,7 +509,8 @@ class EbUnitModel:
                 aboot_factor[i] = a_factor_dict[d]
 
                 re_d = np.random.normal(
-                    scale=self.re_std * (1 - self.gamma[d]) ** 0.5, size=cycle_size,
+                    scale=self.re_std * (1 - self.gamma[d]) ** 0.5,
+                    size=cycle_size,
                 )
                 err_d = np.random.normal(
                     scale=self.error_std * scale_dict[d],
@@ -601,16 +614,17 @@ class EbUnitModel:
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
     def to_dataframe(
-        self, col_names: List[str] = ["_area", "_estimate", "_mse_boot"],
+        self,
+        col_names: List[str] = ["_area", "_estimate", "_mse_boot"],
     ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
         Args:
-            col_names (list, optional): list of string to be used for the dataframe columns names. 
+            col_names (list, optional): list of string to be used for the dataframe columns names.
                 Defaults to ["_area", "_estimate", "_mse_boot"].
 
         Returns:
-            [pd.DataFrame]: a pandas dataframe 
+            [pd.DataFrame]: a pandas dataframe
         """
 
         ncols = len(col_names)
