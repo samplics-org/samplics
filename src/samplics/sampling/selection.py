@@ -25,7 +25,7 @@ from samplics.utils import formats
 from samplics.utils.types import Array, Number, Series, StringNumber
 
 
-class SampleSelection(Generic[Number, StringNumber]):
+class SampleSelection:
     """*SampleSelection* implements a number of sampling selection algorithms.
 
     The implemented sampling algorithms are the simple random sampling (srs), the
