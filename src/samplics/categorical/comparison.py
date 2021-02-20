@@ -280,7 +280,6 @@ class Ttest:
         remove_nan: bool = False,
     ) -> None:
 
-
         if y is None:
             raise AssertionError("vars need to be an array-like object")
         if known_mean is None and group is None:

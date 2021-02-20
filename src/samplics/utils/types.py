@@ -11,6 +11,6 @@ Array = Union[np.ndarray, pd.Series, list, tuple]
 Series = Union[pd.Series, list, tuple]
 
 Number = Union[float, int]
-StringNumber =  Union[str, float, int]
+StringNumber = Union[str, float, int]
 
 DictStrNum = Dict[StringNumber, Number]

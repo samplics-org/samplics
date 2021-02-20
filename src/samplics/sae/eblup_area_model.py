@@ -24,50 +24,50 @@ from samplics.utils.types import Array, Number
 
 
 class EblupAreaModel:
-    """*EblupAreaModel* implements the basic area level model. 
+    """*EblupAreaModel* implements the basic area level model.
 
-    *EblupAreaModel* takes the unstable survey estimates as input and model them to produce the 
-    small area estimates. The standard error of the unit level residuals are assumed known and 
-    usually correspond to the survey estimates standard error. In some cases, the survey standard 
+    *EblupAreaModel* takes the unstable survey estimates as input and model them to produce the
+    small area estimates. The standard error of the unit level residuals are assumed known and
+    usually correspond to the survey estimates standard error. In some cases, the survey standard
     errors (or variances) are modelled to reduce their variability and the modelled standard errors
     are them used for the computes the small area estimates. The user can pick between REML, ML and
-    FH to estimate the model parameters. EblupAreaModel provides both the area level point estimates and the taylor approximation of the MSEs. 
+    FH to estimate the model parameters. EblupAreaModel provides both the area level point estimates and the taylor approximation of the MSEs.
 
     Setting attributes
-        | method (str): the fitting method of the model parameters which can take the possible 
-        |   values restricted maximum likelihood (REML), maximum likelihood (ML), and 
+        | method (str): the fitting method of the model parameters which can take the possible
+        |   values restricted maximum likelihood (REML), maximum likelihood (ML), and
         |   Fay-Herriot (FH). If not specified, "REML" is used as default.
 
     Sample related attributes
-        | yhat (array): the survey output area level estimates. This is also referred to as the 
-        | direct estimates. 
-        | error_std (number): the estimated standard error of the direct estimates. 
-        | X (ndarray): the auxiliary information. 
+        | yhat (array): the survey output area level estimates. This is also referred to as the
+        | direct estimates.
+        | error_std (number): the estimated standard error of the direct estimates.
+        | X (ndarray): the auxiliary information.
         | b_const (array): an array of scaling parameters for the area random effects.
-        | area (array): the area of the survey output estimates.  
-        | samp_size (dict): the sample size per small areas from the sample. 
-        | ys_mean (array): sample area means of the output variable. 
+        | area (array): the area of the survey output estimates.
+        | samp_size (dict): the sample size per small areas from the sample.
+        | ys_mean (array): sample area means of the output variable.
         | Xs_mean (ndarray): sample area means of the auxiliary variables.
 
     Model fitting attributes
-        | fitted (boolean): indicates whether the model has been fitted or not. 
-        | fixed_effects (array): the estimated fixed effects of the regression model. 
-        | fe_std (array): the estimated standard errors of the fixed effects. 
+        | fitted (boolean): indicates whether the model has been fitted or not.
+        | fixed_effects (array): the estimated fixed effects of the regression model.
+        | fe_std (array): the estimated standard errors of the fixed effects.
         | random_effects (array): the estimated standard errors of the fixed effects.
         | re_std (number): the estimated area level standard error of the random effects.
-        | convergence (dict): a dictionnary holding the convergence status and the number of 
-        |   iterations from the model fitting algorithm. 
+        | convergence (dict): a dictionnary holding the convergence status and the number of
+        |   iterations from the model fitting algorithm.
         | goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.
 
     Prediction related attributes
-        | area_est (array): area level modelled estimates. 
-        | area_mse (array): area level taylor estimation of the MSE. 
+        | area_est (array): area level modelled estimates.
+        | area_mse (array): area level taylor estimation of the MSE.
 
     Main methods
         | fit(): fits the linear mixed model to estimate the model parameters using REMl or ML
-        |   methods. 
-        | predict(): predicts the area level mean estimates which includes both the point   | | 
-        |   estimates and the taylor MSE estimate. 
+        |   methods.
+        | predict(): predicts the area level mean estimates which includes both the point   | |
+        |   estimates and the taylor MSE estimate.
     """
 
     def __init__(self, method: str = "REML") -> None:
@@ -170,7 +170,12 @@ class EblupAreaModel:
         info_sigma = 0.0
         if self.method == "ML":
             beta, beta_cov = self._fixed_coefficients(
-                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
+                area=area,
+                yhat=yhat,
+                X=X,
+                sigma2_e=sigma2_e,
+                sigma2_v=sigma2_v,
+                b_const=b_const,
             )
             for d in area:
                 b_d = b_const[area == d]
@@ -200,7 +205,12 @@ class EblupAreaModel:
             info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
         elif self.method == "FH":  # Fay-Herriot approximation
             beta, beta_cov = self._fixed_coefficients(
-                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
+                area=area,
+                yhat=yhat,
+                X=X,
+                sigma2_e=sigma2_e,
+                sigma2_v=sigma2_v,
+                b_const=b_const,
             )
             for d in area:
                 b_d = b_const[area == d]
@@ -229,7 +239,7 @@ class EblupAreaModel:
         tol: float,
         maxiter: int,
     ) -> Tuple[float, float, int, float, bool]:  # May not need variance
-        """ Fisher-scroring algorithm for estimation of variance component
+        """Fisher-scroring algorithm for estimation of variance component
         return (sigma, covariance, number_iterations, tolerance, covergence status)"""
 
         iterations = 0
@@ -239,7 +249,12 @@ class EblupAreaModel:
         while iterations < maxiter and tolerance > tol:
             sigma2_v_previous = sigma2_v
             deriv_sigma, info_sigma = self._partial_derivatives(
-                area=area, yhat=yhat, X=X, sigma2_e=sigma2_e, sigma2_v=sigma2_v, b_const=b_const,
+                area=area,
+                yhat=yhat,
+                X=X,
+                sigma2_e=sigma2_e,
+                sigma2_v=sigma2_v,
+                b_const=b_const,
             )
             sigma2_v += deriv_sigma / info_sigma
             tolerance = abs(sigma2_v - sigma2_v_previous)
@@ -359,21 +374,21 @@ class EblupAreaModel:
         tol: float = 1e-8,
         maxiter: int = 100,
     ) -> None:
-        """Fits the linear mixed models to estimate the fixed effects and the standard error of 
-        the random effects. In addition, the method provides statistics related to the model 
-        fitting e.g. convergence status, log-likelihood, and more.  
+        """Fits the linear mixed models to estimate the fixed effects and the standard error of
+        the random effects. In addition, the method provides statistics related to the model
+        fitting e.g. convergence status, log-likelihood, and more.
 
         Args:
-            yhat (Array): an array of the estimated area level survey estimates also called 
-            the direct estimates. 
-            X (Array): an multi-dimensional array of the auxiliary information associated to 
-            the sampled areas. 
-            area (Array): provides the areas associated to the direct estimates. 
+            yhat (Array): an array of the estimated area level survey estimates also called
+            the direct estimates.
+            X (Array): an multi-dimensional array of the auxiliary information associated to
+            the sampled areas.
+            area (Array): provides the areas associated to the direct estimates.
             error_std (Array): [description]
             re_std_start (float, optional): [description]. Defaults to 0.001.
             b_const (Union[np.array, Number], optional): [description]. Defaults to 1.0.
             tol (float, optional): tolerance used for convergence criteria. Defaults to 1.0e-4.
-            maxiter (int, optional): maximum number of iterations for the fitting algorithm. 
+            maxiter (int, optional): maximum number of iterations for the fitting algorithm.
             Defaults to 100.
         """
 
@@ -406,7 +421,12 @@ class EblupAreaModel:
         )
 
         beta, beta_cov = self._fixed_coefficients(
-            area=area, yhat=yhat, X=X, sigma2_e=error_std ** 2, sigma2_v=sigma2_v, b_const=b_const,
+            area=area,
+            yhat=yhat,
+            X=X,
+            sigma2_e=error_std ** 2,
+            sigma2_v=sigma2_v,
+            b_const=b_const,
         )
 
         self.yhat = yhat
@@ -436,13 +456,13 @@ class EblupAreaModel:
     def predict(
         self, X: Array, area: Array, b_const: Union[np.array, Number] = 1.0, intercept: bool = True
     ) -> None:
-        """Provides the modelled area levels estimates and their MSE estimates. 
+        """Provides the modelled area levels estimates and their MSE estimates.
 
         Args:
-            X (Array): an multi-dimensional array of the auxiliary variables associated to 
-            areas to predict. 
-            area (Array): provides the areas for the prediction. 
-            error_std (Array): 
+            X (Array): an multi-dimensional array of the auxiliary variables associated to
+            areas to predict.
+            area (Array): provides the areas for the prediction.
+            error_std (Array):
             b_const (Union[np.array, Number], optional): [description]. Defaults to 1.0.
 
         Raises:
@@ -481,11 +501,11 @@ class EblupAreaModel:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
         Args:
-            col_names (list, optional): list of string to be used for the dataframe columns names. 
+            col_names (list, optional): list of string to be used for the dataframe columns names.
                 Defaults to ["_area", "_estimate", "_mse"].
 
         Returns:
-            [type]: a pandas dataframe 
+            [type]: a pandas dataframe
         """
 
         return formats.dict_to_dataframe(col_names, self.area_est, self.area_mse)

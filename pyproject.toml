@@ -57,7 +57,7 @@ pylint = "^2.6.0"
 
 [tool.black]
 line-length = 99
-target-version = ['py36', 'py37', 'py38', 'py39']
+target-version = ['py36', 'py37', 'py38']
 exclude = '''
 /(
     \.eggs
