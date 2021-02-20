@@ -163,7 +163,6 @@ class _SurveyEstimator(Generic[Number, StringNumber]):
             categories = y_dummies.columns
             y_dummies = y_dummies.values
         else:
-            y_dummies = None
             categories = None
             y_dummies = None
 
