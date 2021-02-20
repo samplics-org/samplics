@@ -14,7 +14,6 @@ sampling algorithms.
 """
 
 from ast import Str
-from operator import index
 from typing import Dict, Generic, Tuple, Union, Optional, overload
 
 import numpy as np
