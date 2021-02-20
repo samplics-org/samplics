@@ -14,7 +14,7 @@ import pandas as pd
 
 from samplics.utils import checks
 
-from samplics.utils.types import Array, Number, Series, StringNumber
+from samplics.utils.types import Array, DictStrNum, Number, Series, StringNumber
 
 
 def numpy_array(arr: Array) -> np.ndarray:
@@ -113,7 +113,7 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     return all_units
 
 
-def dict_to_dataframe(col_names: List[str], *args: Dict[StringNumber, Number]) -> pd.DataFrame:
+def dict_to_dataframe(col_names: List[str], *args: Union[DictStrNum, Number]) -> pd.DataFrame:
 
     if isinstance(args[0], dict):
         keys = list(args[0].keys())

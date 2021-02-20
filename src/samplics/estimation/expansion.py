@@ -22,7 +22,7 @@ from samplics.utils.types import Array, Number, Series, StringNumber
 from scipy.stats import t as student
 
 
-class _SurveyEstimator(Generic[Number, StringNumber]):
+class _SurveyEstimator:
     """General approach for sample estimation of linear parameters."""
 
     def __init__(self, parameter: str, alpha: float = 0.05, random_seed: Optional[int] = None):
@@ -199,7 +199,7 @@ class _SurveyEstimator(Generic[Number, StringNumber]):
                 return estimate2
 
 
-class TaylorEstimator(_SurveyEstimator[Number, StringNumber]):
+class TaylorEstimator(_SurveyEstimator):
     """*TaylorEstimate* implements taylor-based variance approximations.
 
     Attributes
