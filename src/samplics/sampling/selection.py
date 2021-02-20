@@ -13,8 +13,10 @@ sampling algorithms.
    Springer-Verlag New York, Inc
 """
 
-from ast import Str
-from typing import Dict, Generic, Tuple, Union, Optional, overload
+
+from __future__ import annotations
+
+from typing import Union, Optional
 
 import numpy as np
 import pandas as pd
@@ -22,7 +24,7 @@ import pandas as pd
 import math
 
 from samplics.utils import formats
-from samplics.utils.types import Array, Number, Series, StringNumber
+from samplics.utils.types import Array, Number, StringNumber
 
 
 class SampleSelection:
@@ -47,7 +49,7 @@ class SampleSelection:
         | joint_inclusion_probs(): provides the joint probalities of selection.
         | select(): indicates the selected sample.
 
-    TODO: handling of certaNumberies and implementation of joint_inclusion_probs().
+    TODO: handling of certainties and implementation of joint_inclusion_probs().
     """
 
     def __init__(
@@ -357,7 +359,7 @@ class SampleSelection:
         return sample, hits
 
     @staticmethod
-    def _pps_rs_select(samp_unit, samp_size, mos: Array) -> Tuple[Array, Array]:
+    def _pps_rs_select(samp_unit, samp_size, mos: Array) -> tuple[Array, Array]:
 
         all_indices = np.arange(samp_unit.shape[0])
         all_probs = mos / np.sum(mos)
@@ -447,9 +449,9 @@ class SampleSelection:
     def _sys_inclusion_probs(
         self,
         samp_unit,
-        samp_size: Optional[Dict[StringNumber, Number]] = None,
+        samp_size: Optional[dict[StringNumber, Number]] = None,
         stratum=None,
-        samp_rate: Optional[Dict[StringNumber, Number]] = None,
+        samp_rate: Optional[dict[StringNumber, Number]] = None,
     ) -> np.ndarray:
 
         pass
@@ -513,13 +515,13 @@ class SampleSelection:
 
         Args:
             samp_unit (Array): an array of all the observations in the target population.
-            samp_size (Union[Dict[Any, Number], Number, None], optional): the dictionary of sample
+            samp_size (Union[dict[Any, Number], Number, None], optional): the dictionary of sample
             sizes by stratum, if applicable. Defaults to None.
             stratum (Optional[Array], optional): array of the strata associated to the
                 population units. Defaults to None.
             mos (Optional[Array], optional): array of the measure of size associated to the
                 population units. Defaults to None.
-            samp_rate (Union[Dict[Any, Number], Number, None], optional): sampling rate provided
+            samp_rate (Union[dict[Any, Number], Number, None], optional): sampling rate provided
                 by stratum if applicable. Defaults to None.
 
         Raises:
@@ -606,13 +608,13 @@ class SampleSelection:
 
         Args:
             samp_unit (Array): an array of all the observations in the target population.
-            samp_size (Union[Dict[Any, Number], Number, None], optional): the dictionary of sample
+            samp_size (Union[dict[Any, Number], Number, None], optional): the dictionary of sample
             sizes by stratum, if applicable. Defaults to None.
             stratum (Optional[Array], optional): array of the strata associated to the
                 population units. Defaults to None.
             mos (Optional[Array], optional): array of the measure of size associated to the
                 population units. Defaults to None.
-            samp_rate (Union[Dict[Any, Number], Number, None], optional): sampling rate provided
+            samp_rate (Union[dict[Any, Number], Number, None], optional): sampling rate provided
                 by stratum if applicable. Defaults to None.
             probs (Optional[Array], optional): array of the probability of selection associated to  the population units. Defaults to None.
             shuffle (bool, optional): indicates whether to shuffle the data prior to running the
@@ -628,7 +630,7 @@ class SampleSelection:
             AssertionError: raises an assertion error if some of the clusters are certainties.
 
         Returns:
-            Union[pd.DataFrame, Tuple[np.ndarray, np.ndarray, np.ndarray]]: [description]
+            Union[pd.DataFrame, tuple[np.ndarray, np.ndarray, np.ndarray]]: [description]
         """
 
         if samp_size is not None and samp_rate is not None:
