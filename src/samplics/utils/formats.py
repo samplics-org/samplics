@@ -14,7 +14,7 @@ import pandas as pd
 
 from samplics.utils import checks
 
-from samplics.utils.types import Array, DictStrNum, Number, Series, StringNumber
+from samplics.utils.types import Array, DictStrInt, DictStrNum, Number, Series, StringNumber
 
 
 def numpy_array(arr: Array) -> np.ndarray:
@@ -93,10 +93,10 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 
 
 def sample_size_dict(
-    sample_size: Union[Dict[StringNumber, Number], Number],
+    sample_size: Union[DictStrInt, int],
     stratification: bool,
     stratum: Array,
-) -> Union[Dict[StringNumber, Number], Number]:
+) -> Union[DictStrInt, int]:
     if not isinstance(sample_size, Dict) and stratification:
         return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
     if isinstance(sample_size, (int, float)) and not stratification:
