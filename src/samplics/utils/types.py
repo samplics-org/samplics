@@ -14,3 +14,5 @@ Number = Union[float, int]
 StringNumber = Union[str, float, int]
 
 DictStrNum = Dict[StringNumber, Number]
+DictStrInt = Dict[StringNumber, int]
+DictStrFloat = Dict[StringNumber, float]
