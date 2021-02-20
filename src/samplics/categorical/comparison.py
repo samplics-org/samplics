@@ -21,7 +21,7 @@ from samplics.utils.types import Array, Number, Series, StringNumber
 from samplics.estimation import TaylorEstimator
 
 
-class Ttest(Generic[Number, StringNumber]):
+class Ttest:
     def __init__(self, samp_type: str, paired: bool = False, alpha: float = 0.05) -> None:
 
         if samp_type.lower() not in ("one-sample", "two-sample"):

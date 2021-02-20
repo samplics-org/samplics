@@ -183,7 +183,7 @@ class SampleSize:
 
         number_dictionaries = is_target_dict + is_precision_dict + is_deff_dict + is_resp_rate_dict
 
-        stratum : list[StringNumber]
+        stratum : Optional[list[StringNumber]] = None
         if not self.stratification and (
             isinstance(target, dict)
             or isinstance(precision, dict)
@@ -227,20 +227,20 @@ class SampleSize:
                     elif dict_number > 0:
                         if stratum != list(ll.keys()):
                             raise AssertionError("Python dictionaries have different keys")
-            number_strata = len(stratum)
-            if not is_target_dict and isinstance(target, (int, float)):
+            number_strata = len(stratum) if stratum is not None else 0
+            if not is_target_dict and isinstance(target, (int, float)) and stratum is not None:
                 self.target = dict(zip(stratum, np.repeat(target, number_strata)))
             elif isinstance(target, dict) :  
                 self.target = target
-            if not is_precision_dict and isinstance(precision, (int, float)):
+            if not is_precision_dict and isinstance(precision, (int, float)) and stratum is not None:
                 self.precision = dict(zip(stratum, np.repeat(precision, number_strata)))
             elif isinstance(precision, dict) :
                 self.precision = precision
-            if not is_deff_dict and isinstance(deff, (int, float)):
+            if not is_deff_dict and isinstance(deff, (int, float)) and stratum is not None:
                 self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
             elif isinstance(deff, dict):
                 self.deff_c = deff
-            if not is_resp_rate_dict and isinstance(resp_rate, (int, float)):
+            if not is_resp_rate_dict and isinstance(resp_rate, (int, float)) and stratum is not None:
                 self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
             elif isinstance(resp_rate, dict):
                 self.resp_rate = resp_rate
