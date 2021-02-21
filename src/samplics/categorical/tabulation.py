@@ -4,8 +4,8 @@ The module implements the cross-tabulation analysis.
 
 """
 
-
-from typing import Any, Dict, List, Optional, Union, Tuple
+from __future__ import annotations
+from typing import Any, Optional, Union
 
 import itertools
 
@@ -39,17 +39,17 @@ class Tabulation:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.type = "oneway"
-        self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
-        self.stats: Dict[str, Dict[str, Number]] = {}
-        self.stderror: Dict[str, Dict[str, Number]] = {}
-        self.lower_ci: Dict[str, Dict[str, Number]] = {}
-        self.upper_ci: Dict[str, Dict[str, Number]] = {}
-        self.deff: Dict[str, Dict[str, Number]] = {}
+        self.point_est: dict[str, dict[StringNumber, Number]] = {}
+        self.stats: dict[str, dict[str, Number]] = {}
+        self.stderror: dict[str, dict[str, Number]] = {}
+        self.lower_ci: dict[str, dict[str, Number]] = {}
+        self.upper_ci: dict[str, dict[str, Number]] = {}
+        self.deff: dict[str, dict[str, Number]] = {}
         self.alpha: float = alpha
         self.ciprop_method: str = ciprop_method
-        self.design_info: Dict[str, Number] = {}
-        self.vars_names: List[str] = []
-        self.vars_levels: Dict[str, StringNumber] = {}
+        self.design_info: dict[str, Number] = {}
+        self.vars_names: list[str] = []
+        self.vars_levels: dict[str, list[StringNumber]] = {}
 
     def __repr__(self) -> str:
         return f"Tabulation(parameter={self.parameter}, alpha={self.alpha})"
@@ -70,16 +70,16 @@ class Tabulation:
     def _estimate(
         self,
         var_of_ones: Array,
-        var: Array,
+        var: pd.DataFrame,
         samp_weight: Array = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
-        fpc: Union[Dict, float] = 1,
+        fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
-    ) -> Tuple[TaylorEstimator, list, int]:
+    ) -> tuple[TaylorEstimator, list, int]:
 
         if remove_nan:
             excluded_units = var.isna().values.ravel()
@@ -90,6 +90,8 @@ class Tabulation:
         else:
             var.fillna("nan", inplace=True)
         var = var.to_numpy().ravel()
+
+        var_of_ones = numpy_array(var_of_ones)
 
         if self.parameter == "count":
             tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
@@ -126,13 +128,13 @@ class Tabulation:
     def tabulate(
         self,
         vars: Array,
-        varnames: Optional[Union[str, List[str]]] = None,
+        varnames: Optional[Union[str, list[str]]] = None,
         samp_weight: Optional[Union[Array, Number]] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         # Todo: by: Optional[Array] = None,
-        fpc: Union[Dict, float] = 1,
+        fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
@@ -198,7 +200,6 @@ class Tabulation:
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff
         else:
             nb_obs = 0
-            tbl_est = None
             var_of_ones = np.ones(vars_df.shape[0])
             for k in range(0, nb_vars):
                 tbl_est, var_levels, nb_obs = self._estimate(
@@ -255,7 +256,7 @@ class Tabulation:
         return oneway_df
 
 
-def saturated_two_ways_model(varsnames: List[str]) -> str:
+def saturated_two_ways_model(varsnames: list[str]) -> str:
     """
     docstring
     """
@@ -282,21 +283,20 @@ class CrossTabulation:
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.type = "twoway"
-        self.point_est: Dict[str, Dict[StringNumber, Number]] = {}
-        self.stats: Dict[str, Dict[str, Number]] = {}
-        self.stderror: Dict[str, Dict[str, Number]] = {}
-        self.covariance: Dict[StringNumber, Dict[StringNumber, Number]] = {}
-        self.lower_ci: Dict[str, Dict[str, Number]] = {}
-        self.upper_ci: Dict[str, Dict[str, Number]] = {}
-        self.deff: Dict[str, Dict[str, Number]] = {}
+        self.point_est: dict[str, dict[StringNumber, Number]] = {}
+        self.stats: dict[str, dict[str, Number]] = {}
+        self.stderror: dict[str, dict[str, Number]] = {}
+        self.covariance: dict[StringNumber, dict[StringNumber, Number]] = {}
+        self.lower_ci: dict[str, dict[str, Number]] = {}
+        self.upper_ci: dict[str, dict[str, Number]] = {}
+        self.deff: dict[str, dict[str, Number]] = {}
         self.alpha: float = alpha
         self.ciprop_method: str = ciprop_method
-        self.design_info: Dict[str, Number] = {}
-        self.vars_names: List[str] = []
-        self.vars_levels: Dict[str, StringNumber] = {}
-        self.row_levels = []
-        self.col_levels = []
-        self.vars_names = []
+        self.design_info: dict[str, Number] = {}
+        self.vars_names: list[str] = []
+        self.vars_levels: dict[str, StringNumber] = {}
+        self.row_levels: list[StringNumber] = []
+        self.col_levels: list[StringNumber] = []
 
     def __repr__(self) -> str:
         return f"CrossTabulation(parameter={self.parameter}, alpha={self.alpha})"
@@ -330,13 +330,13 @@ class CrossTabulation:
     def tabulate(
         self,
         vars: Array,
-        varnames: Optional[Union[str, List[str]]] = None,
+        varnames: Optional[Union[str, list[str]]] = None,
         samp_weight: Optional[Union[Array, Number]] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         # Todo: by: Optional[Array] = None,
-        fpc: Union[Dict, float] = 1,
+        fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
         remove_nan: bool = False,
@@ -500,22 +500,26 @@ class CrossTabulation:
             self.lower_ci.update({vars_levels.iloc[r * ncols, 0]: lower_ci})
             self.upper_ci.update({vars_levels.iloc[r * ncols, 0]: upper_ci})
 
-        point_est = pd.DataFrame.from_dict(self.point_est, orient="index").values
+        point_est_df = pd.DataFrame.from_dict(self.point_est, orient="index").values
 
         if self.parameter == "count":
-            point_est = point_est / np.sum(point_est)
-        point_est_null = point_est.sum(axis=1).reshape(nrows, 1) @ np.transpose(
-            point_est.sum(axis=0).reshape(ncols, 1)
+            point_est_df = point_est_df / np.sum(point_est_df)
+        point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ np.transpose(
+            point_est_df.sum(axis=0).reshape(ncols, 1)
         )
 
-        chisq_p = vars.shape[0] * np.sum((point_est - point_est_null) ** 2 / point_est_null)
-        f_p = chisq_p / np.trace(delta_est)
+        chisq_p = float(
+            vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null)
+        )
+        f_p = float(chisq_p / np.trace(delta_est))
 
-        chisq_lr = 2 * vars.shape[0] * np.sum(point_est * np.log(point_est / point_est_null))
-        f_lr = chisq_lr / np.trace(delta_est)
+        chisq_lr = float(
+            2 * vars.shape[0] * np.sum(point_est_df * np.log(point_est_df / point_est_null))
+        )
+        f_lr = float(chisq_lr / np.trace(delta_est))
 
-        df_num = (np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est)
-        df_den = (tbl_est.number_psus - tbl_est.number_strata) * df_num
+        df_num = float((np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est))
+        df_den = float((tbl_est.number_psus - tbl_est.number_strata) * df_num)
 
         self.stats = {
             "Pearson-Unadj": {
