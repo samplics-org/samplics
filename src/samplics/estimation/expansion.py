@@ -18,7 +18,7 @@ import math
 import numpy as np
 import pandas as pd
 from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans, sample_size_dict
-from samplics.utils.types import Array, Number, Series, StringNumber
+from samplics.utils.types import Array, DictStrNum, Number, Series, StringNumber
 from scipy.stats import t as student
 
 
@@ -41,7 +41,7 @@ class _SurveyEstimator:
             raise AssertionError("parameter must be 'proportion', 'mean', 'total' or 'ratio'")
         self.alpha = alpha
 
-        self.point_est: Any = {}
+        self.point_est: Any = {}  # Union[dict[StringNumber, DictStrNum], DictStrNum, Number]
         self.variance: Any = {}
         self.covariance: Any = {}
         self.stderror: Any = {}
@@ -133,7 +133,7 @@ class _SurveyEstimator:
         domain: Optional[np.newaxis] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
-    ) -> Union[dict[StringNumber, dict[StringNumber, float]], dict[StringNumber, float], float]:
+    ) -> Union[dict[StringNumber, DictStrNum], DictStrNum, Number]:
         """Computes the parameter point estimates
 
         Args:
@@ -486,7 +486,6 @@ class TaylorEstimator(_SurveyEstimator):
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
         if domain is None:
-            # breakpoint()
             if (
                 (self.parameter == "proportion" or as_factor and self.parameter == "mean")
                 and isinstance(self.point_est, dict)
@@ -496,7 +495,6 @@ class TaylorEstimator(_SurveyEstimator):
                 lower_ci: dict[StringNumber, float] = {}
                 upper_ci: dict[StringNumber, float] = {}
                 coef_var: dict[StringNumber, float] = {}
-                # breakpoint()
                 for level in self.variance:
                     point_est = self.point_est[level]
                     stderror[level] = math.sqrt(self.variance[level])
@@ -528,7 +526,6 @@ class TaylorEstimator(_SurveyEstimator):
                 lower_ci = {}
                 upper_ci = {}
                 coef_var = {}
-                # breakpoint()
                 for level in self.variance:
                     stderror[level] = math.sqrt(self.variance[level])
                     lower_ci[level] = self.point_est[level] - t_quantile * stderror[level]
@@ -637,7 +634,7 @@ class TaylorEstimator(_SurveyEstimator):
         y = numpy_array(y)
         y_temp = y.copy()
 
-        x = numpy_array(x)
+        x = numpy_array(x) if x is not None else None
         psu = numpy_array(psu) if psu is not None else None
         ssu = numpy_array(ssu) if ssu is not None else None
 
@@ -697,7 +694,6 @@ class TaylorEstimator(_SurveyEstimator):
         else:
             for b in self.by:
                 group_b = by == b
-                # breakpoint()
                 y_temp_b = y_temp[group_b]
                 weight_temp_b = weight_temp[group_b]
                 x_b = x[group_b] if x is not None else None
