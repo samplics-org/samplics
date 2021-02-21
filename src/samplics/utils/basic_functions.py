@@ -10,7 +10,9 @@ Functions:
 respectively. 
 
 """
-from typing import List, Optional
+
+from __future__ import annotations
+from typing import  Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -22,7 +24,7 @@ from samplics.utils import formats
 from samplics.utils.types import Array, Number
 
 
-def set_variables_names(vars: Array, varnames: Optional[List[str]], prefix: str) -> List[str]:
+def set_variables_names(vars: Array, varnames: Optional[Union[str, list[str]]], prefix: str) -> list[str]:
 
     if varnames is None:
         if isinstance(vars, pd.DataFrame):
