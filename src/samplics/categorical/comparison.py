@@ -98,6 +98,8 @@ class Ttest:
                 )
 
                 return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead2a}\n{tbl_subhead2b}\n{tbl_subhead3}\n{tbl_subhead3a}\n{tbl_subhead3b}\n{tbl_subhead3c}\n{tbl_subhead4}\n{tbl_subhead4a}\n{tbl_subhead4b}\n{tbl_subhead5}\n{tbl_subhead5a}\n{tbl_subhead5b}\n{tbl_subhead5c} \n\n{self.to_dataframe().to_string(index=False)}\n"
+            else:
+                raise ValueError("Wrong specifications!")
 
     def _one_sample_one_group(
         self,
@@ -246,8 +248,8 @@ class Ttest:
     def _two_samples_unpaired(
         self,
         y: np.ndarray,
-        group: Array = None,
-        samp_weight: Array = None,
+        group: np.ndarray,
+        samp_weight: Optional[Array] = None,
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
@@ -269,7 +271,7 @@ class Ttest:
     def compare(
         self,
         y: Union[Series, Array],
-        known_mean: Number = None,
+        known_mean: Optional[Number] = None,
         group: Optional[Array] = None,
         varnames: Optional[Union[str, List[str]]] = None,
         samp_weight: Array = None,
@@ -288,16 +290,16 @@ class Ttest:
             raise AssertionError("Only one parameter 'known_mean' or 'group' should be provided!")
 
         if varnames is None:
-            prefix = "var"
+            self.vars_names = set_variables_names(y, None, "var")
         elif isinstance(varnames, str):
-            prefix = varnames
+            self.vars_names = set_variables_names(y, None, varnames)
         elif isinstance(varnames, list):
-            prefix = varnames[0]
+            self.vars_names = set_variables_names(y, varnames, varnames[0])
         else:
             raise AssertionError("varnames should be a string or a list of string")
 
-        self.vars_names = set_variables_names(y, varnames, prefix)
         y = numpy_array(y)
+        group = numpy_array(group)
 
         if self.samp_type == "one-sample" and known_mean is not None:
             self._one_sample_one_group(

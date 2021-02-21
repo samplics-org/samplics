@@ -63,7 +63,7 @@ class SampleWeight:
         """Returns the number of units"""
 
         if domain in (None, dict()):
-            self.number_units["__none__"] = len(samp_weight)
+            self.number_units = len(samp_weight)
         elif domain is not None:
             keys, values = np.unique(domain, return_counts=True)
             self.number_units = dict(zip(keys, values))
@@ -99,7 +99,7 @@ class SampleWeight:
 
         deff_w: Dict[StringNumber, Number] = {}
         if domain is None:
-            deff_w["__none__"] = self._deff_wgt(samp_weight)
+            deff_w = self._deff_wgt(samp_weight)
         else:
             for d in np.unique(domain):
                 deff_w[d] = self._deff_wgt(samp_weight[domain == d])
@@ -205,7 +205,7 @@ class SampleWeight:
         if adjust_class is None:
             (
                 adjust_factor,
-                self.adjust_factor["__none__"],
+                self.adjust_factor,
             ) = self._adjust_factor(samp_weight, resp_code, unknown_to_inelig)
             adjusted_weight = adjust_factor * samp_weight
         else:
@@ -298,14 +298,12 @@ class SampleWeight:
                 self.control[key] = levels[k]
         else:
             if control is None:
-                control = {"__none__": np.sum(samp_weight.size).astype("int")}
+                control = np.sum(samp_weight.size).astype("int")
             elif isinstance(control, (int, float)):
-                control = {"__none__": control}
+                control = control
 
-            norm_weight, self.adjust_factor["__none__"] = self._norm_adjustment(
-                samp_weight, control["__none__"]
-            )
-            self.control["__none__"] = control["__none__"]
+            norm_weight, self.adjust_factor = self._norm_adjustment(samp_weight, control)
+            self.control = control
 
         self.adjust_method = "normalization"
 
@@ -454,9 +452,9 @@ class SampleWeight:
 
         x_dict: Dict[StringNumber, Dict[StringNumber, Number]] = {}
         if domain is None:
-            x_array, x_dict["__none__"] = self._calib_covariates(data, x_cat, x_cont)
-            for key in x_dict["__none__"]:
-                x_dict["__none__"][key] = np.nan
+            x_array, x_dict = self._calib_covariates(data, x_cat, x_cont)
+            for key in x_dict:
+                x_dict[key] = np.nan
         else:
             x_array = np.zeros((data.shape[0], nb_cols))
             for d in np.unique(data[domain].values):
@@ -468,7 +466,7 @@ class SampleWeight:
                     x_dict[d][key] = np.nan
 
         if domain is None:
-            return x_array, x_dict["__none__"]
+            return x_array, x_dict
         else:
             return x_array, x_dict
 
