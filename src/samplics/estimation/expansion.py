@@ -133,7 +133,7 @@ class _SurveyEstimator:
         domain: Optional[np.newaxis] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
-    ) -> Union[dict[StringNumber, DictStrNum], DictStrNum, Number]:
+    ) -> Any: #Union[dict[StringNumber, DictStrNum], DictStrNum, Number]:
         """Computes the parameter point estimates
 
         Args:
@@ -648,7 +648,7 @@ class TaylorEstimator(_SurveyEstimator):
             weight_temp = np.asarray(samp_weight)
 
         if remove_nan:
-            if self.parameter == "ratio":
+            if self.parameter == "ratio" and x is not None:
                 excluded_units = np.isnan(y_temp) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y_temp)
