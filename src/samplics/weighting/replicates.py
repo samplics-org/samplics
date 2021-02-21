@@ -11,7 +11,8 @@ Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more detail
    Springer-Verlag New York, Inc
 """
 
-from typing import Union, List
+from __future__ import annotations
+from typing import Union, Optional
 
 import numpy as np
 import pandas as pd
@@ -50,7 +51,7 @@ class ReplicateWeight:
         stratification: bool = True,
         number_reps: int = 500,
         fay_coef: float = 0.0,
-        random_seed: int = None,
+        random_seed: Optional[int] = None,
     ):
 
         self.method = method.lower()
@@ -71,7 +72,7 @@ class ReplicateWeight:
             np.random.seed(random_seed)
 
     def _reps_to_dataframe(
-        self, psus: pd.DataFrame, rep_data: List[str], rep_prefix: str
+        self, psus: pd.DataFrame, rep_data: np.ndarray, rep_prefix: str
     ) -> pd.DataFrame:
 
         rep_data = pd.DataFrame(rep_data)
@@ -82,7 +83,7 @@ class ReplicateWeight:
 
         return rep_data
 
-    def _rep_prefix(self, prefix: str) -> str:
+    def _rep_prefix(self, prefix: Optional[str]) -> str:
 
         if self.method == "jackknife" and prefix is None:
             rep_prefix = "_jk_wgt_"
@@ -102,8 +103,8 @@ class ReplicateWeight:
     def _degree_of_freedom(
         self,
         weight: np.ndarray,
-        stratum: np.ndarray = None,
-        psu: np.ndarray = None,
+        stratum: Optional[np.ndarray],
+        psu: np.ndarray,
     ) -> None:
 
         stratum = formats.numpy_array(stratum)
@@ -140,17 +141,18 @@ class ReplicateWeight:
 
         ratio_sqrt = np.sqrt((1 - samp_rate) * sample_size / (number_psus - 1))
 
-        return 1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
+        return np.asarray(
+            1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
+        )
 
     def _boot_replicates(
         self,
         psu: np.ndarray,
-        stratum: np.ndarray,
+        stratum: Optional[np.ndarray],
         samp_rate: Number = 0,
         size_gap: int = 1,
     ) -> np.ndarray:
 
-        boot_coefs = None
         if stratum is None:
             psu_ids = np.unique(psu)
             boot_coefs = self._boot_psus_replicates(
@@ -172,7 +174,7 @@ class ReplicateWeight:
         return boot_coefs
 
     # BRR methods
-    def _brr_number_reps(self, psu: np.ndarray, stratum: np.ndarray = None) -> None:
+    def _brr_number_reps(self, psu: np.ndarray, stratum: Optional[np.ndarray] = None) -> None:
 
         if stratum is None:
             self.number_psus = np.unique(psu).size
@@ -194,7 +196,7 @@ class ReplicateWeight:
             if math.pow(2, nb_reps_log2) != self.number_reps:
                 self.number_reps = int(math.pow(2, nb_reps_log2))
 
-    def _brr_replicates(self, psu: np.ndarray, stratum: np.ndarray) -> np.ndarray:
+    def _brr_replicates(self, psu: np.ndarray, stratum: Optional[np.ndarray]) -> np.ndarray:
         """Creates the brr replicate structure"""
 
         if not (0 <= self.fay_coef < 1):
@@ -227,16 +229,16 @@ class ReplicateWeight:
 
     # Jackknife
     @staticmethod
-    def _jkn_psus_replicates(number_psus: np.ndarray) -> np.ndarray:
+    def _jkn_psus_replicates(number_psus: int) -> np.ndarray:
         """Creates the jackknife delete-1 replicate structure """
 
         jk_coefs = (number_psus / (number_psus - 1)) * (
             np.ones((number_psus, number_psus)) - np.identity(number_psus)
         )
 
-        return jk_coefs
+        return np.asarray(jk_coefs)
 
-    def _jkn_replicates(self, psu: np.ndarray, stratum: np.ndarray) -> np.ndarray:
+    def _jkn_replicates(self, psu: np.ndarray, stratum: Optional[np.ndarray]) -> np.ndarray:
 
         self.rep_coefs = ((self.number_reps - 1) / self.number_reps) * np.ones(self.number_reps)
 
@@ -263,9 +265,9 @@ class ReplicateWeight:
         self,
         samp_weight: Array,
         psu: Array,
-        stratum: Array = None,
+        stratum: Optional[Array] = None,
         rep_coefs: Union[Array, Number] = False,
-        rep_prefix: str = None,
+        rep_prefix: Optional[str] = None,
         psu_varname: str = "_psu",
         str_varname: str = "_stratum",
     ) -> pd.DataFrame:
@@ -295,9 +297,11 @@ class ReplicateWeight:
         """
 
         samp_weight = formats.numpy_array(samp_weight)
-
+        psu = formats.numpy_array(psu)
         if not self.stratification:
             stratum = None
+        else:
+            stratum = formats.numpy_array(stratum)
 
         self._degree_of_freedom(samp_weight, stratum, psu)
 
