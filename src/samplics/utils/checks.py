@@ -7,8 +7,9 @@ Functions:
     | *assert_response_status()* checks that the response values are in ("in", "rr", "nr", "uk").
     | *assert_brr_number_psus()* checks that the number of psus is a multiple of 2. 
 """
+from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -40,7 +41,7 @@ def assert_not_unique(array_unique_values: Array) -> None:
         )
 
 
-def assert_response_status(response_status: Any, response_dict: Dict[Any, Any]) -> None:
+def assert_response_status(response_status: Any, response_dict: Optional[dict[Any, Any]]) -> None:
     if response_status is None:
         raise AssertionError("response_status is not provided")
     elif not np.isin(response_status, ("in", "rr", "nr", "uk")).all() and response_dict in (

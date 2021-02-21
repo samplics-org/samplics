@@ -22,7 +22,7 @@ from samplics.utils import formats
 from samplics.utils.types import Array, Number
 
 
-def set_variables_names(vars: Array, varnames: List[str], prefix: str) -> List[str]:
+def set_variables_names(vars: Array, varnames: Optional[List[str]], prefix: str) -> List[str]:
 
     if varnames is None:
         if isinstance(vars, pd.DataFrame):
