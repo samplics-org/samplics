@@ -14,9 +14,10 @@ level.
    Association*, **74**, 269-277.
 """
 
-import math
-from typing import Any, Dict, List, Tuple, Union
+from __future__ import annotations
+from typing import Any, Union
 
+import math
 import numpy as np
 import pandas as pd
 from samplics.utils import formats
@@ -87,16 +88,16 @@ class EblupAreaModel:
         self.fitted: bool = False
         self.fixed_effects: np.ndarray = np.array([])
         self.fe_std: np.ndarray = np.array([])
-        self.re_std: np.ndarray = np.array([])
-        self.convergence: Dict[str, Union[float, int, bool]] = {}
-        self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
+        self.re_std: Number
+        self.convergence: dict[str, Union[float, int, bool]] = {}
+        self.goodness: dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
 
         # Predict(ino/ed) data
-        self.area_est: Dict[Any, float] = {}
-        self.area_mse: Dict[Any, float] = {}
-        self.area_mse_as1: Dict[Any, float] = {}
-        self.area_mse_as2: Dict[Any, float] = {}
-        self.area_mse_terms: Dict[str, Dict[Any, float]] = {}
+        self.area_est: dict[Any, float] = {}
+        self.area_mse: dict[Any, float] = {}
+        self.area_mse_as1: dict[Any, float] = {}
+        self.area_mse_as2: dict[Any, float] = {}
+        self.area_mse_terms: dict[str, dict[Any, float]] = {}
 
     def __str__(self) -> str:
 
@@ -122,7 +123,7 @@ class EblupAreaModel:
         sigma2_e: np.ndarray,
         sigma2_v: float,
         b_const: np.ndarray,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
 
         V = np.diag(sigma2_v * (b_const ** 2) + sigma2_e)
         V_inv = np.linalg.inv(V)
@@ -135,7 +136,7 @@ class EblupAreaModel:
 
     def _log_likelihood(
         self, y: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray
-    ) -> float:
+    ) -> Number:
 
         m = y.size
         const = m * np.log(2 * np.pi)
@@ -162,9 +163,9 @@ class EblupAreaModel:
         yhat: np.ndarray,
         X: np.ndarray,
         sigma2_e: np.ndarray,
-        sigma2_v: np.ndarray,
+        sigma2_v: Number,
         b_const: np.ndarray,
-    ) -> Tuple[float, float]:
+    ) -> tuple[Number, Number]:
 
         deriv_sigma = 0.0
         info_sigma = 0.0
@@ -199,10 +200,10 @@ class EblupAreaModel:
             P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
             P_B = np.matmul(P, B)
             P_B_P = np.matmul(P_B, P)
-            term1 = np.trace(P_B)
+            term1 = float(np.trace(P_B))
             term2 = np.matmul(np.matmul(np.transpose(yhat), P_B_P), yhat)
             deriv_sigma = -0.5 * (term1 - term2)
-            info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
+            info_sigma = 0.5 * float(np.trace(np.matmul(P_B_P, B)))
         elif self.method == "FH":  # Fay-Herriot approximation
             beta, beta_cov = self._fixed_coefficients(
                 area=area,
@@ -238,7 +239,7 @@ class EblupAreaModel:
         sigma2_v_start: float,
         tol: float,
         maxiter: int,
-    ) -> Tuple[float, float, int, float, bool]:  # May not need variance
+    ) -> tuple[float, float, int, float, bool]:  # May not need variance
         """Fisher-scroring algorithm for estimation of variance component
         return (sigma, covariance, number_iterations, tolerance, covergence status)"""
 
@@ -268,10 +269,10 @@ class EblupAreaModel:
         beta: np.ndarray,
         area: np.ndarray,
         sigma2_e: np.ndarray,
-        sigma2_v: float,
-        sigma2_v_cov: float,
+        sigma2_v: Number,
+        sigma2_v_cov: Number,
         b_const: np.ndarray,
-    ) -> Tuple[
+    ) -> tuple[
         np.ndarray,
         np.ndarray,
         np.ndarray,
@@ -279,7 +280,7 @@ class EblupAreaModel:
         np.ndarray,
         np.ndarray,
         np.ndarray,
-        np.dtype,
+        np.ndarray,
     ]:
 
         m = self.yhat.size
@@ -297,7 +298,7 @@ class EblupAreaModel:
         b_term_ml1 = np.linalg.inv(x_vinv_x)
         b_term_ml2_diag = (b_const ** 2) / (v_i ** 2)
         b_term_ml2 = np.matmul(np.matmul(np.transpose(X), np.diag(b_term_ml2_diag)), X)
-        b_term_ml = np.trace(np.matmul(b_term_ml1, b_term_ml2))
+        b_term_ml = float(np.trace(np.matmul(b_term_ml1, b_term_ml2)))
 
         estimates = np.array(self.yhat) * np.nan
         g1 = np.array(self.yhat) * np.nan
@@ -308,19 +309,18 @@ class EblupAreaModel:
         g1_partial = np.array(self.yhat) * np.nan
 
         sum_inv_vi2 = np.sum(1 / (v_i ** 2))
+        b_sigma2_v = 0.0
         if self.method == "REML":
-            b_sigma2_v = 0
-            g3_scale = 2 / sum_inv_vi2
+            g3_scale = 2.0 / sum_inv_vi2
         elif self.method == "ML":
-            b_sigma2_v = -(1 / 2 * sigma2_v_cov) * b_term_ml
-            g3_scale = 2 / sum_inv_vi2
+            b_sigma2_v = -(1.0 / 2.0 * sigma2_v_cov) * b_term_ml
+            g3_scale = 2.0 / sum_inv_vi2
         elif self.method == "FH":
             sum_vi = np.sum((1 / v_i))
-            b_sigma2_v = 2 * (m * sum_inv_vi2 - sum_vi ** 2) / (sum_vi ** 3)
-            g3_scale = 2 * m / sum_vi ** 2
+            b_sigma2_v = 2.0 * (m * sum_inv_vi2 - sum_vi ** 2) / (sum_vi ** 3)
+            g3_scale = 2.0 * m / sum_vi ** 2
         else:
-            b_sigma2_v = 0
-            g3_scale = 0
+            g3_scale = 0.0
 
         for d in area:
             b_d = b_const[area == d]
@@ -352,14 +352,14 @@ class EblupAreaModel:
             mse2_area_specific = g1 - g1_partial + g2 + g3 + g3_star
 
         return (
-            estimates,
-            mse,
-            mse1_area_specific,
-            mse2_area_specific,
-            g1,
-            g2,
-            g3,
-            g3_star,
+            np.asarray(estimates),
+            np.asarray(mse),
+            np.asarray(mse1_area_specific),
+            np.asarray(mse2_area_specific),
+            np.asarray(g1),
+            np.asarray(g2),
+            np.asarray(g3),
+            np.asarray(g3_star),
         )
 
     def fit(
@@ -369,7 +369,7 @@ class EblupAreaModel:
         area: Array,
         error_std: Array,
         re_std_start: float = 0.001,
-        b_const: Union[np.array, Number] = 1.0,
+        b_const: Union[np.ndarray, Number] = 1.0,
         intercept: bool = True,
         tol: float = 1e-8,
         maxiter: int = 100,
@@ -392,14 +392,17 @@ class EblupAreaModel:
             Defaults to 100.
         """
 
-        if isinstance(b_const, (int, float)):
-            b_const = np.ones(area.size) * b_const
-        else:
-            b_const = formats.numpy_array(b_const)
-
         area = formats.numpy_array(area)
         yhat = formats.numpy_array(yhat)
         X = formats.numpy_array(X)
+
+        error_std = formats.numpy_array(error_std)
+        error_std = formats.numpy_array(error_std)
+        if isinstance(b_const, (int, float)):
+            b_const = np.asarray(np.ones(area.size) * b_const)
+        else:
+            b_const = formats.numpy_array(b_const)
+
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)
 
@@ -454,7 +457,11 @@ class EblupAreaModel:
         self.fitted = True
 
     def predict(
-        self, X: Array, area: Array, b_const: Union[np.array, Number] = 1.0, intercept: bool = True
+        self,
+        X: Array,
+        area: Array,
+        b_const: Union[np.ndarray, Number] = 1.0,
+        intercept: bool = True,
     ) -> None:
         """Provides the modelled area levels estimates and their MSE estimates.
 
@@ -463,26 +470,26 @@ class EblupAreaModel:
             areas to predict.
             area (Array): provides the areas for the prediction.
             error_std (Array):
-            b_const (Union[np.array, Number], optional): [description]. Defaults to 1.0.
+            b_const (Union[np.ndarray, Number], optional): [description]. Defaults to 1.0.
 
         Raises:
             Exception: [description]
         """
 
+        area = formats.numpy_array(area)
         if not self.fitted:
             raise Exception(
                 "The model must be fitted first with .fit() before running the prediction."
             )
-
-        if isinstance(b_const, (int, float)):
-            b_const = np.ones(area.size) * b_const
-        else:
-            b_const = formats.numpy_array(b_const)
-
-        area = formats.numpy_array(area)
+            
         X = formats.numpy_array(X)
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)
+
+        if isinstance(b_const, (int, float)):
+            b_const = np.asarray(np.ones(area.size) * b_const)
+        else:
+            b_const = formats.numpy_array(b_const)
 
         point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
             X=X,
@@ -497,7 +504,7 @@ class EblupAreaModel:
         self.area_est = dict(zip(area, point_est))
         self.area_mse = dict(zip(area, mse))
 
-    def to_dataframe(self, col_names: List[str] = ["_area", "_estimate", "_mse"]) -> pd.DataFrame:
+    def to_dataframe(self, col_names: list[str] = ["_area", "_estimate", "_mse"]) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
         Args:
