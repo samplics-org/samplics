@@ -8,13 +8,23 @@ sample weights.
    Calculation*, Stata Press.
 """
 
-from typing import Dict, List, Optional, Tuple, Union
+from __future__ import annotations
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 
 from samplics.utils import checks, formats
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.utils.types import (
+    Array,
+    DictStrFloat,
+    DictStrInt,
+    Number,
+    StringNumber,
+    DictStrNum,
+    DictStrInt,
+    DictStrFloat,
+)
 
 
 class SampleWeight:
@@ -48,40 +58,39 @@ class SampleWeight:
     def __init__(self) -> None:
 
         self.adjust_method: str = ""
-        self.number_units: Dict[StringNumber, int] = {}
-        self.deff_wgt: Dict[StringNumber, Number] = {}
-        self.adjust_factor: Dict[StringNumber, Number] = {}
-        self.control: Dict[StringNumber, Number] = {}
+        self.number_units: Union[DictStrInt, int] = {}
+        self.deff_wgt: Union[DictStrNum, Number] = {}
+        self.adjust_factor: Union[DictStrNum, Number] = {}
+        self.control: Union[DictStrNum, Number] = {}
 
-    def __repr__(self) -> None:
+    def __repr__(self) -> str:
         pass
 
-    def __str__(self) -> None:
+    def __str__(self) -> str:
         pass
 
-    def _number_units(self, domain: np.ndarray, samp_weight: np.ndarray) -> None:
+    def _number_units(self, domain: Optional[np.ndarray], samp_weight: np.ndarray) -> None:
         """Returns the number of units"""
 
-        if domain in (None, dict()):
+        if domain is None:
             self.number_units = len(samp_weight)
         elif domain is not None:
             keys, values = np.unique(domain, return_counts=True)
             self.number_units = dict(zip(keys, values))
 
     @staticmethod
-    def _deff_wgt(samp_weight: np.ndarray) -> float:
+    def _deff_wgt(samp_weight: np.ndarray) -> Number:
         """compute the design effect due to unequal weights -
         Page 71 of Valliant and Dever (2018)"""
 
         mean_w = np.mean(samp_weight)
         relvar_w = np.power(samp_weight - mean_w, 2) / mean_w ** 2
-        deff_w = 1 + np.mean(relvar_w)
 
-        return float(deff_w)
+        return float(1 + np.mean(relvar_w))
 
     def deff_weight(
         self, samp_weight: Array, domain: Optional[np.ndarray] = None
-    ) -> Dict[StringNumber, Number]:
+    ) -> Union[DictStrNum, Number]:
         """Computes the design effect due to unequal weights.
 
         Args:
@@ -91,41 +100,41 @@ class SampleWeight:
                 for each sample unit. Defaults to None. Defaults to None.
 
         Returns:
-            Dict[StringNumber, Number]: dictionnary pairing the domains to the design effects due
+            DictStrNum: dictionnary pairing the domains to the design effects due
                 unequal weights.
         """
 
         samp_weight = formats.numpy_array(samp_weight)
 
-        deff_w: Dict[StringNumber, Number] = {}
         if domain is None:
-            deff_w = self._deff_wgt(samp_weight)
+            self.deff_wgt = self._deff_wgt(samp_weight)
+            return self.deff_wgt
         else:
+            self.deff_wgt = {}
             for d in np.unique(domain):
-                deff_w[d] = self._deff_wgt(samp_weight[domain == d])
-        self.deff_wgt = deff_w
-
-        return deff_w
+                self.deff_wgt[d] = self._deff_wgt(samp_weight[domain == d])
+            return self.deff_wgt
 
     @staticmethod
     def _norm_adjustment(
         samp_weight: np.ndarray,
-        control: Union[Dict[StringNumber, Number], Number],
-    ) -> Tuple[np.ndarray, np.ndarray]:
+        control: Number,
+    ) -> tuple[np.ndarray, Number]:
 
         sum_weights = np.sum(samp_weight)
-        adjust_factor = control / sum_weights
-        norm_weight = samp_weight * adjust_factor
+        adjust_factor = float(control / sum_weights)
 
-        return norm_weight, adjust_factor
+        return np.asarray(samp_weight * adjust_factor), adjust_factor
 
     @staticmethod
-    def _response(resp_status: np.ndarray, resp_dict: np.ndarray) -> np.ndarray:
+    def _response(
+        resp_status: np.ndarray, resp_dict: Optional[dict[str, StringNumber]]
+    ) -> np.ndarray:
 
         resp_status = formats.numpy_array(resp_status)
         checks.assert_response_status(resp_status, resp_dict)
 
-        if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any():
+        if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any() and resp_dict is not None:
             resp_code = np.repeat("  ", resp_status.size).astype(str)
             resp_code[resp_status == resp_dict["in"]] = "in"
             resp_code[resp_status == resp_dict["rr"]] = "rr"
@@ -139,17 +148,17 @@ class SampleWeight:
     @staticmethod
     def _adjust_factor(
         samp_weight: np.ndarray, resp_code: np.ndarray, unknown_to_inelig: bool
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, Number]:
 
         in_sample = resp_code == "in"  # ineligible
         rr_sample = resp_code == "rr"  # respondent
         nr_sample = resp_code == "nr"  # nonrespondent
         uk_sample = resp_code == "uk"  # unknown
 
-        in_weights_sum = np.sum(samp_weight[in_sample])
-        rr_weights_sum = np.sum(samp_weight[rr_sample])
-        nr_weights_sum = np.sum(samp_weight[nr_sample])
-        uk_weights_sum = np.sum(samp_weight[uk_sample])
+        in_weights_sum = float(np.sum(samp_weight[in_sample]))
+        rr_weights_sum = float(np.sum(samp_weight[rr_sample]))
+        nr_weights_sum = float(np.sum(samp_weight[nr_sample]))
+        uk_weights_sum = float(np.sum(samp_weight[uk_sample]))
 
         if unknown_to_inelig:
             adjust_uk = (in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum) / (
@@ -168,10 +177,10 @@ class SampleWeight:
 
     def adjust(
         self,
-        samp_weight: np.ndarray,
-        adjust_class: np.ndarray,
-        resp_status: np.ndarray,
-        resp_dict: Union[Dict[str, StringNumber], None] = None,
+        samp_weight: Array,
+        adjust_class: Array,
+        resp_status: Array,
+        resp_dict: Optional[Union[dict[str, StringNumber]]] = None,
         unknown_to_inelig: bool = True,
     ) -> np.ndarray:
         """adjusts sample weight to account for non-response.
@@ -184,7 +193,7 @@ class SampleWeight:
                 parameter.
             resp_status (np.ndarray): array indicating the eligibility and response status of the
                 sample unit. Values of resp_status should inform on ineligible (in), respondent (rr), nonrespondent (nr), not known / unknown (uk). If the values of the parameter are not in ("in", "rr", "nr", "uk") then the resp_dict is required.
-            resp_dict (Union[Dict[str, StringNumber], None], optional): dictionnary providing the
+            resp_dict (Union[dict[str, StringNumber], None], optional): dictionnary providing the
                 mapping between the values of resp_status and the ["in", "rr", "nr", "uk"].
                 For example, if the response status are: 0 for ineligible, 1 for respondent,
                 2 for nonrespondent, and 9 for unknown. Then the dictionary will be {"in": 0, "rr": 1, "nr": 2, "uk": 9}. If the response status variable has only values in ("in", "rr", "nr", "uk") then the dictionary is not needed. Optional parameter. Defaults to None.
@@ -198,7 +207,7 @@ class SampleWeight:
             np.ndarray: array of the adjusted sample weights.
         """
 
-        resp_code = self._response(resp_status, resp_dict)
+        resp_code = self._response(formats.numpy_array(resp_status), resp_dict)
         samp_weight = formats.numpy_array(samp_weight)
         adjusted_weight = np.ones(samp_weight.size) * np.nan
 
@@ -219,7 +228,7 @@ class SampleWeight:
                 )
 
             adjust_array = formats.dataframe_to_array(adjust_class)
-
+            self.adjust_factor = {}
             for c in np.unique(adjust_array):
                 samp_weight_c = samp_weight[adjust_array == c]
                 resp_code_c = resp_code[adjust_array == c]
@@ -231,7 +240,7 @@ class SampleWeight:
         self.deff_wgt = self.deff_weight(adjusted_weight)
         self.adjust_method = "nonresponse"
 
-        return adjusted_weight
+        return np.asarray(adjusted_weight)
 
     @staticmethod
     def _core_matrix(
@@ -252,12 +261,12 @@ class SampleWeight:
                 np.linalg.inv(core_matrix),
             )
 
-        return core_factor
+        return np.asarray(core_factor)
 
     def normalize(
         self,
         samp_weight: Array,
-        control: Union[Dict[StringNumber, Number], Number, None] = None,
+        control: Optional[Union[DictStrNum, Number]] = None,
         domain: Optional[Array] = None,
     ) -> np.ndarray:
         """normalizes the sample weights to sum to a known constants or levels.
@@ -282,11 +291,13 @@ class SampleWeight:
             domain = formats.numpy_array(domain)
             keys = np.unique(domain)
             levels: np.ndarray = np.zeros(keys.size) * np.nan
+            self.adjust_factor = {}
+            self.control = {}
             for k, key in enumerate(keys):
                 weight_k = samp_weight[domain == key]
                 if control is None:
                     levels[k] = np.sum(domain == key)
-                elif control is not None and isinstance(control, Dict):
+                elif control is not None and isinstance(control, dict):
                     levels[k] = control[key]
                 elif isinstance(control, (float, int)):
                     levels[k] = control
@@ -298,12 +309,11 @@ class SampleWeight:
                 self.control[key] = levels[k]
         else:
             if control is None:
-                control = np.sum(samp_weight.size).astype("int")
+                self.control = int(np.sum(samp_weight.size))
+                norm_weight, self.adjust_factor = self._norm_adjustment(samp_weight, self.control)
             elif isinstance(control, (int, float)):
-                control = control
-
-            norm_weight, self.adjust_factor = self._norm_adjustment(samp_weight, control)
-            self.control = control
+                norm_weight, self.adjust_factor = self._norm_adjustment(samp_weight, control)
+                self.control = control
 
         self.adjust_method = "normalization"
 
@@ -312,17 +322,17 @@ class SampleWeight:
     def poststratify(
         self,
         samp_weight: Array,
-        control: Union[Dict[StringNumber, Number], Number, None] = None,
-        factor: Union[Dict[StringNumber, Number], float, None] = None,
+        control: Optional[Union[DictStrNum, Number]] = None,
+        factor: Optional[Union[DictStrNum, Number]] = None,
         domain: Optional[Array] = None,
     ) -> np.ndarray:
         """[summary]
 
         Args:
             samp_weight (Array): [description]
-            control (Union[Dict[StringNumber, Number], Number, None], optional): a number or
+            control (Union[DictStrNum, Number, None], optional): a number or
                 array of the level to calibrate the sum of the weights. Defaults to None.
-            factor (Union[Dict[StringNumber, Number], float, None], optional): adjustment factor.
+            factor (Union[DictStrNum, Number, None], optional): adjustment factor.
                 Defaults to None.
             domain (Optional[Array], optional): array indicating the normalization class for each
                 sample unit. Defaults to None.
@@ -344,15 +354,18 @@ class SampleWeight:
                 raise ValueError("control dictionary keys do not match domain values.")
 
         if control is None and domain is not None:
-            if (np.unique(domain) != np.unique(list(factor.keys()))).any():
+            if (
+                isinstance(factor, dict)
+                and (np.unique(domain) != np.unique(list(factor.keys()))).any()
+            ):
                 raise ValueError("factor dictionary keys do not match domain values.")
 
-            sum_weight = np.sum(samp_weight)
+            sum_weight = float(np.sum(samp_weight))
             if isinstance(factor, dict):
                 control = {}
                 for d in np.unique(domain):
                     control[d] = sum_weight * factor[d]
-            elif isinstance(factor, float):
+            elif isinstance(factor, (int, float)):
                 control = sum_weight * factor
 
         ps_weight = self.normalize(samp_weight, control, domain)
@@ -364,7 +377,7 @@ class SampleWeight:
         self,
         samp_weight: np.ndarray,
         X: np.ndarray,
-        control: Union[Dict[StringNumber, Number], None],
+        control: Union[DictStrNum, None],
         domain: Optional[Array] = None,
     ) -> None:
         pass
@@ -373,7 +386,7 @@ class SampleWeight:
         self,
         samp_weight: Array,
         x: Union[np.ndarray, pd.DataFrame],
-        control: Union[Dict[StringNumber, Number], None] = None,
+        control: Union[DictStrNum, None] = None,
         scale: Union[np.ndarray, Number] = 1,
         domain: Optional[Array] = None,
     ) -> np.ndarray:
@@ -383,9 +396,9 @@ class SampleWeight:
     @staticmethod
     def _calib_covariates(
         data: pd.DataFrame,
-        x_cat: Optional[List[str]] = None,
-        x_cont: Optional[List[str]] = None,
-    ) -> Tuple[np.ndarray, Dict[StringNumber, Number]]:
+        x_cat: Optional[list[str]] = None,
+        x_cont: Optional[list[str]] = None,
+    ) -> tuple[np.ndarray, DictStrNum]:
 
         if not isinstance(data, pd.DataFrame) or data is None:
             raise ValueError("data must be a pandas dataframe.")
@@ -393,49 +406,49 @@ class SampleWeight:
         if x_cat is None and x_cont is None:
             raise AssertionError("x_cat and/or x_cont must be specified.")
         else:
-            x_dummies = None
-            x_dict = None
             if x_cat is not None:
                 x_concat = formats.dataframe_to_array(data[x_cat])
                 x_dummies = pd.get_dummies(x_concat)
                 x_dict = formats.array_to_dict(x_concat)
                 # x_dummies.insert(0, "intercept", 1)
-            if x_cont is None:
+            if x_cont is None and x_dummies is not None:
                 x_array = x_dummies.astype("int")
-            else:
+            elif x_cont is not None and x_dict is not None:
                 x_array = pd.concat([x_dummies, data[x_cont]], axis=1).astype("int")
-                x_cont_dict: Dict[StringNumber, Number] = {}
+                x_cont_dict: DictStrNum = {}
                 nb_obs = data[x_cont].shape[0]
                 for var in x_cont:
                     x_cont_dict[var] = nb_obs
                     x_dict.update(x_cont_dict)
+            else:
+                raise AssertionError
 
-        return x_array.to_numpy(), x_dict
+        return np.asarray(x_array.to_numpy()), x_dict
 
     def calib_covariates(
         self,
         data: pd.DataFrame,
-        x_cat: Optional[List[str]] = None,
-        x_cont: Optional[List[str]] = None,
-        domain: Optional[List[str]] = None,
-    ) -> Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]:
+        x_cat: Optional[list[str]] = None,
+        x_cont: Optional[list[str]] = None,
+        domain: Optional[list[str]] = None,
+    ) -> tuple[np.ndarray, Union[DictStrNum, dict[StringNumber, DictStrNum]]]:
         """A utility function that creates an array of the calibration groups/domains and
         a dictionary pairing the domains with the control values.
 
         Args:
             data (pd.DataFrame): input pandas dataframe with the calibration's control data.
-            x_cat (Optional[List[str]], optional): List of the names of the categorical control
+            x_cat (Optional[list[str]], optional): list of the names of the categorical control
                 variables. Defaults to None.
-            x_cont (Optional[List[str]], optional): List of the names of the continuous control
+            x_cont (Optional[list[str]], optional): list of the names of the continuous control
                 variables. Defaults to None.
-            domain (Optional[List[str]], optional): list of the names of the variables defining
+            domain (Optional[list[str]], optional): list of the names of the variables defining
                 the normalization classes for each sample unit. Defaults to None.
 
         Raises:
             AssertionError: raises an assertion error if input data is not a pandas dataframe.
 
         Returns:
-            Tuple[np.ndarray, Union[DictStrNum, Dict[StringNumber, DictStrNum]]]: a tuple of
+            tuple[np.ndarray, Union[DictStrNum, dict[StringNumber, DictStrNum]]]: a tuple of
             an array of the calibration domains and a dictionary pairing the domains with the
             control values.
         """
@@ -450,20 +463,24 @@ class SampleWeight:
         else:
             nb_cols = (data[x_cat].drop_duplicates()).shape[0] + len(x_cont)
 
-        x_dict: Dict[StringNumber, Dict[StringNumber, Number]] = {}
+        x_dict: Union[DictStrNum, dict[StringNumber, DictStrNum]]
         if domain is None:
             x_array, x_dict = self._calib_covariates(data, x_cat, x_cont)
             for key in x_dict:
                 x_dict[key] = np.nan
         else:
+            x_dict2: dict[StringNumber, DictStrNum] = {}
+            x_dict_d: DictStrNum
             x_array = np.zeros((data.shape[0], nb_cols))
             for d in np.unique(data[domain].values):
                 (
                     x_array[data[domain] == d, :],
-                    x_dict[d],
+                    x_dict_d,
                 ) = self._calib_covariates(data[data[domain] == d], x_cat, x_cont)
-                for key in x_dict[d]:
-                    x_dict[d][key] = np.nan
+                for key in x_dict_d:
+                    x_dict_d[key] = np.nan
+                x_dict2[d] = x_dict_d
+            x_dict = x_dict2
 
         if domain is None:
             return x_array, x_dict
@@ -472,10 +489,10 @@ class SampleWeight:
 
     def _calib_wgt(self, x: np.ndarray, core_factor: np.ndarray) -> np.ndarray:
         def _core_vector(x_i: np.ndarray, core_factor: np.ndarray) -> np.ndarray:
-            return np.dot(core_factor, x_i)
+            return np.asarray(np.dot(core_factor, x_i))
 
         if x.shape == (x.size,):
-            adjust_factor = _core_vector(x, float(core_factor))
+            adjust_factor = _core_vector(x, core_factor)
         else:
             adjust_factor = np.apply_along_axis(
                 _core_vector, axis=1, arr=x, core_factor=core_factor
@@ -487,7 +504,7 @@ class SampleWeight:
         self,
         samp_weight: Array,
         aux_vars: Array,
-        control: Union[Dict[StringNumber, Union[DictStrNum, Number]], None] = None,
+        control: Union[dict[StringNumber, Union[DictStrNum, Number]]],
         domain: Optional[Array] = None,
         scale: Union[Array, Number] = 1,
         bounded: bool = False,
@@ -498,7 +515,7 @@ class SampleWeight:
         Args:
             samp_weight (Array): array of sample weights.
             aux_vars (Array): array of auxiliary variables.
-            control (Union[Dict[StringNumber, Union[DictStrNum, Number]], None], optional):
+            control (Union[dict[StringNumber, Union[DictStrNum, Number]], None], optional):
                 provides the controls by domain if applicable. Defaults to None.
             domain (Optional[Array], optional): Array indicating the normalization class for each
                 sample unit. Defaults to None.
@@ -510,14 +527,15 @@ class SampleWeight:
             np.ndarray: an array of the calibrated sample weights.
         """
 
-        samp_size = samp_weight.size
-
         samp_weight = formats.numpy_array(samp_weight)
         aux_vars = formats.numpy_array(aux_vars)
+        samp_size = samp_weight.size
         if domain is not None:
             domain = formats.numpy_array(domain)
         if isinstance(scale, (float, int)):
             scale = np.repeat(scale, samp_size)
+        else:
+            scale = formats.numpy_array(scale)
         if aux_vars.shape == (samp_size,):
             x_w = aux_vars * samp_weight
             one_dimension = True
@@ -561,10 +579,9 @@ class SampleWeight:
                 control_d = control.get(d)
                 if isinstance(control_d, (int, float)):
                     control_d_values = [control_d]
-                elif isinstance(control_d, Dict):
+                elif isinstance(control_d, dict):
                     control_d_values = list(control_d.values())
                 else:
-                    control_d_values = None
                     raise TypeError("Type of control not valid!")
 
                 scale_d = scale[domain == d]

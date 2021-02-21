@@ -14,7 +14,7 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 
-from samplics.utils.types import Array, Number, Series
+from samplics.utils.types import Array, Number, Series, StringNumber
 
 
 def assert_probabilities(probs: Array) -> None:
@@ -41,7 +41,9 @@ def assert_not_unique(array_unique_values: Array) -> None:
         )
 
 
-def assert_response_status(response_status: Any, response_dict: Optional[dict[Any, Any]]) -> None:
+def assert_response_status(
+    response_status: Any, response_dict: Optional[dict[str, StringNumber]]
+) -> None:
     if response_status is None:
         raise AssertionError("response_status is not provided")
     elif not np.isin(response_status, ("in", "rr", "nr", "uk")).all() and response_dict in (
