@@ -7,7 +7,8 @@ Functions:
     | *dataframe_to_array()* returns a pandas dataframe from an np.ndarray.
 """
 
-from typing import Dict, List, Union, Tuple
+from __future__ import annotations
+from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -36,7 +37,7 @@ def numpy_array(arr: Array) -> np.ndarray:
         return arr
 
 
-def array_to_dict(arr: np.ndarray, domain: np.ndarray = None) -> Dict[StringNumber, Number]:
+def array_to_dict(arr: np.ndarray, domain: Optional[np.ndarray] = None) -> DictStrNum:
     """Converts an array to a dictionary where the keys are the unique values of the array and
     the values of the dictionary are the counts of the array values.
 
@@ -47,7 +48,7 @@ def array_to_dict(arr: np.ndarray, domain: np.ndarray = None) -> Dict[StringNumb
             Defaults to None.
 
     Returns:
-        Dict[StringNumber, Number]: a dictionary with the unique values of *arr* as keys.
+        dict[StringNumber, Number]: a dictionary with the unique values of *arr* as keys.
             The values of the dictionary correspond to the counts of the keys in *arr*.
     """
 
@@ -89,7 +90,7 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
     else:
         raise AssertionError("The input data is not a pandas dataframe")
 
-    return x_array.to_numpy()
+    return np.asarray(x_array.to_numpy())
 
 
 def sample_size_dict(
@@ -97,12 +98,14 @@ def sample_size_dict(
     stratification: bool,
     stratum: Array,
 ) -> Union[DictStrInt, int]:
-    if not isinstance(sample_size, Dict) and stratification:
+    if not isinstance(sample_size, dict) and stratification:
         return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
     if isinstance(sample_size, (int, float)) and not stratification:
         return sample_size
-    elif isinstance(sample_size, Dict):
+    elif isinstance(sample_size, dict):
         return sample_size
+    else:
+        raise AssertionError
 
 
 def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
@@ -113,7 +116,7 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     return all_units
 
 
-def dict_to_dataframe(col_names: List[str], *args: Union[DictStrNum, Number]) -> pd.DataFrame:
+def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
 
     if isinstance(args[0], dict):
         keys = list(args[0].keys())
@@ -140,8 +143,9 @@ def dict_to_dataframe(col_names: List[str], *args: Union[DictStrNum, Number]) ->
     return values_df
 
 
-def remove_nans(excluded_units: Array, *args) -> Tuple:
+def remove_nans(excluded_units: Array, *args: Any) -> list:
 
+    excluded_units = numpy_array(excluded_units)
     vars = list()
     for var in args:
         if var is not None and len(var.shape) != 0:
@@ -152,7 +156,10 @@ def remove_nans(excluded_units: Array, *args) -> Tuple:
     return vars
 
 
-def fpc_as_dict(stratum: Array, fpc: Union[Array, Number]):
+def fpc_as_dict(stratum: Optional[Array], fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
+
+    if stratum is not None:
+        stratum = numpy_array(stratum)
 
     if stratum is None and isinstance(fpc, (int, float)):
         return fpc
@@ -176,9 +183,9 @@ def concatenate_series_to_str(row: Series) -> str:
     return "__by__".join([str(c) for c in row])
 
 
-def numpy_to_dummies(arr: np.ndarray, varsnames: List[str]) -> np.ndarray:
+def numpy_to_dummies(arr: np.ndarray, varsnames: list[str]) -> np.ndarray:
 
     df = pd.DataFrame(arr.astype(str))
     df.columns = varsnames
 
-    return pd.get_dummies(df, drop_first=True)
+    return np.asarray(pd.get_dummies(df, drop_first=True).to_numpy())

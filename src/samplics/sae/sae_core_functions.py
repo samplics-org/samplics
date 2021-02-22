@@ -94,7 +94,7 @@ def fixed_coefficients(
     beta_hat = np.matmul(x_v_x_inv_x, y)
 
     # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
-    return beta_hat.ravel()  # , np.linalg.inv(beta_hat_cov)
+    return np.asarray(beta_hat.ravel())  # , np.linalg.inv(beta_hat_cov)
 
 
 def covariance(
@@ -336,7 +336,7 @@ def iterative_fisher_scoring(
     abstol: float,
     reltol: float,
     maxiter: int,
-) -> Tuple[float, float, int, float, bool]:  # May not need variance
+) -> Tuple[np.ndarray, np.ndarray, int, float, bool]:  # May not need variance
     """Fisher-scroring algorithm for estimating variance components.
 
     Args:
@@ -356,7 +356,7 @@ def iterative_fisher_scoring(
     """
 
     iterations = 0
-    tolerance, tol = 1, 0.9
+    tolerance, tol = 1.0, 0.9
     sigma2 = np.asarray([0, 0])
     sigma2_previous = np.asarray([0, 0])
     info_matrix = None
@@ -383,7 +383,7 @@ def iterative_fisher_scoring(
 
     return (
         sigma2,
-        np.linalg.inv(info_matrix),
+        np.asarray(np.linalg.inv(info_matrix)),
         iterations,
         tolerance,
         tolerance <= tol,
