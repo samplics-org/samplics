@@ -25,15 +25,17 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
+from __future__ import annotations
+from typing import Any, Optional, Union
+
 import warnings
-from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from samplics.sae.sae_core_functions import area_stats
 from samplics.utils import formats, basic_functions
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 
 class EblupUnitModel:
@@ -101,35 +103,35 @@ class EblupUnitModel:
             raise AssertionError("Value provided for method is not valid!")
 
         # Sample data
-        self.scales: np.ndarray = np.array([])
-        self.afactors: Dict[Any, float] = {}
-        self.ys: np.ndarray = np.array([])
-        self.Xs: np.ndarray = np.array([])
-        self.areas: np.ndarray = np.array([])
-        self.areas_list: np.ndarray = np.array([])
-        self.samp_size: Dict[Any, int] = {}
-        self.ys_mean: np.ndarray = np.array([])
-        self.Xs_mean: np.ndarray = np.array([])
+        self.scales: np.ndarray 
+        self.afactors: DictStrNum
+        self.ys: np.ndarray 
+        self.Xs: np.ndarray
+        self.areas: np.ndarray 
+        self.areas_list: np.ndarray 
+        self.samp_size: DictStrNum
+        self.ys_mean: np.ndarray
+        self.Xs_mean: np.ndarray
 
         # Fitting stats
         self.fitted: bool = False
-        self.fixed_effects: np.ndarray = np.array([])
-        self.fe_std: np.ndarray = np.array([])
-        self.random_effects: np.ndarray = np.array([])
-        self.re_std: float = 0
-        self.error_std: float = 0
-        self.convergence: Dict[str, Union[float, int, bool]] = {}
-        self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.gamma: Dict[Any, float] = {}
+        self.fixed_effects: np.ndarray 
+        self.fe_std: np.ndarray 
+        self.random_effects: np.ndarray 
+        self.re_std: Number = 0
+        self.error_std: Number = 0
+        self.convergence: dict[str, Union[float, int, bool]] = {}
+        self.goodness: dict[str, Number] = {}  # loglikehood, deviance, AIC, BIC
+        self.gamma: DictStrNum
 
         # Predict(ion/ed) data
-        self.areap: np.ndarray = np.array([])
-        self.Xp_mean: np.ndarray = np.array([])
+        self.areap: np.ndarray
+        self.Xp_mean: np.ndarray
         self.number_reps: int = 0
-        self.samp_rate: Dict[Any, float] = None
-        self.area_est: Dict[Any, float] = None
-        self.area_mse: Dict[Any, float] = None
-        self.area_mse_boot: Optional[Dict[Any, float]] = None
+        self.samp_rate: DictStrNum
+        self.area_est: DictStrNum
+        self.area_mse: DictStrNum
+        self.area_mse_boot: Optional[DictStrNum] = None
 
     def _beta(
         self,
@@ -154,9 +156,8 @@ class EblupUnitModel:
             beta1 = beta1 + np.matmul(np.transpose(Xw_d), resid_d_w)
             beta2 = beta2 + np.sum(resid_d_w * y_d[:, None] * w_d[:, None], axis=0)
 
-        beta = np.matmul(np.linalg.inv(beta1), beta2)
-
-        return beta
+        return np.asarray(np.matmul(np.linalg.inv(beta1), beta2)
+)
 
     def _mse(
         self,
@@ -191,7 +192,7 @@ class EblupUnitModel:
             / i_determinant
         )
 
-        return g1 + g2 + 2 * g3
+        return np.asarray(g1 + g2 + 2 * g3)
 
     def fit(
         self,
@@ -239,13 +240,13 @@ class EblupUnitModel:
                 Xs = np.insert(Xs.reshape(n, 1), 0, 1, axis=1)
             else:
                 Xs = np.insert(Xs, 0, 1, axis=1)
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+        if samp_weight is not None:
             samp_weight = formats.numpy_array(samp_weight)
+
         if isinstance(scales, (float, int)):
-            scales = np.ones(ys.shape[0]) * scales
+            scales = np.asarray(np.ones(ys.shape[0]) * scales)
         else:
             scales = formats.numpy_array(scales)
-
         self.scales = scales
 
         self.afactors = dict(zip(self.areas_list, basic_functions.sumby(areas, scales)))
@@ -259,11 +260,9 @@ class EblupUnitModel:
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         basic_fit = basic_model.fit(reml=reml, full_output=True, **fit_kwargs)
-        # print(basic_fit.summary())
 
         self.error_std = basic_fit.scale ** 0.5
         self.fixed_effects = basic_fit.fe_params
-        # self.random_effects = np.array(list(basic_fit.random_effects.values()))
 
         self.fe_std = basic_fit.bse_fe
         self.re_std = float(basic_fit.cov_re) ** 0.5
@@ -455,11 +454,6 @@ class EblupUnitModel:
         ps = np.isin(self.areap, self.areas_list)
         ps_area_list = self.areap[ps]
 
-        error = None
-        re_boot = None
-        re = None
-        X_ps = None
-        area_ps = None
         for i, d in enumerate(ps_area_list):
             aread = self.areas == d
             scale_ps_d = self.scales[aread]
@@ -467,7 +461,7 @@ class EblupUnitModel:
                 scale=self.error_std, size=(number_reps, self.samp_size[d])
             )
             re_boot_d = np.random.normal(scale=self.re_std, size=(number_reps, 1))
-            re_d = np.repeat(re_boot_d, self.samp_size[d], axis=1)
+            re_d = np.repeat(re_boot_d, int(self.samp_size[d]), axis=1)
 
             if i == 0:
                 error = error_d
@@ -529,13 +523,13 @@ class EblupUnitModel:
         if show_progress:
             print("\n")
 
-        self.area_mse_boot = dict(zip(ps_area_list, np.mean(boot_mse, axis=0)))
+        self.area_mse_boot = dict(zip(ps_area_list, np.asarray(np.mean(boot_mse, axis=0))))
 
         # TODO: nonnegligeable sampling fractions, section 7.2.4, Rao and Molina (2015)
 
     def to_dataframe(
         self,
-        col_names: List[str] = ["_area", "_estimate", "_mse", "_mse_boot"],
+        col_names: list[str] = ["_area", "_estimate", "_mse", "_mse_boot"],
     ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
