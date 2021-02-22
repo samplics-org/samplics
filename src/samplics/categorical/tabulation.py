@@ -48,7 +48,7 @@ class Tabulation:
         self.alpha: float = alpha
         self.ciprop_method: str = ciprop_method
         self.design_info: dict[str, Number] = {}
-        self.vars_names: list[str] = []
+        self.vars_names: Union[str, list[str]] = []
         self.vars_levels: dict[str, list[StringNumber]] = {}
 
     def __repr__(self) -> str:
@@ -293,7 +293,7 @@ class CrossTabulation:
         self.alpha: float = alpha
         self.ciprop_method: str = ciprop_method
         self.design_info: dict[str, Number] = {}
-        self.vars_names: list[str] = []
+        self.vars_names: Union[str, list[str]] = []
         self.vars_levels: dict[str, StringNumber] = {}
         self.row_levels: list[StringNumber] = []
         self.col_levels: list[StringNumber] = []
