@@ -21,7 +21,7 @@ import math
 import numpy as np
 import pandas as pd
 from samplics.utils import formats
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, DictStrNum, Number
 
 
 class EblupAreaModel:
@@ -79,25 +79,25 @@ class EblupAreaModel:
             self.method = method.upper()
 
         # Sample data
-        self.yhat: np.ndarray = np.array([])
-        self.error_std: np.ndarray = np.array([])
-        self.X: np.ndarray = np.array([])
-        self.area: np.ndarray = np.array([])
+        self.yhat: np.ndarray
+        self.error_std: np.ndarray
+        self.X: np.ndarray
+        self.area: np.ndarray
 
         # Fitting stats
         self.fitted: bool = False
-        self.fixed_effects: np.ndarray = np.array([])
-        self.fe_std: np.ndarray = np.array([])
+        self.fixed_effects: np.ndarray
+        self.fe_std: np.ndarray
         self.re_std: Number
         self.convergence: dict[str, Union[float, int, bool]] = {}
-        self.goodness: dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
+        self.goodness: dict[str, Number] = {}  # loglikehood, deviance, AIC, BIC
 
         # Predict(ino/ed) data
-        self.area_est: dict[Any, float] = {}
-        self.area_mse: dict[Any, float] = {}
-        self.area_mse_as1: dict[Any, float] = {}
-        self.area_mse_as2: dict[Any, float] = {}
-        self.area_mse_terms: dict[str, dict[Any, float]] = {}
+        self.area_est: DictStrNum
+        self.area_mse: DictStrNum
+        self.area_mse_as1: DictStrNum
+        self.area_mse_as2: DictStrNum
+        self.area_mse_terms: dict[str, DictStrNum]
 
     def __str__(self) -> str:
 
@@ -481,7 +481,7 @@ class EblupAreaModel:
             raise Exception(
                 "The model must be fitted first with .fit() before running the prediction."
             )
-            
+
         X = formats.numpy_array(X)
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)

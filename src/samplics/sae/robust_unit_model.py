@@ -23,7 +23,8 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
-from typing import Any, Dict, Optional, Tuple, Union, Callable
+from __future__ import annotations
+from typing import Any, Optional, Union, Callable
 
 import numpy as np
 import pandas as pd
@@ -31,7 +32,7 @@ import pandas as pd
 import statsmodels.api as sm
 
 from samplics.utils import formats, basic_functions
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, DictStrNum, Number
 
 from samplics.sae.sae_core_functions import area_stats
 from samplics.sae.eb_unit_model import EbUnitModel
@@ -105,7 +106,7 @@ class EllUnitModel:
         self,
         method: str = "MOM",
         boxcox: Optional[float] = None,
-        constant: Number = 0,
+        constant: Optional[Number] = None,
         indicator: Optional[Any] = None,
     ):
 
@@ -114,36 +115,36 @@ class EllUnitModel:
         if self.method not in ("REML", "ML", "MOM"):
             raise AssertionError("Value provided for method is not valid!")
         self.indicator = indicator
-        self.boxcox = {"lambda": boxcox, "constant": constant}
+        self.boxcox: dict[str, Optional[Number]] = {"lambda": boxcox, "constant": constant}
 
         # Sample data
-        self.scales: np.ndarray = np.array([])
-        self.afactors: Dict[Any, float] = {}
-        self.ys: np.ndarray = np.array([])
-        self.Xs: np.ndarray = np.array([])
-        self.areas: np.ndarray = np.array([])
-        self.areas_list: np.ndarray = np.array([])
-        self.samp_size: Dict[Any, int] = {}
-        self.ys_mean: np.ndarray = np.array([])
-        self.Xs_mean: np.ndarray = np.array([])
+        self.scales: np.ndarray
+        self.afactors: DictStrNum
+        self.ys: np.ndarray
+        self.Xs: np.ndarray
+        self.areas: np.ndarray
+        self.areas_list: np.ndarray
+        self.samp_size: DictStrNum
+        self.ys_mean: np.ndarray
+        self.Xs_mean: np.ndarray
 
         # Fitted data
         self.fitted: bool = False
-        self.fixed_effects: np.ndarray = np.array([])
-        self.fe_std: np.ndarray = np.array([])
-        self.random_effects: np.ndarray = np.array([])
-        self.re_std: float = 0
-        self.error_std: float = 0
-        self.convergence: Dict[str, Union[float, int, bool]] = {}
-        self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.gamma: Dict[Any, float] = {}
+        self.fixed_effects: np.ndarray
+        self.fe_std: np.ndarray
+        self.random_effects: np.ndarray
+        self.re_std: float
+        self.error_std: float
+        self.convergence: dict[str, Union[float, int, bool]] = {}
+        self.goodness: dict[str, Number] = {}  # loglikehood, deviance, AIC, BIC
+        self.gamma: DictStrNum
 
         # Predict(ion/ed) data
-        self.areap: np.ndarray = np.array([])
-        self.Xp_mean: np.ndarray = np.array([])
-        self.number_reps: int = 0
-        self.area_est: Dict[Any, float] = {}
-        self.area_mse: Dict[Any, float] = {}
+        self.areap: np.ndarray
+        self.Xp_mean: np.ndarray
+        self.number_reps: int
+        self.area_est: DictStrNum
+        self.area_mse: DictStrNum
 
     def fit(
         self,
@@ -182,10 +183,11 @@ class EllUnitModel:
                 Xs = np.insert(Xs.reshape(n, 1), 0, 1, axis=1)
             else:
                 Xs = np.insert(Xs, 0, 1, axis=1)
-        if samp_weight is not None and isinstance(samp_weight, pd.DataFrame):
+        if samp_weight is not None:
             samp_weight = formats.numpy_array(samp_weight)
+
         if isinstance(scales, (float, int)):
-            scales = np.ones(ys.shape[0]) * scales
+            scales = np.asarray(np.ones(ys.shape[0]) * scales)
         else:
             scales = formats.numpy_array(scales)
 
@@ -245,12 +247,10 @@ class EllUnitModel:
         max_array_length: int,
         show_progress: bool,
         **kwargs: Any,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
 
         areas = np.unique(area)
         nb_areas = len(areas)
-        bar_length = 0
-        steps = 0
         if show_progress:
             bar_length = min(50, nb_areas)
             steps = np.linspace(1, nb_areas - 1, bar_length).astype(int)
@@ -267,7 +267,6 @@ class EllUnitModel:
             number_cycles = int(number_samples // cycle_size)
             last_cycle_size = number_samples % cycle_size
 
-            y_d = None
             for j in range(number_cycles + 1):
                 if j == number_cycles:
                     cycle_size = last_cycle_size
@@ -302,24 +301,22 @@ class EllUnitModel:
         ell_estimate = np.mean(eta, axis=0)
         ell_mse = np.mean(np.power(eta - ell_estimate[None, :], 2), axis=0)
 
-        return ell_estimate, ell_mse
+        return np.asarray(ell_estimate), np.asarray(ell_mse)
 
     def _predict_indicator_nonparametric(
         self,
         number_samples: int,
-        indicator: Callable[..., np.ndarray],
+        indicator: Callable[..., Array],
         mu: np.ndarray,
         area: np.ndarray,
         total_residuals: np.ndarray,
         max_array_length: int,
         show_progress: bool,
         **kwargs: Any,
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
 
         areas = np.unique(area)
         nb_areas = len(areas)
-        bar_length = 0
-        steps = 0
         if show_progress:
             bar_length = min(50, nb_areas)
             steps = np.linspace(1, nb_areas - 1, bar_length).astype(int)
@@ -371,7 +368,7 @@ class EllUnitModel:
         ell_estimate = np.mean(eta, axis=0)
         ell_mse = np.mean(np.power(eta - ell_estimate[None, :], 2), axis=0)
 
-        return ell_estimate, ell_mse
+        return np.asarray(ell_estimate), np.asarray(ell_mse)
 
     def predict(
         self,
@@ -413,6 +410,7 @@ class EllUnitModel:
                 "The model must be fitted first with .fit() before running the prediction."
             )
 
+        X = formats.numpy_array(X)
         self.number_samples = int(number_samples)
         if isinstance(scale, (float, int)):
             scale = np.ones(X.shape[0]) * scale
@@ -430,8 +428,6 @@ class EllUnitModel:
 
         mu = X @ self.fixed_effects
 
-        area_est = None
-        area_mse = None
         if self.method in ("REML", "ML"):
             area_est, area_mse = self._predict_indicator_parametric(
                 self.number_samples,

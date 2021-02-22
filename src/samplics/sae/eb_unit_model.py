@@ -22,15 +22,17 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
+from __future__ import annotations
+from typing import Any, Optional, Union, Callable
+
 import warnings
-from typing import Any, Dict, List, Optional, Union, Callable
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from samplics.sae.eblup_unit_model import EblupUnitModel
 from samplics.utils import formats, basic_functions
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, DictStrNum, Number
 
 
 class EbUnitModel:
@@ -103,59 +105,63 @@ class EbUnitModel:
     def __init__(
         self,
         method: str = "REML",
-        boxcox: Optional[float] = None,
-        constant: Number = 0,
+        boxcox: Optional[Number] = None,
+        constant: Optional[Number] = None,
     ):
 
         # Setting
         self.method: str = method.upper()
         if self.method not in ("REML", "ML"):
             raise AssertionError("Value provided for method is not valid!")
-        self.indicator: Callable[..., Any] = None
-        self.number_samples: Optional[int] = None
-        self.boxcox = {"lambda": boxcox, "constant": constant}
+        self.indicator: Callable[..., Any]
+        self.number_samples: int
+        self.boxcox: dict[str, Optional[Number]] = {"lambda": boxcox, "constant": constant}
 
         # Sample data
-        self.scales: np.ndarray = np.array([])
-        self.afactors: Dict[Any, float] = {}
-        self.ys: np.ndarray = np.array([])
-        self.Xs: np.ndarray = np.array([])
-        self.areas: np.ndarray = np.array([])
-        self.areas_list: np.ndarray = np.array([])
-        self.samp_size: Dict[Any, int] = {}
-        self.ys_mean: np.ndarray = np.array([])
-        self.Xs_mean: np.ndarray = np.array([])
+        self.scales: np.ndarray
+        self.afactors: DictStrNum
+        self.ys: np.ndarray
+        self.Xs: np.ndarray
+        self.areas: np.ndarray
+        self.areas_list: np.ndarray
+        self.samp_size: DictStrNum
+        self.ys_mean: np.ndarray
+        self.Xs_mean: np.ndarray
 
         # Fitted data
         self.fitted: bool = False
-        self.fixed_effects: np.ndarray = np.array([])
-        self.fe_std: np.ndarray = np.array([])
-        self.random_effects: np.ndarray = np.array([])
-        self.re_std: float = 0
-        self.error_std: float = 0
-        self.convergence: Dict[str, Union[float, int, bool]] = {}
-        self.goodness: Dict[str, float] = {}  # loglikehood, deviance, AIC, BIC
-        self.gamma: Dict[Any, float] = {}
+        self.fixed_effects: np.ndarray
+        self.fe_std: np.ndarray
+        self.random_effects: np.ndarray
+        self.re_std: float
+        self.error_std: float
+        self.convergence: dict[str, Union[float, int, bool]] = {}
+        self.goodness: dict[str, Number] = {}  # loglikehood, deviance, AIC, BIC
+        self.gamma: DictStrNum
 
         # Predict(ion/ed) data
-        self.number_reps: int = 0
-        self.area_est: Dict[Any, float] = {}
-        # self.area_mse: Dict[Any, float] = {}
-        self.area_mse_boot: Optional[Dict[Any, float]] = None
+        self.number_reps: int
+        self.area_est: DictStrNum
+        self.area_mse: DictStrNum
+        self.area_mse_boot: Optional[DictStrNum] = None
 
     def _transformation(self, y: np.ndarray, inverse: bool) -> np.ndarray:
         if self.boxcox["lambda"] is None:
             return y
-        elif self.boxcox["lambda"] == 0.0:
+        elif self.boxcox["lambda"] == 0.0 and self.boxcox["constant"] is not None:
             if inverse:
-                return np.exp(y) - self.boxcox["constant"]
+                return np.asarray(np.exp(y) - self.boxcox["constant"])
             else:
-                return np.log(y + self.boxcox["constant"])
+                return np.asarray(np.log(y + self.boxcox["constant"]))
         elif self.boxcox["lambda"] != 0.0:
             if inverse:
-                return np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
+                return np.asarray(
+                    np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
+                )
             else:
-                return np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
+                return np.asarray(np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"])
+        else:
+            raise AssertionError
 
     def fit(
         self,
@@ -187,6 +193,8 @@ class EbUnitModel:
             maxiter (int, optional): maximum number of iterations for the fitting algorithm.
             Defaults to 100.
         """
+
+        ys = formats.numpy_array(ys)
 
         ys_transformed = basic_functions.transform(
             ys,
@@ -253,8 +261,6 @@ class EbUnitModel:
         nb_arear = len(arear_list)
         mu_r = X_r @ fixed_effects
 
-        bar_length = 0
-        steps = 0
         if show_progress:
             bar_length = min(50, nb_arear)
             steps = np.linspace(1, nb_arear - 1, bar_length).astype(int)
@@ -314,7 +320,7 @@ class EbUnitModel:
         if show_progress:
             print("\n")
 
-        return np.mean(eta, axis=0)
+        return np.asarray(np.mean(eta, axis=0))
 
     def predict(
         self,
@@ -360,13 +366,13 @@ class EbUnitModel:
 
         self.number_samples = int(number_samples)
 
-        if isinstance(scaler, (float, int)):
-            scaler = np.ones(Xr.shape[0]) * scaler
-        else:
-            scaler = formats.numpy_array(scaler)
+        Xr = formats.numpy_array(Xr)
         arear = formats.numpy_array(arear)
         self.arear_list = np.unique(arear)
-        Xr = formats.numpy_array(Xr)
+        if isinstance(scaler, (float, int)):
+            scaler = np.asarray(np.ones(Xr.shape[0]) * scaler)
+        else:
+            scaler = formats.numpy_array(scaler)
         if intercept:
             if Xr.ndim == 1:
                 n = Xr.shape[0]
@@ -387,7 +393,7 @@ class EbUnitModel:
             arear,
             self.arear_list,
             self.fixed_effects,
-            self.gamma,
+            np.asarray(list(self.gamma.values())),
             self.error_std ** 2,
             self.re_std ** 2,
             scaler,
@@ -495,7 +501,7 @@ class EbUnitModel:
 
         eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
         eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
-        y_samp_boot = np.zeros((number_reps, np.sum(list(sample_size_dict.values()))))
+        y_samp_boot = np.zeros((number_reps, int(np.sum(list(sample_size_dict.values())))))
         print(f"Generating the {number_reps} bootstrap replicate populations")
         for b in range(number_cycles):
             start = b * cycle_size
@@ -526,9 +532,9 @@ class EbUnitModel:
                 eta_pop_boot[start:end, i] = indicator(zboot_d, **kwargs)
 
                 if i == 0:
-                    yboot_s = yboot_d[:, -sample_size_dict[d] :]
+                    yboot_s = yboot_d[:, -int(sample_size_dict[d]) :]
                 else:
-                    yboot_s = np.append(yboot_s, yboot_d[:, -sample_size_dict[d] :], axis=1)
+                    yboot_s = np.append(yboot_s, yboot_d[:, -int(sample_size_dict[d]) :], axis=1)
 
                 if show_progress:
                     run_id = b * nb_areas_ps + i
@@ -610,12 +616,12 @@ class EbUnitModel:
 
         print("\n")
 
-        mse_boot = np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
+        mse_boot = np.asarray(np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0))
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
     def to_dataframe(
         self,
-        col_names: List[str] = ["_area", "_estimate", "_mse_boot"],
+        col_names: list[str] = ["_area", "_estimate", "_mse_boot"],
     ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 

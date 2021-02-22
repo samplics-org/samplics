@@ -12,7 +12,7 @@ respectively.
 """
 
 from __future__ import annotations
-from typing import  Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -24,7 +24,9 @@ from samplics.utils import formats
 from samplics.utils.types import Array, Number
 
 
-def set_variables_names(vars: Array, varnames: Optional[Union[str, list[str]]], prefix: str) -> list[str]:
+def set_variables_names(
+    vars: Array, varnames: Optional[Union[str, list[str]]], prefix: str
+) -> list[str]:
 
     if varnames is None:
         if isinstance(vars, pd.DataFrame):
@@ -90,7 +92,7 @@ def averageby(
 def transform(
     y: np.ndarray,
     llambda: Optional[Number] = None,
-    constant: float = 0.0,
+    constant: Optional[Number] = None,
     inverse: bool = True,
 ) -> np.ndarray:
     """Transforms the variable of interest using the Boxcox method or its inverse.
@@ -110,6 +112,8 @@ def transform(
     if llambda is None:
         return y
     elif llambda == 0.0:
+        if constant is None:
+            constant = 0.0
         if inverse:
             return np.exp(y) - constant
         else:
