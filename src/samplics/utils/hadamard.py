@@ -27,10 +27,12 @@ def hadamard(n: int) -> np.ndarray:
 
     n_log2 = int(math.log(n, 2))
     if math.pow(2, n_log2) == n:
-        return hdd(n)
-    if n % 4 == 0:
+        return np.asarray(hdd(n))
+    elif n % 4 == 0:
         hadamard_run = "_hadamard" + str(n) + "()"
-        return eval(hadamard_run)
+        return np.asarray(eval(hadamard_run))
+    else:
+        raise ValueError("n is not valid!")
 
 
 def _hadamard2() -> np.ndarray:

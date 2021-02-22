@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.types import Array, Number, Series, StringNumber
+from samplics.utils.formats import numpy_array
 
 
 def assert_probabilities(probs: Array) -> None:
@@ -30,6 +31,7 @@ def assert_probabilities(probs: Array) -> None:
 
 
 def assert_weights(weights: Array) -> None:
+    weights = numpy_array(weights)
     if weights.any() < 0:
         raise ValueError("Sample weights must be positive values")
 
@@ -46,14 +48,11 @@ def assert_response_status(
 ) -> None:
     if response_status is None:
         raise AssertionError("response_status is not provided")
-    elif not np.isin(response_status, ("in", "rr", "nr", "uk")).all() and response_dict in (
-        None,
-        dict(),
-    ):
+    elif not np.isin(response_status, ("in", "rr", "nr", "uk")).all() and response_dict is None:
         raise AssertionError(
             "The response status must only contains values in ('in', 'rr', 'nr', 'uk') or the mapping should be provided using response_dict parameter"
         )
-    elif response_dict not in (None, dict()):
+    elif isinstance(response_dict, dict):
         resp_keys = np.array(list(response_dict.keys()))
         if not np.isin(resp_keys, ("in", "rr", "nr", "uk")).all():
             raise AssertionError("Response mapping dictionnary has unexpected value(s)")

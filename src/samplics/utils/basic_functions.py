@@ -17,7 +17,6 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from numpy.lib.arraysetops import isin
 
 
 from samplics.utils import formats
@@ -26,7 +25,7 @@ from samplics.utils.types import Array, Number
 
 def set_variables_names(
     vars: Array, varnames: Optional[Union[str, list[str]]], prefix: str
-) -> list[str]:
+) -> Union[str, list[str]]:
 
     if varnames is None:
         if isinstance(vars, pd.DataFrame):
@@ -115,19 +114,21 @@ def transform(
         if constant is None:
             constant = 0.0
         if inverse:
-            return np.exp(y) - constant
+            return np.asarray(np.exp(y) - constant)
         else:
             if ((y + constant) <= 0).any():
                 raise ValueError("log function not defined for negative numbers")
             else:
-                return np.log(y + constant)
+                return np.asarray(np.log(y + constant))
     elif llambda != 0.0:
         if inverse:
             if ((1 + y * llambda) <= 0).any():
                 raise ValueError("log function not defined for negative numbers")
-            return np.exp(np.log(1 + y * llambda) / llambda)
+            return np.asarray(np.exp(np.log(1 + y * llambda) / llambda))
         else:
-            return np.power(y, llambda) / llambda
+            return np.asarray(np.power(y, llambda) / llambda)
+    else:
+        raise AssertionError
 
 
 def skewness(y: Array, type: int = 1) -> float:
@@ -177,7 +178,7 @@ def _plot_measure(
     coef_max: Number = 5,
     nb_points: int = 100,
     measure: str = "skewness",
-    block=True,
+    block: bool = True,
 ) -> None:
     y = formats.numpy_array(y)
     lambda_range = np.linspace(coef_min, coef_max, num=nb_points)
@@ -227,7 +228,11 @@ def _plot_measure(
 
 
 def plot_skewness(
-    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100, block=True
+    y: np.ndarray,
+    coef_min: Number = -5,
+    coef_max: Number = 5,
+    nb_points: int = 100,
+    block: bool = True,
 ) -> None:
     """Plots a scatter plot of skewness coefficients and the lambda coefficients of the Boxcox
     transformation. The plot helps identify the range of lambda values to minimize the
@@ -250,7 +255,11 @@ def plot_skewness(
 
 
 def plot_kurtosis(
-    y: np.ndarray, coef_min: Number = -5, coef_max: Number = 5, nb_points: int = 100, block=True
+    y: np.ndarray,
+    coef_min: Number = -5,
+    coef_max: Number = 5,
+    nb_points: int = 100,
+    block: bool = True,
 ) -> None:
     """Plots a scatter plot of skewness coefficients and the lambda coefficients of the Boxcox
     transformation. The plot helps identify the range of lambda values to minimize the
