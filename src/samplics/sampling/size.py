@@ -257,10 +257,19 @@ class OneSampleSize:
                 self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
             elif isinstance(resp_rate, dict):
                 self.resp_rate = resp_rate
+            if (
+                not isinstance(pop_size, dict)
+                and isinstance(pop_size, (int, float))
+                and stratum is not None
+            ):
+                self.resp_rate = dict(zip(stratum, np.repeat(pop_size, number_strata)))
+            elif isinstance(pop_size, dict):
+                self.resp_rate = pop_size
 
         target_values: Union[np.ndarray, Number]
         precision_values: Union[np.ndarray, Number]
         resp_rate_values: Union[np.ndarray, Number]
+        pop_size_values: Union[np.ndarray, Number]
         if (
             isinstance(self.target, dict)
             and isinstance(self.precision, dict)
@@ -269,6 +278,8 @@ class OneSampleSize:
             target_values = np.array(list(self.target.values()))
             precision_values = np.array(list(self.precision.values()))
             resp_rate_values = np.array(list(self.resp_rate.values()))
+            if isinstance(self.pop_size, dict):
+                pop_size_values = np.array(list(self.pop_size.values()))
         elif (
             isinstance(self.target, (int, float))
             and isinstance(self.precision, (int, float))
@@ -277,6 +288,8 @@ class OneSampleSize:
             target_values = self.target
             precision_values = self.precision
             resp_rate_values = self.resp_rate
+            if isinstance(self.pop_size, (int, float)):
+                pop_size_values = self.pop_size
         else:
             raise TypeError("Wrong type for self.target, self.precision, or self.resp_rate")
 
