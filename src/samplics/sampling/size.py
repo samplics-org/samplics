@@ -353,12 +353,6 @@ class SampleSize:
 
         self.samp_size = samp_size
 
-    def allocate(self) -> Any:
-        pass
-
-    def optimize(self) -> Any:
-        pass
-
     def to_dataframe(self, col_names: Optional[list[str]] = None) -> pd.DataFrame:
         """Coverts the dictionaries to a pandas dataframe
 
@@ -390,6 +384,46 @@ class SampleSize:
                     self.precision,
                     self.samp_size,
                 )
+
+
+def allocate(
+    method: str,
+    stratum: Array,
+    samp_size: Optional[Number] = None,
+    pop_size: Optional[DictStrNum] = None,
+    target_size: Optional[Number] = None,
+) -> dict[StringNumber, Number]:
+
+    stratum = list(formats.numpy_array(stratum))
+
+    if method.lower() == "equal":
+        if isinstance(target_size, (int, float)):
+            samp_alloc = dict(zip(stratum, np.repeat(target_size, len(stratum))))
+        else:
+            raise ValueError("Parameter 'target_size' must be a valid integer!")
+    elif method.lower() == "proportional":
+        if isinstance(pop_size, dict):
+            total_pop = sum(list(pop_size.values()))
+            samp_size_h = [math.ceil((samp_size / total_pop) * pop_size[k]) for k in stratum]
+            samp_alloc = dict(zip(stratum, samp_size_h))
+        else:
+            raise ValueError("Parameter 'pop_size' must be a dictionary!")
+    elif method.lower() == "fixed_rate":
+        pass
+    elif method.lower() == "proportional_rate":
+        pass
+    elif method.lower() == "equal_errors":
+        pass
+    elif method.lower() == "optimum_mean":
+        pass
+    elif method.lower() == "optimum_comparison":
+        pass
+    else:
+        raise ValueError(
+            "Parameter 'method' is not valid. Options are 'equal', 'proportional', 'fixed_rate', 'proportional_rate', 'equal_errors', 'optimun_mean', and 'optimun_comparison'!"
+        )
+
+    return samp_alloc
 
 
 class OneSampleSize:

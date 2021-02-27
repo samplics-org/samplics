@@ -1,4 +1,40 @@
-from samplics.sampling import SampleSize
+import pytest
+
+from samplics.sampling import SampleSize, allocate
+
+
+region = ["Dakar", "Kaolack", "Ziguinchor"]
+pop_size = {"Dakar": 500, "Kaolack": 300, "Ziguinchor": 200}
+
+
+@pytest.mark.xfail(reason="stratum is required")
+def test_deff_equal_stratum_error():
+    allocate(method="equal")
+
+
+def test_deff_equal_alloc():
+    equal_alloc = allocate(method="equal", stratum=region, target_size=15)
+    assert equal_alloc["Dakar"] == 15
+    assert equal_alloc["Kaolack"] == 15
+    assert equal_alloc["Ziguinchor"] == 15
+
+
+def test_deff_equal_alloc_error():
+    with pytest.raises(ValueError):
+        allocate(method="equal", stratum=region, target_size=[23])
+
+
+def test_deff_proportional_alloc():
+    equal_alloc = allocate(method="proportional", stratum=region, samp_size=100, pop_size=pop_size)
+    assert equal_alloc["Dakar"] == 50
+    assert equal_alloc["Kaolack"] == 30
+    assert equal_alloc["Ziguinchor"] == 20
+
+
+def test_deff_proportional_alloc_error():
+    with pytest.raises(ValueError):
+        allocate(method="equal", stratum=region, samp_size=100, pop_size=5)
+
 
 ## Design effects
 
