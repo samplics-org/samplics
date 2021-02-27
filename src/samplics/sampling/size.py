@@ -391,15 +391,15 @@ def allocate(
     stratum: Array,
     samp_size: Optional[Number] = None,
     pop_size: Optional[DictStrNum] = None,
-    target_size: Optional[Number] = None,
+    constant: Optional[Number] = None,
     rate: Optional[Union[DictStrNum, Number]] = None,
 ) -> dict[StringNumber, Number]:
 
     stratum = list(formats.numpy_array(stratum))
 
     if method.lower() == "equal":
-        if isinstance(target_size, (int, float)):
-            samp_alloc = dict(zip(stratum, np.repeat(target_size, len(stratum))))
+        if isinstance(constant, (int, float)):
+            samp_alloc = dict(zip(stratum, np.repeat(constant, len(stratum))))
         else:
             raise ValueError("Parameter 'target_size' must be a valid integer!")
     elif method.lower() == "proportional":

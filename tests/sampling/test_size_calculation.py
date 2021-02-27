@@ -13,7 +13,7 @@ def test_deff_equal_stratum_error():
 
 
 def test_deff_equal_alloc():
-    equal_alloc = allocate(method="equal", stratum=region, target_size=15)
+    equal_alloc = allocate(method="equal", stratum=region, constant=15)
     assert equal_alloc["Dakar"] == 15
     assert equal_alloc["Kaolack"] == 15
     assert equal_alloc["Ziguinchor"] == 15
@@ -21,7 +21,7 @@ def test_deff_equal_alloc():
 
 def test_deff_equal_alloc_error():
     with pytest.raises(ValueError):
-        allocate(method="equal", stratum=region, target_size=[23])
+        allocate(method="equal", stratum=region, constant=[23])
 
 
 def test_deff_proportional_alloc():
