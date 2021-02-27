@@ -17,7 +17,7 @@ from samplics.utils import formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
-class OneSampleSize:
+class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
     def __init__(
@@ -95,8 +95,8 @@ class OneSampleSize:
             and isinstance(precision, (int, float))
             and isinstance(self.deff_c, (int, float))
         ):
+            sigma = target * (1 - target)
             if isinstance(pop_size, (int, float)):
-                sigma = target * (1 - target)
                 return math.ceil(
                     self.deff_c
                     * pop_size
@@ -105,9 +105,7 @@ class OneSampleSize:
                     / ((pop_size - 1) * precision ** 2 + z_value * sigma)
                 )
             else:
-                return math.ceil(
-                    self.deff_c * z_value ** 2 * target * (1 - target) / precision ** 2
-                )
+                return math.ceil(self.deff_c * z_value ** 2 * sigma / precision ** 2)
         else:
             raise TypeError("target and precision must be numbers or dictionnaires!")
 
@@ -115,7 +113,7 @@ class OneSampleSize:
         self,
         target: Union[DictStrNum, Number],
         precision: Union[DictStrNum, Number],
-        pop_size: Optional[Union[DictStrNum, Number]],
+        # pop_size: Optional[Union[DictStrNum, Number]],
         stratum: Optional[Array],
     ) -> Union[DictStrNum, Number]:
 
@@ -339,7 +337,7 @@ class OneSampleSize:
             samp_size = self._calculate_fleiss(
                 target=self.target,
                 precision=self.precision,
-                pop_size=self.pop_size,
+                # pop_size=self.pop_size,
                 stratum=stratum,
             )
 
@@ -392,3 +390,11 @@ class OneSampleSize:
                     self.precision,
                     self.samp_size,
                 )
+
+
+class OneSampleSize:
+    pass
+
+
+class TwoSampleSize:
+    pass
