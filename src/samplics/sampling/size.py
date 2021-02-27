@@ -17,7 +17,7 @@ from samplics.utils import formats
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
-class SampleSize:
+class OneSampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
     def __init__(
@@ -35,6 +35,7 @@ class SampleSize:
         self.deff_w: Union[DictStrNum, Number] = 1.0
         self.precision: Union[DictStrNum, Number]
         self.resp_rate: Union[DictStrNum, Number] = 1.0
+        self.pop_size: Optional[Union[DictStrNum, Number]] = None
 
     def icc(self) -> Union[DictStrNum, Number]:
         pass
@@ -155,6 +156,7 @@ class SampleSize:
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
+        pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
     ) -> None:
         """calculate the sample allocation.
@@ -189,6 +191,7 @@ class SampleSize:
             or isinstance(precision, dict)
             or isinstance(deff, dict)
             or isinstance(resp_rate, dict)
+            or isinstance(pop_size, dict)
         ):
             raise AssertionError("No python dictionary needed for non-stratified sample.")
         elif (
@@ -215,6 +218,8 @@ class SampleSize:
                 self.precision = dict(zip(stratum, np.repeat(precision, number_strata)))
                 self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
                 self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
+                if isinstance(pop_size, (int, float)):
+                    self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
             else:
                 raise ValueError("Number of strata not specified!")
         elif self.stratification and number_dictionaries > 0:
