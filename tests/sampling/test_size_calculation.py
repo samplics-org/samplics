@@ -36,6 +36,48 @@ def test_deff_proportional_alloc_error():
         allocate(method="equal", stratum=region, samp_size=100, pop_size=5)
 
 
+def test_deff_rate_number_alloc():
+    equal_alloc = allocate(method="fixed_rate", stratum=region, pop_size=pop_size, rate=0.05)
+    assert equal_alloc["Dakar"] == 25
+    assert equal_alloc["Kaolack"] == 15
+    assert equal_alloc["Ziguinchor"] == 10
+
+
+def test_deff_rate_dict_alloc():
+    rate = {"Dakar": 0.05, "Kaolack": 0.10, "Ziguinchor": 0.20}
+    equal_alloc = allocate(method="fixed_rate", stratum=region, pop_size=pop_size, rate=rate)
+    assert equal_alloc["Dakar"] == 25
+    assert equal_alloc["Kaolack"] == 30
+    assert equal_alloc["Ziguinchor"] == 40
+
+
+def test_deff_rate_alloc_error():
+    with pytest.raises(ValueError):
+        allocate(method="fixed_rate", stratum=region, pop_size=[5])
+
+
+def test_deff_proportional_rate_alloc():
+    pop_size2 = {"Dakar": 5000, "Kaolack": 3000, "Ziguinchor": 2000}
+    rate = {"Dakar": 0.000005, "Kaolack": 0.000010, "Ziguinchor": 0.000020}
+    equal_alloc = allocate(
+        method="proportional_rate", stratum=region, pop_size=pop_size2, rate=rate
+    )
+    assert equal_alloc["Dakar"] == 125
+    assert equal_alloc["Kaolack"] == 90
+    assert equal_alloc["Ziguinchor"] == 80
+
+
+def test_deff_proportional_rate_error1():
+    rate = {"Dakar": 0.005, "Kaolack": 0.010, "Ziguinchor": 0.020}
+    with pytest.raises(ValueError):
+        allocate(method="proportional_rate", stratum=region, pop_size=pop_size, rate=rate)
+
+
+def test_deff_proportional_rate_alloc_error2():
+    with pytest.raises(ValueError):
+        allocate(method="fixed_rate", stratum=region, pop_size=[5])
+
+
 ## Design effects
 
 
