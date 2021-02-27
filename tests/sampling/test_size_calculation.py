@@ -1,9 +1,9 @@
-from samplics.sampling import OneSampleSize
+from samplics.sampling import SampleSize
 
 ## Design effects
 
 
-deff_calculation = OneSampleSize()
+deff_calculation = SampleSize()
 
 
 def test_deff_int():
@@ -23,7 +23,7 @@ def test_deff_dict():
 
 ## Wald's method
 
-size_nat_wald = OneSampleSize()
+size_nat_wald = SampleSize()
 
 
 def test_size_nat_wald_basics():
@@ -55,7 +55,7 @@ def test_size_nat_wald_df():
 
 
 ## Wald's method - stratified
-size_str_wald = OneSampleSize(parameter="Proportion", method="Wald", stratification=True)
+size_str_wald = SampleSize(parameter="Proportion", method="Wald", stratification=True)
 
 target = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 precision = {"stratum1": 0.30, "stratum2": 0.10, "stratum3": 0.15}
@@ -114,7 +114,7 @@ def test_size_str_wald_df():
 
 ## Fleiss' method
 
-size_nat_fleiss = OneSampleSize(method="fleiss")
+size_nat_fleiss = SampleSize(method="fleiss")
 
 
 def test_size_nat_fleiss_basics():
@@ -226,7 +226,7 @@ def test_size_nat_fleiss_df():
 
 
 ## Fleiss' method - stratified
-size_str_fleiss = OneSampleSize(parameter="Proportion", method="Fleiss", stratification=True)
+size_str_fleiss = SampleSize(parameter="Proportion", method="Fleiss", stratification=True)
 
 target2 = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 precision2 = {"stratum1": 0.03, "stratum2": 0.10, "stratum3": 0.05}
