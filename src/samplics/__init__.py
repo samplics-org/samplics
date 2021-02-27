@@ -1,5 +1,5 @@
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
-from samplics.sampling import SampleSelection, SampleSize
+from samplics.sampling import SampleSelection, OneSampleSize
 from samplics.weighting import ReplicateWeight, SampleWeight
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
 
