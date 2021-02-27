@@ -62,6 +62,7 @@ class OneSampleSize:
         self,
         target: Union[DictStrNum, Number],
         precision: Union[DictStrNum, Number],
+        pop_size: Optional[Union[DictStrNum, Number]],
         stratum: Optional[Array],
     ) -> Union[DictStrNum, Number]:
 
@@ -75,16 +76,38 @@ class OneSampleSize:
         ):
             samp_size: DictStrNum = {}
             for s in stratum:
-                samp_size[s] = math.ceil(
-                    self.deff_c[s] * z_value ** 2 * target[s] * (1 - target[s]) / precision[s] ** 2
-                )
+                sigma_s = target[s] * (1 - target[s])
+                if isinstance(pop_size, dict):
+                    samp_size[s] = math.ceil(
+                        self.deff_c[s]
+                        * pop_size[s]
+                        * z_value ** 2
+                        * sigma_s
+                        / ((pop_size[s] - 1) * precision[s] ** 2 + z_value * sigma_s)
+                    )
+                else:
+                    samp_size[s] = math.ceil(
+                        self.deff_c[s] * z_value ** 2 * sigma_s / precision[s] ** 2
+                    )
             return samp_size
         elif (
             isinstance(target, (int, float))
             and isinstance(precision, (int, float))
             and isinstance(self.deff_c, (int, float))
         ):
-            return math.ceil(self.deff_c * z_value ** 2 * target * (1 - target) / precision ** 2)
+            if isinstance(pop_size, (int, float)):
+                sigma = target * (1 - target)
+                return math.ceil(
+                    self.deff_c
+                    * pop_size
+                    * z_value ** 2
+                    * sigma
+                    / ((pop_size - 1) * precision ** 2 + z_value * sigma)
+                )
+            else:
+                return math.ceil(
+                    self.deff_c * z_value ** 2 * target * (1 - target) / precision ** 2
+                )
         else:
             raise TypeError("target and precision must be numbers or dictionnaires!")
 
@@ -92,6 +115,7 @@ class OneSampleSize:
         self,
         target: Union[DictStrNum, Number],
         precision: Union[DictStrNum, Number],
+        pop_size: Optional[Union[DictStrNum, Number]],
         stratum: Optional[Array],
     ) -> Union[DictStrNum, Number]:
 
@@ -306,11 +330,17 @@ class OneSampleSize:
         samp_size: Union[DictStrNum, Number]
         if self.method == "wald":
             samp_size = self._calculate_wald(
-                target=self.target, precision=self.precision, stratum=stratum
+                target=self.target,
+                precision=self.precision,
+                pop_size=self.pop_size,
+                stratum=stratum,
             )
         elif self.method == "fleiss":
             samp_size = self._calculate_fleiss(
-                target=self.target, precision=self.precision, stratum=stratum
+                target=self.target,
+                precision=self.precision,
+                pop_size=self.pop_size,
+                stratum=stratum,
             )
 
         if np.asarray(0 < resp_rate_values).all() and np.asarray(resp_rate_values <= 1).all():
