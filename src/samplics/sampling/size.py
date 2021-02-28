@@ -478,6 +478,10 @@ def allocate(
     return sample_sizes, sample_rates
 
 
+def calculate_clusters():
+    pass
+
+
 class OneSampleSize:
     pass
 
