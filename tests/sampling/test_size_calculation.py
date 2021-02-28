@@ -13,10 +13,10 @@ def testation_equal_stratum_error():
 
 
 def testation_equal():
-    equal = allocate(method="equal", stratum=region, pop_size=pop_size, constant=15)
-    assert equal["Dakar"] == 15
-    assert equal["Kaolack"] == 15
-    assert equal["Ziguinchor"] == 15
+    sizes, rates = allocate(method="equal", stratum=region, pop_size=pop_size, constant=15)
+    assert sizes["Dakar"] == 15
+    assert sizes["Kaolack"] == 15
+    assert sizes["Ziguinchor"] == 15
 
 
 def testation_equal_error():
@@ -25,10 +25,12 @@ def testation_equal_error():
 
 
 def testation_proportional():
-    equal = allocate(method="proportional", stratum=region, samp_size=100, pop_size=pop_size)
-    assert equal["Dakar"] == 50
-    assert equal["Kaolack"] == 30
-    assert equal["Ziguinchor"] == 20
+    sizes, rates = allocate(
+        method="proportional", stratum=region, samp_size=100, pop_size=pop_size
+    )
+    assert sizes["Dakar"] == 50
+    assert sizes["Kaolack"] == 30
+    assert sizes["Ziguinchor"] == 20
 
 
 def testation_proportional_error():
@@ -37,10 +39,10 @@ def testation_proportional_error():
 
 
 def testation_fixed_rate_number():
-    equal = allocate(method="fixed_rate", stratum=region, pop_size=pop_size, rate=0.05)
-    assert equal["Dakar"] == 25
-    assert equal["Kaolack"] == 15
-    assert equal["Ziguinchor"] == 10
+    sizes, rates = allocate(method="fixed_rate", stratum=region, pop_size=pop_size, rate=0.05)
+    assert sizes["Dakar"] == 25
+    assert sizes["Kaolack"] == 15
+    assert sizes["Ziguinchor"] == 10
 
 
 def testation_fixed_rate_error():
@@ -49,11 +51,13 @@ def testation_fixed_rate_error():
 
 
 def testation_variable_rate():
-    rate = {"Dakar": 0.05, "Kaolack": 0.10, "Ziguinchor": 0.20}
-    equal = allocate(method="variable_rate", stratum=region, pop_size=pop_size, rate=rate)
-    assert equal["Dakar"] == 25
-    assert equal["Kaolack"] == 30
-    assert equal["Ziguinchor"] == 40
+    input_rates = {"Dakar": 0.05, "Kaolack": 0.10, "Ziguinchor": 0.20}
+    sizes, rates = allocate(
+        method="variable_rate", stratum=region, pop_size=pop_size, rate=input_rates
+    )
+    assert sizes["Dakar"] == 25
+    assert sizes["Kaolack"] == 30
+    assert sizes["Ziguinchor"] == 40
 
 
 def testationf_variable_rate_error():
@@ -63,10 +67,12 @@ def testationf_variable_rate_error():
 
 def testation_proportional_rate():
     pop_size2 = {"Dakar": 5000, "Kaolack": 3000, "Ziguinchor": 2000}
-    equal = allocate(method="proportional_rate", stratum=region, pop_size=pop_size2, rate=0.000005)
-    assert equal["Dakar"] == 125
-    assert equal["Kaolack"] == 45
-    assert equal["Ziguinchor"] == 20
+    sizes, rates = allocate(
+        method="proportional_rate", stratum=region, pop_size=pop_size2, rate=0.000005
+    )
+    assert sizes["Dakar"] == 125
+    assert sizes["Kaolack"] == 45
+    assert sizes["Ziguinchor"] == 20
 
 
 def testation_proportional_rate_error1():
@@ -82,12 +88,12 @@ def test_deff_proportional_rate_error2():
 
 def test_deff_optimum_mean():
     stddev = {"Dakar": 5, "Kaolack": 10, "Ziguinchor": 20}
-    optimum = allocate(
+    sizes, rates = allocate(
         method="optimum_mean", stratum=region, pop_size=pop_size, rate=0.01, stddev=stddev
     )
-    assert optimum["Dakar"] == 25
-    assert optimum["Kaolack"] == 30
-    assert optimum["Ziguinchor"] == 40
+    assert sizes["Dakar"] == 25
+    assert sizes["Kaolack"] == 30
+    assert sizes["Ziguinchor"] == 40
 
 
 def testation_optimum_mean_error1():
@@ -106,12 +112,12 @@ def testation_optimum_mean_error2():
 
 def test_deff_optimum_comparison():
     stddev = {"Dakar": 50, "Kaolack": 10, "Ziguinchor": 20}
-    optimum2 = allocate(
+    sizes, rates = allocate(
         method="optimum_comparison", stratum=region, pop_size=pop_size, rate=0.5, stddev=stddev
     )
-    assert optimum2["Dakar"] == 25
-    assert optimum2["Kaolack"] == 5
-    assert optimum2["Ziguinchor"] == 10
+    assert sizes["Dakar"] == 25
+    assert sizes["Kaolack"] == 5
+    assert sizes["Ziguinchor"] == 10
 
 
 def testation_optimum_comparison_error1():
@@ -134,12 +140,12 @@ def testation_equal_errors_error2():
 
 def test_deff_equal_errors():
     stddev = {"Dakar": 5, "Kaolack": 1, "Ziguinchor": 2}
-    optimum2 = allocate(
+    sizes, rates = allocate(
         method="equal_errors", stratum=region, pop_size=pop_size, constant=5, stddev=stddev
     )
-    assert optimum2["Dakar"] == 125
-    assert optimum2["Kaolack"] == 5
-    assert optimum2["Ziguinchor"] == 20
+    assert sizes["Dakar"] == 125
+    assert sizes["Kaolack"] == 5
+    assert sizes["Ziguinchor"] == 20
 
 
 def testation_equal_errors_error1():
