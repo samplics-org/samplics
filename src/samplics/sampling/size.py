@@ -13,7 +13,7 @@ import pandas as pd
 
 from scipy.stats import norm as normal
 
-from samplics.utils import formats
+from samplics.utils.formats import numpy_array, dict_to_dataframe
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
@@ -371,14 +371,14 @@ class SampleSize:
             raise AssertionError("No sample size calculated.")
         else:
             if self.stratification:
-                return formats.dict_to_dataframe(
+                return dict_to_dataframe(
                     ["_stratum", "_target", "_precision", "_samp_size"],
                     self.target,
                     self.precision,
                     self.samp_size,
                 )
             if not self.stratification:
-                return formats.dict_to_dataframe(
+                return dict_to_dataframe(
                     ["_target", "_precision", "_samp_size"],
                     self.target,
                     self.precision,
@@ -389,24 +389,31 @@ class SampleSize:
 def allocate(
     method: str,
     stratum: Array,
+    pop_size: DictStrNum,
     samp_size: Optional[Number] = None,
-    pop_size: Optional[DictStrNum] = None,
     constant: Optional[Number] = None,
     rate: Optional[Union[DictStrNum, Number]] = None,
+    stddev: Optional[DictStrNum] = None,
 ) -> dict[StringNumber, Number]:
 
-    stratum = list(formats.numpy_array(stratum))
+    stratum = list(numpy_array(stratum))
 
     if method.lower() == "equal":
         if isinstance(constant, (int, float)):
-            samp_alloc = dict(zip(stratum, np.repeat(constant, len(stratum))))
+            sample_sizes = dict(zip(stratum, np.repeat(constant, len(stratum))))
         else:
             raise ValueError("Parameter 'target_size' must be a valid integer!")
     elif method.lower() == "proportional":
-        if isinstance(pop_size, dict) and samp_size is not None:
+        if isinstance(pop_size, dict) and stddev is None and samp_size is not None:
             total_pop = sum(list(pop_size.values()))
             samp_size_h = [math.ceil((samp_size / total_pop) * pop_size[k]) for k in stratum]
-            samp_alloc = dict(zip(stratum, samp_size_h))
+            sample_sizes = dict(zip(stratum, samp_size_h))
+        elif isinstance(pop_size, dict) and stddev is not None and samp_size is not None:
+            total_pop = sum(list(pop_size.values()))
+            samp_size_h = [
+                math.ceil((samp_size / total_pop) * pop_size[k] * stddev[k]) for k in stratum
+            ]
+            sample_sizes = dict(zip(stratum, samp_size_h))
         else:
             raise ValueError(
                 "Parameter 'pop_size' must be a dictionary and 'samp_size' an integer!"
@@ -414,35 +421,43 @@ def allocate(
     elif method.lower() == "fixed_rate":
         if isinstance(rate, (int, float)) and pop_size is not None:
             samp_size_h = [math.ceil(rate * pop_size[k]) for k in stratum]
-        elif isinstance(rate, dict) and pop_size is not None:
-            samp_size_h = [math.ceil(rate[k] * pop_size[k]) for k in stratum]
         else:
             raise ValueError("Parameter 'pop_size' must be a dictionary!")
-        samp_alloc = dict(zip(stratum, samp_size_h))
+        sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "proportional_rate":
         if isinstance(rate, (int, float)) and pop_size is not None:
             samp_size_h = [math.ceil(rate * pop_size[k] * pop_size[k]) for k in stratum]
-        elif isinstance(rate, dict) and pop_size is not None:
-            samp_size_h = [math.ceil(rate[k] * pop_size[k] * pop_size[k]) for k in stratum]
         else:
             raise ValueError("Parameter 'pop_size' must be a dictionary!")
-        if (samp_size_h > np.asarray(list(pop_size.values()))).any():
-            raise ValueError(
-                "Some of the rates are too large, resulting in sample sizes larger than population sizes!"
-            )
-        samp_alloc = dict(zip(stratum, samp_size_h))
+        sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "equal_errors":
         pass
     elif method.lower() == "optimum_mean":
-        pass
+        if isinstance(rate, (int, float)) and pop_size is not None and stddev is not None:
+            samp_size_h = [math.ceil(rate * pop_size[k] * stddev[k]) for k in stratum]
+        else:
+            raise ValueError("Parameter 'pop_size' must be a dictionary!")
+        sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "optimum_comparison":
-        pass
+        if isinstance(rate, (int, float)) and stddev is not None:
+            samp_size_h = [math.ceil(rate * stddev[k]) for k in stratum]
+        else:
+            raise ValueError("Parameter 'stddev' must be a dictionary!")
+        sample_sizes = dict(zip(stratum, samp_size_h))
+    elif method.lower() == "variable_rate" and isinstance(rate, dict) and pop_size is not None:
+        samp_size_h = [math.ceil(rate[k] * pop_size[k]) for k in stratum]
+        sample_sizes = dict(zip(stratum, samp_size_h))
     else:
         raise ValueError(
             "Parameter 'method' is not valid. Options are 'equal', 'proportional', 'fixed_rate', 'proportional_rate', 'equal_errors', 'optimun_mean', and 'optimun_comparison'!"
         )
 
-    return samp_alloc
+    if (list(sample_sizes.values()) > np.asarray(list(pop_size.values()))).any():
+        raise ValueError(
+            "Some of the constants, rates, or standard errors are too large, resulting in sample sizes larger than population sizes!"
+        )
+
+    return sample_sizes
 
 
 class OneSampleSize:
