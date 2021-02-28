@@ -394,7 +394,7 @@ def allocate(
     constant: Optional[Number] = None,
     rate: Optional[Union[DictStrNum, Number]] = None,
     stddev: Optional[DictStrNum] = None,
-) -> dict[StringNumber, Number]:
+) -> tuple[DictStrNum, DictStrNum]:
     """Reference: Kish(1965), page 97"""
 
     stratum = list(numpy_array(stratum))
@@ -470,7 +470,12 @@ def allocate(
             "Some of the constants, rates, or standard errors are too large, resulting in sample sizes larger than population sizes!"
         )
 
-    return sample_sizes
+    sample_rates = {}
+    if isinstance(pop_size, dict):
+        for k in pop_size:
+            sample_rates[k] = sample_sizes[k] / pop_size[k]
+
+    return sample_sizes, sample_rates
 
 
 class OneSampleSize:
