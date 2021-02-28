@@ -395,6 +395,7 @@ def allocate(
     rate: Optional[Union[DictStrNum, Number]] = None,
     stddev: Optional[DictStrNum] = None,
 ) -> dict[StringNumber, Number]:
+    """Reference: Kish(1965), page 97"""
 
     stratum = list(numpy_array(stratum))
 
@@ -422,7 +423,9 @@ def allocate(
         if isinstance(rate, (int, float)) and pop_size is not None:
             samp_size_h = [math.ceil(rate * pop_size[k]) for k in stratum]
         else:
-            raise ValueError("Parameter 'pop_size' must be a dictionary!")
+            raise ValueError(
+                "Parameter 'pop_size' and 'rate' must be a dictionary and number respectively!"
+            )
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "proportional_rate":
         if isinstance(rate, (int, float)) and pop_size is not None:
@@ -431,18 +434,28 @@ def allocate(
             raise ValueError("Parameter 'pop_size' must be a dictionary!")
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "equal_errors":
-        pass
+        if isinstance(constant, (int, float)) and stddev is not None:
+            samp_size_h = [math.ceil(constant * stddev[k] * stddev[k]) for k in stratum]
+        else:
+            raise ValueError(
+                "Parameter 'stddev' and 'constant' must be a dictionary and number, respectively!"
+            )
+        sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "optimum_mean":
         if isinstance(rate, (int, float)) and pop_size is not None and stddev is not None:
             samp_size_h = [math.ceil(rate * pop_size[k] * stddev[k]) for k in stratum]
         else:
-            raise ValueError("Parameter 'pop_size' must be a dictionary!")
+            raise ValueError(
+                "Parameter 'pop_size' and 'rate' must be a dictionary and number respectively!"
+            )
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "optimum_comparison":
         if isinstance(rate, (int, float)) and stddev is not None:
             samp_size_h = [math.ceil(rate * stddev[k]) for k in stratum]
         else:
-            raise ValueError("Parameter 'stddev' must be a dictionary!")
+            raise ValueError(
+                "Parameter 'stddev' and 'rate' must be a dictionary and number respectively!"
+            )
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "variable_rate" and isinstance(rate, dict) and pop_size is not None:
         samp_size_h = [math.ceil(rate[k] * pop_size[k]) for k in stratum]
