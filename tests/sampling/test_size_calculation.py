@@ -17,6 +17,12 @@ def testation_equal():
     assert sizes["Dakar"] == 15
     assert sizes["Kaolack"] == 15
     assert sizes["Ziguinchor"] == 15
+    assert rates["Dakar"] == 15 / pop_size["Dakar"]
+    assert rates["Kaolack"] == 15 / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == 15 / pop_size["Ziguinchor"]
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
 def testation_equal_error():
@@ -31,6 +37,9 @@ def testation_proportional():
     assert sizes["Dakar"] == 50
     assert sizes["Kaolack"] == 30
     assert sizes["Ziguinchor"] == 20
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
 def testation_proportional_error():
@@ -43,6 +52,12 @@ def testation_fixed_rate_number():
     assert sizes["Dakar"] == 25
     assert sizes["Kaolack"] == 15
     assert sizes["Ziguinchor"] == 10
+    assert rates["Dakar"] == 0.05
+    assert rates["Kaolack"] == 0.05
+    assert rates["Ziguinchor"] == 0.05
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
 def testation_fixed_rate_error():
@@ -58,6 +73,12 @@ def testation_variable_rate():
     assert sizes["Dakar"] == 25
     assert sizes["Kaolack"] == 30
     assert sizes["Ziguinchor"] == 40
+    assert rates["Dakar"] == 0.05
+    assert rates["Kaolack"] == 0.10
+    assert rates["Ziguinchor"] == 0.20
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
 def testationf_variable_rate_error():
@@ -73,6 +94,12 @@ def testation_proportional_rate():
     assert sizes["Dakar"] == 125
     assert sizes["Kaolack"] == 45
     assert sizes["Ziguinchor"] == 20
+    assert rates["Dakar"] == pytest.approx(0.000005 * pop_size2["Dakar"])
+    assert rates["Kaolack"] == pytest.approx(0.000005 * pop_size2["Kaolack"])
+    assert rates["Ziguinchor"] == pytest.approx(0.000005 * pop_size2["Ziguinchor"])
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size2["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size2["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size2["Ziguinchor"]
 
 
 def testation_proportional_rate_error1():
@@ -94,6 +121,12 @@ def test_deff_optimum_mean():
     assert sizes["Dakar"] == 25
     assert sizes["Kaolack"] == 30
     assert sizes["Ziguinchor"] == 40
+    assert rates["Dakar"] == 0.01 * stddev["Dakar"]
+    assert rates["Kaolack"] == 0.01 * stddev["Kaolack"]
+    assert rates["Ziguinchor"] == 0.01 * stddev["Ziguinchor"]
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
 def testation_optimum_mean_error1():
@@ -118,6 +151,12 @@ def test_deff_optimum_comparison():
     assert sizes["Dakar"] == 25
     assert sizes["Kaolack"] == 5
     assert sizes["Ziguinchor"] == 10
+    assert rates["Dakar"] == 0.5 * stddev["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == 0.5 * stddev["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == 0.5 * stddev["Ziguinchor"] / pop_size["Ziguinchor"]
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
 def testation_optimum_comparison_error1():
@@ -146,6 +185,15 @@ def test_deff_equal_errors():
     assert sizes["Dakar"] == 125
     assert sizes["Kaolack"] == 5
     assert sizes["Ziguinchor"] == 20
+    assert rates["Dakar"] == 5 * stddev["Dakar"] * stddev["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == 5 * stddev["Kaolack"] * stddev["Kaolack"] / pop_size["Kaolack"]
+    assert (
+        rates["Ziguinchor"]
+        == 5 * stddev["Ziguinchor"] * stddev["Ziguinchor"] / pop_size["Ziguinchor"]
+    )
+    assert rates["Dakar"] == sizes["Dakar"] / pop_size["Dakar"]
+    assert rates["Kaolack"] == sizes["Kaolack"] / pop_size["Kaolack"]
+    assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
 def testation_equal_errors_error1():
