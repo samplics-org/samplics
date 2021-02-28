@@ -127,6 +127,33 @@ def testation_optimum_comparison_error1():
         )
 
 
+def testation_equal_errors_error2():
+    with pytest.raises(ValueError):
+        allocate(method="equal_errors", stratum=region, pop_size=pop_size, stddev=[5])
+
+
+def test_deff_equal_errors():
+    stddev = {"Dakar": 5, "Kaolack": 1, "Ziguinchor": 2}
+    optimum2 = allocate(
+        method="equal_errors", stratum=region, pop_size=pop_size, constant=5, stddev=stddev
+    )
+    assert optimum2["Dakar"] == 125
+    assert optimum2["Kaolack"] == 5
+    assert optimum2["Ziguinchor"] == 20
+
+
+def testation_equal_errors_error1():
+    stddev = {"Dakar": 5, "Kaolack": 10, "Ziguinchor": 20}
+    with pytest.raises(ValueError):
+        allocate(
+            method="equal_errors",
+            stratum=region,
+            pop_size=pop_size,
+            constant=[9],
+            stddev=stddev,
+        )
+
+
 def testation_optimum_comparison_error2():
     with pytest.raises(ValueError):
         allocate(method="optimum_comparison", stratum=region, pop_size=pop_size, stddev=[5])
