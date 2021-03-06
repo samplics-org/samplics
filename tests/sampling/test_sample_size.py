@@ -250,7 +250,7 @@ def test_size_nat_wald_size():
     assert size_nat_wald.samp_size == 62
     assert size_nat_wald.deff_c == 1.0
     assert size_nat_wald.target == 0.80
-    assert size_nat_wald.precision == 0.1
+    assert size_nat_wald.half_ci == 0.1
 
 
 def test_size_nat_wald_size_with_deff():
@@ -258,20 +258,20 @@ def test_size_nat_wald_size_with_deff():
     assert size_nat_wald.samp_size == 93
     assert size_nat_wald.deff_c == 1.5
     assert size_nat_wald.target == 0.80
-    assert size_nat_wald.precision == 0.1
+    assert size_nat_wald.half_ci == 0.1
 
 
 def test_size_nat_wald_df():
     size_nat_wald.calculate(0.80, 0.10)
     size_df = size_nat_wald.to_dataframe()
-    assert (size_df.columns == ["_target", "_precision", "_samp_size"]).all()
+    assert (size_df.columns == ["_target", "_half_ci", "_samp_size"]).all()
 
 
 ## Wald's method - stratified
 size_str_wald = SampleSize(parameter="Proportion", method="Wald", stratification=True)
 
 target = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
-precision = {"stratum1": 0.30, "stratum2": 0.10, "stratum3": 0.15}
+half_ci = {"stratum1": 0.30, "stratum2": 0.10, "stratum3": 0.15}
 deff = {"stratum1": 1, "stratum2": 1.5, "stratum3": 2.5}
 
 
@@ -289,7 +289,7 @@ def test_size_str_wald_size1():
 
 
 def test_size_str_wald_size2():
-    size_str_wald.calculate(0.8, precision)
+    size_str_wald.calculate(0.8, half_ci)
     assert size_str_wald.samp_size["stratum1"] == 7
     assert size_str_wald.samp_size["stratum2"] == 62
     assert size_str_wald.samp_size["stratum3"] == 28
@@ -303,7 +303,7 @@ def test_size_str_wald_size3():
 
 
 def test_size_str_wald_size4():
-    size_str_wald.calculate(target, precision, deff)
+    size_str_wald.calculate(target, half_ci, deff)
     assert size_str_wald.samp_size["stratum1"] == 3
     assert size_str_wald.samp_size["stratum2"] == 122
     assert size_str_wald.samp_size["stratum3"] == 90
@@ -322,7 +322,7 @@ def test_size_str_wald_df():
     size_str_wald.calculate(0.80, 0.10, number_strata=5)
     size_df = size_str_wald.to_dataframe()
     assert size_df.shape[0] == 5
-    assert (size_df.columns == ["_stratum", "_target", "_precision", "_samp_size"]).all()
+    assert (size_df.columns == ["_stratum", "_target", "_half_ci", "_samp_size"]).all()
 
 
 ## Fleiss' method
@@ -341,7 +341,7 @@ def test_size_nat_fleiss_size1a():
     assert size_nat_fleiss.samp_size == 88
     assert size_nat_fleiss.deff_c == 1.0
     assert size_nat_fleiss.target == 0.80
-    assert size_nat_fleiss.precision == 0.1
+    assert size_nat_fleiss.half_ci == 0.1
 
 
 def test_size_nat_fleiss_size1b():
@@ -349,7 +349,7 @@ def test_size_nat_fleiss_size1b():
     assert size_nat_fleiss.samp_size == 88
     assert size_nat_fleiss.deff_c == 1.0
     assert size_nat_fleiss.target == 0.20
-    assert size_nat_fleiss.precision == 0.1
+    assert size_nat_fleiss.half_ci == 0.1
 
 
 def test_size_nat_fleiss_size2a():
@@ -357,7 +357,7 @@ def test_size_nat_fleiss_size2a():
     assert size_nat_fleiss.samp_size == 132
     assert size_nat_fleiss.deff_c == 1.0
     assert size_nat_fleiss.target == 0.95
-    assert size_nat_fleiss.precision == 0.06
+    assert size_nat_fleiss.half_ci == 0.06
 
 
 def test_size_nat_fleiss_size2b():
@@ -365,7 +365,7 @@ def test_size_nat_fleiss_size2b():
     assert size_nat_fleiss.samp_size == 132
     assert size_nat_fleiss.deff_c == 1.0
     assert size_nat_fleiss.target == 0.05
-    assert size_nat_fleiss.precision == 0.06
+    assert size_nat_fleiss.half_ci == 0.06
 
 
 def test_size_nat_fleiss_size3():
@@ -373,7 +373,7 @@ def test_size_nat_fleiss_size3():
     assert size_nat_fleiss.samp_size == 1097
     assert size_nat_fleiss.deff_c == 1.0
     assert size_nat_fleiss.target == 0.70
-    assert size_nat_fleiss.precision == 0.03
+    assert size_nat_fleiss.half_ci == 0.03
 
 
 def test_size_nat_fleiss_size4():
@@ -381,7 +381,7 @@ def test_size_nat_fleiss_size4():
     assert size_nat_fleiss.samp_size == 663
     assert size_nat_fleiss.deff_c == 1.0
     assert size_nat_fleiss.target == 0.85
-    assert size_nat_fleiss.precision == 0.03
+    assert size_nat_fleiss.half_ci == 0.03
 
 
 def test_size_nat_fleiss_size_with_deff1a():
@@ -389,7 +389,7 @@ def test_size_nat_fleiss_size_with_deff1a():
     assert size_nat_fleiss.samp_size == 132
     assert size_nat_fleiss.deff_c == 1.5
     assert size_nat_fleiss.target == 0.80
-    assert size_nat_fleiss.precision == 0.1
+    assert size_nat_fleiss.half_ci == 0.1
 
 
 def test_size_nat_fleiss_size_with_deff1b():
@@ -397,7 +397,7 @@ def test_size_nat_fleiss_size_with_deff1b():
     assert size_nat_fleiss.samp_size == 132
     assert size_nat_fleiss.deff_c == 1.5
     assert size_nat_fleiss.target == 0.20
-    assert size_nat_fleiss.precision == 0.1
+    assert size_nat_fleiss.half_ci == 0.1
 
 
 def test_size_nat_fleiss_size_with_deff2a():
@@ -405,7 +405,7 @@ def test_size_nat_fleiss_size_with_deff2a():
     assert size_nat_fleiss.samp_size == 197
     assert size_nat_fleiss.deff_c == 1.5
     assert size_nat_fleiss.target == 0.95
-    assert size_nat_fleiss.precision == 0.06
+    assert size_nat_fleiss.half_ci == 0.06
 
 
 def test_size_nat_fleiss_size_with_deff2b():
@@ -413,7 +413,7 @@ def test_size_nat_fleiss_size_with_deff2b():
     assert size_nat_fleiss.samp_size == 197
     assert size_nat_fleiss.deff_c == 1.5
     assert size_nat_fleiss.target == 0.05
-    assert size_nat_fleiss.precision == 0.06
+    assert size_nat_fleiss.half_ci == 0.06
 
 
 def test_size_nat_fleiss_size_with_deff3():
@@ -421,7 +421,7 @@ def test_size_nat_fleiss_size_with_deff3():
     assert size_nat_fleiss.samp_size == 1646
     assert size_nat_fleiss.deff_c == 1.5
     assert size_nat_fleiss.target == 0.70
-    assert size_nat_fleiss.precision == 0.03
+    assert size_nat_fleiss.half_ci == 0.03
 
 
 def test_size_nat_fleiss_size_with_deff4():
@@ -429,20 +429,20 @@ def test_size_nat_fleiss_size_with_deff4():
     assert size_nat_fleiss.samp_size == 994
     assert size_nat_fleiss.deff_c == 1.5
     assert size_nat_fleiss.target == 0.85
-    assert size_nat_fleiss.precision == 0.03
+    assert size_nat_fleiss.half_ci == 0.03
 
 
 def test_size_nat_fleiss_df():
     size_nat_fleiss.calculate(0.80, 0.10)
     size_df = size_nat_fleiss.to_dataframe()
-    assert (size_df.columns == ["_target", "_precision", "_samp_size"]).all()
+    assert (size_df.columns == ["_target", "_half_ci", "_samp_size"]).all()
 
 
 ## Fleiss' method - stratified
 size_str_fleiss = SampleSize(parameter="Proportion", method="Fleiss", stratification=True)
 
 target2 = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
-precision2 = {"stratum1": 0.03, "stratum2": 0.10, "stratum3": 0.05}
+half_ci2 = {"stratum1": 0.03, "stratum2": 0.10, "stratum3": 0.05}
 deff2 = {"stratum1": 1, "stratum2": 1.5, "stratum3": 2.5}
 
 
@@ -460,7 +460,7 @@ def test_size_str_fleiss_size1():
 
 
 def test_size_str_fleiss_size2():
-    size_str_fleiss.calculate(0.8, precision2)
+    size_str_fleiss.calculate(0.8, half_ci2)
     assert size_str_fleiss.samp_size["stratum1"] == 788
     assert size_str_fleiss.samp_size["stratum2"] == 88
     assert size_str_fleiss.samp_size["stratum3"] == 306
@@ -474,7 +474,7 @@ def test_size_str_fleiss_size3():
 
 
 def test_size_str_fleiss_size4():
-    size_str_fleiss.calculate(target2, precision2, deff2)
+    size_str_fleiss.calculate(target2, half_ci2, deff2)
     assert size_str_fleiss.samp_size["stratum1"] == 354
     assert size_str_fleiss.samp_size["stratum2"] == 154
     assert size_str_fleiss.samp_size["stratum3"] == 1002
@@ -493,4 +493,4 @@ def test_size_str_fleiss_df():
     size_str_fleiss.calculate(0.80, 0.10, number_strata=5)
     size_df = size_str_fleiss.to_dataframe()
     assert size_df.shape[0] == 5
-    assert (size_df.columns == ["_stratum", "_target", "_precision", "_samp_size"]).all()
+    assert (size_df.columns == ["_stratum", "_target", "_half_ci", "_samp_size"]).all()
