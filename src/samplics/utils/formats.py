@@ -171,6 +171,38 @@ def fpc_as_dict(stratum: Optional[Array], fpc: Union[Array, Number]) -> Union[Di
         raise TypeError("stratum and fpc are not compatible!")
 
 
+def convert_numbers_to_dicts(number_strata: int, *args: Union[DictStrNum, Number]) -> list:
+
+    dict_number = 0
+    stratum: Optional[list[StringNumber]] = None
+    for arg in args:
+        if not isinstance(arg, (int, float, dict)):
+            raise TypeError("Arguments must be of type int, float or dict!")
+
+        if isinstance(arg, dict):
+            dict_number += 1
+            if dict_number == 1:
+                stratum = list(arg.keys())
+            elif dict_number >= 1:
+                if stratum != list(arg.keys()):
+                    raise AssertionError("Python dictionaries have different keys")
+
+    if stratum is None:
+        if number_strata >= 1:
+            stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
+        else:
+            raise ValueError("Number of strata must be superior or equal to 1!")
+
+    list_of_dicts = list()
+    for arg in args:
+        if isinstance(arg, (int, float)):
+            list_of_dicts.append(dict(zip(stratum, np.repeat(arg, number_strata))))
+        else:
+            list_of_dicts.append(arg)
+
+    return list_of_dicts
+
+
 def concatenate_series_to_str(row: Series) -> str:
     """concatenate the elements into one string using '_' to separate the elements
 
