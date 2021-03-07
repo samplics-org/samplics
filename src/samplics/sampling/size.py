@@ -13,7 +13,7 @@ import pandas as pd
 
 from scipy.stats import norm as normal, t as student
 
-from samplics.utils.formats import numpy_array, dict_to_dataframe
+from samplics.utils.formats import numpy_array, dict_to_dataframe, convert_numbers_to_dicts
 from samplics.utils.types import Array, Number, StringNumber, DictStrNum
 
 
@@ -517,19 +517,32 @@ class OneMeanSampleSize:
         beta: float = 0.80,
     ) -> None:
 
-        is_target_dict = isinstance(targeted_mean, dict)
-        is_reference_dict = isinstance(reference_mean, dict)
+        is_targeted_mean_dict = isinstance(targeted_mean, dict)
+        is_reference_mean_dict = isinstance(reference_mean, dict)
+        is_stddev_dict = isinstance(stddev, dict)
         is_deff_dict = isinstance(deff, dict)
         is_resp_rate_dict = isinstance(resp_rate, dict)
         is_pop_size_dict = isinstance(pop_size, dict)
 
         number_dictionaries = (
-            is_target_dict
-            + is_reference_dict
+            is_targeted_mean_dict
+            + is_reference_mean_dict
+            + is_stddev_dict
             + is_deff_dict
             + is_resp_rate_dict
             + is_pop_size_dict
         )
+
+        if (
+            self.stratification
+            and (number_strata is None or number_strata <= 0)
+            and number_dictionaries == 0
+        ):
+            raise AssertionError("Stratified designs ")
+
+        else:
+            if number_dictionaries >= 1:
+                raise ValueError("Dictionnaries must NOT be provided for non stratified designs!")
 
         self.alpha = alpha
         self.beta = beta

@@ -171,7 +171,9 @@ def fpc_as_dict(stratum: Optional[Array], fpc: Union[Array, Number]) -> Union[Di
         raise TypeError("stratum and fpc are not compatible!")
 
 
-def convert_numbers_to_dicts(number_strata: int, *args: Union[DictStrNum, Number]) -> list:
+def convert_numbers_to_dicts(
+    number_strata: Optional[int], *args: Union[DictStrNum, Number]
+) -> list[DictStrNum]:
 
     dict_number = 0
     stratum: Optional[list[StringNumber]] = None
@@ -188,10 +190,12 @@ def convert_numbers_to_dicts(number_strata: int, *args: Union[DictStrNum, Number
                     raise AssertionError("Python dictionaries have different keys")
 
     if stratum is None:
-        if number_strata >= 1:
+        if isinstance(number_strata, (int, float)) and number_strata >= 1:
             stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
         else:
             raise ValueError("Number of strata must be superior or equal to 1!")
+    else:
+        number_strata = len(stratum)
 
     list_of_dicts = list()
     for arg in args:
