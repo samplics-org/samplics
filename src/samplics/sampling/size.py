@@ -514,7 +514,7 @@ class OneMeanSampleSize:
         number_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
-        beta: float = 0.80,
+        beta: float = 0.20,
     ) -> None:
 
         is_targeted_mean_dict = isinstance(targeted_mean, dict)
@@ -540,31 +540,63 @@ class OneMeanSampleSize:
         ):
             raise AssertionError("Stratified designs ")
 
-        else:
-            if number_dictionaries >= 1:
-                raise ValueError("Dictionnaries must NOT be provided for non stratified designs!")
+        if not self.stratification and number_dictionaries >= 1:
+            raise ValueError("Dictionaries must NOT be provided for non stratified designs!")
+
+        number_strata = 1 if not self.stratification else number_strata
+
+        [mean1, mean0, std_dev] = convert_numbers_to_dicts(
+            number_strata, targeted_mean, reference_mean, stddev
+        )
 
         self.alpha = alpha
         self.beta = beta
 
         if self.estimated_mean:
-            pass  # should be solved iteratively, see pages 66 and 67 of Ryan's book
+            pass
+            # prob_alpha and prob_beta should be solved iteratively, see pages 66 and 67 of Ryan's book
+            # for key in mean1[0]:
+            #     self.samp_size[key] = pow(
+            #         (prob_alpha + prob_beta) * std_dev[key] / (mean1[key] - mean0[key]), 2
+            #     )
         else:
             prob_alpha = (
                 normal.ppf(1 - self.alpha / 2)
                 if self.test_type == "two-side"
                 else normal.ppf(1 - self.alpha)
             )
-            prob_beta = normal.ppf(self.beta)
-
-        if self.stratification:
-            pass
-        else:
-            if number_dictionaries >= 1:
-                raise ValueError("Dictionnaries must NOT be provided for non stratified designs!")
-
-            if isinstance(targeted_mean, (int, float)) and isinstance(deff, (int, float)):
-                rr = targeted_mean / deff
+            prob_beta = normal.ppf(1 - self.beta)
+            if self.stratification:
+                self.samp_size = {}
+                self.power = {}
+                for key in mean1:
+                    self.samp_size[key] = math.ceil(
+                        pow(
+                            (prob_alpha + prob_beta) * std_dev[key] / (mean1[key] - mean0[key]),
+                            2,
+                        )
+                    )
+                    adj_fct = (mean0[key] - mean1[key]) / (
+                        std_dev[key] / math.sqrt(self.samp_size[key])
+                    )
+                    self.power[key] = (
+                        1 - normal.cdf(prob_alpha + adj_fct) + normal.cdf(-prob_alpha + adj_fct)
+                    )
+            else:
+                self.samp_size = math.ceil(
+                    pow(
+                        (prob_alpha + prob_beta)
+                        * std_dev["_stratum_1"]
+                        / (mean1["_stratum_1"] - mean0["_stratum_1"]),
+                        2,
+                    )
+                )
+                adj_fct = (mean0["_stratum_1"] - mean1["_stratum_1"]) / (
+                    std_dev["_stratum_1"] / math.sqrt(self.samp_size)
+                )
+                self.power = (
+                    1 - normal.cdf(prob_alpha + adj_fct) + normal.cdf(-prob_alpha + adj_fct)
+                )
 
 
 class TwoMeanSampleSize:
