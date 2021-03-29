@@ -1,8 +1,6 @@
-import pytest
-
 import numpy as np
 import pandas as pd
-
+import pytest
 
 from samplics.utils.basic_functions import (
     averageby,
@@ -13,11 +11,6 @@ from samplics.utils.basic_functions import (
     skewness,
     sumby,
     transform,
-    averageby,
-    skewness,
-    kurtosis,
-    plot_skewness,
-    plot_kurtosis,
 )
 
 

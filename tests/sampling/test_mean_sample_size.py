@@ -28,13 +28,13 @@ def test_one_mean_sample_size_stratified_fail2():
 
 ## One sample size with one side - Not stratified
 one_mean_not_str_oneside = OneMeanSampleSize(
-    stratification=False, two_side=False, estimated_mean=False
+    stratification=False, two_side=False, estimated_mean=True
 )
 
 
 def test_one_mean_sample_size_not_stratified_oneside_1():
     one_mean_not_str_oneside.calculate(targeted_mean=52, reference_mean=50, stddev=3)
-    assert one_mean_not_str_oneside.samp_size == 14
+    assert one_mean_not_str_oneside.samp_size == 16
     assert one_mean_not_str_oneside.power == pytest.approx(0.802239, 0.00001)
 
 

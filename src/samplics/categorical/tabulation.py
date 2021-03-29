@@ -5,9 +5,10 @@ The module implements the cross-tabulation analysis.
 """
 
 from __future__ import annotations
-from typing import Any, Optional, Union
 
 import itertools
+
+from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -15,15 +16,10 @@ import pandas as pd
 from patsy import dmatrix
 from scipy.stats import chi2, f
 
-from samplics.utils.basic_functions import set_variables_names
-from samplics.utils.formats import (
-    concatenate_series_to_str,
-    numpy_array,
-    remove_nans,
-)
-from samplics.utils.types import Array, Number, Series, StringNumber
-
 from samplics.estimation import TaylorEstimator
+from samplics.utils.basic_functions import set_variables_names
+from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
+from samplics.utils.types import Array, Number, Series, StringNumber
 
 
 class Tabulation:

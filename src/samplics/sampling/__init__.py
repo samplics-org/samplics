@@ -1,4 +1,10 @@
 from samplics.sampling.selection import SampleSelection
-from samplics.sampling.size import allocate, SampleSize, OneMeanSampleSize, TwoMeanSampleSize
+from samplics.sampling.size import (
+    OneMeanSampleSize,
+    SampleSize,
+    TwoMeanSampleSize,
+    allocate,
+)
+
 
 __all__ = ["allocate", "SampleSelection", "SampleSize", "OneMeanSample", "TwoMeanSampleSize"]

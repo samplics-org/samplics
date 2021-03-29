@@ -8,14 +8,21 @@ Functions:
 """
 
 from __future__ import annotations
+
 from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
 
-from samplics.utils import checks
-
-from samplics.utils.types import Array, DictStrInt, DictStrNum, Number, Series, StringNumber
+from samplics.utils.checks import assert_not_unique
+from samplics.utils.types import (
+    Array,
+    DictStrInt,
+    DictStrNum,
+    Number,
+    Series,
+    StringNumber,
+)
 
 
 def numpy_array(arr: Array) -> np.ndarray:
@@ -111,7 +118,7 @@ def sample_size_dict(
 def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     all_units = numpy_array(all_units)
     if unique:
-        checks.assert_not_unique(all_units)
+        assert_not_unique(all_units)
 
     return all_units
 

@@ -3,6 +3,7 @@ import pandas as pd
 
 from samplics.estimation import ReplicateEstimator
 
+
 """Jackknife estimates"""
 nhanes2jkn = pd.read_csv("./tests/estimation/nhanes2jknife.csv")
 

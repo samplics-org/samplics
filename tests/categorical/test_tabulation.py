@@ -1,9 +1,9 @@
-import pytest
 import numpy as np
 import pandas as pd
+import pytest
 
-from samplics.estimation import TaylorEstimator
 from samplics.categorical import Tabulation
+from samplics.estimation import TaylorEstimator
 
 
 birthcat = pd.read_csv(
