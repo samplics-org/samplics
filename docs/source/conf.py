@@ -10,8 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os, sys
+import os
+import sys
+
 import samplics
+
 
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -66,6 +69,7 @@ pygments_style = "sphinx"
 # a list of builtin themes.
 
 import sphinx_bootstrap_theme
+
 
 html_theme = "bootstrap"
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()

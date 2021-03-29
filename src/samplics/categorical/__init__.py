@@ -1,3 +1,4 @@
-from samplics.categorical.tabulation import Tabulation, CrossTabulation
+from samplics.categorical.tabulation import CrossTabulation, Tabulation
+
 
 __all__ = ["Tabulation", "CrossTabulation"]

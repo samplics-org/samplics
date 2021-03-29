@@ -4,17 +4,23 @@
 
 from __future__ import annotations
 
-from typing import Any, Union, Optional
-
 import math
+
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 
-from scipy.stats import norm as normal, t as student
+from scipy.stats import norm as normal
+from scipy.stats import t as student
+from scipy.stats import nct
 
-from samplics.utils.formats import numpy_array, dict_to_dataframe, convert_numbers_to_dicts
-from samplics.utils.types import Array, Number, StringNumber, DictStrNum
+from samplics.utils.formats import (
+    convert_numbers_to_dicts,
+    dict_to_dataframe,
+    numpy_array,
+)
+from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 
 class SampleSize:
@@ -568,6 +574,23 @@ class OneMeanSampleSize:
                         2,
                     )
                 )
+
+                if self.estimated_mean:
+                    t_prob_alpha = (
+                        student.ppf(1 - self.alpha / 2, self.samp_size[key] - 1)
+                        if self.test_type == "two-side"
+                        else student.ppf(1 - self.alpha, self.samp_size[key] - 1)
+                    )
+                    t_prob_beta = student.ppf(1 - self.beta, self.samp_size[key] - 1)
+                    self.samp_size[key] = math.ceil(
+                        pow(
+                            (t_prob_alpha + t_prob_beta)
+                            * std_dev[key]
+                            / (mean1[key] - mean0[key]),
+                            2,
+                        )
+                    )
+
                 adj_fct = (mean0[key] - mean1[key]) / (
                     std_dev[key] / math.sqrt(self.samp_size[key])
                 )
@@ -583,18 +606,41 @@ class OneMeanSampleSize:
                     2,
                 )
             )
+
             adj_fct = (mean0["_stratum_1"] - mean1["_stratum_1"]) / (
                 std_dev["_stratum_1"] / math.sqrt(self.samp_size)
             )
             self.power = 1 - normal.cdf(prob_alpha + adj_fct) + normal.cdf(-prob_alpha + adj_fct)
 
-        if self.estimated_mean:
-            pass
-            # prob_alpha and prob_beta should be solved iteratively, see pages 66 and 67 of Ryan's book
-            # for key in mean1[0]:
-            #     self.samp_size[key] = pow(
-            #         (prob_alpha + prob_beta) * std_dev[key] / (mean1[key] - mean0[key]), 2
-            #     )
+            if self.estimated_mean:
+                t_prob_alpha0 = (
+                    student.ppf(1 - self.alpha / 2, self.samp_size - 1)
+                    if self.test_type == "two-side"
+                    else student.ppf(1 - self.alpha, self.samp_size - 1)
+                )
+                t_prob_beta0 = student.ppf(1 - self.beta, self.samp_size - 1)
+                self.samp_size = math.ceil(
+                    pow(
+                        (t_prob_alpha0 + t_prob_beta0)
+                        * std_dev["_stratum_1"]
+                        / (mean1["_stratum_1"] - mean0["_stratum_1"]),
+                        2,
+                    )
+                )
+                t_prob_alpha1 = (
+                    student.ppf(1 - self.alpha / 2, self.samp_size - 1)
+                    if self.test_type == "two-side"
+                    else student.ppf(1 - self.alpha, self.samp_size - 1)
+                )
+
+                t_adj_fct = (mean0["_stratum_1"] - mean1["_stratum_1"]) / (
+                    std_dev["_stratum_1"] / math.sqrt(self.samp_size)
+                )
+                self.power = (
+                    1
+                    - nct.cdf(t_prob_alpha1, self.samp_size - 1, -t_adj_fct)
+                    # + student.cdf(-t_prob_alpha1 + t_adj_fct)
+                )
 
 
 class TwoMeanSampleSize:

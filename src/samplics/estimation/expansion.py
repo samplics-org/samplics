@@ -12,14 +12,18 @@ and Wolter, K.M. (2007) [#w2007]_.
    Springer-Verlag New York, Inc
 """
 from __future__ import annotations
-from typing import Any, Optional, Union
 
 import math
+
+from typing import Any, Optional, Union
+
 import numpy as np
 import pandas as pd
-from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans, sample_size_dict
-from samplics.utils.types import Array, DictStrNum, Number, Series, StringNumber
+
 from scipy.stats import t as student
+
+from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans
+from samplics.utils.types import Array, Number, Series, StringNumber
 
 
 class _SurveyEstimator:
@@ -133,7 +137,7 @@ class _SurveyEstimator:
         domain: Optional[np.newaxis] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
-    ) -> Any: #Union[dict[StringNumber, DictStrNum], DictStrNum, Number]:
+    ) -> Any:  # Union[dict[StringNumber, DictStrNum], DictStrNum, Number]:
         """Computes the parameter point estimates
 
         Args:

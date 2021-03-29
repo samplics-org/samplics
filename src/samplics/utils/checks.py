@@ -14,8 +14,8 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 
-from samplics.utils.types import Array, Number, Series, StringNumber
-from samplics.utils.formats import numpy_array
+from samplics.utils import formats
+from samplics.utils.types import Array, StringNumber
 
 
 def assert_probabilities(probs: Array) -> None:
@@ -31,7 +31,7 @@ def assert_probabilities(probs: Array) -> None:
 
 
 def assert_weights(weights: Array) -> None:
-    weights = numpy_array(weights)
+    weights = formats.numpy_array(weights)
     if weights.any() < 0:
         raise ValueError("Sample weights must be positive values")
 
