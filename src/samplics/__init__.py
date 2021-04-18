@@ -1,3 +1,4 @@
+from samplics.datasets.datasets import PSUFrame, PSUSample, SSUSample
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
 from samplics.sampling import OneMeanSampleSize, SampleSelection, SampleSize, allocate
@@ -8,18 +9,21 @@ from samplics.weighting import ReplicateWeight, SampleWeight
 
 __all__ = [
     "allocate",
-    "SampleSelection",
-    "SampleSize",
-    "OneMeanSampleSize",
-    "SampleWeight",
-    "ReplicateWeight",
-    "ReplicateEstimator",
-    "TaylorEstimator",
+    "array_to_dict",
     "EblupAreaModel",
     "EblupUnitModel",
     "EbUnitModel",
     "EllUnitModel",
-    "array_to_dict",
+    "OneMeanSampleSize",
+    "PSUFrame",
+    "PSUSample",
+    "SampleSelection",
+    "SampleSize",
+    "SampleWeight",
+    "SSUSample",
+    "ReplicateWeight",
+    "ReplicateEstimator",
+    "TaylorEstimator",
     "transform",
 ]
 
