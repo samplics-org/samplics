@@ -12,14 +12,14 @@ respectively.
 """
 
 from __future__ import annotations
+
 from typing import Optional, Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
-
-from samplics.utils import formats
+from samplics.utils.formats import numpy_array
 from samplics.utils.types import Array, Number
 
 
@@ -136,7 +136,7 @@ def skewness(y: Array, type: int = 1) -> float:
     if type not in (1, 2, 3):
         raise AssertionError("Parameter type must be 1, 2 or 3.")
 
-    y = formats.numpy_array(y)
+    y = numpy_array(y)
     skewness = float(np.mean((y - np.mean(y)) ** 3) / np.std(y) ** 3)
     if type == 2:
         n = y.shape[0]
@@ -156,7 +156,7 @@ def kurtosis(y: Array, type: int = 1) -> float:
     if type not in (1, 2, 3):
         raise AssertionError("Parameter type must be 1, 2 or 3.")
 
-    y = formats.numpy_array(y)
+    y = numpy_array(y)
     kurtosis = float(np.mean((y - np.mean(y)) ** 4) / np.std(y) ** 4)
     if type == 1:
         kurtosis = kurtosis - 3
@@ -180,7 +180,7 @@ def _plot_measure(
     measure: str = "skewness",
     block: bool = True,
 ) -> None:
-    y = formats.numpy_array(y)
+    y = numpy_array(y)
     lambda_range = np.linspace(coef_min, coef_max, num=nb_points)
     coefs = np.zeros(lambda_range.size)
     measure_loc = None

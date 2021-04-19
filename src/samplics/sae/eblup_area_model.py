@@ -15,11 +15,14 @@ level.
 """
 
 from __future__ import annotations
-from typing import Any, Union
 
 import math
+
+from typing import Any, Union
+
 import numpy as np
 import pandas as pd
+
 from samplics.utils import formats
 from samplics.utils.types import Array, DictStrNum, Number
 

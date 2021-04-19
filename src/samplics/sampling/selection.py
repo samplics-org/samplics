@@ -16,15 +16,22 @@ sampling algorithms.
 
 from __future__ import annotations
 
-from typing import Union, Optional
+import math
+
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 
-import math
-
 from samplics.utils import formats
-from samplics.utils.types import Array, DictStrFloat, DictStrInt, DictStrNum, Number, StringNumber
+from samplics.utils.types import (
+    Array,
+    DictStrFloat,
+    DictStrInt,
+    DictStrNum,
+    Number,
+    StringNumber,
+)
 
 
 class SampleSelection:

@@ -1,23 +1,49 @@
+from samplics.datasets.datasets import (
+    Birth,
+    CountyCrop,
+    CountyCropMeans,
+    ExpenditureMilk,
+    Nhanes2,
+    Nhanes2brr,
+    Nhanes2jk,
+    Nmihs,
+    PSUFrame,
+    PSUSample,
+    SSUSample,
+)
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
-from samplics.sampling import SampleSelection, SampleSize
-from samplics.weighting import ReplicateWeight, SampleWeight
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
-
-from samplics.utils.formats import array_to_dict
+from samplics.sampling import OneMeanSampleSize, SampleSelection, SampleSize, allocate
 from samplics.utils.basic_functions import transform
+from samplics.utils.formats import array_to_dict
+from samplics.weighting import ReplicateWeight, SampleWeight
+
 
 __all__ = [
-    "SampleSelection",
-    "SampleSize",
-    "SampleWeight",
-    "ReplicateWeight",
-    "ReplicateEstimator",
-    "TaylorEstimator",
+    "allocate",
+    "array_to_dict",
+    "Birth",
+    "CountyCrop",
+    "CountyCropMeans",
     "EblupAreaModel",
     "EblupUnitModel",
     "EbUnitModel",
     "EllUnitModel",
-    "array_to_dict",
+    "ExpenditureMilk",
+    "Nhanes2",
+    "Nhanes2brr",
+    "Nhanes2jk",
+    "Nmihs",
+    "OneMeanSampleSize",
+    "PSUFrame",
+    "PSUSample",
+    "SampleSelection",
+    "SampleSize",
+    "SampleWeight",
+    "SSUSample",
+    "ReplicateWeight",
+    "ReplicateEstimator",
+    "TaylorEstimator",
     "transform",
 ]
 

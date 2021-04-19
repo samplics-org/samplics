@@ -1,0 +1,7 @@
+[flake8]
+ignore = C901,E203,E231,E501,W291,W503
+exclude = .git,__pycache__,docs/source/conf.py,old,build,dist
+max-line-length = 99
+max-doc-length = 99
+docstring-convention = google
+max-complexity = 10

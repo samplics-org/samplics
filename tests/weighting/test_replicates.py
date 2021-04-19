@@ -1,7 +1,7 @@
 import pandas as pd
 
-
 from samplics.weighting import ReplicateWeight
+
 
 test_data = pd.read_csv("./tests/weighting/small_data_for_testing_replicate_weights.csv")
 

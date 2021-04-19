@@ -5,20 +5,21 @@ The module implements comparisons of groups.
 """
 
 from __future__ import annotations
-from typing import Any, Generic, Dict, List, Optional, Union, Tuple
 
 import math
+
+from typing import Any, Dict, Generic, List, Optional, Tuple, Union
+
 import numpy as np
 import pandas as pd
 
 from scipy.stats import t
 
+from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
 from samplics.utils.formats import numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber
-
-from samplics.estimation import TaylorEstimator
 
 
 class Ttest:

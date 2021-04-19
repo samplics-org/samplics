@@ -26,15 +26,17 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 """
 
 from __future__ import annotations
-from typing import Any, Optional, Union
 
 import warnings
+
+from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+
 from samplics.sae.sae_core_functions import area_stats
-from samplics.utils import formats, basic_functions
+from samplics.utils import basic_functions, formats
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 
@@ -103,21 +105,21 @@ class EblupUnitModel:
             raise AssertionError("Value provided for method is not valid!")
 
         # Sample data
-        self.scales: np.ndarray 
+        self.scales: np.ndarray
         self.afactors: DictStrNum
-        self.ys: np.ndarray 
+        self.ys: np.ndarray
         self.Xs: np.ndarray
-        self.areas: np.ndarray 
-        self.areas_list: np.ndarray 
+        self.areas: np.ndarray
+        self.areas_list: np.ndarray
         self.samp_size: DictStrNum
         self.ys_mean: np.ndarray
         self.Xs_mean: np.ndarray
 
         # Fitting stats
         self.fitted: bool = False
-        self.fixed_effects: np.ndarray 
-        self.fe_std: np.ndarray 
-        self.random_effects: np.ndarray 
+        self.fixed_effects: np.ndarray
+        self.fe_std: np.ndarray
+        self.random_effects: np.ndarray
         self.re_std: Number = 0
         self.error_std: Number = 0
         self.convergence: dict[str, Union[float, int, bool]] = {}
@@ -156,8 +158,7 @@ class EblupUnitModel:
             beta1 = beta1 + np.matmul(np.transpose(Xw_d), resid_d_w)
             beta2 = beta2 + np.sum(resid_d_w * y_d[:, None] * w_d[:, None], axis=0)
 
-        return np.asarray(np.matmul(np.linalg.inv(beta1), beta2)
-)
+        return np.asarray(np.matmul(np.linalg.inv(beta1), beta2))
 
     def _mse(
         self,

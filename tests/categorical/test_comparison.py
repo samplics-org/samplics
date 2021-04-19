@@ -1,9 +1,9 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import pytest
 
 from samplics.categorical.comparison import Ttest
+
 
 auto = pd.read_csv("./tests/categorical/auto2.csv")
 
