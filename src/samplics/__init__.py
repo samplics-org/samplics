@@ -1,4 +1,4 @@
-from samplics.datasets.datasets import PSUFrame, PSUSample, SSUSample
+from samplics.datasets.datasets import PSUFrame, PSUSample, SSUSample, Nhanes2Subset, NmihsSubset
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
 from samplics.sampling import OneMeanSampleSize, SampleSelection, SampleSize, allocate
@@ -14,6 +14,8 @@ __all__ = [
     "EblupUnitModel",
     "EbUnitModel",
     "EllUnitModel",
+    "Nhanes2Subset",
+    "NmihsSubset",
     "OneMeanSampleSize",
     "PSUFrame",
     "PSUSample",
