@@ -108,7 +108,16 @@ class Nhanes2(_Dataset):
 
         self._load_data(
             "nhanes2.csv",
-            colnames=["stratid", "psuid", "race", "highbp", "highlead", "diabetes", "finalwgt"],
+            colnames=[
+                "stratid",
+                "psuid",
+                "race",
+                "highbp",
+                "highlead",
+                "zinc",
+                "diabetes",
+                "finalwgt",
+            ],
         )
 
 
