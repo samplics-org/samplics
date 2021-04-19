@@ -62,13 +62,14 @@ def test_loading_nhanes2_subset():
         == "A subset of NHANES II data. This file is not meant to be representative of NHANES II. It is just an subset to illustrate the syntax in this tutorial."
     )
     assert nhanes2.nrows == 10337
-    assert nhanes2.ncols == 7
+    assert nhanes2.ncols == 8
     assert list(nhanes2.data.columns) == [
         "stratid",
         "psuid",
         "race",
         "highbp",
         "highlead",
+        "zinc",
         "diabetes",
         "finalwgt",
     ]

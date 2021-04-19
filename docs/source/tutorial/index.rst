@@ -6,6 +6,28 @@ Samplics is a Python package designed to be a comprehensive tool for selecting, 
 
 This tutorial is intended for users with basic knowledge of Python. It is assumed that the user has a basic understanding of Python syntax. Also, the tutorial is not intended to teach survey sampling methods. To learn survey sampling methods, we refer the user to the `UNStats Handbook 2005 <https://unstats.un.org/unsd/hhsurveys/>`_, `Designing Household Survey Samples: Practical Guidelines <https://unstats.un.org/unsd/demographic/sources/surveys/Series_F98en.pdf>`_, and the reference material mentioned throughout this tutorial. 
 
+The module *datasets* allows the user to access the datasets used in this tutorial. Note that the datasets are only used to illustrate the the syntax and APIs of *samplics*. The datasets should not be used for any statistical analysis. **Many of the datasets in this tutorial are subsets of real-life samples but DO NOT represent these real-life samples**. The datasets were subseted from existing samples to reduce the size of the files.  Each datasets is represented by a class with the members: *name*, *description*, *nrows*, *ncols*, *design*, *source*, and, *data*. The list of datasets are the following:
+* Birth: This dataset represent a city data of categories of birth by age group. The dataset was obtained through the public stata API.
+* CountyCrop and CountryCropMeans: These datasets were used by Battese, G.E., Harter, R.M. and Fuller, W.A. [#battese1988]_ for their pioner paper on small area estimation.
+* ExpenditureMilk: 
+* Nhanes2, Nhanes2brr, Nhanes2jk: these datasets were obtained from the NHANES[#mcdowell1981]_. As mentioned above, the datasets are only subsets of the full sample and do not represent the NHANES II study. This data is only useful for illustrating the syntax of *samplics*. These datasets should not be used to conduct any analysis of NHANES nor use the numbers for any statistical analysis. The original data was obtained through the public stata API.
+* Nmihs: The dataset is a subset of the National Maternal and Infant Health Survey (NMIHS) sample[#gonzalez1992]_. The dataset should not be used to conduct any analysis of NMIHS nor use the numbers for any statistical analysis. The original data was obtained through the public stata API.
+* PSUFrame, PSUSample, SSUSample: these are simulated datasets to illustrate the selectionof primary and secondary sampling units.
+
+**Note**: no number shown in this tutorial shall be used for any statistical analysis. All the examples are exclusively for illustrating the syntax of *samplics*.
+
+.. code-block::python
+    import samplics
+    from samplics.datasets import PSUFrame
+
+    psu_frame_cls = PSUFrame()
+    psu_frame_cls.load_data()
+
+    psu_frame = psu_frame_cls.data
+
+.. [#battese1988] Battese, G.E., Harter, R.M. and Fuller, W.A. (1988). An Error-Components Model for Prediction of County Crop Areas Using Survey and Satellite Data, Journal of the American Statistical Association 83, 28-36.
+.. [#gonzalez1992] Gonzalez, J. F., Jr., N. Krauss, and C. Scott. 1992. Estimation in the 1988 National Maternal and Infant Health Survey. Proceedings of the Section on Statistics Education, American Statistical Association 343–348.
+.. [#mcdowell1981] McDowell, A., A. Engel, J. T. Massey, and K. Maurer. 1981. Plan and operation of the Second National Health and Nutrition Examination Survey, 1976–1980. Vital and Health Statistics 1(15): 1–144.
 
 Sample size calculation
 -----------------------
