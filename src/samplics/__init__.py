@@ -1,4 +1,12 @@
-from samplics.datasets.datasets import PSUFrame, PSUSample, SSUSample, Nhanes2, Nhanes2brr, Nmihs
+from samplics.datasets.datasets import (
+    PSUFrame,
+    PSUSample,
+    SSUSample,
+    Nhanes2,
+    Nhanes2brr,
+    Nhanes2jk,
+    Nmihs,
+)
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
 from samplics.sampling import OneMeanSampleSize, SampleSelection, SampleSize, allocate
