@@ -1,6 +1,7 @@
 from samplics.datasets.datasets import (
     Birth,
     CountyCrop,
+    CountyCropMeans,
     Nhanes2,
     Nhanes2brr,
     Nhanes2jk,
@@ -22,6 +23,7 @@ __all__ = [
     "array_to_dict",
     "Birth",
     "CountyCrop",
+    "CountyCropMeans",
     "EblupAreaModel",
     "EblupUnitModel",
     "EbUnitModel",
