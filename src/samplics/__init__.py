@@ -1,11 +1,13 @@
 from samplics.datasets.datasets import (
-    PSUFrame,
-    PSUSample,
-    SSUSample,
+    Birth,
+    CountyCrop,
     Nhanes2,
     Nhanes2brr,
     Nhanes2jk,
     Nmihs,
+    PSUFrame,
+    PSUSample,
+    SSUSample,
 )
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
@@ -18,6 +20,8 @@ from samplics.weighting import ReplicateWeight, SampleWeight
 __all__ = [
     "allocate",
     "array_to_dict",
+    "Birth",
+    "CountyCrop",
     "EblupAreaModel",
     "EblupUnitModel",
     "EbUnitModel",
