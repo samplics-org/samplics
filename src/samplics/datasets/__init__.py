@@ -1,4 +1,5 @@
 from samplics.datasets.datasets import (
+    Auto,
     Birth,
     CountyCrop,
     CountyCropMeans,
@@ -14,6 +15,7 @@ from samplics.datasets.datasets import (
 
 
 __all__ = [
+    "Auto",
     "Birth",
     "CountyCrop",
     "CountyCropMeans",
