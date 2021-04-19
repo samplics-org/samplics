@@ -181,6 +181,26 @@ class Nmihs(_Dataset):
         self._load_data("nmihs_subset.csv")
 
 
+class Auto(_Dataset):
+    """A class to represent the Auto sample dataset
+
+    Args:
+        _Dataset ([type]): The base class for loading datasets
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.name = "Auto Sample"
+        self.description = "The Auto sample data."
+
+    def load_data(
+        self,
+    ) -> None:
+        """Load auto.csv file to create the data member"""
+
+        self._load_data("auto.csv", colnames=["mpg", "foreign", "y1", "y2"])
+
+
 class Birth(_Dataset):
     """A class to represent the Birth sample dataset
 

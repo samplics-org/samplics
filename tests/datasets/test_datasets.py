@@ -1,4 +1,5 @@
 from samplics.datasets.datasets import (
+    Auto,
     Birth,
     CountyCrop,
     CountyCropMeans,
@@ -112,6 +113,17 @@ def test_loading_nmihs_subset():
     )
     assert nmihs_subset.nrows == 603
     assert nmihs_subset.ncols == 52
+
+
+def test_loading_auto():
+    auto = Auto()
+    auto.load_data()
+
+    assert auto.name == "Auto Sample"
+    assert auto.description == "The Auto sample data."
+    assert auto.nrows == 74
+    assert auto.ncols == 4
+    assert list(auto.data.columns) == ["mpg", "foreign", "y1", "y2"]
 
 
 def test_loading_birth():

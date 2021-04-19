@@ -7,4 +7,4 @@ from samplics.sampling.size import (
 )
 
 
-__all__ = ["allocate", "SampleSelection", "SampleSize", "OneMeanSample", "TwoMeanSampleSize"]
+__all__ = ["allocate", "SampleSelection", "SampleSize", "OneMeanSampleSize", "TwoMeanSampleSize"]
