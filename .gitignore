@@ -126,10 +126,11 @@ dmypy.json
 # .github
 
 #Extra
-datasets
+/datasets
 reference_material
 notebooks/
 *.ipynb_checkpoints/
+roadmap.md
 
 #Other
 *.Rhistory

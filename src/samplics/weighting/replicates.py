@@ -12,12 +12,13 @@ Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more detail
 """
 
 from __future__ import annotations
-from typing import Union, Optional
+
+import math
+
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-
-import math
 
 from samplics.utils import checks, formats
 from samplics.utils import hadamard as hdd

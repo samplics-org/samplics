@@ -3,6 +3,7 @@ import pandas as pd
 
 from samplics.sae.eblup_area_model import EblupAreaModel
 
+
 milk = pd.read_csv("./tests/sae/milk.csv")
 
 area = milk["SmallArea"]

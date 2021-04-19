@@ -1,10 +1,11 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import pytest
 
 import samplics
+
 from samplics.weighting import SampleWeight
+
 
 # All categorical
 sample_cat = pd.DataFrame(

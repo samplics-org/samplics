@@ -23,15 +23,17 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 """
 
 from __future__ import annotations
-from typing import Any, Optional, Union, Callable
 
 import warnings
+
+from typing import Any, Callable, Optional, Union
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+
 from samplics.sae.eblup_unit_model import EblupUnitModel
-from samplics.utils import formats, basic_functions
+from samplics.utils import basic_functions, formats
 from samplics.utils.types import Array, DictStrNum, Number
 
 

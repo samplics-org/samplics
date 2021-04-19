@@ -8,14 +8,21 @@ Functions:
 """
 
 from __future__ import annotations
+
 from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
 
-from samplics.utils import checks
-
-from samplics.utils.types import Array, DictStrInt, DictStrNum, Number, Series, StringNumber
+from samplics.utils.checks import assert_not_unique
+from samplics.utils.types import (
+    Array,
+    DictStrInt,
+    DictStrNum,
+    Number,
+    Series,
+    StringNumber,
+)
 
 
 def numpy_array(arr: Array) -> np.ndarray:
@@ -111,7 +118,7 @@ def sample_size_dict(
 def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     all_units = numpy_array(all_units)
     if unique:
-        checks.assert_not_unique(all_units)
+        assert_not_unique(all_units)
 
     return all_units
 
@@ -169,6 +176,42 @@ def fpc_as_dict(stratum: Optional[Array], fpc: Union[Array, Number]) -> Union[Di
         return dict(zip(stratum, fpc))
     else:
         raise TypeError("stratum and fpc are not compatible!")
+
+
+def convert_numbers_to_dicts(
+    number_strata: Optional[int], *args: Union[DictStrNum, Number]
+) -> list[DictStrNum]:
+
+    dict_number = 0
+    stratum: Optional[list[StringNumber]] = None
+    for arg in args:
+        if not isinstance(arg, (int, float, dict)):
+            raise TypeError("Arguments must be of type int, float or dict!")
+
+        if isinstance(arg, dict):
+            dict_number += 1
+            if dict_number == 1:
+                stratum = list(arg.keys())
+            elif dict_number >= 1:
+                if stratum != list(arg.keys()):
+                    raise AssertionError("Python dictionaries have different keys")
+
+    if stratum is None:
+        if isinstance(number_strata, (int, float)) and number_strata >= 1:
+            stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
+        else:
+            raise ValueError("Number of strata must be superior or equal to 1!")
+    else:
+        number_strata = len(stratum)
+
+    list_of_dicts = list()
+    for arg in args:
+        if isinstance(arg, (int, float)):
+            list_of_dicts.append(dict(zip(stratum, np.repeat(arg, number_strata))))
+        else:
+            list_of_dicts.append(arg)
+
+    return list_of_dicts
 
 
 def concatenate_series_to_str(row: Series) -> str:
