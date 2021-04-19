@@ -32,6 +32,7 @@ __all__ = [
     "ExpenditureMilk",
     "Nhanes2",
     "Nhanes2brr",
+    "Nhanes2jk",
     "Nmihs",
     "OneMeanSampleSize",
     "PSUFrame",
