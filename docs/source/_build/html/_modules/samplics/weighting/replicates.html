@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>samplics.weighting.replicates &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../gettingstarted.html">Getting started</a></li>
+                <li><a href="../../../tutorial/index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/index.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usecases.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for samplics.weighting.replicates</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Replicate weights module.</span>
+
+<span class="sd">The module has one main class called *ReplicateWeight* which implements three replication </span>
+<span class="sd">techniques: Bootstrap, Jackknife, and balanced repeated replication (BRR). For reference, </span>
+<span class="sd">users can consultant Efron, B. and Tibshirani, R.J. (1994) [#et1994]_, Valliant, R. and </span>
+<span class="sd">Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more details. </span>
+
+<span class="sd">.. [#et1994] Efron, B. and Tibshirani, R.J. (1994), *An Introduction to the Boostrap*, </span>
+<span class="sd">   Chapman &amp; Hall/CRC.</span>
+<span class="sd">.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, </span>
+<span class="sd">   Springer-Verlag New York, Inc</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">samplics.utils</span> <span class="kn">import</span> <span class="n">checks</span><span class="p">,</span> <span class="n">formats</span>
+<span class="kn">from</span> <span class="nn">samplics.utils</span> <span class="kn">import</span> <span class="n">hadamard</span> <span class="k">as</span> <span class="n">hdd</span>
+<span class="kn">from</span> <span class="nn">samplics.utils.types</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Number</span>
+
+
+<div class="viewcode-block" id="ReplicateWeight"><a class="viewcode-back" href="../../../samplics.weighting.html#samplics.weighting.replicates.ReplicateWeight">[docs]</a><span class="k">class</span> <span class="nc">ReplicateWeight</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;*ReplicateWeight* implements Boostrap, Jackknife and BRR to derive replicate weights.</span>
+<span class="sd">    When possible design weights should be used as the input weights for creating the replicate</span>
+<span class="sd">    weights, hence the weight adjustments can be applied to the replicates.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        | method (str): replicate method.</span>
+<span class="sd">        | fay_coef (float): Fay coefficient when implementing BRR-Fay.</span>
+<span class="sd">        | number_reps (int): number of replicates.</span>
+<span class="sd">        | rep_coefs (np.ndarray): coefficients associated to the replicates.</span>
+<span class="sd">        | stratification (bool): stratification indicator.</span>
+<span class="sd">        | number_psus (int): number of primary sampling units.</span>
+<span class="sd">        | number_strata (int): number of strata.</span>
+<span class="sd">        | random_seed (int): random seed.</span>
+
+
+<span class="sd">    Methods:</span>
+<span class="sd">        | replicate(): computes the replicate weights.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">stratification</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">number_reps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="n">fay_coef</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">random_seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stratification</span> <span class="o">=</span> <span class="n">stratification</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="n">number_reps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="n">number_reps</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">number_reps</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span> <span class="o">=</span> <span class="n">fay_coef</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_psus</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">random_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">random_seed</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reps_to_dataframe</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">psus</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">rep_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rep_prefix</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+        <span class="n">rep_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rep_data</span><span class="p">)</span>
+        <span class="n">rep_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">rep_data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">rep_prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">psus</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">rep_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">psus</span><span class="p">,</span> <span class="n">rep_data</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rep_data</span>
+
+    <span class="k">def</span> <span class="nf">_rep_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;jackknife&quot;</span> <span class="ow">and</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep_prefix</span> <span class="o">=</span> <span class="s2">&quot;_jk_wgt_&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span> <span class="ow">and</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep_prefix</span> <span class="o">=</span> <span class="s2">&quot;_boot_wgt_&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span> <span class="ow">and</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep_prefix</span> <span class="o">=</span> <span class="s2">&quot;_brr_wgt_&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep_prefix</span> <span class="o">=</span> <span class="s2">&quot;_fay_wgt_&quot;</span>
+        <span class="k">elif</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rep_prefix</span> <span class="o">=</span> <span class="s2">&quot;_rep_wgt_&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rep_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+
+        <span class="k">return</span> <span class="n">rep_prefix</span>
+
+    <span class="k">def</span> <span class="nf">_degree_of_freedom</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">stratum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">psu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">stratum</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span>
+        <span class="n">psu</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">psu</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stratum</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">psu</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="o">=</span> <span class="n">weight</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="c1"># Bootstrap methods</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_boot_psus_replicates</span><span class="p">(</span>
+        <span class="n">number_psus</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">number_reps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">samp_rate</span><span class="p">:</span> <span class="n">Number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">size_gap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates the bootstrap replicates structure&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">number_psus</span> <span class="o">&lt;=</span> <span class="n">size_gap</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;size_gap should be smaller than the number of units&quot;</span><span class="p">)</span>
+
+        <span class="n">sample_size</span> <span class="o">=</span> <span class="n">number_psus</span> <span class="o">-</span> <span class="n">size_gap</span>
+        <span class="n">psu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">number_psus</span><span class="p">)</span>
+        <span class="n">psu_boot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">psu</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">number_reps</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">))</span>
+        <span class="n">psu_replicates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">number_psus</span><span class="p">,</span> <span class="n">number_reps</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">rep</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">number_reps</span><span class="p">):</span>
+            <span class="n">psu_ids</span><span class="p">,</span> <span class="n">psus_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu_boot</span><span class="p">[</span><span class="n">rep</span><span class="p">,</span> <span class="p">:],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">psu_replicates</span><span class="p">[:,</span> <span class="n">rep</span><span class="p">][</span><span class="n">psu_ids</span><span class="p">]</span> <span class="o">=</span> <span class="n">psus_counts</span>
+
+        <span class="n">ratio_sqrt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">samp_rate</span><span class="p">)</span> <span class="o">*</span> <span class="n">sample_size</span> <span class="o">/</span> <span class="p">(</span><span class="n">number_psus</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="n">ratio_sqrt</span> <span class="o">+</span> <span class="n">ratio_sqrt</span> <span class="o">*</span> <span class="p">(</span><span class="n">number_psus</span> <span class="o">/</span> <span class="n">sample_size</span><span class="p">)</span> <span class="o">*</span> <span class="n">psu_replicates</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_boot_replicates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">psu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">stratum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">samp_rate</span><span class="p">:</span> <span class="n">Number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">size_gap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">stratum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">psu_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">)</span>
+            <span class="n">boot_coefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boot_psus_replicates</span><span class="p">(</span>
+                <span class="n">psu_ids</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">size_gap</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">strata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">strata</span><span class="p">):</span>
+                <span class="n">psu_ids_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">[</span><span class="n">stratum</span> <span class="o">==</span> <span class="n">s</span><span class="p">])</span>
+                <span class="n">number_psus_s</span> <span class="o">=</span> <span class="n">psu_ids_s</span><span class="o">.</span><span class="n">size</span>
+                <span class="n">boot_coefs_s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boot_psus_replicates</span><span class="p">(</span>
+                    <span class="n">number_psus_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">,</span> <span class="n">samp_rate</span><span class="p">,</span> <span class="n">size_gap</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">boot_coefs</span> <span class="o">=</span> <span class="n">boot_coefs_s</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">boot_coefs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">boot_coefs</span><span class="p">,</span> <span class="n">boot_coefs_s</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">boot_coefs</span>
+
+    <span class="c1"># BRR methods</span>
+    <span class="k">def</span> <span class="nf">_brr_number_reps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">stratum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">stratum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_psus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">)</span><span class="o">.</span><span class="n">size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_psus</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_psus</span> <span class="o">%</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_psus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">stratum</span><span class="p">,</span> <span class="n">psu</span><span class="p">))),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span><span class="o">.</span><span class="n">size</span>
+            <span class="k">if</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_psus</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Number of psus must be twice the number of strata!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">&lt;=</span> <span class="mi">28</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">//</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nb_reps_log2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nb_reps_log2</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nb_reps_log2</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_brr_replicates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">stratum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates the brr replicate structure&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The Fay coefficient must be greater or equal to 0 and lower than 1.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_brr_number_reps</span><span class="p">(</span><span class="n">psu</span><span class="p">,</span> <span class="n">stratum</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">brr_coefs</span> <span class="o">=</span> <span class="n">hdd</span><span class="o">.</span><span class="n">hadamard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">brr_coefs</span> <span class="o">=</span> <span class="n">brr_coefs</span><span class="p">[:,</span> <span class="mi">1</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">brr_coefs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">brr_coefs</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_strata</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">h</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">2</span>
+                <span class="k">if</span> <span class="n">brr_coefs</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">start</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+                    <span class="n">brr_coefs</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span><span class="p">,</span>
+                        <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># brr_coefs[r, 2 * h] == -1:</span>
+                    <span class="n">brr_coefs</span><span class="p">[</span><span class="n">r</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span><span class="p">,</span>
+                    <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">brr_coefs</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># Jackknife</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_jkn_psus_replicates</span><span class="p">(</span><span class="n">number_psus</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates the jackknife delete-1 replicate structure &quot;&quot;&quot;</span>
+
+        <span class="n">jk_coefs</span> <span class="o">=</span> <span class="p">(</span><span class="n">number_psus</span> <span class="o">/</span> <span class="p">(</span><span class="n">number_psus</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">number_psus</span><span class="p">,</span> <span class="n">number_psus</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">number_psus</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jk_coefs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_jkn_replicates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">psu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">stratum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stratum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">psu_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">)</span>
+            <span class="n">jk_coefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jkn_psus_replicates</span><span class="p">(</span><span class="n">psu_ids</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">strata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span>
+            <span class="n">jk_coefs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">))</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">end</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strata</span><span class="p">:</span>
+                <span class="n">psu_ids_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">[</span><span class="n">stratum</span> <span class="o">==</span> <span class="n">s</span><span class="p">])</span>
+                <span class="n">number_psus_s</span> <span class="o">=</span> <span class="n">psu_ids_s</span><span class="o">.</span><span class="n">size</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">number_psus_s</span>
+                <span class="n">jk_coefs</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jkn_psus_replicates</span><span class="p">(</span><span class="n">number_psus_s</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">number_psus_s</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">number_psus_s</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">end</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">jk_coefs</span>
+
+<div class="viewcode-block" id="ReplicateWeight.replicate"><a class="viewcode-back" href="../../../samplics.weighting.html#samplics.weighting.replicates.ReplicateWeight.replicate">[docs]</a>    <span class="k">def</span> <span class="nf">replicate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">samp_weight</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
+        <span class="n">psu</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
+        <span class="n">stratum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rep_coefs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Array</span><span class="p">,</span> <span class="n">Number</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">rep_prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">psu_varname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_psu&quot;</span><span class="p">,</span>
+        <span class="n">str_varname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_stratum&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Computes replicate sample weights.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            samp_weight (Array): array of sample weights. To incorporate the weights adjustment</span>
+<span class="sd">                in the replicate weights, first replicate the design sample weights then apply</span>
+<span class="sd">                the adjustments to the replicates.</span>
+<span class="sd">            psu (Array):</span>
+<span class="sd">            stratum (Array, optional): array of the strata. Defaults to None.</span>
+<span class="sd">            rep_coefs (Union[Array, Number], optional): coefficients associated to the replicates.</span>
+<span class="sd">                Defaults to False.</span>
+<span class="sd">            rep_prefix (str, optional): prefix to apply to the replicate weights names.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            psu_varname (str, optional): name of the psu variable in the output dataframe.</span>
+<span class="sd">                Defaults to &quot;_psu&quot;.</span>
+<span class="sd">            str_varname (str, optional): name of the stratum variable in the output dataframe.</span>
+<span class="sd">                Defaults to &quot;_stratum&quot;.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: raises an assertion error when stratum is None for a stratified design.</span>
+<span class="sd">            AssertionError: raises an assertion error when the replication method is not valid.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: a dataframe of the replicates sample weights.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">samp_weight</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">samp_weight</span><span class="p">)</span>
+        <span class="n">psu</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">psu</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stratification</span><span class="p">:</span>
+            <span class="n">stratum</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stratum</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">stratum</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_degree_of_freedom</span><span class="p">(</span><span class="n">samp_weight</span><span class="p">,</span> <span class="n">stratum</span><span class="p">,</span> <span class="n">psu</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stratification</span> <span class="ow">and</span> <span class="n">stratum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;For a stratified design, stratum must be specified.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">stratum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stratum_psu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">str_varname</span><span class="p">:</span> <span class="n">stratum</span><span class="p">,</span> <span class="n">psu_varname</span><span class="p">:</span> <span class="n">psu</span><span class="p">})</span>
+            <span class="n">stratum_psu</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">str_varname</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="n">str_varname</span><span class="p">,</span> <span class="n">psu_varname</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">str_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">psu</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">checks</span><span class="o">.</span><span class="n">assert_brr_number_psus</span><span class="p">(</span><span class="n">str_index</span><span class="p">)</span>
+            <span class="n">psus</span> <span class="o">=</span> <span class="n">psu</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">str_index</span><span class="p">)]</span>
+            <span class="n">strata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">psus</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">stratum_psu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">str_varname</span><span class="p">:</span> <span class="n">strata</span><span class="p">,</span> <span class="n">psu_varname</span><span class="p">:</span> <span class="n">psus</span><span class="p">})</span>
+            <span class="n">psu_pd</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">psu_varname</span><span class="p">:</span> <span class="n">psu</span><span class="p">})</span>
+            <span class="n">stratum_psu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">psu_pd</span><span class="p">,</span> <span class="n">stratum_psu</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">psu_varname</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">stratum_psu</span> <span class="o">=</span> <span class="n">stratum_psu</span><span class="p">[[</span><span class="n">str_varname</span><span class="p">,</span> <span class="n">psu_varname</span><span class="p">]]</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="n">str_varname</span><span class="p">,</span> <span class="n">psu_varname</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stratum_psu</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">psu_varname</span><span class="p">:</span> <span class="n">psu</span><span class="p">})</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="n">psu_varname</span><span class="p">]</span>
+
+        <span class="n">psus_ids</span> <span class="o">=</span> <span class="n">stratum_psu</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;jackknife&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="n">psus_ids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">_rep_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jkn_replicates</span><span class="p">(</span><span class="n">psu</span><span class="p">,</span> <span class="n">stratum</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+            <span class="n">_rep_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boot_replicates</span><span class="p">(</span><span class="n">psu</span><span class="p">,</span> <span class="n">stratum</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span><span class="p">:</span>
+            <span class="n">_rep_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_brr_replicates</span><span class="p">(</span><span class="n">psu</span><span class="p">,</span> <span class="n">stratum</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                <span class="s2">&quot;Replication method not recognized. Possible options are: &#39;bootstrap&#39;, &#39;brr&#39;, and &#39;jackknife&#39;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">rep_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_prefix</span><span class="p">(</span><span class="n">rep_prefix</span><span class="p">)</span>
+        <span class="n">_rep_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reps_to_dataframe</span><span class="p">(</span><span class="n">psus_ids</span><span class="p">,</span> <span class="n">_rep_data</span><span class="p">,</span> <span class="n">rep_prefix</span><span class="p">)</span>
+
+        <span class="n">samp_weight</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;_samp_weight&quot;</span><span class="p">:</span> <span class="n">samp_weight</span><span class="p">})</span>
+        <span class="n">samp_weight</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">full_sample</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">stratum_psu</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">full_sample</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">full_sample</span><span class="p">,</span> <span class="n">_rep_data</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rep_coefs</span><span class="p">:</span>
+            <span class="n">rep_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">full_sample</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">rep_prefix</span><span class="p">)]</span>
+            <span class="n">full_sample</span><span class="p">[</span><span class="n">rep_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_sample</span><span class="p">[</span><span class="n">rep_cols</span><span class="p">]</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">samp_weight</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">full_sample</span></div>
+
+<div class="viewcode-block" id="ReplicateWeight.normalize"><a class="viewcode-back" href="../../../samplics.weighting.html#samplics.weighting.replicates.ReplicateWeight.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ReplicateWeight.adjust"><a class="viewcode-back" href="../../../samplics.weighting.html#samplics.weighting.replicates.ReplicateWeight.adjust">[docs]</a>    <span class="k">def</span> <span class="nf">adjust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ReplicateWeight.trim"><a class="viewcode-back" href="../../../samplics.weighting.html#samplics.weighting.replicates.ReplicateWeight.trim">[docs]</a>    <span class="k">def</span> <span class="nf">trim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

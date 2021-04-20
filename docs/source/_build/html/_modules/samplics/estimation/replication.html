@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>samplics.estimation.replication &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../gettingstarted.html">Getting started</a></li>
+                <li><a href="../../../tutorial/index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/index.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial/index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial/eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usecases.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for samplics.estimation.replication</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">numpy.lib.arraysetops</span> <span class="kn">import</span> <span class="n">isin</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">t</span> <span class="k">as</span> <span class="n">student</span>
+
+<span class="kn">from</span> <span class="nn">samplics.estimation.expansion</span> <span class="kn">import</span> <span class="n">_SurveyEstimator</span>
+<span class="kn">from</span> <span class="nn">samplics.utils</span> <span class="kn">import</span> <span class="n">formats</span>
+<span class="kn">from</span> <span class="nn">samplics.utils.types</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">DictStrNum</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">StringNumber</span>
+
+
+<span class="n">TypeRepEst</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TypeRepEst&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;ReplicateEstimator&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ReplicateEstimator"><a class="viewcode-back" href="../../../samplics.estimation.html#samplics.estimation.replication.ReplicateEstimator">[docs]</a><span class="k">class</span> <span class="nc">ReplicateEstimator</span><span class="p">(</span><span class="n">_SurveyEstimator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;*ReplicateEstimator* implements replicate-based variance approximations.</span>
+
+
+<span class="sd">    Attributes</span>
+<span class="sd">        | point_est (dict): point estimate of the parameter of interest.</span>
+<span class="sd">        | variance (dict): variance estimate of the parameter of interest.</span>
+<span class="sd">        | stderror (dict): standard error of the parameter of interest.</span>
+<span class="sd">        | coef_var (dict): estimate of the coefficient of variation.</span>
+<span class="sd">        | deff (dict): estimate of the design effect due to weighting.</span>
+<span class="sd">        | lower_ci (dict): estimate of the lower bound of the confidence interval.</span>
+<span class="sd">        | upper_ci (dict): estimate of the upper bound of the confidence interval.</span>
+<span class="sd">        | degree_of_freedom (int): degree of freedom for the confidence interval.</span>
+<span class="sd">        | alpha (float): significant level for the confidence interval</span>
+<span class="sd">        | strata (list): list of the strata in the sample.</span>
+<span class="sd">        | domains (list): list of the domains in the sample.</span>
+<span class="sd">        | method (str): variance estimation method.</span>
+<span class="sd">        | parameter (str): the parameter of the population to estimate e.g. total.</span>
+<span class="sd">        | number_strata (int): number of strata.</span>
+<span class="sd">        | number_psus (int): number of primary sampling units (psus).</span>
+<span class="sd">        | conservative (bool): indicate whether to produce conservative variance estimates.</span>
+<span class="sd">        | number_reps (int): number of replicate weights.</span>
+<span class="sd">        | rep_coefs (array): coefficients associated to the replicate weights.</span>
+<span class="sd">        | fay_coef (float): Fay coefficient for the the BRR-Fay algorithm.</span>
+<span class="sd">        | random_seed (int): random seed for reproducibility.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">        | estimate(): produces the point estimate of the parameter of interest with the associated</span>
+<span class="sd">        |   measures of precision.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">rep_weight_cls</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fay_coef</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Number</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">random_seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="s2">&quot;brr&quot;</span><span class="p">,</span> <span class="s2">&quot;jackknife&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;method must be &#39;bootstrap&#39;, &#39;brr&#39;, or &#39;jackknife&#39;&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conservative</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Number</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span> <span class="ow">and</span> <span class="n">fay_coef</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span> <span class="o">=</span> <span class="n">fay_coef</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">rep_weight_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="n">rep_weight_cls</span><span class="o">.</span><span class="n">number_reps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="n">rep_weight_cls</span><span class="o">.</span><span class="n">rep_coefs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="o">=</span> <span class="n">rep_weight_cls</span><span class="o">.</span><span class="n">degree_of_freedom</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span> <span class="o">=</span> <span class="n">rep_weight_cls</span><span class="o">.</span><span class="n">fay_coef</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_rep_point</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;proportion&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_weights</span> <span class="o">*</span> <span class="n">y</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_weights</span> <span class="o">*</span> <span class="n">y</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_weights</span> <span class="o">*</span> <span class="n">y</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_weights</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Parameter not valid!&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_bias</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">samp_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rep_weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Number</span><span class="p">:</span>
+
+        <span class="n">estimate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_point</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">rep_estimates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_point</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rep_estimates</span><span class="p">)</span> <span class="o">-</span> <span class="n">estimate</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span>
+
+    <span class="k">def</span> <span class="nf">_rep_coefs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_coefs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Number</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">rep_coefs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rep_coefs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="n">rep_coefs</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rep_coefs</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="n">rep_coefs</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fay_coef</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;jackknife&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_variance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rep_weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rep_coefs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">estimate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">conservative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Number</span><span class="p">:</span>
+
+        <span class="n">variance</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">rep_estimates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_point</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;jackknife&quot;</span><span class="p">:</span>  <span class="c1"># page 155 (4.2.3 and 4.2.5) - Wolter(2003)</span>
+            <span class="n">jk_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rep_coefs</span><span class="p">))</span>
+            <span class="n">pseudo_estimates</span> <span class="o">=</span> <span class="n">jk_factor</span> <span class="o">*</span> <span class="n">estimate</span> <span class="o">-</span> <span class="p">(</span><span class="n">jk_factor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">rep_estimates</span>
+            <span class="k">if</span> <span class="n">conservative</span><span class="p">:</span>
+                <span class="n">variance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_coefs</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">((</span><span class="n">pseudo_estimates</span> <span class="o">-</span> <span class="n">estimate</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">jk_factor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">conservative</span><span class="p">:</span>
+                <span class="n">variance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                        <span class="n">rep_coefs</span>
+                        <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">pseudo_estimates</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pseudo_estimates</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">jk_factor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                            <span class="mi">2</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">conservative</span><span class="p">:</span>
+                <span class="n">variance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_coefs</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">rep_estimates</span> <span class="o">-</span> <span class="n">estimate</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">conservative</span><span class="p">:</span>
+                <span class="n">variance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rep_coefs</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">rep_estimates</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rep_estimates</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">variance</span>
+
+    <span class="k">def</span> <span class="nf">_get_bias</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">samp_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rep_weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">domain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">remove_nan</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">remove_nan</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">excluded_units</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">excluded_units</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">stratum</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">remove_nans</span><span class="p">(</span>
+                <span class="n">excluded_units</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">rep_weights</span> <span class="o">=</span> <span class="n">rep_weights</span><span class="p">[</span><span class="o">~</span><span class="n">excluded_units</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+            <span class="n">y_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="n">y_dummies</span><span class="o">.</span><span class="n">columns</span>
+            <span class="n">y_dummies</span> <span class="o">=</span> <span class="n">y_dummies</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">bias</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="k">if</span> <span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span> <span class="ow">and</span> <span class="n">categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cat_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">categories</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                    <span class="n">cat_dict_k</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="n">categories</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bias</span><span class="p">(</span>
+                                <span class="n">y_dummies</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">,</span> <span class="kc">None</span>
+                            <span class="p">)</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                    <span class="n">cat_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cat_dict_k</span><span class="p">)</span>
+                <span class="n">bias</span> <span class="o">=</span> <span class="n">cat_dict</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bias</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">domain</span><span class="p">):</span>
+                <span class="n">samp_weight_d</span> <span class="o">=</span> <span class="n">samp_weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)</span>
+                <span class="n">rep_weights_d</span> <span class="o">=</span> <span class="n">rep_weights</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+                    <span class="n">x_d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">x_d</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                    <span class="n">y_dummies_d</span> <span class="o">=</span> <span class="n">y_dummies</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+                    <span class="n">cat_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">categories</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                        <span class="n">cat_dict_d_k</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                            <span class="p">{</span>
+                                <span class="n">categories</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bias</span><span class="p">(</span>
+                                    <span class="n">y_dummies_d</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span>
+                                    <span class="n">samp_weight_d</span><span class="p">,</span>
+                                    <span class="n">rep_weights_d</span><span class="p">,</span>
+                                    <span class="kc">None</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="p">}</span>
+                        <span class="p">)</span>
+                        <span class="n">cat_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cat_dict_d_k</span><span class="p">)</span>
+                    <span class="n">bias</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">cat_dict</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">y_d</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)</span>
+                    <span class="n">bias</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bias</span><span class="p">(</span><span class="n">y_d</span><span class="p">,</span> <span class="n">samp_weight_d</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">,</span> <span class="n">x_d</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">bias</span>
+
+    <span class="k">def</span> <span class="nf">_get_variance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">samp_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rep_weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rep_coefs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">domain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">conservative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">remove_nan</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+            <span class="n">y_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="n">y_dummies</span><span class="o">.</span><span class="n">columns</span>
+            <span class="n">y_dummies</span> <span class="o">=</span> <span class="n">y_dummies</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">if</span> <span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                <span class="n">estimate_k</span><span class="p">:</span> <span class="nb">dict</span>
+                <span class="n">cat_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">categories</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                    <span class="n">estimate_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_point</span><span class="p">(</span><span class="n">y_dummies</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+                    <span class="n">cat_dict_k</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="n">categories</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span><span class="p">(</span>
+                                <span class="n">y_dummies</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span>
+                                <span class="n">rep_weights</span><span class="p">,</span>
+                                <span class="n">rep_coefs</span><span class="p">,</span>
+                                <span class="n">x</span><span class="p">,</span>
+                                <span class="n">estimate_k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                <span class="n">conservative</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                    <span class="n">cat_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cat_dict_k</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">cat_dict</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">estimate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_point</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">rep_weights</span><span class="p">,</span> <span class="n">rep_coefs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">estimate</span><span class="p">,</span> <span class="n">conservative</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">variance_else1</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">variance_else2</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">domain</span><span class="p">):</span>
+                <span class="n">samp_weight_d</span> <span class="o">=</span> <span class="n">samp_weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)</span>
+                <span class="n">rep_weights_d</span> <span class="o">=</span> <span class="n">rep_weights</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+                    <span class="n">x_d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">x_d</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span> <span class="ow">and</span> <span class="n">categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">y_dummies_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_dummies</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">])</span>
+                    <span class="n">cat_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">categories</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                        <span class="n">estimate_d_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_point</span><span class="p">(</span><span class="n">y_dummies_d</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">samp_weight_d</span><span class="p">,</span> <span class="n">x_d</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">cat_dict_d_k</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                            <span class="p">{</span>
+                                <span class="n">categories</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span><span class="p">(</span>
+                                    <span class="n">y_dummies_d</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span>
+                                    <span class="n">rep_weights_d</span><span class="p">,</span>
+                                    <span class="n">rep_coefs</span><span class="p">,</span>
+                                    <span class="n">x_d</span><span class="p">,</span>
+                                    <span class="n">estimate_d_k</span><span class="p">,</span>
+                                    <span class="n">conservative</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="p">}</span>
+                        <span class="p">)</span>
+                        <span class="n">cat_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cat_dict_d_k</span><span class="p">)</span>
+                    <span class="n">variance_else1</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">cat_dict</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">y_d</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">domain</span> <span class="o">==</span> <span class="n">d</span><span class="p">)</span>
+                    <span class="n">estimate_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_point</span><span class="p">(</span><span class="n">y_d</span><span class="p">,</span> <span class="n">samp_weight_d</span><span class="p">,</span> <span class="n">x_d</span><span class="p">)</span>
+                    <span class="n">variance_else2</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variance</span><span class="p">(</span>
+                        <span class="n">y_d</span><span class="p">,</span>
+                        <span class="n">rep_weights_d</span><span class="p">,</span>
+                        <span class="n">rep_coefs</span><span class="p">,</span>
+                        <span class="n">x_d</span><span class="p">,</span>
+                        <span class="n">estimate_d</span><span class="p">,</span>
+                        <span class="n">conservative</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">variance_else1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">variance_else2</span>
+
+    <span class="k">def</span> <span class="nf">_get_confint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">estimate</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">variance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">quantile</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">lower_ci</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">upper_ci</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">variance</span><span class="p">:</span>
+                    <span class="n">point_est</span> <span class="o">=</span> <span class="n">estimate</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+                    <span class="n">std_est</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">[</span><span class="n">level</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+                    <span class="n">location_ci</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">point_est</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">point_est</span><span class="p">))</span>
+                    <span class="n">scale_ci</span> <span class="o">=</span> <span class="n">std_est</span> <span class="o">/</span> <span class="p">(</span><span class="n">point_est</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">point_est</span><span class="p">))</span>
+                    <span class="n">ll</span> <span class="o">=</span> <span class="n">location_ci</span> <span class="o">-</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">scale_ci</span>
+                    <span class="n">lower_ci</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ll</span><span class="p">))</span>
+                    <span class="n">uu</span> <span class="o">=</span> <span class="n">location_ci</span> <span class="o">+</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">scale_ci</span>
+                    <span class="n">upper_ci</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">uu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">uu</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">lower_ci</span><span class="p">,</span> <span class="n">upper_ci</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">estimate</span> <span class="o">-</span> <span class="n">quantile</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">estimate</span> <span class="o">+</span> <span class="n">quantile</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span>
+                    <span class="n">variance</span><span class="p">,</span> <span class="mf">0.5</span>
+                <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower_ci_else1</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">upper_ci_else1</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">lower_ci_else2</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">upper_ci_else2</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">variance</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                    <span class="n">lower_ci_k</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">upper_ci_k</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                        <span class="n">point_est</span> <span class="o">=</span> <span class="n">estimate</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">level</span><span class="p">]</span>
+                        <span class="n">std_est</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">level</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+                        <span class="n">location_ci</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">point_est</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">point_est</span><span class="p">))</span>
+                        <span class="n">scale_ci</span> <span class="o">=</span> <span class="n">std_est</span> <span class="o">/</span> <span class="p">(</span><span class="n">point_est</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">point_est</span><span class="p">))</span>
+                        <span class="n">ll</span> <span class="o">=</span> <span class="n">location_ci</span> <span class="o">-</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">scale_ci</span>
+                        <span class="n">lower_ci_k</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ll</span><span class="p">))</span>
+                        <span class="n">uu</span> <span class="o">=</span> <span class="n">location_ci</span> <span class="o">+</span> <span class="n">quantile</span> <span class="o">*</span> <span class="n">scale_ci</span>
+                        <span class="n">upper_ci_k</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">uu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">uu</span><span class="p">))</span>
+                    <span class="n">lower_ci_else1</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">lower_ci_k</span>
+                    <span class="n">upper_ci_else1</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">upper_ci_k</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lower_ci_else2</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">-</span> <span class="n">quantile</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+                    <span class="n">upper_ci_else2</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="n">quantile</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">lower_ci_else1</span><span class="p">,</span> <span class="n">upper_ci_else1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">lower_ci_else2</span><span class="p">,</span> <span class="n">upper_ci_else2</span>
+
+    <span class="k">def</span> <span class="nf">_get_coefvar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">estimate</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># Any := Union[dict[StringNumber, DictStrNum], DictStrNum, Number]</span>
+        <span class="n">variance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>  <span class="c1"># Any := Union[dict[StringNumber, DictStrNum], DictStrNum, Number]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                <span class="n">coef_var</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">variance</span><span class="p">:</span>
+                    <span class="n">coef_var</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">[</span><span class="n">level</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">estimate</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">coef_var</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">estimate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coef_var</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">variance</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                    <span class="n">coef_var_k</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                        <span class="n">coef_var_k</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">level</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">estimate</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">level</span><span class="p">]</span>
+                    <span class="n">coef_var</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef_var_k</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">coef_var</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">estimate</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">coef_var</span>
+
+<div class="viewcode-block" id="ReplicateEstimator.estimate"><a class="viewcode-back" href="../../../samplics.estimation.html#samplics.estimation.replication.ReplicateEstimator.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">:</span> <span class="n">TypeRepEst</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
+        <span class="n">samp_weight</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span>
+        <span class="n">rep_weights</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rep_coefs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">domain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">conservative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">deff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># Todo</span>
+        <span class="n">remove_nan</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeRepEst</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;[summary]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            self (TypeRepEst): [description]</span>
+<span class="sd">            y (Array): [description]</span>
+<span class="sd">            samp_weight (Array): [description]</span>
+<span class="sd">            rep_weights (Union[np.ndarray, pd.DataFrame]): [description]</span>
+<span class="sd">            x (Union[np.ndarray, pd.DataFrame, None], optional): [description]. Defaults to None.</span>
+<span class="sd">            rep_coefs (Union[float, np.ndarray, None], optional): [description]. Defaults to None.</span>
+<span class="sd">            domain (Optional[np.ndarray], optional): [description]. Defaults to None.</span>
+<span class="sd">            conservative (bool, optional): [description]. Defaults to False.</span>
+<span class="sd">            deff (bool, optional): [description]. Defaults to False.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: [description]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TypeRepEst: [description]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;x must be provided for ratio estimation.&quot;</span><span class="p">)</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">samp_weight</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">samp_weight</span><span class="p">)</span>
+        <span class="n">rep_weights</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">rep_weights</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">numpy_array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">remove_nan</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span> <span class="ow">and</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">excluded_units</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">excluded_units</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">formats</span><span class="o">.</span><span class="n">remove_nans</span><span class="p">(</span>
+                <span class="n">excluded_units</span><span class="p">,</span>
+                <span class="n">y</span><span class="p">,</span>
+                <span class="n">samp_weight</span><span class="p">,</span>
+                <span class="n">x</span><span class="p">,</span>
+                <span class="n">domain</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">rep_weights</span> <span class="o">=</span> <span class="n">rep_weights</span><span class="p">[</span><span class="o">~</span><span class="n">excluded_units</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conservative</span> <span class="o">=</span> <span class="n">conservative</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">=</span> <span class="n">rep_weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rep_coefs</span><span class="p">(</span><span class="n">rep_coefs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">domain</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domains</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">point_est</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_point</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">samp_weight</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_variance</span><span class="p">(</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">samp_weight</span><span class="p">,</span>
+            <span class="n">rep_weights</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rep_coefs</span><span class="p">),</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">domain</span><span class="p">,</span>
+            <span class="n">conservative</span><span class="p">,</span>
+            <span class="n">remove_nan</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;brr&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_reps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">t_quantile</span> <span class="o">=</span> <span class="n">student</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">degree_of_freedom</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lower_ci</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper_ci</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_confint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_est</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">,</span> <span class="n">t_quantile</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_coefvar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">point_est</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domains</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stderror</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">level</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stderror</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;proportion&quot;</span><span class="p">:</span>
+                    <span class="n">stderror</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                        <span class="n">stderror</span><span class="p">[</span><span class="n">level</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">level</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stderror</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">stderror</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stderror</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

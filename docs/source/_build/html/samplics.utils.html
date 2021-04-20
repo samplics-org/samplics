@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Utils &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Small Area Estimation" href="samplics.sae.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="gettingstarted.html">Getting started</a></li>
+                <li><a href="tutorial/index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Use Cases</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="utils">
+<h1>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-samplics.utils.checks">
+<span id="samplics-utils-checks-module"></span><h2>samplics.utils.checks module<a class="headerlink" href="#module-samplics.utils.checks" title="Permalink to this headline">¶</a></h2>
+<p>Runs checks on the data to help capture some errors faster and provides better error messages.</p>
+<dl>
+<dt>Functions:</dt><dd><div class="line-block">
+<div class="line"><em>assert_probabilities()</em> ensures that probability values are between 0 and 1.</div>
+<div class="line"><em>assert_weights()</em> ensures that sample weights are not negatives.</div>
+<div class="line"><em>assert_not_unique()</em> return an assertion error if the array has non unique values.</div>
+<div class="line"><em>assert_response_status()</em> checks that the response values are in (“in”, “rr”, “nr”, “uk”).</div>
+<div class="line"><em>assert_brr_number_psus()</em> checks that the number of psus is a multiple of 2.</div>
+</div>
+</dd>
+</dl>
+<dl class="py function">
+<dt id="samplics.utils.checks.assert_probabilities">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.checks.</span></code><code class="sig-name descname"><span class="pre">assert_probabilities</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/utils/checks.html#assert_probabilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.checks.assert_probabilities" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.checks.assert_weights">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.checks.</span></code><code class="sig-name descname"><span class="pre">assert_weights</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/utils/checks.html#assert_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.checks.assert_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.checks.assert_not_unique">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.checks.</span></code><code class="sig-name descname"><span class="pre">assert_not_unique</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array_unique_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/utils/checks.html#assert_not_unique"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.checks.assert_not_unique" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.checks.assert_response_status">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.checks.</span></code><code class="sig-name descname"><span class="pre">assert_response_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_status</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">StringNumber</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/utils/checks.html#assert_response_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.checks.assert_response_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.checks.assert_brr_number_psus">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.checks.</span></code><code class="sig-name descname"><span class="pre">assert_brr_number_psus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/utils/checks.html#assert_brr_number_psus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.checks.assert_brr_number_psus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-samplics.utils.formats">
+<span id="samplics-utils-formats-module"></span><h2>samplics.utils.formats module<a class="headerlink" href="#module-samplics.utils.formats" title="Permalink to this headline">¶</a></h2>
+<p>Formats to tranform the data into another format.</p>
+<dl>
+<dt>Functions:</dt><dd><div class="line-block">
+<div class="line"><em>numpy_array()</em> converts an array-like data to np.ndarray</div>
+<div class="line"><em>array_to_dict()</em> converts an array to a dictionary where the keys are the unique values of</div>
+<div class="line-block">
+<div class="line">the array and the values of the dictionary are the counts of the array values.</div>
+</div>
+<div class="line"><em>dataframe_to_array()</em> returns a pandas dataframe from an np.ndarray.</div>
+</div>
+</dd>
+</dl>
+<dl class="py function">
+<dt id="samplics.utils.formats.numpy_array">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">numpy_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/samplics/utils/formats.html#numpy_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.numpy_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an array-like input data to np.ndarray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<em>Array</em>) – array-like input data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an numpy array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.array_to_dict">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">array_to_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/samplics/utils/formats.html#array_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.array_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an array to a dictionary where the keys are the unique values of the array and
+the values of the dictionary are the counts of the array values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>np.ndarray</em>) – an input area.</p></li>
+<li><p><strong>domain</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – an array to provide the group associated with the
+observations in arr. If not None, a dictionarry of dictionaries is produced.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>a dictionary with the unique values of <em>arr</em> as keys.</dt><dd><p>The values of the dictionary correspond to the counts of the keys in <em>arr</em>.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict[StringNumber, Number]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.dataframe_to_array">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">dataframe_to_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/samplics/utils/formats.html#dataframe_to_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.dataframe_to_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pandas dataframe from an np.ndarray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – a pandas dataframe or series.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – return an exception if data is not a pandas dataframe or series.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>an numpy array.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.sample_size_dict">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">sample_size_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratification</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratum</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/samplics/utils/formats.html#sample_size_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.sample_size_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.sample_units">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">sample_units</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_units</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/samplics/utils/formats.html#sample_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.sample_units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.dict_to_dataframe">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">dict_to_dataframe</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col_names</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pd.DataFrame</span><a class="reference internal" href="_modules/samplics/utils/formats.html#dict_to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.dict_to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.remove_nans">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">remove_nans</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">excluded_units</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="_modules/samplics/utils/formats.html#remove_nans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.remove_nans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.fpc_as_dict">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">fpc_as_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stratum</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fpc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/samplics/utils/formats.html#fpc_as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.fpc_as_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.convert_numbers_to_dicts">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">convert_numbers_to_dicts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_strata</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">DictStrNum</span><span class="p"><span class="pre">,</span> </span><span class="pre">Number</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">DictStrNum</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/samplics/utils/formats.html#convert_numbers_to_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.convert_numbers_to_dicts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.concatenate_series_to_str">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">concatenate_series_to_str</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="_modules/samplics/utils/formats.html#concatenate_series_to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.concatenate_series_to_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>concatenate the elements into one string using ‘_’ to separate the elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>row</strong> (<em>Array</em>) – [description]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>[description]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="samplics.utils.formats.numpy_to_dummies">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.formats.</span></code><code class="sig-name descname"><span class="pre">numpy_to_dummies</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varsnames</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">np.ndarray</span><a class="reference internal" href="_modules/samplics/utils/formats.html#numpy_to_dummies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.formats.numpy_to_dummies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-samplics.utils.hadamard">
+<span id="samplics-utils-hadamard-module"></span><h2>samplics.utils.hadamard module<a class="headerlink" href="#module-samplics.utils.hadamard" title="Permalink to this headline">¶</a></h2>
+<p>computes Hadamard matrices.
+A Hadamard matrix is a square matrix whose entries are either +1 or −1 and whose rows are mutually orthogonal.The Hadamard matrix is used to derive the BRR replicate weights. It is conjectured that
+a Hadamard matrix exist for all n divisible by 4. However, the <em>hadarmard(n)</em> functions from
+<em>scipy.linalg</em> only provides the matrix for n that are power of 2. Hence, in this module,
+additional Hadamard matrices are implemented. For example, <em>scipy.linalg.hadamard()</em> can provide a matrix for n = 4, 8, 16, 32, 64, 128, etc. The module add Hadamard matrices for n = 12, 20, 24, 28, and some additional to come.</p>
+<p>In appendix A, Wolter, K. M. (1985) <a class="footnote-reference brackets" href="#w1985" id="id1">1</a> provides a list of Hadamard matrices for all
+n multiple of 4 up to 100 which should be sufficient for most applications. Note that this is
+this reference is for the first edition of the book which explicitly provides the hadamard
+matrices. Above that, the scipy function can be used. Also, more Hadamard matrices can be
+found at: <a class="reference external" href="http://neilsloane.com/hadamard/">http://neilsloane.com/hadamard/</a></p>
+<dl class="footnote brackets">
+<dt class="label" id="w1985"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Wolter., K. M. (1985), <em>Introduction to variance Estimation</em>, Springer-Verlag New York, Inc</p>
+</dd>
+</dl>
+<p>TODO: implements Hadamard matrices of order higher than 28.</p>
+<dl class="py function">
+<dt id="samplics.utils.hadamard.hadamard">
+<code class="sig-prename descclassname"><span class="pre">samplics.utils.hadamard.</span></code><code class="sig-name descname"><span class="pre">hadamard</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/samplics/utils/hadamard.html#hadamard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.utils.hadamard.hadamard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

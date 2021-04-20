@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit level model: empirical best linear unbiased Prediction (EBLUP) &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Use Cases" href="../usecases.html" />
+    <link rel="prev" title="Area level model: empirical best linear unbiased predictor (EBLUP)" href="eblup_area_model.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../gettingstarted.html">Getting started</a></li>
+                <li><a href="index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usecases.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5.5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Unit-level-model:-empirical-best-linear-unbiased-Prediction-(EBLUP)">
+<h1>Unit level model: empirical best linear unbiased Prediction (EBLUP)<a class="headerlink" href="#Unit-level-model:-empirical-best-linear-unbiased-Prediction-(EBLUP)" title="Permalink to this headline">¶</a></h1>
+<p>The Unit Level model refers to a class of SAE techniques that fit the linear mixed model at the sampling unit level. As for the Area Level model, generalized linear mixed models are also the modeling framework for Unit Level model. In this case, given that the model is happening at the sub-area level, both the random effects and unit level standard errors can be estimated from the model. In this tutorial, we will predict the area level means which is a linear parameter.</p>
+<div class="section" id="County-Crop-(Corn-and-Soybeans)-Areas-Data">
+<h2>County Crop (Corn and Soybeans) Areas Data<a class="headerlink" href="#County-Crop-(Corn-and-Soybeans)-Areas-Data" title="Permalink to this headline">¶</a></h2>
+<p>For this example, we use the county crop data used by Battese, Harter, and Fuller (1988). The datasets contains 37 observations on areas under corn and under soybeans for each of the 12 counties in the north-central of Iowa. Each county was divided in segments and using interviews and LANDSAT satellite data, data on area used for corn and soybeans was obtained. In the unit level data, each observation is a segment with the following variables: county id (county_id), area in hectare under corn
+(corn_area), area in heactare under soybeans (soybeans_area), number of pixel classified as corn (corn_pixel), and number of pixels classified as soybeans (soybeans_pixel).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">samplics</span>
+<span class="kn">from</span> <span class="nn">samplics.datasets</span> <span class="kn">import</span> <span class="n">CountyCrop</span><span class="p">,</span> <span class="n">CountyCropMeans</span>
+<span class="kn">from</span> <span class="nn">samplics.sae</span> <span class="kn">import</span> <span class="n">EblupUnitModel</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Load County Crop sample data</span>
+<span class="n">countycrop_cls</span> <span class="o">=</span> <span class="n">CountyCrop</span><span class="p">()</span>
+<span class="n">countycrop_cls</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">countycrop</span> <span class="o">=</span> <span class="n">countycrop_cls</span><span class="o">.</span><span class="n">data</span>
+
+<span class="n">nb_obs</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">First </span><span class="si">{</span><span class="n">nb_obs</span><span class="si">}</span><span class="s2"> observations from the unit (segment) level crop areas data</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">countycrop</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">nb_obs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+First 15 observations from the unit (segment) level crop areas data
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>county_id</th>
+      <th>corn_area</th>
+      <th>soybeans_area</th>
+      <th>corn_pixel</th>
+      <th>soybeans_pixel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>165.76</td>
+      <td>8.09</td>
+      <td>374</td>
+      <td>55</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>96.32</td>
+      <td>106.03</td>
+      <td>209</td>
+      <td>218</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>76.08</td>
+      <td>103.60</td>
+      <td>253</td>
+      <td>250</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>185.35</td>
+      <td>6.47</td>
+      <td>432</td>
+      <td>96</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>116.43</td>
+      <td>63.82</td>
+      <td>367</td>
+      <td>178</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5</td>
+      <td>162.08</td>
+      <td>43.50</td>
+      <td>361</td>
+      <td>137</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>5</td>
+      <td>152.04</td>
+      <td>71.43</td>
+      <td>288</td>
+      <td>206</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>5</td>
+      <td>161.75</td>
+      <td>42.49</td>
+      <td>369</td>
+      <td>165</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>6</td>
+      <td>92.88</td>
+      <td>105.26</td>
+      <td>206</td>
+      <td>218</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>6</td>
+      <td>149.94</td>
+      <td>76.49</td>
+      <td>316</td>
+      <td>221</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>6</td>
+      <td>64.75</td>
+      <td>174.34</td>
+      <td>145</td>
+      <td>338</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>7</td>
+      <td>127.07</td>
+      <td>95.67</td>
+      <td>355</td>
+      <td>128</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>7</td>
+      <td>133.55</td>
+      <td>76.57</td>
+      <td>295</td>
+      <td>147</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>7</td>
+      <td>77.70</td>
+      <td>93.48</td>
+      <td>223</td>
+      <td>204</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>8</td>
+      <td>206.39</td>
+      <td>37.84</td>
+      <td>459</td>
+      <td>77</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>In addition to the unit (segment) level data, we have the small area (county) level averages of the number of pixels classified as corn or soybeans.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Load County Crop Area Means sample data</span>
+<span class="n">countycropmeans_cls</span> <span class="o">=</span> <span class="n">CountyCropMeans</span><span class="p">()</span>
+<span class="n">countycropmeans_cls</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">countycrop_means</span> <span class="o">=</span> <span class="n">countycropmeans_cls</span><span class="o">.</span><span class="n">data</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">County level crop areas averages</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">countycrop_means</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+County level crop areas averages
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>county_id</th>
+      <th>samp_segments</th>
+      <th>pop_segments</th>
+      <th>ave_corn_pixel</th>
+      <th>ave_soybeans_pixel</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>1</td>
+      <td>545</td>
+      <td>295.29</td>
+      <td>189.70</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>566</td>
+      <td>300.40</td>
+      <td>196.65</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>394</td>
+      <td>289.60</td>
+      <td>205.28</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>2</td>
+      <td>424</td>
+      <td>290.74</td>
+      <td>220.22</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>3</td>
+      <td>564</td>
+      <td>318.21</td>
+      <td>188.06</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>3</td>
+      <td>570</td>
+      <td>257.17</td>
+      <td>247.13</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>7</td>
+      <td>3</td>
+      <td>402</td>
+      <td>291.77</td>
+      <td>185.37</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>8</td>
+      <td>3</td>
+      <td>567</td>
+      <td>301.26</td>
+      <td>221.36</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>9</td>
+      <td>4</td>
+      <td>687</td>
+      <td>262.17</td>
+      <td>247.09</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>10</td>
+      <td>5</td>
+      <td>569</td>
+      <td>314.28</td>
+      <td>198.66</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>11</td>
+      <td>5</td>
+      <td>965</td>
+      <td>298.65</td>
+      <td>204.61</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>12</td>
+      <td>6</td>
+      <td>556</td>
+      <td>325.99</td>
+      <td>177.05</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="section" id="Empirical-Bayes-linear-unbiased-predictor-(EBLUP)">
+<h3>Empirical Bayes linear unbiased predictor (EBLUP)<a class="headerlink" href="#Empirical-Bayes-linear-unbiased-predictor-(EBLUP)" title="Permalink to this headline">¶</a></h3>
+<p>Now we are going to estimates the average area size under corn and soybeans. To do so, we use the nested error linear regression (special case of the linear mixed model) to model the number of hectares. As auxiliary variables, we use the number of pixel classified as corn and soybeans.</p>
+<p>First, we use the method <em>fit()</em> to estimate the model parameters.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">areas</span> <span class="o">=</span> <span class="n">countycrop</span><span class="p">[</span><span class="s2">&quot;county_id&quot;</span><span class="p">]</span>
+<span class="n">ys</span> <span class="o">=</span> <span class="n">countycrop</span><span class="p">[</span><span class="s2">&quot;corn_area&quot;</span><span class="p">]</span>
+<span class="n">Xs</span> <span class="o">=</span> <span class="n">countycrop</span><span class="p">[[</span><span class="s2">&quot;corn_pixel&quot;</span><span class="p">,</span> <span class="s2">&quot;soybeans_pixel&quot;</span><span class="p">]]</span>
+<span class="n">Xp_mean</span> <span class="o">=</span> <span class="n">countycrop_means</span><span class="p">[[</span><span class="s2">&quot;ave_corn_pixel&quot;</span><span class="p">,</span> <span class="s2">&quot;ave_corn_pixel&quot;</span><span class="p">]]</span>
+<span class="n">samp_size</span> <span class="o">=</span> <span class="n">countycrop_means</span><span class="p">[[</span><span class="s2">&quot;samp_segments&quot;</span><span class="p">]]</span>
+<span class="n">pop_size</span> <span class="o">=</span> <span class="n">countycrop_means</span><span class="p">[[</span><span class="s2">&quot;pop_segments&quot;</span><span class="p">]]</span>
+<span class="n">areap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;REML Method&quot;&quot;&quot;</span>
+<span class="n">eblup_bhf_reml</span> <span class="o">=</span> <span class="n">EblupUnitModel</span><span class="p">()</span>
+<span class="n">eblup_bhf_reml</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">ys</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">,</span>
+    <span class="n">areas</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">eblup_bhf_reml</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">Xmean</span><span class="o">=</span><span class="n">Xp_mean</span><span class="p">,</span>
+    <span class="n">area</span><span class="o">=</span><span class="n">areap</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">corn_est_reml</span> <span class="o">=</span> <span class="n">eblup_bhf_reml</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">corn_est_reml</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    _area   _estimate        _mse
+0     1.0  119.357558  139.514787
+1     2.0  120.364916  140.131214
+2     3.0  110.530444  114.058730
+3     4.0  112.879489  113.682072
+4     5.0  133.244364  152.310283
+5     6.0  108.640579   75.256679
+6     7.0  113.284824  121.930105
+7     8.0  120.335415  113.394707
+8     9.0  111.072462   67.357524
+9    10.0  120.669683  118.122346
+10   11.0  109.649316   99.856041
+11   12.0  126.735499  148.884533
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;ML Method&quot;&quot;&quot;</span>
+<span class="n">eblup_bhf_ml</span> <span class="o">=</span> <span class="n">EblupUnitModel</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ML&quot;</span><span class="p">)</span>
+<span class="n">eblup_bhf_ml</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">ys</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">,</span>
+    <span class="n">areas</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">eblup_bhf_ml</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Xp_mean</span><span class="p">,</span> <span class="n">areap</span><span class="p">)</span>
+
+<span class="n">corn_est_ml</span> <span class="o">=</span> <span class="n">eblup_bhf_ml</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">corn_est_ml</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    _area   _estimate        _mse
+0     1.0  118.987340  117.381060
+1     2.0  120.091296  119.200583
+2     3.0  111.315363   96.845753
+3     4.0  113.302456   99.756880
+4     5.0  132.143329  138.775182
+5     6.0  108.072837   67.896678
+6     7.0  113.637097  108.711569
+7     8.0  120.189563  103.560647
+8     9.0  110.480483   62.797278
+9    10.0  120.961246  111.594667
+10   11.0  110.577742   93.776110
+11   12.0  126.790379  139.817391
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Bootstrap-MSE-estimation">
+<h3>Bootstrap MSE estimation<a class="headerlink" href="#Bootstrap-MSE-estimation" title="Permalink to this headline">¶</a></h3>
+<p>As shown above, the <em>predict()</em> method provides the taylor-based MSE estimates. However, we can also calculate MSE estimates using the bootstrap approach.</p>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
