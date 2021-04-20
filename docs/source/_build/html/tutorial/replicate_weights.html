@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Replicate weights &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Estimation of population parameters" href="estimation.html" />
+    <link rel="prev" title="Sample weight adjustment" href="sample_weights.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../gettingstarted.html">Getting started</a></li>
+                <li><a href="index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#sample-weighting">Sample weighting</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usecases.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5.5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Replicate-weights">
+<h1>Replicate weights<a class="headerlink" href="#Replicate-weights" title="Permalink to this headline">¶</a></h1>
+<p>Replicate weights are usually created for the purpose of variance (uncertainty) estimation. One common use case for replication-based methods is the estimation of non-linear parameters fow which Taylor-based approximation may not be accurate enough. Another use case is when the number of primary sampling units selected per stratum is small (low degree of freedom). Replicate weights are usually created for the purpose of variance (uncertainty)estimation. One common use case for replication-based
+methods is the estimation of non-linear parameters fow which Taylor-based approximation may not be accurate enough. Another use case is when the number of primary sampling units selected per stratum is small (low degree of freedom).</p>
+<p>In this tutorial, we will explore creating replicate weights using the class <em>ReplicateWeight</em>. Three replication methods have been implemented: balanced repeated replication (BRR) including the Fay-BRR, bootstrap and jackknife. The replicate method of interest is specified when initializing the class by using the parameter <em>method</em>. The parameter <em>method</em> takes the values “bootstrap”, “brr”, or “jackknife”. In this tutorial, we show how the API works for producing replicate weights.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">samplics</span>
+<span class="kn">from</span> <span class="nn">samplics.datasets</span> <span class="kn">import</span> <span class="n">PSUSample</span><span class="p">,</span> <span class="n">SSUSample</span>
+<span class="kn">from</span> <span class="nn">samplics.weighting</span> <span class="kn">import</span> <span class="n">ReplicateWeight</span>
+</pre></div>
+</div>
+</div>
+<p>We import the sample data…</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Load PSU sample data</span>
+<span class="n">psu_sample_cls</span> <span class="o">=</span> <span class="n">PSUSample</span><span class="p">()</span>
+<span class="n">psu_sample_cls</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">psu_sample</span> <span class="o">=</span> <span class="n">psu_sample_cls</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1"># Load PSU sample data</span>
+<span class="n">ssu_sample_cls</span> <span class="o">=</span> <span class="n">SSUSample</span><span class="p">()</span>
+<span class="n">ssu_sample_cls</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">ssu_sample</span> <span class="o">=</span> <span class="n">ssu_sample_cls</span><span class="o">.</span><span class="n">data</span>
+
+<span class="n">full_sample</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">psu_sample</span><span class="p">[[</span><span class="s2">&quot;cluster&quot;</span><span class="p">,</span> <span class="s2">&quot;region&quot;</span><span class="p">,</span> <span class="s2">&quot;psu_prob&quot;</span><span class="p">]],</span>
+    <span class="n">ssu_sample</span><span class="p">[[</span><span class="s2">&quot;cluster&quot;</span><span class="p">,</span> <span class="s2">&quot;household&quot;</span><span class="p">,</span> <span class="s2">&quot;ssu_prob&quot;</span><span class="p">]],</span>
+    <span class="n">on</span><span class="o">=</span><span class="s2">&quot;cluster&quot;</span><span class="p">)</span>
+
+<span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;inclusion_prob&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;psu_prob&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;ssu_prob&quot;</span><span class="p">]</span>
+<span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;inclusion_prob&quot;</span><span class="p">]</span>
+
+<span class="n">full_sample</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>cluster</th>
+      <th>region</th>
+      <th>psu_prob</th>
+      <th>household</th>
+      <th>ssu_prob</th>
+      <th>inclusion_prob</th>
+      <th>design_weight</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>72</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>73</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>75</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>715</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>722</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>724</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>755</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>761</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>764</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>782</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>795</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>7111</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>7112</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>7117</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>7</td>
+      <td>North</td>
+      <td>0.187726</td>
+      <td>7123</td>
+      <td>0.115385</td>
+      <td>0.021661</td>
+      <td>46.166667</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="section" id="Balanced-Repeated-Replication-(BRR)">
+<h2>Balanced Repeated Replication (BRR)<a class="headerlink" href="#Balanced-Repeated-Replication-(BRR)" title="Permalink to this headline">¶</a></h2>
+<p>The basic idea of BRR is to slip the sample in independent random groups. The groups are then threated as independent replicates of the the sample design. A special case is when the sample is split into two half samples in each stratum. This design is suitable to many survey designs where only two psus are selected by stratum. In practice, one of the psu is asigned to the first random group and the other psu is assign to the second group. The sample weights are double for one group (say the
+first one) and the sample weights in the other group are set to zero. To ensure that the replicates are independent, we use hadamard matrices to assign the random groups.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">scipy</span>
+<span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">hadamard</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[ 1,  1,  1,  1,  1,  1,  1,  1],
+       [ 1, -1,  1, -1,  1, -1,  1, -1],
+       [ 1,  1, -1, -1,  1,  1, -1, -1],
+       [ 1, -1, -1,  1,  1, -1, -1,  1],
+       [ 1,  1,  1,  1, -1, -1, -1, -1],
+       [ 1, -1,  1, -1, -1,  1, -1,  1],
+       [ 1,  1, -1, -1, -1, -1,  1,  1],
+       [ 1, -1, -1,  1, -1,  1,  1, -1]])
+</pre></div></div>
+</div>
+<p>In our example, we have 10 psus. If we do not have explicit stratification then <em>replicate()</em> will group the clusters into 5 strata (2 per stratum). In this case, the smallest number of replicates possible using the hadamard matrix is 8.</p>
+<p>The result below shows that <em>replicate()</em> created 5 strata by grouping clusters 7 and 10 in the first stratum, clusters 16 and 24 in the second stratum, and so on. We can achieve the same result by providing setting <em>stratification=True</em> and providing the stratum variable to <em>replicate()</em>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">brr</span> <span class="o">=</span> <span class="n">ReplicateWeight</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;brr&quot;</span><span class="p">,</span> <span class="n">stratification</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">brr_wgt</span> <span class="o">=</span> <span class="n">brr</span><span class="o">.</span><span class="n">replicate</span><span class="p">(</span><span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">],</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">])</span>
+
+<span class="n">brr_wgt</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>_stratum</th>
+      <th>_psu</th>
+      <th>_samp_weight</th>
+      <th>_brr_wgt_1</th>
+      <th>_brr_wgt_2</th>
+      <th>_brr_wgt_3</th>
+      <th>_brr_wgt_4</th>
+      <th>_brr_wgt_5</th>
+      <th>_brr_wgt_6</th>
+      <th>_brr_wgt_7</th>
+      <th>_brr_wgt_8</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>7</td>
+      <td>46.166667</td>
+      <td>0.000000</td>
+      <td>92.333333</td>
+      <td>0.000000</td>
+      <td>92.333333</td>
+      <td>0.000000</td>
+      <td>92.333333</td>
+      <td>0.000000</td>
+      <td>92.333333</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>1</td>
+      <td>10</td>
+      <td>50.783333</td>
+      <td>101.566667</td>
+      <td>0.000000</td>
+      <td>101.566667</td>
+      <td>0.000000</td>
+      <td>101.566667</td>
+      <td>0.000000</td>
+      <td>101.566667</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>2</td>
+      <td>16</td>
+      <td>62.149123</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>124.298246</td>
+      <td>124.298246</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>124.298246</td>
+      <td>124.298246</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>2</td>
+      <td>24</td>
+      <td>58.940741</td>
+      <td>117.881481</td>
+      <td>117.881481</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>117.881481</td>
+      <td>117.881481</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>3</td>
+      <td>29</td>
+      <td>65.702778</td>
+      <td>0.000000</td>
+      <td>131.405556</td>
+      <td>131.405556</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>131.405556</td>
+      <td>131.405556</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>3</td>
+      <td>34</td>
+      <td>75.661566</td>
+      <td>151.323133</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>151.323133</td>
+      <td>151.323133</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>151.323133</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>4</td>
+      <td>45</td>
+      <td>85.398025</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>170.796049</td>
+      <td>170.796049</td>
+      <td>170.796049</td>
+      <td>170.796049</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>4</td>
+      <td>52</td>
+      <td>85.520635</td>
+      <td>171.041270</td>
+      <td>171.041270</td>
+      <td>171.041270</td>
+      <td>171.041270</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>5</td>
+      <td>64</td>
+      <td>218.893889</td>
+      <td>0.000000</td>
+      <td>437.787778</td>
+      <td>0.000000</td>
+      <td>437.787778</td>
+      <td>437.787778</td>
+      <td>0.000000</td>
+      <td>437.787778</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>5</td>
+      <td>86</td>
+      <td>213.491667</td>
+      <td>426.983333</td>
+      <td>0.000000</td>
+      <td>426.983333</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>426.983333</td>
+      <td>0.000000</td>
+      <td>426.983333</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>An extension of BRR is the Fay’s method. In the Fay’s approach, instead of multiplying one half-sample by zero, we multiple the sampel weights by a factor <span class="math notranslate nohighlight">\(\alpha\)</span> and the other halh-sample by <span class="math notranslate nohighlight">\(2-\alpha\)</span>. We refer to <span class="math notranslate nohighlight">\(\alpha\)</span> as the fay coefficient. Note that when <span class="math notranslate nohighlight">\(\alpha=0\)</span> then teh Fay’s method reduces to BRR.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fay</span> <span class="o">=</span> <span class="n">ReplicateWeight</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;brr&quot;</span><span class="p">,</span> <span class="n">stratification</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fay_coef</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">fay_wgt</span> <span class="o">=</span> <span class="n">fay</span><span class="o">.</span><span class="n">replicate</span><span class="p">(</span>
+    <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">],</span>
+    <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">],</span>
+    <span class="n">rep_prefix</span><span class="o">=</span><span class="s2">&quot;fay_weight_&quot;</span><span class="p">,</span>
+    <span class="n">psu_varname</span><span class="o">=</span><span class="s2">&quot;cluster&quot;</span><span class="p">,</span>
+    <span class="n">str_varname</span><span class="o">=</span><span class="s2">&quot;stratum&quot;</span>
+<span class="p">)</span>
+
+<span class="n">fay_wgt</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>stratum</th>
+      <th>cluster</th>
+      <th>_samp_weight</th>
+      <th>fay_weight_1</th>
+      <th>fay_weight_2</th>
+      <th>fay_weight_3</th>
+      <th>fay_weight_4</th>
+      <th>fay_weight_5</th>
+      <th>fay_weight_6</th>
+      <th>fay_weight_7</th>
+      <th>fay_weight_8</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>7</td>
+      <td>46.166667</td>
+      <td>13.850000</td>
+      <td>78.483333</td>
+      <td>13.850000</td>
+      <td>78.483333</td>
+      <td>13.850000</td>
+      <td>78.483333</td>
+      <td>13.850000</td>
+      <td>78.483333</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>1</td>
+      <td>10</td>
+      <td>50.783333</td>
+      <td>86.331667</td>
+      <td>15.235000</td>
+      <td>86.331667</td>
+      <td>15.235000</td>
+      <td>86.331667</td>
+      <td>15.235000</td>
+      <td>86.331667</td>
+      <td>15.235000</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>2</td>
+      <td>16</td>
+      <td>62.149123</td>
+      <td>18.644737</td>
+      <td>18.644737</td>
+      <td>105.653509</td>
+      <td>105.653509</td>
+      <td>18.644737</td>
+      <td>18.644737</td>
+      <td>105.653509</td>
+      <td>105.653509</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>2</td>
+      <td>24</td>
+      <td>58.940741</td>
+      <td>100.199259</td>
+      <td>100.199259</td>
+      <td>17.682222</td>
+      <td>17.682222</td>
+      <td>100.199259</td>
+      <td>100.199259</td>
+      <td>17.682222</td>
+      <td>17.682222</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>3</td>
+      <td>29</td>
+      <td>65.702778</td>
+      <td>19.710833</td>
+      <td>111.694722</td>
+      <td>111.694722</td>
+      <td>19.710833</td>
+      <td>19.710833</td>
+      <td>111.694722</td>
+      <td>111.694722</td>
+      <td>19.710833</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>3</td>
+      <td>34</td>
+      <td>75.661566</td>
+      <td>128.624663</td>
+      <td>22.698470</td>
+      <td>22.698470</td>
+      <td>128.624663</td>
+      <td>128.624663</td>
+      <td>22.698470</td>
+      <td>22.698470</td>
+      <td>128.624663</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>4</td>
+      <td>45</td>
+      <td>85.398025</td>
+      <td>25.619407</td>
+      <td>25.619407</td>
+      <td>25.619407</td>
+      <td>25.619407</td>
+      <td>145.176642</td>
+      <td>145.176642</td>
+      <td>145.176642</td>
+      <td>145.176642</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>4</td>
+      <td>52</td>
+      <td>85.520635</td>
+      <td>145.385079</td>
+      <td>145.385079</td>
+      <td>145.385079</td>
+      <td>145.385079</td>
+      <td>25.656190</td>
+      <td>25.656190</td>
+      <td>25.656190</td>
+      <td>25.656190</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>5</td>
+      <td>64</td>
+      <td>218.893889</td>
+      <td>65.668167</td>
+      <td>372.119611</td>
+      <td>65.668167</td>
+      <td>372.119611</td>
+      <td>372.119611</td>
+      <td>65.668167</td>
+      <td>372.119611</td>
+      <td>65.668167</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>5</td>
+      <td>86</td>
+      <td>213.491667</td>
+      <td>362.935833</td>
+      <td>64.047500</td>
+      <td>362.935833</td>
+      <td>64.047500</td>
+      <td>64.047500</td>
+      <td>362.935833</td>
+      <td>64.047500</td>
+      <td>362.935833</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Bootstrap">
+<h2>Bootstrap<a class="headerlink" href="#Bootstrap" title="Permalink to this headline">¶</a></h2>
+<p>For the bootstrap replicates, we need to provide the number of replicates. When the number of replicates is not provided, <em>ReplicateWeight</em> will default to 500. The bootstrap consists of selecting the same number of psus as in the sample but with replacement. The selection is independently repeated for each replicate.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">bootstrap</span> <span class="o">=</span> <span class="n">ReplicateWeight</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span> <span class="n">stratification</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">number_reps</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">boot_wgt</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">replicate</span><span class="p">(</span><span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">],</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">])</span>
+
+<span class="n">boot_wgt</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>_psu</th>
+      <th>_samp_weight</th>
+      <th>_boot_wgt_1</th>
+      <th>_boot_wgt_2</th>
+      <th>_boot_wgt_3</th>
+      <th>_boot_wgt_4</th>
+      <th>_boot_wgt_5</th>
+      <th>_boot_wgt_6</th>
+      <th>_boot_wgt_7</th>
+      <th>_boot_wgt_8</th>
+      <th>...</th>
+      <th>_boot_wgt_41</th>
+      <th>_boot_wgt_42</th>
+      <th>_boot_wgt_43</th>
+      <th>_boot_wgt_44</th>
+      <th>_boot_wgt_45</th>
+      <th>_boot_wgt_46</th>
+      <th>_boot_wgt_47</th>
+      <th>_boot_wgt_48</th>
+      <th>_boot_wgt_49</th>
+      <th>_boot_wgt_50</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7</td>
+      <td>46.166667</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>51.296296</td>
+      <td>102.592593</td>
+      <td>0.000000</td>
+      <td>102.592593</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>...</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>0.000000</td>
+      <td>51.296296</td>
+      <td>102.592593</td>
+      <td>51.296296</td>
+      <td>102.592593</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>10</td>
+      <td>50.783333</td>
+      <td>56.425926</td>
+      <td>112.851852</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>169.277778</td>
+      <td>112.851852</td>
+      <td>0.000000</td>
+      <td>...</td>
+      <td>56.425926</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>112.851852</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>169.277778</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>16</td>
+      <td>62.149123</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>0.000000</td>
+      <td>69.054581</td>
+      <td>138.109162</td>
+      <td>...</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>0.000000</td>
+      <td>69.054581</td>
+      <td>0.000000</td>
+      <td>69.054581</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>69.054581</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>24</td>
+      <td>58.940741</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>0.000000</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>130.979424</td>
+      <td>130.979424</td>
+      <td>...</td>
+      <td>130.979424</td>
+      <td>130.979424</td>
+      <td>65.489712</td>
+      <td>0.000000</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>130.979424</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>29</td>
+      <td>65.702778</td>
+      <td>146.006173</td>
+      <td>73.003086</td>
+      <td>0.000000</td>
+      <td>73.003086</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>146.006173</td>
+      <td>0.000000</td>
+      <td>...</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>146.006173</td>
+      <td>0.000000</td>
+      <td>146.006173</td>
+      <td>0.000000</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>34</td>
+      <td>75.661566</td>
+      <td>252.205222</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>...</td>
+      <td>168.136814</td>
+      <td>168.136814</td>
+      <td>168.136814</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>0.000000</td>
+      <td>84.068407</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>45</td>
+      <td>85.398025</td>
+      <td>0.000000</td>
+      <td>94.886694</td>
+      <td>189.773388</td>
+      <td>94.886694</td>
+      <td>0.000000</td>
+      <td>94.886694</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>94.886694</td>
+      <td>189.773388</td>
+      <td>94.886694</td>
+      <td>0.000000</td>
+      <td>284.660082</td>
+      <td>189.773388</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>52</td>
+      <td>85.520635</td>
+      <td>190.045855</td>
+      <td>285.068783</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>380.091711</td>
+      <td>95.022928</td>
+      <td>0.000000</td>
+      <td>190.045855</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>190.045855</td>
+      <td>190.045855</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>64</td>
+      <td>218.893889</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>243.215432</td>
+      <td>0.000000</td>
+      <td>243.215432</td>
+      <td>0.000000</td>
+      <td>243.215432</td>
+      <td>0.000000</td>
+      <td>...</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>0.000000</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>243.215432</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>86</td>
+      <td>213.491667</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>237.212963</td>
+      <td>474.425926</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>0.000000</td>
+      <td>474.425926</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>237.212963</td>
+      <td>474.425926</td>
+      <td>474.425926</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>0.000000</td>
+    </tr>
+  </tbody>
+</table>
+<p>10 rows × 52 columns</p>
+</div></div>
+</div>
+</div>
+<div class="section" id="Jackknife">
+<h2>Jackknife<a class="headerlink" href="#Jackknife" title="Permalink to this headline">¶</a></h2>
+<p>Below, we illustrate the API for creating replicate weights using the jackknife method.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">jackknife</span> <span class="o">=</span> <span class="n">ReplicateWeight</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;jackknife&quot;</span><span class="p">,</span> <span class="n">stratification</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">jkn_wgt</span> <span class="o">=</span> <span class="n">jackknife</span><span class="o">.</span><span class="n">replicate</span><span class="p">(</span><span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">],</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">])</span>
+
+<span class="n">jkn_wgt</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>_psu</th>
+      <th>_samp_weight</th>
+      <th>_jk_wgt_1</th>
+      <th>_jk_wgt_2</th>
+      <th>_jk_wgt_3</th>
+      <th>_jk_wgt_4</th>
+      <th>_jk_wgt_5</th>
+      <th>_jk_wgt_6</th>
+      <th>_jk_wgt_7</th>
+      <th>_jk_wgt_8</th>
+      <th>_jk_wgt_9</th>
+      <th>_jk_wgt_10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7</td>
+      <td>46.166667</td>
+      <td>0.000000</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+      <td>51.296296</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>10</td>
+      <td>50.783333</td>
+      <td>56.425926</td>
+      <td>0.000000</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+      <td>56.425926</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>16</td>
+      <td>62.149123</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>0.000000</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+      <td>69.054581</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>24</td>
+      <td>58.940741</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>0.000000</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+      <td>65.489712</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>29</td>
+      <td>65.702778</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>0.000000</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+      <td>73.003086</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>34</td>
+      <td>75.661566</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>0.000000</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+      <td>84.068407</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>45</td>
+      <td>85.398025</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+      <td>0.000000</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+      <td>94.886694</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>52</td>
+      <td>85.520635</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+      <td>0.000000</td>
+      <td>95.022928</td>
+      <td>95.022928</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>64</td>
+      <td>218.893889</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>243.215432</td>
+      <td>0.000000</td>
+      <td>243.215432</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>86</td>
+      <td>213.491667</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>237.212963</td>
+      <td>0.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>With stratification…</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">jackknife</span> <span class="o">=</span> <span class="n">ReplicateWeight</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;jackknife&quot;</span><span class="p">,</span> <span class="n">stratification</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">jkn_wgt</span> <span class="o">=</span> <span class="n">jackknife</span><span class="o">.</span><span class="n">replicate</span><span class="p">(</span><span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">],</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">],</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">])</span>
+
+<span class="n">jkn_wgt</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>_stratum</th>
+      <th>_psu</th>
+      <th>_samp_weight</th>
+      <th>_jk_wgt_1</th>
+      <th>_jk_wgt_2</th>
+      <th>_jk_wgt_3</th>
+      <th>_jk_wgt_4</th>
+      <th>_jk_wgt_5</th>
+      <th>_jk_wgt_6</th>
+      <th>_jk_wgt_7</th>
+      <th>_jk_wgt_8</th>
+      <th>_jk_wgt_9</th>
+      <th>_jk_wgt_10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>North</td>
+      <td>7</td>
+      <td>46.166667</td>
+      <td>46.166667</td>
+      <td>46.166667</td>
+      <td>46.166667</td>
+      <td>0.000000</td>
+      <td>92.333333</td>
+      <td>46.166667</td>
+      <td>46.166667</td>
+      <td>46.166667</td>
+      <td>46.166667</td>
+      <td>46.166667</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>North</td>
+      <td>10</td>
+      <td>50.783333</td>
+      <td>50.783333</td>
+      <td>50.783333</td>
+      <td>50.783333</td>
+      <td>101.566667</td>
+      <td>0.000000</td>
+      <td>50.783333</td>
+      <td>50.783333</td>
+      <td>50.783333</td>
+      <td>50.783333</td>
+      <td>50.783333</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>South</td>
+      <td>16</td>
+      <td>62.149123</td>
+      <td>62.149123</td>
+      <td>62.149123</td>
+      <td>62.149123</td>
+      <td>62.149123</td>
+      <td>62.149123</td>
+      <td>93.223684</td>
+      <td>93.223684</td>
+      <td>0.000000</td>
+      <td>62.149123</td>
+      <td>62.149123</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>South</td>
+      <td>24</td>
+      <td>58.940741</td>
+      <td>58.940741</td>
+      <td>58.940741</td>
+      <td>58.940741</td>
+      <td>58.940741</td>
+      <td>58.940741</td>
+      <td>88.411111</td>
+      <td>0.000000</td>
+      <td>88.411111</td>
+      <td>58.940741</td>
+      <td>58.940741</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>South</td>
+      <td>29</td>
+      <td>65.702778</td>
+      <td>65.702778</td>
+      <td>65.702778</td>
+      <td>65.702778</td>
+      <td>65.702778</td>
+      <td>65.702778</td>
+      <td>0.000000</td>
+      <td>98.554167</td>
+      <td>98.554167</td>
+      <td>65.702778</td>
+      <td>65.702778</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>East</td>
+      <td>34</td>
+      <td>75.661566</td>
+      <td>113.492350</td>
+      <td>113.492350</td>
+      <td>0.000000</td>
+      <td>75.661566</td>
+      <td>75.661566</td>
+      <td>75.661566</td>
+      <td>75.661566</td>
+      <td>75.661566</td>
+      <td>75.661566</td>
+      <td>75.661566</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>East</td>
+      <td>45</td>
+      <td>85.398025</td>
+      <td>128.097037</td>
+      <td>0.000000</td>
+      <td>128.097037</td>
+      <td>85.398025</td>
+      <td>85.398025</td>
+      <td>85.398025</td>
+      <td>85.398025</td>
+      <td>85.398025</td>
+      <td>85.398025</td>
+      <td>85.398025</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>East</td>
+      <td>52</td>
+      <td>85.520635</td>
+      <td>0.000000</td>
+      <td>128.280952</td>
+      <td>128.280952</td>
+      <td>85.520635</td>
+      <td>85.520635</td>
+      <td>85.520635</td>
+      <td>85.520635</td>
+      <td>85.520635</td>
+      <td>85.520635</td>
+      <td>85.520635</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>West</td>
+      <td>64</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>218.893889</td>
+      <td>437.787778</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>West</td>
+      <td>86</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>213.491667</td>
+      <td>0.000000</td>
+      <td>426.983333</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p><strong>Important.</strong> For any of the three methods, we can request the replicate coefficient instead of the replicate weights by <em>rep_coefs=True</em>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#jackknife = ReplicateWeight(method=&quot;jackknife&quot;, stratification=True)</span>
+<span class="n">jkn_wgt</span> <span class="o">=</span> <span class="n">jackknife</span><span class="o">.</span><span class="n">replicate</span><span class="p">(</span>
+    <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">],</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">],</span> <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">],</span> <span class="n">rep_coefs</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">jkn_wgt</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;_stratum&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>_stratum</th>
+      <th>_psu</th>
+      <th>_samp_weight</th>
+      <th>_jk_wgt_1</th>
+      <th>_jk_wgt_2</th>
+      <th>_jk_wgt_3</th>
+      <th>_jk_wgt_4</th>
+      <th>_jk_wgt_5</th>
+      <th>_jk_wgt_6</th>
+      <th>_jk_wgt_7</th>
+      <th>_jk_wgt_8</th>
+      <th>_jk_wgt_9</th>
+      <th>_jk_wgt_10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>75</th>
+      <td>East</td>
+      <td>34</td>
+      <td>75.661566</td>
+      <td>1.5</td>
+      <td>1.5</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>East</td>
+      <td>45</td>
+      <td>85.398025</td>
+      <td>1.5</td>
+      <td>0.0</td>
+      <td>1.5</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>East</td>
+      <td>52</td>
+      <td>85.520635</td>
+      <td>0.0</td>
+      <td>1.5</td>
+      <td>1.5</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>North</td>
+      <td>7</td>
+      <td>46.166667</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>North</td>
+      <td>10</td>
+      <td>50.783333</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>South</td>
+      <td>16</td>
+      <td>62.149123</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.5</td>
+      <td>1.5</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>South</td>
+      <td>24</td>
+      <td>58.940741</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.5</td>
+      <td>0.0</td>
+      <td>1.5</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>South</td>
+      <td>29</td>
+      <td>65.702778</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.5</td>
+      <td>1.5</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>West</td>
+      <td>64</td>
+      <td>218.893889</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>West</td>
+      <td>86</td>
+      <td>213.491667</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#fay = ReplicateWeight(method=&quot;brr&quot;, stratification=False, fay_coef=0.3)</span>
+<span class="n">fay_wgt</span> <span class="o">=</span> <span class="n">fay</span><span class="o">.</span><span class="n">replicate</span><span class="p">(</span>
+    <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;design_weight&quot;</span><span class="p">],</span>
+    <span class="n">full_sample</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">],</span>
+    <span class="n">rep_prefix</span><span class="o">=</span><span class="s2">&quot;fay_weight_&quot;</span><span class="p">,</span>
+    <span class="n">psu_varname</span><span class="o">=</span><span class="s2">&quot;cluster&quot;</span><span class="p">,</span>
+    <span class="n">str_varname</span><span class="o">=</span><span class="s2">&quot;stratum&quot;</span><span class="p">,</span>
+    <span class="n">rep_coefs</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">fay_wgt</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>stratum</th>
+      <th>cluster</th>
+      <th>_samp_weight</th>
+      <th>fay_weight_1</th>
+      <th>fay_weight_2</th>
+      <th>fay_weight_3</th>
+      <th>fay_weight_4</th>
+      <th>fay_weight_5</th>
+      <th>fay_weight_6</th>
+      <th>fay_weight_7</th>
+      <th>fay_weight_8</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>7</td>
+      <td>46.166667</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>1</td>
+      <td>10</td>
+      <td>50.783333</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>2</td>
+      <td>16</td>
+      <td>62.149123</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>2</td>
+      <td>24</td>
+      <td>58.940741</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>3</td>
+      <td>29</td>
+      <td>65.702778</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+    </tr>
+    <tr>
+      <th>75</th>
+      <td>3</td>
+      <td>34</td>
+      <td>75.661566</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+    </tr>
+    <tr>
+      <th>90</th>
+      <td>4</td>
+      <td>45</td>
+      <td>85.398025</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>1.7</td>
+    </tr>
+    <tr>
+      <th>105</th>
+      <td>4</td>
+      <td>52</td>
+      <td>85.520635</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>0.3</td>
+    </tr>
+    <tr>
+      <th>120</th>
+      <td>5</td>
+      <td>64</td>
+      <td>218.893889</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>5</td>
+      <td>86</td>
+      <td>213.491667</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>0.3</td>
+      <td>1.7</td>
+      <td>0.3</td>
+      <td>1.7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

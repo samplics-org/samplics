@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>T-test &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Area level model: empirical best linear unbiased predictor (EBLUP)" href="eblup_area_model.html" />
+    <link rel="prev" title="Tabulation" href="tabulation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../gettingstarted.html">Getting started</a></li>
+                <li><a href="index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#categorical-data-analysis">Categorical data analysis</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tabulation.html">Tabulation</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usecases.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5.5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="T-test">
+<h1>T-test<a class="headerlink" href="#T-test" title="Permalink to this headline">¶</a></h1>
+<p>The t-test module allows comparing means of continuous variables of interest to known means or across two groups. There are four main types of comparisons. - Comparison of one-sample mean to a known mean - Comparison of two groups from the same sample - Comparison of two means from two different samples - Comparison of two paired means</p>
+<p><code class="docutils literal notranslate"><span class="pre">Ttest()</span></code> is the class that implements all four type of comparisons. To run a comparison, the user call the method <code class="docutils literal notranslate"><span class="pre">compare()</span></code> with the appropriate parameters.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="kn">from</span> <span class="nn">samplics.datasets</span> <span class="kn">import</span> <span class="n">Auto</span>
+<span class="kn">from</span> <span class="nn">samplics.categorical.comparison</span> <span class="kn">import</span> <span class="n">Ttest</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Comparison-of-one-sample-mean-to-a-knowm-mean">
+<h2>Comparison of one-sample mean to a knowm mean<a class="headerlink" href="#Comparison-of-one-sample-mean-to-a-knowm-mean" title="Permalink to this headline">¶</a></h2>
+<p>For this comparison, the mean of a continuous variable, i.e. mpg, is compared to a know mean. In the example below, the user is testing whether the average mpg is equal to 20. Hence, the null hypothesis is <strong>H0: mean(mpg) = 20</strong>. There are three possible alternatives for this null hypotheses: - Ha: mean(mpg) &lt; 20 (less_than alternative) - Ha: mean(mpg) &gt; 20 (greater_than alternative) - Ha: Ha: mean(mpg) != 20 (not_equal alternative)</p>
+<p>All three alternatives are automatically computed by the method <code class="docutils literal notranslate"><span class="pre">compare()</span></code>. This behavior is similar across the four type of comparisons.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Load Auto sample data</span>
+<span class="n">auto_cls</span> <span class="o">=</span> <span class="n">Auto</span><span class="p">()</span>
+<span class="n">auto_cls</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">auto</span> <span class="o">=</span> <span class="n">auto_cls</span><span class="o">.</span><span class="n">data</span>
+<span class="n">mpg</span> <span class="o">=</span> <span class="n">auto</span><span class="p">[</span><span class="s2">&quot;mpg&quot;</span><span class="p">]</span>
+
+<span class="n">one_sample_known_mean</span> <span class="o">=</span> <span class="n">Ttest</span><span class="p">(</span><span class="n">samp_type</span><span class="o">=</span><span class="s2">&quot;one-sample&quot;</span><span class="p">)</span>
+<span class="n">one_sample_known_mean</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">mpg</span><span class="p">,</span> <span class="n">known_mean</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">one_sample_known_mean</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Design-based One-Sample T-test
+ Null hypothesis (Ho): mean = 20
+ t statictics: 1.9289
+ Degrees of freedom: 73.00
+ Alternative hypothesis (Ha):
+  Prob(T &lt; t) = 0.9712
+  Prob(|T| &gt; |t|) = 0.0576
+  Prob(T &gt; t) = 0.0288
+
+ Nb. Obs      Mean  Std. Error  Std. Dev.  Lower CI  Upper CI
+      74 21.297297    0.672551   5.785503 19.956905  22.63769
+
+</pre></div></div>
+</div>
+<p>The print below shows the information encapsulated in the object. <code class="docutils literal notranslate"><span class="pre">point_est</span></code> provides the sample mean. Similarly, <code class="docutils literal notranslate"><span class="pre">stderror,</span> <span class="pre">stddev,</span> <span class="pre">lower_ci,</span> <span class="pre">and</span> <span class="pre">upper_ci</span></code> provide the standard error, standard deviation, lower bound confidence interval (CI), and upper bound CI, respectively. The class member <code class="docutils literal notranslate"><span class="pre">stats</span></code> provides the statistics related to the three t-tests (for the three alternative hypothesis). There is additional information encapsulated in the object as shown below.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pprint</span><span class="p">(</span><span class="n">one_sample_known_mean</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;alpha&#39;: 0.05,
+ &#39;deff&#39;: {},
+ &#39;group_levels&#39;: {},
+ &#39;group_names&#39;: [],
+ &#39;lower_ci&#39;: 19.956904913980306,
+ &#39;paired&#39;: False,
+ &#39;point_est&#39;: 21.2972972972973,
+ &#39;samp_type&#39;: &#39;one-sample&#39;,
+ &#39;stats&#39;: {&#39;df&#39;: 73,
+           &#39;known_mean&#39;: 20,
+           &#39;number_obs&#39;: 74,
+           &#39;p_value&#39;: {&#39;greater_than&#39;: 0.02881433507499831,
+                       &#39;less_than&#39;: 0.9711856649250017,
+                       &#39;not_equal&#39;: 0.05762867014999663},
+           &#39;t&#39;: 1.9289200809064198},
+ &#39;stddev&#39;: 5.785503209735141,
+ &#39;stderror&#39;: 0.6725510870764976,
+ &#39;upper_ci&#39;: 22.63768968061429,
+ &#39;vars_names&#39;: [&#39;mpg&#39;]}
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Comparison-of-two-groups-from-the-same-sample">
+<h2>Comparison of two groups from the same sample<a class="headerlink" href="#Comparison-of-two-groups-from-the-same-sample" title="Permalink to this headline">¶</a></h2>
+<p>This type of comparison is used when the two groups are from the sample. For example, after running a survey, the user want to know if the domestic cars have the same mpg on average compare to the foreign cars. The parameter <code class="docutils literal notranslate"><span class="pre">group</span></code> indicates the categorical variable. NB: note that, at this point, <code class="docutils literal notranslate"><span class="pre">Ttest()</span></code> does not take into account potential dependencies between groups.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">foreign</span> <span class="o">=</span> <span class="n">auto</span><span class="p">[</span><span class="s2">&quot;foreign&quot;</span><span class="p">]</span>
+
+<span class="n">one_sample_two_groups</span> <span class="o">=</span> <span class="n">Ttest</span><span class="p">(</span><span class="n">samp_type</span><span class="o">=</span><span class="s2">&quot;one-sample&quot;</span><span class="p">)</span>
+<span class="n">one_sample_two_groups</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">mpg</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">foreign</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">one_sample_two_groups</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Design-based One-Sample T-test
+ Null hypothesis (Ho): mean(Domestic) = mean(Foreign)
+ Equal variance assumption:
+  t statictics: -3.6632
+  Degrees of freedom: 72.00
+  Alternative hypothesis (Ha):
+   Prob(T &lt; t) = 0.0002
+   Prob(|T| &gt; |t|) = 0.0005
+   Prob(T &gt; t) = 0.9998
+ Unequal variance assumption:
+  t statictics: -3.2245
+  Degrees of freedom: 30.81
+  Alternative hypothesis (Ha):
+   Prob(T &lt; t) = 0.0015
+   Prob(|T| &gt; |t|) = 0.0030
+   Prob(T &gt; t) = 0.9985
+
+   Group  Nb. Obs      Mean  Std. Error  Std. Dev.  Lower CI  Upper CI
+Domestic       52 19.826923    0.655868   4.729532 18.519780 21.134066
+ Foreign       22 24.772727    1.386503   6.503276 22.009431 27.536024
+
+</pre></div></div>
+</div>
+<p>Since there are two groups for this comparison, the sample mean, standard error, standard deviation, lower bound CI, and upper bound CI are provided by group as Python dictionnaries. The class member <code class="docutils literal notranslate"><span class="pre">stats</span></code> provides statistics for the comparison assuming both equal and unequal variances.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">These are the group means for mpg: </span><span class="si">{</span><span class="n">one_sample_two_groups</span><span class="o">.</span><span class="n">point_est</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;These are the group standard error for mpg: </span><span class="si">{</span><span class="n">one_sample_two_groups</span><span class="o">.</span><span class="n">stderror</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;These are the group standard deviation for mpg: </span><span class="si">{</span><span class="n">one_sample_two_groups</span><span class="o">.</span><span class="n">stddev</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;These are the computed statistics:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">one_sample_two_groups</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+These are the group means for mpg: {&#39;Domestic&#39;: 19.826923076923077, &#39;Foreign&#39;: 24.772727272727273}
+
+These are the group standard error for mpg: {&#39;Domestic&#39;: 0.6558681110509441, &#39;Foreign&#39;: 1.3865030562044942}
+
+These are the group standard deviation for mpg: {&#39;Domestic&#39;: 4.7295322086717775, &#39;Foreign&#39;: 6.50327578586491}
+
+These are the computed statistics:
+
+{&#39;df_eq_variance&#39;: 72,
+ &#39;df_uneq_variance&#39;: 30.814287872636015,
+ &#39;number_obs&#39;: {&#39;Domestic&#39;: 52, &#39;Foreign&#39;: 22},
+ &#39;p_value_eq_variance&#39;: {&#39;greater_than&#39;: 0.9997637712766184,
+                         &#39;less_than&#39;: 0.00023622872338158247,
+                         &#39;not_equal&#39;: 0.00047245744676316495},
+ &#39;p_value_uneq_variance&#39;: {&#39;greater_than&#39;: 0.9985090924569335,
+                           &#39;less_than&#39;: 0.0014909075430664899,
+                           &#39;not_equal&#39;: 0.0029818150861329797},
+ &#39;t_eq_variance&#39;: -3.663245852011623,
+ &#39;t_uneq_variance&#39;: -3.2245353733260638}
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Comparison-of-two-means-from-two-different-samples">
+<h2>Comparison of two means from two different samples<a class="headerlink" href="#Comparison-of-two-means-from-two-different-samples" title="Permalink to this headline">¶</a></h2>
+<p>This type of comparison should be used when the two groups come from different samples or different strata. The group are assumed independent. Otherwise, the information is similar to the previous test. Note that, when instantiating the class, we used <code class="docutils literal notranslate"><span class="pre">samp_type=&quot;two-sample&quot;</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">two_samples_unpaired</span> <span class="o">=</span> <span class="n">Ttest</span><span class="p">(</span><span class="n">samp_type</span><span class="o">=</span><span class="s2">&quot;two-sample&quot;</span><span class="p">,</span> <span class="n">paired</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">two_samples_unpaired</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">mpg</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">foreign</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">two_samples_unpaired</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Design-based Two-Sample T-test
+ Null hypothesis (Ho): mean(Domestic) = mean(Foreign)
+ Equal variance assumption:
+  t statictics: -3.6308
+  Degrees of freedom: 72.00
+  Alternative hypothesis (Ha):
+   Prob(T &lt; t) = 0.0003
+   Prob(|T| &gt; |t|) = 0.0005
+   Prob(T &gt; t) = 0.9997
+ Unequal variance assumption:
+  t statictics: -3.1797
+  Degrees of freedom: 30.55
+  Alternative hypothesis (Ha):
+   Prob(T &lt; t) = 0.0017
+   Prob(|T| &gt; |t|) = 0.0034
+   Prob(T &gt; t) = 0.9983
+
+   Group  Nb. Obs      Mean  Std. Error  Std. Dev.  Lower CI  Upper CI
+Domestic       52 19.826923    0.657777   4.743297 18.506381 21.147465
+ Foreign       22 24.772727    1.409510   6.611187 21.841491 27.703963
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">These are the group means for mpg: </span><span class="si">{</span><span class="n">two_samples_unpaired</span><span class="o">.</span><span class="n">point_est</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;These are the group standard error for mpg: </span><span class="si">{</span><span class="n">two_samples_unpaired</span><span class="o">.</span><span class="n">stderror</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;These are the group standard deviation for mpg: </span><span class="si">{</span><span class="n">two_samples_unpaired</span><span class="o">.</span><span class="n">stddev</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;These are the computed statistics:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">two_samples_unpaired</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+These are the group means for mpg: {&#39;Domestic&#39;: 19.826923076923077, &#39;Foreign&#39;: 24.772727272727273}
+
+These are the group standard error for mpg: {&#39;Domestic&#39;: 0.6577769784877485, &#39;Foreign&#39;: 1.409509782735444}
+
+These are the group standard deviation for mpg: {&#39;Domestic&#39;: 4.743297247514701, &#39;Foreign&#39;: 6.611186898567625}
+
+These are the computed statistics:
+
+{&#39;df_eq_variance&#39;: 72,
+ &#39;df_uneq_variance&#39;: 30.54627772512107,
+ &#39;number_obs&#39;: {&#39;Domestic&#39;: 52, &#39;Foreign&#39;: 22},
+ &#39;p_value_eq_variance&#39;: {&#39;greater_than&#39;: 0.9997372920330829,
+                         &#39;less_than&#39;: 0.00026270796691710014,
+                         &#39;not_equal&#39;: 0.0005254159338342003},
+ &#39;p_value_uneq_variance&#39;: {&#39;greater_than&#39;: 0.9983149592187673,
+                           &#39;less_than&#39;: 0.0016850407812326064,
+                           &#39;not_equal&#39;: 0.003370081562465213},
+ &#39;t_eq_variance&#39;: -3.6308484477318372,
+ &#39;t_uneq_variance&#39;: -3.1796851846684073}
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Comparison-of-two-paired-means">
+<h2>Comparison of two paired means<a class="headerlink" href="#Comparison-of-two-paired-means" title="Permalink to this headline">¶</a></h2>
+<p>When two measures are taken from the same observations, the paired t-test is appropriate for comparing the means.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">two_samples_paired</span> <span class="o">=</span> <span class="n">Ttest</span><span class="p">(</span><span class="n">samp_type</span><span class="o">=</span><span class="s2">&quot;two-sample&quot;</span><span class="p">,</span> <span class="n">paired</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">two_samples_paired</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">auto</span><span class="p">[[</span><span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">]],</span> <span class="n">group</span><span class="o">=</span><span class="n">foreign</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">two_samples_paired</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Design-based Two-Sample T-test
+ Null hypothesis (Ho): mean(Diff = y1 - y2) = 0
+ t statictics: 0.8733
+ Degrees of freedom: 73.00
+ Alternative hypothesis (Ha):
+  Prob(T &lt; t) = 0.8073
+  Prob(|T| &gt; |t|) = 0.3853
+  Prob(T &gt; t) = 0.1927
+
+ Nb. Obs         Mean   Std. Error  Std. Dev.      Lower CI  Upper CI
+      74 4.054054e-07 4.641962e-07   0.000004 -5.197363e-07  0.000001
+
+</pre></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">varnames</span></code> can be used rename teh variables</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">y1</span> <span class="o">=</span> <span class="n">auto</span><span class="p">[</span><span class="s2">&quot;y1&quot;</span><span class="p">]</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="n">auto</span><span class="p">[</span><span class="s2">&quot;y2&quot;</span><span class="p">]</span>
+
+<span class="n">two_samples_paired</span> <span class="o">=</span> <span class="n">Ttest</span><span class="p">(</span><span class="n">samp_type</span><span class="o">=</span><span class="s2">&quot;two-sample&quot;</span><span class="p">,</span> <span class="n">paired</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">two_samples_paired</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">],</span> <span class="n">varnames</span><span class="o">=</span> <span class="p">[</span><span class="s2">&quot;group_1&quot;</span><span class="p">,</span> <span class="s2">&quot;gourp_2&quot;</span><span class="p">],</span> <span class="n">group</span><span class="o">=</span><span class="n">foreign</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">two_samples_paired</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Design-based Two-Sample T-test
+ Null hypothesis (Ho): mean(Diff = group_1 - gourp_2) = 0
+ t statictics: 0.8733
+ Degrees of freedom: 73.00
+ Alternative hypothesis (Ha):
+  Prob(T &lt; t) = 0.8073
+  Prob(|T| &gt; |t|) = 0.3853
+  Prob(T &gt; t) = 0.1927
+
+ Nb. Obs         Mean   Std. Error  Std. Dev.      Lower CI  Upper CI
+      74 4.054054e-07 4.641962e-07   0.000004 -5.197363e-07  0.000001
+
+</pre></div></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

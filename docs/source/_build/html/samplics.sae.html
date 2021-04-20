@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Small Area Estimation &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utils" href="samplics.utils.html" />
+    <link rel="prev" title="Population parameters estimation" href="samplics.estimation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="gettingstarted.html">Getting started</a></li>
+                <li><a href="tutorial/index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Use Cases</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="small-area-estimation">
+<h1>Small Area Estimation<a class="headerlink" href="#small-area-estimation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="samplics-sae-eb-area-model">
+<h2>samplics.sae.eb_area_model<a class="headerlink" href="#samplics-sae-eb-area-model" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-samplics.sae.eb_unit_model">
+<span id="samplics-sae-eb-unit-model"></span><h2>samplics.sae.eb_unit_model<a class="headerlink" href="#module-samplics.sae.eb_unit_model" title="Permalink to this headline">¶</a></h2>
+<p>EB  for the unit level model.</p>
+<p>This module implements the basic EB unit level model. The functionalities are organized in
+classes. Each class has three main methods: <em>fit()</em>, <em>predict()</em> and <em>bootstrap_mse()</em>.
+Linear Mixed Models (LMM) are the core underlying statistical framework used to model the hierarchical nature of the small area estimation (SAE) techniques implemented in this module, see McCulloch, C.E. and Searle, S.R. (2001) <a class="footnote-reference brackets" href="#ms2001" id="id1">1</a> for more details on LMM.</p>
+<p>The <em>EbUnitModel</em> class implements the model developed by Molina, I. and Rao, J.N.K. (2010)
+<a class="footnote-reference brackets" href="#mr2010" id="id2">2</a>. So far, only the basic approach requiring the normal distribution of the errors is
+implemented. This approach allows estimating complex indicators such as poverty indices and
+other nonlinear paramaters. The class fits the model parameters using REML or ML. To predict the
+area level indicators estimates, a Monte Carlo (MC) approach is used. MSE estimation is achieved
+using a bootstrap procedure.</p>
+<p>For a comprehensive review of the small area estimation models and its applications,
+see Rao, J.N.K. and Molina, I. (2015) <a class="footnote-reference brackets" href="#rm2015" id="id3">3</a>.</p>
+<dl class="footnote brackets">
+<dt class="label" id="ms2001"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>McCulloch, C.E.and Searle, S.R. (2001), <em>Generalized, Linear, Mixed Models</em>,
+New York: John Wiley &amp; Sons, Inc.</p>
+</dd>
+<dt class="label" id="mr2010"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Molina, , I. and Rao, J.N.K. (2010), Small Area Estimation of Poverty Indicators,
+<em>Canadian Journal of Statistics</em>, <strong>38</strong>, 369-385.</p>
+</dd>
+<dt class="label" id="rm2015"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>Rao, J.N.K. and Molina, I. (2015), <em>Small area estimation, 2nd edn.</em>,
+John Wiley &amp; Sons, Hoboken, New Jersey.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt id="samplics.sae.eb_unit_model.EbUnitModel">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">samplics.sae.eb_unit_model.</span></code><code class="sig-name descname"><span class="pre">EbUnitModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'REML'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxcox</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constant</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplics/sae/eb_unit_model.html#EbUnitModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sae.eb_unit_model.EbUnitModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><em>EbUnitModel</em> implements the basic Unit level model for complex indicators.</p>
+<p><em>EbUnitModel</em> takes the sample data as input and fits the basic linear mixed model.
+The user can pick between restricted maximum likelihood (REML) or maximum likelihood (ML)
+to fit the model parameters. Also, EbUnitModel predicts the areas means and provides
+the point and mean squared error (MSE) estimates of the empirical Bayes linear
+unbiased (EBLUP). User can also obtain the bootstrap mse estimates of the MSE.</p>
+<p><em>EbUnitModel</em> requires the user to provide the indicator function. The indicator function is
+expected to take the array of output sample observations as input and possibly some additional
+parameters needed to compute the indicator. The indicator function outputs an aggregated value.
+For example, the poverty gap indicator can have the following signature
+pov_gap(y: array, pov_line: float) -&gt; float. If the indicator function different outputs by
+area then the self.area_list can be used to incorporate different logics across areas.</p>
+<p>Also, <em>EbUnitModel</em> can use Boxcox to transform the output sample values in order to reduce
+the asymmetry in the datawhen fitting the linear mixed model.</p>
+<dl>
+<dt>Setting attributes</dt><dd><div class="line-block">
+<div class="line">method (str): the fitting method of the model parameters which can take the possible</div>
+<div class="line-block">
+<div class="line">values restricted maximum likelihood (REML) or maximum likelihood (ML).</div>
+<div class="line">If not specified, “REML” is used as default.</div>
+</div>
+<div class="line">indicator (function): a user defined function to compute the indicator.</div>
+<div class="line">boxcox (dict): contains the <em>lambda</em> parameter of the Boxcox and a constant for the</div>
+<div class="line">log-transformation of the Boxcox.</div>
+</div>
+</dd>
+<dt>Sample related attributes</dt><dd><div class="line-block">
+<div class="line">ys (array): the output sample observations.</div>
+<div class="line">Xs (ndarray): the auxiliary information.</div>
+<div class="line">scales (array): an array of scaling parameters for the unit levels errors.</div>
+<div class="line">afactors (array): sum of the inverse squared of scale.</div>
+<div class="line">areas (array): the full vector of small areas from the sampled observations.</div>
+<div class="line">areas_list (array): the list of small areas from the sample data.</div>
+<div class="line">samp_size (dict): the sample size per small areas from the sample.</div>
+<div class="line">ys_mean (array): sample area means of the output variable.</div>
+<div class="line">Xs_mean (ndarray): sample area means of the auxiliary variables.</div>
+</div>
+</dd>
+<dt>Model fitting attributes</dt><dd><div class="line-block">
+<div class="line">fitted (boolean): indicates whether the model has been fitted or not.</div>
+<div class="line">fixed_effects (array): the estimated fixed effects of the regression model.</div>
+<div class="line">fe_std (array): the estimated standard errors of the fixed effects.</div>
+<div class="line">random_effects (array): the estimated area level random effects.</div>
+<div class="line-block">
+<div class="line">associated with the small areas.</div>
+</div>
+<div class="line">re_std (number): the estimated standard error of the random effects.</div>
+<div class="line">error_std (number): standard error of the unit level residuals.</div>
+<div class="line">convergence (dict): a dictionnary holding the convergence status and the number of</div>
+<div class="line-block">
+<div class="line">iterations from the model fitting algorithm.</div>
+</div>
+<div class="line">goodness (dict): a dictionary holding the log-likelihood, AIC, and BIC.</div>
+<div class="line">gamma (dict): ratio of the between-area variability (re_std**2) to the total</div>
+<div class="line-block">
+<div class="line">variability (re_std**2 + error_std**2 / a_factor).</div>
+</div>
+</div>
+</dd>
+<dt>Prediction related attributes</dt><dd><div class="line-block">
+<div class="line">areap (array): the list of areas for the prediction.</div>
+<div class="line">number_reps (int): number of replicates for the bootstrap MSE estimation.</div>
+<div class="line">area_est (array): area level EBLUP estimates.</div>
+<div class="line">area_mse (array): area level taylor estimation of the MSE.</div>
+<div class="line">area_mse_boot (array): area level bootstrap estimation of the MSE.</div>
+</div>
+</dd>
+<dt>Main methods</dt><dd><div class="line-block">
+<div class="line">fit(): fits the linear mixed model to estimate the model parameters using REMl or ML</div>
+<div class="line-block">
+<div class="line">methods.</div>
+</div>
+<div class="line">predict(): predicts the area level indicator estimates which includes both the point</div>
+<div class="line-block">
+<div class="line">estimates and the taylor MSE estimate.</div>
+</div>
+<div class="line">bootstrap_mse(): computes the area level bootstrap MSE estimates of the indicator.</div>
+</div>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplics.sae.eb_unit_model.EbUnitModel.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ys</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">areas</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scales</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/sae/eb_unit_model.html#EbUnitModel.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sae.eb_unit_model.EbUnitModel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the linear mixed models to estimate the model parameters that is the fixed
+effects, the random effects standard error and the unit level residuals’ standard error.
+In addition, the method provides statistics related to the model fitting e.g. convergence
+status, log-likelihood, AIC, BIC, and more.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ys</strong> (<em>Array</em>) – An array of the output sample observations.</p></li>
+<li><p><strong>Xs</strong> (<em>Array</em>) – An multi-dimensional array of the sample auxiliary information.</p></li>
+<li><p><strong>areas</strong> (<em>Array</em>) – provides the area of the sampled observations.</p></li>
+<li><p><strong>samp_weight</strong> (<em>Optional</em><em>[</em><em>Array</em><em>]</em><em>, </em><em>optional</em>) – An array of the sample weights.
+Defaults to None.</p></li>
+<li><p><strong>scales</strong> (<em>Union</em><em>[</em><em>Array</em><em>, </em><em>Number</em><em>]</em><em>, </em><em>optional</em>) – the scale factor for the unit level errors.
+If a single number of provided, the same number will be applied to all observations. Defaults to 1.</p></li>
+<li><p><strong>intercept</strong> (<em>bool</em><em>, </em><em>optional</em>) – An boolean to indicate whether an intercept need to be
+added to Xs. Defaults to True</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – tolerance used for convergence criteria. Defaults to 1.0e-4.</p></li>
+<li><p><strong>maxiter</strong> (<em>int</em><em>, </em><em>optional</em>) – maximum number of iterations for the fitting algorithm.</p></li>
+<li><p><strong>to 100.</strong> (<em>Defaults</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="samplics.sae.eb_unit_model.EbUnitModel.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arear</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indicator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">…</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_array_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/sae/eb_unit_model.html#EbUnitModel.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sae.eb_unit_model.EbUnitModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the area level means and provides the taylor MSE estimation of the estimated
+area means.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xr</strong> (<em>Array</em>) – an multi-dimensional array of the out of sample auxiliary variables.</p></li>
+<li><p><strong>arear</strong> (<em>Array</em>) – provides the area of the out of sample units.</p></li>
+<li><p><strong>indicator</strong> (<em>Callable</em><em>[</em><em>..</em><em>, </em><em>Array</em><em>]</em>) – a user defined function which computes the area level
+indicators. The function should take y (output variable) as the first parameters,
+additional parameters can be used. Use <a href="#id4"><span class="problematic" id="id5">**</span></a><em>kwargs</em> to transfer the additional
+parameters.</p></li>
+<li><p><strong>number_samples</strong> (<em>int</em>) – number of replicates for the Monte-Carlo (MC) algorithm.</p></li>
+<li><p><strong>scaler</strong> (<em>Union</em><em>[</em><em>Array</em><em>, </em><em>Number</em><em>]</em><em>, </em><em>optional</em>) – the scale factor for the unit level errors.
+If a single number of provided, the same number will be applied to all observations. Defaults to 1.</p></li>
+<li><p><strong>intercept</strong> (<em>bool</em><em>, </em><em>optional</em>) – An boolean to indicate whether an intercept need to be
+added to Xr. Defaults to True.</p></li>
+<li><p><strong>max_array_length</strong> (<em>int</em><em>, </em><em>optional</em>) – controls the number of replicates to generate at
+the same time. This parameter helps with performance. The number can be reduce or
+increase based on the user’s computer RAM capacity. Defaults to int(100e6).</p></li>
+<li><p><strong>show_progress</strong> (<em>bool</em><em>, </em><em>optional</em>) – shows a bar progress of the MC replicates
+calculations. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – when predict() is called before fitting the model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="samplics.sae.eb_unit_model.EbUnitModel.bootstrap_mse">
+<code class="sig-name descname"><span class="pre">bootstrap_mse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arear</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indicator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">…</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_reps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_array_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/sae/eb_unit_model.html#EbUnitModel.bootstrap_mse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sae.eb_unit_model.EbUnitModel.bootstrap_mse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the MSE bootstrap estimates of the area level indicator estimates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xr</strong> (<em>Array</em>) – an multi-dimensional array of the out of sample auxiliary variables.</p></li>
+<li><p><strong>arear</strong> (<em>Array</em>) – provides the area of the out of sample units.</p></li>
+<li><p><strong>indicator</strong> (<em>Callable</em><em>[</em><em>..</em><em>, </em><em>Array</em><em>]</em>) – [description]</p></li>
+<li><p><strong>number_reps</strong> (<em>int</em>) – [description]</p></li>
+<li><p><strong>scaler</strong> (<em>Union</em><em>[</em><em>Array</em><em>, </em><em>Number</em><em>]</em><em>, </em><em>optional</em>) – [description]. Defaults to 1.</p></li>
+<li><p><strong>intercept</strong> (<em>bool</em><em>, </em><em>optional</em>) – [description]. Defaults to True.</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – tolerance used for convergence criteria. Defaults to 1.0e-4.</p></li>
+<li><p><strong>maxiter</strong> (<em>int</em><em>, </em><em>optional</em>) – maximum number of iterations for the fitting algorithm.</p></li>
+<li><p><strong>to 100.</strong> (<em>Defaults</em>) – </p></li>
+<li><p><strong>max_array_length</strong> (<em>int</em><em>, </em><em>optional</em>) – [description]. Defaults to int(100e6).</p></li>
+<li><p><strong>show_progress</strong> (<em>bool</em><em>, </em><em>optional</em>) – shows a bar progress of the bootstrap replicates
+calculations. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="samplics.sae.eb_unit_model.EbUnitModel.to_dataframe">
+<code class="sig-name descname"><span class="pre">to_dataframe</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col_names</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">['_area',</span> <span class="pre">'_estimate',</span> <span class="pre">'_mse_boot']</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pd.DataFrame</span><a class="reference internal" href="_modules/samplics/sae/eb_unit_model.html#EbUnitModel.to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sae.eb_unit_model.EbUnitModel.to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pandas dataframe from dictionaries with same keys and one value per key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>col_names</strong> (<em>list</em><em>, </em><em>optional</em>) – list of string to be used for the dataframe columns names.
+Defaults to [“_area”, “_estimate”, “_mse_boot”].</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a pandas dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

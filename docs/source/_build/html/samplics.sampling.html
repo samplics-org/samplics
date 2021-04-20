@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sample selection &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sample weighting" href="samplics.weighting.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="samplics.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="gettingstarted.html">Getting started</a></li>
+                <li><a href="tutorial/index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/eblup_area_model.html">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usecases.html">Use Cases</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="sample-selection">
+<h1>Sample selection<a class="headerlink" href="#sample-selection" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-samplics.sampling.selection">
+<span id="samplics-sampling-selection"></span><h2>samplics.sampling.selection<a class="headerlink" href="#module-samplics.sampling.selection" title="Permalink to this headline">¶</a></h2>
+<p>Sampling selection module</p>
+<p>The module has one main class called <em>SampleSelection</em> which provides a number of random selection methodsand associated probability of selection. All the samping techniques implemented in this
+modules are discussed in the following reference book: Cochran, W.G. (1977) <a class="footnote-reference brackets" href="#c1977" id="id1">1</a>,
+Kish, L. (1965) <a class="footnote-reference brackets" href="#k1965" id="id2">2</a>, and Lohr, S.L. (2010) <a class="footnote-reference brackets" href="#l2010" id="id3">3</a>. Furthermore, Brewer, K.R.W. and
+Hanif, M. (1983) <a class="footnote-reference brackets" href="#bh1983" id="id4">4</a> provides comprehensive and detailed descriptions of these complex
+sampling algorithms.</p>
+<dl class="footnote brackets">
+<dt class="label" id="c1977"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Cochran, W.G. (1977), <em>Sampling Techniques, 3rd edn.</em>, Jonh Wiley &amp; Sons, Inc.</p>
+</dd>
+<dt class="label" id="k1965"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Kish, L. (1965), <em>Survey Sampling</em>, Jonh Wiley &amp; Sons, Inc.</p>
+</dd>
+<dt class="label" id="l2010"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>Lohr, S.L. (2010), <em>Sampling: Design and Analysis, 2nd edn.</em>, Cengage Learning, Inc.</p>
+</dd>
+<dt class="label" id="bh1983"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
+<dd><p>Brewer, K.R.W. and Hanif, M. (1983), <em>Sampling With Unequal Probabilities</em>,
+Springer-Verlag New York, Inc</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt id="samplics.sampling.selection.SampleSelection">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">samplics.sampling.selection.</span></code><code class="sig-name descname"><span class="pre">SampleSelection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratification</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_replacement</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplics/sampling/selection.html#SampleSelection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sampling.selection.SampleSelection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><em>SampleSelection</em> implements a number of sampling selection algorithms.</p>
+<p>The implemented sampling algorithms are the simple random sampling (srs), the
+systematic selection (sys), five different algorithms of probability proportional
+to size (pps), and the generic selection.</p>
+<dl>
+<dt>Attributes of the class:</dt><dd><div class="line-block">
+<div class="line">method (str): a string specifying the sampling algorithm. The available</div>
+<div class="line-block">
+<div class="line">sampling algorithms are: simple random sampling (srs), systematic selection (sys),</div>
+<div class="line">Brewer’s procedure (pps-brewer), Hanurav-Vijayan procedure (pps-hv),</div>
+<div class="line">Murphy’s procedure (pps-murphy), Rao-Sampford procedure (pps-rs), systematic</div>
+<div class="line">pps (pps-sys), and a generic selection from arbitrary probabilities using</div>
+<div class="line"><em>numpy.random.choice()</em> method.</div>
+</div>
+<div class="line">stratification (bool): indicates if the sampling procedure is stratified or not.</div>
+<div class="line">with_replacement (bool): indicates whether the selection is with replacement.</div>
+</div>
+</dd>
+<dt>Main functions:</dt><dd><div class="line-block">
+<div class="line">inclusion_probs(): provides the inclusion probabilities.</div>
+<div class="line">joint_inclusion_probs(): provides the joint probalities of selection.</div>
+<div class="line">select(): indicates the selected sample.</div>
+</div>
+</dd>
+</dl>
+<p>TODO: handling of certainties and implementation of joint_inclusion_probs().</p>
+<dl class="py method">
+<dt id="samplics.sampling.selection.SampleSelection.inclusion_probs">
+<code class="sig-name descname"><span class="pre">inclusion_probs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp_unit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratum</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/samplics/sampling/selection.html#SampleSelection.inclusion_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sampling.selection.SampleSelection.inclusion_probs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the inclusion probabilities according to the sampling scheme.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samp_unit</strong> (<em>Array</em>) – an array of all the observations in the target population.</p></li>
+<li><p><strong>samp_size</strong> (<em>Union</em><em>[</em><em>dict</em><em>[</em><em>Any</em><em>, </em><em>Number</em><em>]</em><em>, </em><em>Number</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – the dictionary of sample</p></li>
+<li><p><strong>by stratum</strong> (<em>sizes</em>) – </p></li>
+<li><p><strong>applicable. Defaults to None.</strong> (<em>if</em>) – </p></li>
+<li><p><strong>stratum</strong> (<em>Optional</em><em>[</em><em>Array</em><em>]</em><em>, </em><em>optional</em>) – array of the strata associated to the
+population units. Defaults to None.</p></li>
+<li><p><strong>mos</strong> (<em>Optional</em><em>[</em><em>Array</em><em>]</em><em>, </em><em>optional</em>) – array of the measure of size associated to the
+population units. Defaults to None.</p></li>
+<li><p><strong>samp_rate</strong> (<em>Union</em><em>[</em><em>dict</em><em>[</em><em>Any</em><em>, </em><em>Number</em><em>]</em><em>, </em><em>Number</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – sampling rate provided
+by stratum if applicable. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – raises an assertion error if some of the clusters are certainties.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>an array of the probabilities of inclusion.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="samplics.sampling.selection.SampleSelection.joint_inclusion_probs">
+<code class="sig-name descname"><span class="pre">joint_inclusion_probs</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/samplics/sampling/selection.html#SampleSelection.joint_inclusion_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sampling.selection.SampleSelection.joint_inclusion_probs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="samplics.sampling.selection.SampleSelection.select">
+<code class="sig-name descname"><span class="pre">select</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp_unit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">DictStrInt</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratum</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">DictStrFloat</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Array</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_dataframe</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_only</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">np.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">pd.DataFrame</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/samplics/sampling/selection.html#SampleSelection.select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#samplics.sampling.selection.SampleSelection.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selects the random sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samp_unit</strong> (<em>Array</em>) – an array of all the observations in the target population.</p></li>
+<li><p><strong>samp_size</strong> (<em>Union</em><em>[</em><em>dict</em><em>[</em><em>Any</em><em>, </em><em>Number</em><em>]</em><em>, </em><em>Number</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – the dictionary of sample</p></li>
+<li><p><strong>by stratum</strong> (<em>sizes</em>) – </p></li>
+<li><p><strong>applicable. Defaults to None.</strong> (<em>if</em>) – </p></li>
+<li><p><strong>stratum</strong> (<em>Optional</em><em>[</em><em>Array</em><em>]</em><em>, </em><em>optional</em>) – array of the strata associated to the
+population units. Defaults to None.</p></li>
+<li><p><strong>mos</strong> (<em>Optional</em><em>[</em><em>Array</em><em>]</em><em>, </em><em>optional</em>) – array of the measure of size associated to the
+population units. Defaults to None.</p></li>
+<li><p><strong>samp_rate</strong> (<em>Union</em><em>[</em><em>dict</em><em>[</em><em>Any</em><em>, </em><em>Number</em><em>]</em><em>, </em><em>Number</em><em>, </em><em>None</em><em>]</em><em>, </em><em>optional</em>) – sampling rate provided
+by stratum if applicable. Defaults to None.</p></li>
+<li><p><strong>probs</strong> (<em>Optional</em><em>[</em><em>Array</em><em>]</em><em>, </em><em>optional</em>) – array of the probability of selection associated to  the population units. Defaults to None.</p></li>
+<li><p><strong>shuffle</strong> (<em>bool</em><em>, </em><em>optional</em>) – indicates whether to shuffle the data prior to running the
+selection algorithm. Defaults to False.</p></li>
+<li><p><strong>to_dataframe</strong> (<em>bool</em><em>, </em><em>optional</em>) – indicates whether to convert the output to a pandas
+dataframe. Defaults to False.</p></li>
+<li><p><strong>sample_only</strong> (<em>bool</em><em>, </em><em>optional</em>) – indicates whether to return only the sample without
+the out of sample units. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>AssertionError</strong> – raises an assertion error if both samp_size and samp_rate is
+    provided as input.</p></li>
+<li><p><strong>AssertionError</strong> – raises an assertion error if some of the clusters are certainties.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>[description]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Union[pd.DataFrame, tuple[np.ndarray, np.ndarray, np.ndarray]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

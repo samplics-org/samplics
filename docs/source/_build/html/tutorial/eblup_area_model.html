@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Area level model: empirical best linear unbiased predictor (EBLUP) &#8212; samplics 0.3.5 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/_source/samplics_style.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/samplics_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Unit level model: empirical best linear unbiased Prediction (EBLUP)" href="eblup_unit_model.html" />
+    <link rel="prev" title="T-test" href="ttest.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Sample Analytics</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../gettingstarted.html">Getting started</a></li>
+                <li><a href="index.html">Tutorial</a></li>
+                <li><a href="https://github.com/survey-methods/samplics">Github</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Documentation <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">How to get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingstarted.html#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#datasets-for-the-tutorial">Datasets for the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-size-calculation">Sample size calculation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_size_calculation.html">Sample size calculation for stage sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-selection">Sample selection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="psu_selection.html">Selection of primary sampling units (PSUs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ssu_selection.html">Selection of secondary sampling units (SSUs)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sample-weighting">Sample weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sample_weights.html">Sample weight adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="replicate_weights.html">Replicate weights</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#population-parameters-estimation">Population parameters estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="estimation.html">Estimation of population parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#categorical-data-analysis">Categorical data analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tabulation.html">Tabulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ttest.html">T-test</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#small-area-estimation-sae">Small Area Estimation (SAE)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Area level model: empirical best linear unbiased predictor (EBLUP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eblup_unit_model.html">Unit level model: empirical best linear unbiased Prediction (EBLUP)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usecases.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sampling.html">Sampling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sampling.html#module-samplics.sampling.selection">samplics.sampling.selection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.weighting.html">Weighting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.adjustment">samplics.weighting.adjustment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.weighting.html#module-samplics.weighting.replicates">samplics.weighting.replicates</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.estimation.html">Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.expansion">samplics.estimation.expansion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.regression">samplics.estimation.regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.estimation.html#module-samplics.estimation.replication">samplics.estimation.replication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.sae.html">Small Area Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#samplics-sae-eb-area-model">samplics.sae.eb_area_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.sae.html#module-samplics.sae.eb_unit_model">samplics.sae.eb_unit_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../samplics.utils.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.checks">samplics.utils.checks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.formats">samplics.utils.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../samplics.utils.html#module-samplics.utils.hadamard">samplics.utils.hadamard module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5.5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Area-level-model:-empirical-best-linear-unbiased-predictor-(EBLUP)">
+<h1>Area level model: empirical best linear unbiased predictor (EBLUP)<a class="headerlink" href="#Area-level-model:-empirical-best-linear-unbiased-predictor-(EBLUP)" title="Permalink to this headline">¶</a></h1>
+<p>Small area estimation (SAE) are useful techniques when the sample sizes are not sufficient to provide reliable direct domain estimates given the sampling design. In this tutorial, the direct estimates refer to estimates obtained from the design-based approach. It usually consists of applying adjusted design weights to the variable of interest to compute sample parameters as estimates of equivalent population parameters. When auxiliary information is available, we can use model assisted survey
+methods can be used to estimate population parameters.</p>
+<p>In this tutorial, we will go futher and use modeling techniques to produce domains estimates. For the area level model, the modeling is done at the area level using generalized linear mixed models. The sections below shows how to use the <em>EblupAreaModel</em> class from the <em>samplics</em> package to produce area level estimates.</p>
+<div class="section" id="Milk-Expenditure-data">
+<h2>Milk Expenditure data<a class="headerlink" href="#Milk-Expenditure-data" title="Permalink to this headline">¶</a></h2>
+<p>To illustrate the EblupAreaModel class, we will use the Milk Expenditure dataset used in Rao and Molina (2015). As mentioned in the book, this dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006). For the R users, this dataset is also used by the R package sae (<a class="reference external" href="https://cran.r-project.org/web/packages/sae/index.html">https://cran.r-project.org/web/packages/sae/index.html</a>).</p>
+<p>The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. The datasets has the following values: major area representing (major_area), small area (small_area), sample size (samp_size), direct survey estimates of average expenditure (direct_est), standard error of the direct estimate (std_error), and coefficient of variation of the direct estimates (coef_variance).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">samplics</span>
+<span class="kn">from</span> <span class="nn">samplics.datasets</span> <span class="kn">import</span> <span class="n">ExpenditureMilk</span>
+<span class="kn">from</span> <span class="nn">samplics.sae</span> <span class="kn">import</span> <span class="n">EblupAreaModel</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Load Expenditure on Milk sample data</span>
+<span class="n">milk_exp_cls</span> <span class="o">=</span> <span class="n">ExpenditureMilk</span><span class="p">()</span>
+<span class="n">milk_exp_cls</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="n">milk_exp</span> <span class="o">=</span> <span class="n">milk_exp_cls</span><span class="o">.</span><span class="n">data</span>
+
+<span class="n">nb_obs</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">First </span><span class="si">{</span><span class="n">nb_obs</span><span class="si">}</span><span class="s2"> observations of the Milk Expendure dataset</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">milk_exp</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="n">nb_obs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+First 15 observations of the Milk Expendure dataset
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>major_area</th>
+      <th>small_area</th>
+      <th>samp_size</th>
+      <th>direct_est</th>
+      <th>std_error</th>
+      <th>coef_var</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>28</th>
+      <td>4</td>
+      <td>29</td>
+      <td>238</td>
+      <td>0.796</td>
+      <td>0.106</td>
+      <td>0.133</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>4</td>
+      <td>30</td>
+      <td>207</td>
+      <td>0.565</td>
+      <td>0.089</td>
+      <td>0.158</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>4</td>
+      <td>31</td>
+      <td>165</td>
+      <td>0.886</td>
+      <td>0.225</td>
+      <td>0.254</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>4</td>
+      <td>32</td>
+      <td>153</td>
+      <td>0.952</td>
+      <td>0.205</td>
+      <td>0.215</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>4</td>
+      <td>33</td>
+      <td>210</td>
+      <td>0.807</td>
+      <td>0.119</td>
+      <td>0.147</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>4</td>
+      <td>34</td>
+      <td>383</td>
+      <td>0.582</td>
+      <td>0.067</td>
+      <td>0.115</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>4</td>
+      <td>35</td>
+      <td>255</td>
+      <td>0.684</td>
+      <td>0.106</td>
+      <td>0.155</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>4</td>
+      <td>36</td>
+      <td>226</td>
+      <td>0.787</td>
+      <td>0.126</td>
+      <td>0.160</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>4</td>
+      <td>37</td>
+      <td>224</td>
+      <td>0.440</td>
+      <td>0.092</td>
+      <td>0.209</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>4</td>
+      <td>38</td>
+      <td>212</td>
+      <td>0.759</td>
+      <td>0.132</td>
+      <td>0.174</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>4</td>
+      <td>39</td>
+      <td>211</td>
+      <td>0.770</td>
+      <td>0.100</td>
+      <td>0.130</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>4</td>
+      <td>40</td>
+      <td>179</td>
+      <td>0.800</td>
+      <td>0.113</td>
+      <td>0.141</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>4</td>
+      <td>41</td>
+      <td>312</td>
+      <td>0.756</td>
+      <td>0.083</td>
+      <td>0.110</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>4</td>
+      <td>42</td>
+      <td>241</td>
+      <td>0.865</td>
+      <td>0.121</td>
+      <td>0.140</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>4</td>
+      <td>43</td>
+      <td>205</td>
+      <td>0.640</td>
+      <td>0.129</td>
+      <td>0.202</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="EBLUP-Predictor">
+<h2>EBLUP Predictor<a class="headerlink" href="#EBLUP-Predictor" title="Permalink to this headline">¶</a></h2>
+<p>As shown in the milk expenditure datasets, some of the coefficients of variation are not small which indicates unstability of the direct survey estimates. Hence, we can try to reduce the variability of the estimates by smoothing them through modeling. For illustration purpose, we will model the average expenditure on milk using the major areas as auxiliary variables.</p>
+<p>First, we use the method <em>fit()</em> to estimate the model parameters. The pandas’s method <em>get_dummies()</em> create a matrix with dummy values (0 and 1) from the categorical variable <em>major_area</em>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">area</span> <span class="o">=</span> <span class="n">milk_exp</span><span class="p">[</span><span class="s2">&quot;small_area&quot;</span><span class="p">]</span>
+<span class="n">yhat</span> <span class="o">=</span> <span class="n">milk_exp</span><span class="p">[</span><span class="s2">&quot;direct_est&quot;</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">milk_exp</span><span class="p">[</span><span class="s2">&quot;major_area&quot;</span><span class="p">],</span><span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sigma_e</span> <span class="o">=</span> <span class="n">milk_exp</span><span class="p">[</span><span class="s2">&quot;std_error&quot;</span><span class="p">]</span>
+
+<span class="c1">## REML method</span>
+<span class="n">fh_model_reml</span> <span class="o">=</span> <span class="n">EblupAreaModel</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;REML&quot;</span><span class="p">)</span>
+<span class="n">fh_model_reml</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">yhat</span><span class="o">=</span><span class="n">yhat</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">error_std</span><span class="o">=</span><span class="n">sigma_e</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The estimated fixed effects are: </span><span class="si">{</span><span class="n">fh_model_reml</span><span class="o">.</span><span class="n">fixed_effects</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The estimated standard error of the area random effects is: </span><span class="si">{</span><span class="n">fh_model_reml</span><span class="o">.</span><span class="n">re_std</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The convergence statistics are: </span><span class="si">{</span><span class="n">fh_model_reml</span><span class="o">.</span><span class="n">convergence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The goodness of fit statistics are: </span><span class="si">{</span><span class="n">fh_model_reml</span><span class="o">.</span><span class="n">goodness</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+The estimated fixed effects are: [ 0.96818899  0.13278031  0.22694622 -0.24130104]
+
+The estimated standard error of the area random effects is: 0.13619961509121203
+
+The convergence statistics are: {&#39;achieved&#39;: True, &#39;iterations&#39;: 7, &#39;precision&#39;: 4.849039725307591e-09}
+
+The goodness of fit statistics are: {&#39;loglike&#39;: -9.40347441551394, &#39;AIC&#39;: 30.80694883102788, &#39;BIC&#39;: 41.37414952518925}
+
+</pre></div></div>
+</div>
+<p>Now the the model has been fitted, we can obtain the EBLUP average expenditure on milk by running <em>predict()</em> which is a method of <em>EblupAreaModel</em> class. This run will produce two main attributes that is <em>area_est</em> and <em>area_mse</em> which are python dictionaries pairing the small areas to the eblup estimates and the MSE estimates, respectively.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fh_model_reml</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">fh_model_reml</span><span class="o">.</span><span class="n">area_est</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{1: 1.0219705448470247,
+ 2: 1.0476019518832929,
+ 3: 1.067951426885093,
+ 4: 0.7608165634163992,
+ 5: 0.8461570426977258,
+ 6: 0.9743727062092635,
+ 7: 1.0584526732855335,
+ 8: 1.0977762564423161,
+ 9: 1.2215454913423587,
+ 10: 1.1951460164712608,
+ 11: 0.7852149170863969,
+ 12: 1.2139462074222365,
+ 13: 1.2096597223605197,
+ 14: 0.9834964402356499,
+ 15: 1.1864247095350073,
+ 16: 1.1556981135233566,
+ 17: 1.2263412510186886,
+ 18: 1.2856489898727401,
+ 19: 1.2363248413266212,
+ 20: 1.2349601399238845,
+ 21: 1.0903016265233827,
+ 22: 1.1923057228469667,
+ 23: 1.1216467660137068,
+ 24: 1.2230297222963098,
+ 25: 1.1938054444127764,
+ 26: 0.762719590055247,
+ 27: 0.7649551536523853,
+ 28: 0.733844388348909,
+ 29: 0.769929554574362,
+ 30: 0.6134416227081896,
+ 31: 0.7695560730689718,
+ 32: 0.7958253128224164,
+ 33: 0.7723188482183627,
+ 34: 0.6102300678743072,
+ 35: 0.7001781895145349,
+ 36: 0.7592788108093524,
+ 37: 0.5298863352267293,
+ 38: 0.7434466782997067,
+ 39: 0.7548996333852697,
+ 40: 0.770191966164431,
+ 41: 0.748116424018986,
+ 42: 0.8040775166023042,
+ 43: 0.681086884699362}
+</pre></div></div>
+</div>
+<p>We can use the utility method <em>to_dataframe()</em> to output the estimates as a pandas dataframe. The function provides the area, the estimate and its MSE estimates. We can use <em>col_names</em> to customize the name of the columns. For example, using <code class="docutils literal notranslate"><span class="pre">col_names</span> <span class="pre">=</span> <span class="pre">[&quot;small_area&quot;,</span> <span class="pre">&quot;eblup_estimate&quot;,</span> <span class="pre">&quot;eblup_mse&quot;]</span></code>. Otherwise, if col_names is not provided, “_area“,”_estimates” and “_mse” are used as defaults.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">milk_est_reml</span> <span class="o">=</span> <span class="n">fh_model_reml</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;small_area&quot;</span><span class="p">,</span> <span class="s2">&quot;eblup_estimate&quot;</span><span class="p">,</span> <span class="s2">&quot;eblup_mse&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The dataframe version of the area level estimates:</span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">milk_est_reml</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+The dataframe version of the area level estimates:
+
+     small_area  eblup_estimate  eblup_mse
+0            1        1.021971   0.013460
+1            2        1.047602   0.005373
+2            3        1.067951   0.005702
+3            4        0.760817   0.008542
+4            5        0.846157   0.009580
+5            6        0.974373   0.011671
+6            7        1.058453   0.015926
+7            8        1.097776   0.010587
+8            9        1.221545   0.014184
+9           10        1.195146   0.014902
+10          11        0.785215   0.007694
+11          12        1.213946   0.016337
+12          13        1.209660   0.012563
+13          14        0.983496   0.012117
+14          15        1.186425   0.012031
+15          16        1.155698   0.011709
+16          17        1.226341   0.010860
+17          18        1.285649   0.013691
+18          19        1.236325   0.011035
+19          20        1.234960   0.013080
+20          21        1.090302   0.009949
+21          22        1.192306   0.017244
+22          23        1.121647   0.011292
+23          24        1.223030   0.013625
+24          25        1.193805   0.008066
+25          26        0.762720   0.009205
+26          27        0.764955   0.009205
+27          28        0.733844   0.016477
+28          29        0.769930   0.007801
+29          30        0.613442   0.006099
+30          31        0.769556   0.015442
+31          32        0.795825   0.014658
+32          33        0.772319   0.009025
+33          34        0.610230   0.003871
+34          35        0.700178   0.007801
+35          36        0.759279   0.009646
+36          37        0.529886   0.006404
+37          38        0.743447   0.010156
+38          39        0.754900   0.007210
+39          40        0.770192   0.008470
+40          41        0.748116   0.005485
+41          42        0.804078   0.009205
+42          43        0.681087   0.009904
+</pre></div></div>
+</div>
+<p>We could also fit the model parameters using the maximum likelihood (ML) method which will impact the MSE estimation as well. To estimate the area means using the ML methdo, we only need to set <em>method=“ML”</em> then run the prediction as follows.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## ML method</span>
+<span class="n">fh_model_ml</span> <span class="o">=</span> <span class="n">EblupAreaModel</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ML&quot;</span><span class="p">)</span>
+<span class="n">fh_model_ml</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">yhat</span><span class="o">=</span><span class="n">yhat</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">error_std</span><span class="o">=</span><span class="n">sigma_e</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">milk_est_ml</span> <span class="o">=</span> <span class="n">fh_model_ml</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">milk_est_ml</span> <span class="o">=</span> <span class="n">fh_model_ml</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;small_area&quot;</span><span class="p">,</span> <span class="s2">&quot;eblup_estimate&quot;</span><span class="p">,</span> <span class="s2">&quot;eblup_mse&quot;</span><span class="p">])</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The dataframe version of the ML area level estimates:</span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">milk_est_ml</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+The dataframe version of the ML area level estimates:
+
+     small_area  eblup_estimate  eblup_mse
+0            1        1.016173   0.013580
+1            2        1.043697   0.005513
+2            3        1.062817   0.005851
+3            4        0.775349   0.008735
+4            5        0.855490   0.009775
+5            6        0.973586   0.011841
+6            7        1.047478   0.015934
+7            8        1.095344   0.010822
+8            9        1.205409   0.014346
+9           10        1.181256   0.015036
+10          11        0.803370   0.007911
+11          12        1.196775   0.016405
+12          13        1.196159   0.012771
+13          14        0.991405   0.012335
+14          15        1.186883   0.012192
+15          16        1.159036   0.011877
+16          17        1.223237   0.011041
+17          18        1.275519   0.013805
+18          19        1.232285   0.011214
+19          20        1.230442   0.013214
+20          21        1.098577   0.010138
+21          22        1.192160   0.017194
+22          23        1.127992   0.011468
+23          24        1.219628   0.013742
+24          25        1.193626   0.008251
+25          26        0.759065   0.009345
+26          27        0.761123   0.009345
+27          28        0.731565   0.016390
+28          29        0.766273   0.007942
+29          30        0.619145   0.006222
+30          31        0.762939   0.015404
+31          32        0.786375   0.014656
+32          33        0.767978   0.009165
+33          34        0.614135   0.003947
+34          35        0.701311   0.007942
+35          36        0.755756   0.009782
+36          37        0.540665   0.006532
+37          38        0.741132   0.010286
+38          39        0.752451   0.007347
+39          40        0.766242   0.008613
+40          41        0.746536   0.005598
+41          42        0.797140   0.009345
+42          43        0.684098   0.010037
+</pre></div></div>
+</div>
+<p>Similar, we can use the Fay-Herriot method as follows</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## FH method</span>
+<span class="n">fh_model_fh</span> <span class="o">=</span> <span class="n">EblupAreaModel</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;FH&quot;</span><span class="p">)</span>
+<span class="n">fh_model_fh</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">yhat</span><span class="o">=</span><span class="n">yhat</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">error_std</span><span class="o">=</span><span class="n">sigma_e</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">milk_est_fh</span> <span class="o">=</span> <span class="n">fh_model_fh</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">milk_est_fh</span> <span class="o">=</span> <span class="n">fh_model_fh</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;small_area&quot;</span><span class="p">,</span> <span class="s2">&quot;eblup_estimate&quot;</span><span class="p">,</span> <span class="s2">&quot;eblup_mse&quot;</span><span class="p">])</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The dataframe version of the ML area level estimates:</span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">milk_est_fh</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+The dataframe version of the ML area level estimates:
+
+     small_area  eblup_estimate  eblup_mse
+0            1        1.017976   0.012757
+1            2        1.044964   0.005314
+2            3        1.064481   0.005632
+3            4        0.770692   0.008323
+4            5        0.852512   0.009284
+5            6        0.973826   0.011178
+6            7        1.050857   0.014868
+7            8        1.096165   0.010253
+8            9        1.210505   0.013471
+9           10        1.185640   0.014095
+10          11        0.797569   0.007558
+11          12        1.202150   0.015325
+12          13        1.200459   0.012039
+13          14        0.988971   0.011640
+14          15        1.186745   0.011467
+15          16        1.157992   0.011182
+16          17        1.224223   0.010424
+17          18        1.278680   0.012914
+18          19        1.233566   0.010581
+19          20        1.231860   0.012386
+20          21        1.095955   0.009600
+21          22        1.192213   0.015890
+22          23        1.125997   0.010811
+23          24        1.220695   0.012858
+24          25        1.193687   0.007865
+25          26        0.760244   0.008855
+26          27        0.762358   0.008855
+27          28        0.732288   0.015042
+28          29        0.767459   0.007569
+29          30        0.617310   0.005975
+30          31        0.764997   0.014212
+31          32        0.789315   0.013572
+32          33        0.769376   0.008692
+33          34        0.612861   0.003833
+34          35        0.700962   0.007569
+35          36        0.756891   0.009253
+36          37        0.537193   0.006264
+37          38        0.741882   0.009709
+38          39        0.753251   0.007020
+39          40        0.767519   0.008186
+40          41        0.747059   0.005391
+41          42        0.799363   0.008855
+42          43        0.683161   0.009484
+</pre></div></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019-2020, samplics.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
