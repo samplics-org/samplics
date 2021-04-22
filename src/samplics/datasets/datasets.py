@@ -126,7 +126,20 @@ def load_nhanes2brr():
 
 
 def load_nhanes2jk():
-    pass
+    colnames = None
+    name = "NHANES II Subsample with jackknife weights"
+    description = "A subset of NHANES II data with jackknife weights. This file is not meant to be representative of NHANES II. It is just an subset to illustrate the syntax in this tutorial."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "nhanes2jk_subset.csv",
+        colnames=colnames,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
 
 
 breakpoint()
