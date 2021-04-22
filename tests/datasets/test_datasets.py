@@ -31,6 +31,7 @@ def test_loading_psu_frame():
     ]
 
 
+# breakpoint()
 def test_loading_psu_sample():
     psu_sample = PSUSample()
     psu_sample.load_data()

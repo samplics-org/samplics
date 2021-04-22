@@ -7,6 +7,96 @@ from os.path import dirname, join
 import pandas as pd
 
 
+def load_dataset(
+    file_name: str,
+    colnames: Optional[list],
+    name: str,
+    description: str,
+    design: dict,
+    source: str,
+) -> None:
+
+    module_path = dirname(__file__)
+    file_path = join(module_path, "data", file_name)
+    df = pd.read_csv(file_path)
+    if colnames is not None:
+        df = df[colnames]
+    nrows, ncols = df.shape
+
+    return {
+        "name": name,
+        "description": description,
+        "ncols": ncols,
+        "nrows": nrows,
+        "data": df,
+        "design": design,
+        "source": source,
+    }
+
+
+def load_psu_frame():
+    name = "PSU Frame"
+    description = "A simulated census data."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "psu_frame.csv",
+        colnames=None,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
+
+
+breakpoint()
+
+
+def load_psu_sample():
+    pass
+
+
+def load_ssu_sample():
+    pass
+
+
+def load_nhanes2():
+    pass
+
+
+def load_nhanes2brr():
+    pass
+
+
+def load_nhanes2jk():
+    pass
+
+
+def load_nmhis():
+    pass
+
+
+def load_auto():
+    pass
+
+
+def load_birth():
+    pass
+
+
+def load_county_crop():
+    pass
+
+
+def load_county_crop_means():
+    pass
+
+
+def load_expenditure_milk():
+    pass
+
+
 class _Dataset:
     """The base class for the datasets included on the library"""
 
