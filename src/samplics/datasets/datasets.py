@@ -142,15 +142,41 @@ def load_nhanes2jk():
     )
 
 
-breakpoint()
-
-
 def load_nmhis():
-    pass
+    colnames = None
+    name = "NMIHS Subsample"
+    description = "A subset of NMHIS data. This file is not meant to be representative of NMHIS. It is just an subset to illustrate the syntax in this tutorial."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "nmihs_subset.csv",
+        colnames=colnames,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
 
 
 def load_auto():
-    pass
+    colnames = None
+    name = "Birth Sample"
+    description = "The Birth sample data."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "auto.csv",
+        colnames=colnames,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
+
+
+breakpoint()
 
 
 def load_birth():
