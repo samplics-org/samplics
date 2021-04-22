@@ -7,7 +7,7 @@ from os.path import dirname, join
 import pandas as pd
 
 
-def load_dataset(
+def _load_dataset(
     file_name: str,
     colnames: Optional[list],
     name: str,
@@ -40,7 +40,7 @@ def load_psu_frame():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "psu_frame.csv",
         colnames=None,
         name=name,
@@ -57,7 +57,7 @@ def load_psu_sample():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "psu_sample.csv",
         colnames=colnames,
         name=name,
@@ -74,7 +74,7 @@ def load_ssu_sample():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "ssu_sample.csv",
         colnames=colnames,
         name=name,
@@ -100,7 +100,7 @@ def load_nhanes2():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "nhanes2.csv",
         colnames=colnames,
         name=name,
@@ -117,7 +117,7 @@ def load_nhanes2brr():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "nhanes2brr_subset.csv",
         colnames=colnames,
         name=name,
@@ -134,7 +134,7 @@ def load_nhanes2jk():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "nhanes2jk_subset.csv",
         colnames=colnames,
         name=name,
@@ -151,7 +151,7 @@ def load_nmhis():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "nmihs_subset.csv",
         colnames=colnames,
         name=name,
@@ -168,7 +168,7 @@ def load_auto():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "auto.csv",
         colnames=colnames,
         name=name,
@@ -185,7 +185,7 @@ def load_birth():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "birth.csv",
         colnames=colnames,
         name=name,
@@ -202,7 +202,7 @@ def load_county_crop():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "countycrop.csv",
         colnames=colnames,
         name=name,
@@ -225,7 +225,7 @@ def load_county_crop_means():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "countycrop_means.csv",
         colnames=colnames,
         name=name,
@@ -249,7 +249,7 @@ def load_expenditure_milk():
     design = {}
     source = ""
 
-    return load_dataset(
+    return _load_dataset(
         "expenditure_on_milk.csv",
         colnames=colnames,
         name=name,
