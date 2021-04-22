@@ -50,15 +50,39 @@ def load_psu_frame():
     )
 
 
-breakpoint()
-
-
 def load_psu_sample():
-    pass
+    name = "PSU Sample"
+    description = "The PSU sample obtained from the simulated PSU frame."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "psu_sample.csv",
+        colnames=None,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
 
 
 def load_ssu_sample():
-    pass
+    name = "SSU Sample"
+    description = "The SSU sample obtained from the simulated SSU frame."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "ssu_sample.csv",
+        colnames=None,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
+
+
+breakpoint()
 
 
 def load_nhanes2():
