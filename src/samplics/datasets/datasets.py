@@ -176,23 +176,72 @@ def load_auto():
     )
 
 
-breakpoint()
-
-
 def load_birth():
-    pass
+    colnames = None
+    name = "Auto Sample"
+    description = "The Auto sample data."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "birth.csv",
+        colnames=colnames,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
 
 
 def load_county_crop():
-    pass
+    colnames = None
+    name = "County Crop Sample"
+    description = "The County Crop Areas sample data."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "countycrop.csv",
+        colnames=colnames,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
 
 
 def load_county_crop_means():
-    pass
+    colnames = None
+    name = "County Crop Area Means"
+    description = "The County Crop Area Means data."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "countycrop_means.csv",
+        colnames=colnames,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
 
 
 def load_expenditure_milk():
-    pass
+    colnames = None
+    name = "Expenditure on Milk"
+    description = "The expenditure on milk data."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "expenditure_on_milk.csv",
+        colnames=colnames,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
 
 
 class _Dataset:
@@ -424,10 +473,10 @@ class CountyCrop(_Dataset):
     def load_data(
         self,
     ) -> None:
-        """Load countycropareas.csv file to create the data member"""
+        """Load countycrop.csv file to create the data member"""
 
         self._load_data(
-            "countycropareas.csv",
+            "countycrop.csv",
             colnames=["county_id", "corn_area", "soybeans_area", "corn_pixel", "soybeans_pixel"],
         )
 
@@ -447,10 +496,10 @@ class CountyCropMeans(_Dataset):
     def load_data(
         self,
     ) -> None:
-        """Load countycropareas_means.csv file to create the data member"""
+        """Load countycrop_means.csv file to create the data member"""
 
         self._load_data(
-            "countycropareas_means.csv",
+            "countycrop_means.csv",
             colnames=[
                 "county_id",
                 "samp_segments",
