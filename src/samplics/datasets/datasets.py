@@ -82,11 +82,23 @@ def load_ssu_sample():
     )
 
 
-breakpoint()
-
-
 def load_nhanes2():
-    pass
+    name = "NHANES II Subsample"
+    description = "A subset of NHANES II data. This file is not meant to be representative of NHANES II. It is just an subset to illustrate the syntax in this tutorial."
+    design = {}
+    source = ""
+
+    return load_dataset(
+        "nhanes2.csv",
+        colnames=None,
+        name=name,
+        description=description,
+        design=design,
+        source=source,
+    )
+
+
+breakpoint()
 
 
 def load_nhanes2brr():
