@@ -9,14 +9,14 @@ This tutorial is intended for users with basic knowledge of Python. It is assume
 
 Datasets for the tutorial
 -------------------------
-The module *datasets* allows the user to load the datasets used in this tutorial. Note that the datasets are only used to illustrate the syntax and APIs of *samplics*. **Many of the datasets in this tutorial are subsets of actual samples but DO NOT represent these samples**. The datasets were subseted from existing samples to reduce the size of the files.  Each dataset is represented by a class with the members: *name*, *description*, *nrows*, *ncols*, *design*, *source*, and, *data*. The list of datasets are the following:
+The module *datasets* allows the user to load the datasets used in this tutorial. Note that the datasets are only used to illustrate the syntax and APIs of *samplics*. **Many of the datasets in this tutorial are subsets of actual samples but DO NOT represent these samples**. The datasets were subseted from existing samples to reduce the size of the files.  Each dataset can be loaded using the function load_xxx() where xxx indicates the dataset. For example, *load_psu_frame()* loads the PSU frame dataset and return a dictionary with the following members: *name*, *description*, *nrows*, *ncols*, *design*, *source*, and, *data*. The list of datasets are the following:
 
-* **Birth**: This dataset represent a city data of categories of birth by age group. The dataset was obtained through the public stata API.
-* **CountyCrop** and **CountryCropMeans**: These datasets were used by Battese, G.E., Harter, R.M. and Fuller, W.A. [#battese1988]_ for their pioner paper on small area estimation.
-* **ExpenditureMilk**: The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. This dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006).
-* **Nhanes2**, **Nhanes2brr**, **Nhanes2jk**: these datasets were obtained from the NHANES [#mcdowell1981]_. As mentioned above, the datasets are only subsets of the full sample and do not represent the NHANES II study. This data is only useful for illustrating the syntax of *samplics*. These datasets should not be used to conduct any analysis of NHANES nor use the numbers for any statistical analysis. The original data was obtained through the public stata API.
-* **Nmihs**: The dataset is a subset of the National Maternal and Infant Health Survey (NMIHS) sample [#gonzalez1992]_. The dataset should not be used to conduct any analysis of NMIHS nor use the numbers for any statistical analysis. The original data was obtained through the public stata API.
-* **PSUFrame**, **PSUSample**, **SSUSample**: these are simulated datasets to illustrate the selectionof primary and secondary sampling units.
+* **Birth**: This dataset represent a city data of categories of birth by age group. The dataset was obtained through the public stata API. Use *load_birth()* to load the dataset.
+* **CountyCrop** and **CountryCropMeans**: These datasets were used by Battese, G.E., Harter, R.M. and Fuller, W.A. [#battese1988]_ for their pioner paper on small area estimation. Use *load_county_crop()* and *load_county_crop_means()* to load the datasets.
+* **ExpenditureMilk**: The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. This dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006). Use *load_expenditure_milk()* to load the dataset.
+* **Nhanes2**, **Nhanes2brr**, **Nhanes2jk**: these datasets were obtained from the NHANES [#mcdowell1981]_. As mentioned above, the datasets are only subsets of the full sample and do not represent the NHANES II study. This data is only useful for illustrating the syntax of *samplics*. These datasets should not be used to conduct any analysis of NHANES nor use the numbers for any statistical analysis. The original data was obtained through the public stata API. Use *load_nhanes2()*, *load_nhanes2brr()*, and *load_nhanes2jk()* to load the datasets.
+* **Nmihs**: The dataset is a subset of the National Maternal and Infant Health Survey (NMIHS) sample [#gonzalez1992]_. The dataset should not be used to conduct any analysis of NMIHS nor use the numbers for any statistical analysis. The original data was obtained through the public stata API. Use *load_nmihs()* to load the dataset.
+* **PSUFrame**, **PSUSample**, **SSUSample**: these are simulated datasets to illustrate the selectionof primary and secondary sampling units. Use *load_psu_frame()*, *load_psu_sample()*, and *load_ssu_sample()* to load the datasets.
 
 Let's assume we want to load the PSU frame, we could write the following code.
 
@@ -25,16 +25,13 @@ Let's assume we want to load the PSU frame, we could write the following code.
    import samplics
 
    # Import appropriate class.
-   from samplics.datasets import PSUFrame
+   from samplics.datasets import load_psu_frame
 
-   # Instantiate an object to store the dataset and its metadata
-   psu_frame_cls = PSUFrame()
-
-   # Load the datasets to the class instance. 
-   psu_frame_cls.load_data()
+   # Load the dataset and its metadata into the dictionary psu_frame_dict
+   psu_frame_dict = load_psu_frame()
 
    # Store the datasets in the variable psu_frame (optional)
-   psu_frame = psu_frame_cls.data
+   psu_frame = psu_frame_dict["data"]
 
 **Important**: The datasets should not be used for any statistical analysis. No number shown in this tutorial shall be used for any statistical analysis. All the examples are exclusively for illustrating the syntax of *samplics*.
 
