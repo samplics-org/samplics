@@ -375,16 +375,25 @@ class SampleSize:
         if self.samp_size is None:
             raise AssertionError("No sample size calculated.")
         else:
-            if self.stratification:
+            if col_names is None and self.stratification:
                 return dict_to_dataframe(
                     ["_stratum", "_target", "_half_ci", "_samp_size"],
                     self.target,
                     self.half_ci,
                     self.samp_size,
                 )
-            if not self.stratification:
+            if col_names is None and not self.stratification:
                 return dict_to_dataframe(
                     ["_target", "_half_ci", "_samp_size"],
+                    self.target,
+                    self.half_ci,
+                    self.samp_size,
+                )
+            if col_names is not None:
+                if len(col_names) not in (3, 4):
+                    raise AssertionError("'col_names' must be a list of 3 or 4 strings")
+                return dict_to_dataframe(
+                    col_names,
                     self.target,
                     self.half_ci,
                     self.samp_size,
