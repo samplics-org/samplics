@@ -3,7 +3,6 @@ import pandas as pd
 import pytest
 
 from samplics.categorical import Tabulation
-from samplics.estimation import TaylorEstimator
 
 
 birthcat = pd.read_csv(
@@ -19,10 +18,10 @@ pop = birthcat["pop"]
 tbl_count = Tabulation("count")
 
 
-@pytest.mark.xfail(strict=True, reason="Parameter not valid")
-@pytest.mark.parametrize("param", ["total", "mean", "ratio", "other"])
-def test_not_valid_parameter(param):
-    tbl = Tabulation(param)
+# @pytest.mark.xfail(strict=True, reason="Parameter not valid")
+# @pytest.mark.parametrize("param", ["total", "mean", "ratio", "other"])
+# def test_not_valid_parameter(param):
+#     tbl = Tabulation(param)
 
 
 tbl_count.tabulate(birth_cat, remove_nan=True)

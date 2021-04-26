@@ -75,12 +75,20 @@ class _SurveyEstimator:
             and isinstance(self.upper_ci, dict)
             and isinstance(self.coef_var, dict)
         ):
-            estimation["DOMAINS"] = self.domains
-            estimation[parameter] = self.point_est.values()
-            estimation["SE"] = self.stderror.values()
-            estimation["LCI"] = self.lower_ci.values()
-            estimation["UCI"] = self.upper_ci.values()
-            estimation["CV"] = self.coef_var.values()
+            if self.domains is not None:
+                estimation["DOMAINS"] = self.domains
+                estimation[parameter] = self.point_est.values()
+                estimation["SE"] = self.stderror.values()
+                estimation["LCI"] = self.lower_ci.values()
+                estimation["UCI"] = self.upper_ci.values()
+                estimation["CV"] = self.coef_var.values()
+            else:
+                estimation["LEVELS"] = self.point_est.keys()
+                estimation[parameter] = self.point_est.values()
+                estimation["SE"] = self.stderror.values()
+                estimation["LCI"] = self.lower_ci.values()
+                estimation["UCI"] = self.upper_ci.values()
+                estimation["CV"] = self.coef_var.values()
         else:
             estimation[parameter] = [self.point_est]
             estimation["SE"] = [self.stderror]
@@ -107,6 +115,11 @@ class _SurveyEstimator:
             self.number_psus = np.unique(psu).size if psu.size > 1 else samp_weight.size
             self.number_strata = 1
         elif psu.size > 1:
+            # if type object ("O") change it to str, otherwise np.unique will fail
+            if stratum.dtype == "O":
+                stratum = stratum.astype(str)
+            if psu.dtype == "O":
+                psu = psu.astype(str)
             self.number_psus = np.unique([stratum, psu], axis=1).shape[1]
             self.number_strata = np.unique(stratum).size
         else:
