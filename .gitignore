@@ -129,7 +129,7 @@ dmypy.json
 /datasets
 reference_material
 notebooks/
-presentations/*/
+presentationss/*/
 *.ipynb_checkpoints/*
 roadmap.md
 
