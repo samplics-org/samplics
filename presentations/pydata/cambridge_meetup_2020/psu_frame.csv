@@ -1,0 +1,2352 @@
+region,state,psu,number_households
+Midwest,Illinois,705,586
+Midwest,Illinois,706,520
+Midwest,Illinois,707,744
+Midwest,Illinois,708,913
+Midwest,Illinois,709,354
+Midwest,Illinois,710,854
+Midwest,Illinois,711,538
+Midwest,Illinois,712,534
+Midwest,Illinois,713,437
+Midwest,Illinois,714,451
+Midwest,Illinois,715,523
+Midwest,Illinois,716,672
+Midwest,Illinois,717,400
+Midwest,Illinois,718,677
+Midwest,Illinois,719,483
+Midwest,Illinois,720,621
+Midwest,Illinois,721,954
+Midwest,Illinois,722,280
+Midwest,Illinois,723,1143
+Midwest,Illinois,724,675
+Midwest,Illinois,725,549
+Midwest,Illinois,726,998
+Midwest,Illinois,727,660
+Midwest,Illinois,728,427
+Midwest,Illinois,729,935
+Midwest,Illinois,730,775
+Midwest,Illinois,731,532
+Midwest,Illinois,732,529
+Midwest,Illinois,733,793
+Midwest,Illinois,734,487
+Midwest,Illinois,735,1086
+Midwest,Illinois,736,345
+Midwest,Illinois,737,406
+Midwest,Illinois,738,385
+Midwest,Illinois,739,1180
+Midwest,Illinois,740,528
+Midwest,Illinois,741,765
+Midwest,Illinois,742,655
+Midwest,Illinois,743,1205
+Midwest,Illinois,744,661
+Midwest,Illinois,745,468
+Midwest,Illinois,746,529
+Midwest,Illinois,747,343
+Midwest,Illinois,748,418
+Midwest,Illinois,749,401
+Midwest,Illinois,750,411
+Midwest,Illinois,751,1113
+Midwest,Illinois,752,855
+Midwest,Illinois,753,645
+Midwest,Illinois,754,439
+Midwest,Illinois,755,318
+Midwest,Illinois,756,351
+Midwest,Illinois,757,341
+Midwest,Illinois,758,380
+Midwest,Illinois,759,1011
+Midwest,Illinois,760,337
+Midwest,Illinois,761,550
+Midwest,Illinois,762,585
+Midwest,Illinois,763,477
+Midwest,Illinois,764,792
+Midwest,Illinois,765,414
+Midwest,Illinois,766,421
+Midwest,Illinois,767,664
+Midwest,Illinois,768,729
+Midwest,Illinois,769,417
+Midwest,Illinois,770,469
+Midwest,Illinois,771,554
+Midwest,Illinois,772,504
+Midwest,Illinois,773,457
+Midwest,Illinois,774,672
+Midwest,Illinois,775,351
+Midwest,Illinois,776,479
+Midwest,Illinois,777,318
+Midwest,Illinois,778,524
+Midwest,Illinois,779,808
+Midwest,Illinois,780,373
+Midwest,Illinois,781,287
+Midwest,Illinois,782,426
+Midwest,Illinois,783,468
+Midwest,Illinois,784,516
+Midwest,Illinois,785,427
+Midwest,Illinois,786,389
+Midwest,Illinois,787,429
+Midwest,Illinois,788,518
+Midwest,Illinois,789,564
+Midwest,Illinois,790,383
+Midwest,Illinois,791,446
+Midwest,Illinois,792,558
+Midwest,Indiana,793,507
+Midwest,Indiana,794,489
+Midwest,Indiana,795,400
+Midwest,Indiana,796,669
+Midwest,Indiana,797,775
+Midwest,Indiana,798,680
+Midwest,Indiana,799,657
+Midwest,Indiana,800,395
+Midwest,Indiana,801,593
+Midwest,Indiana,802,816
+Midwest,Indiana,803,664
+Midwest,Indiana,804,598
+Midwest,Indiana,805,451
+Midwest,Indiana,806,722
+Midwest,Indiana,807,442
+Midwest,Indiana,808,594
+Midwest,Indiana,809,612
+Midwest,Indiana,810,640
+Midwest,Indiana,811,670
+Midwest,Indiana,812,417
+Midwest,Indiana,813,748
+Midwest,Indiana,814,846
+Midwest,Indiana,815,671
+Midwest,Indiana,816,491
+Midwest,Indiana,817,478
+Midwest,Indiana,818,469
+Midwest,Indiana,819,443
+Midwest,Indiana,820,456
+Midwest,Indiana,821,554
+Midwest,Indiana,822,424
+Midwest,Indiana,823,651
+Midwest,Indiana,824,578
+Midwest,Indiana,825,362
+Midwest,Indiana,826,530
+Midwest,Indiana,827,548
+Midwest,Indiana,828,340
+Midwest,Indiana,829,407
+Midwest,Indiana,830,443
+Midwest,Indiana,831,508
+Midwest,Indiana,832,274
+Midwest,Indiana,833,708
+Midwest,Indiana,834,441
+Midwest,Indiana,835,664
+Midwest,Indiana,836,562
+Midwest,Indiana,837,431
+Midwest,Indiana,838,430
+Midwest,Indiana,839,469
+Midwest,Indiana,840,491
+Midwest,Indiana,841,620
+Midwest,Indiana,842,428
+Midwest,Iowa,843,935
+Midwest,Iowa,844,730
+Midwest,Iowa,845,471
+Midwest,Iowa,846,565
+Midwest,Iowa,847,437
+Midwest,Iowa,848,628
+Midwest,Iowa,849,820
+Midwest,Iowa,850,689
+Midwest,Iowa,851,561
+Midwest,Iowa,852,428
+Midwest,Iowa,853,678
+Midwest,Iowa,854,641
+Midwest,Iowa,855,685
+Midwest,Iowa,856,884
+Midwest,Iowa,857,492
+Midwest,Iowa,858,705
+Midwest,Iowa,859,408
+Midwest,Iowa,860,544
+Midwest,Iowa,861,728
+Midwest,Iowa,862,477
+Midwest,Iowa,863,596
+Midwest,Iowa,864,332
+Midwest,Kansas,865,462
+Midwest,Kansas,866,539
+Midwest,Kansas,867,499
+Midwest,Kansas,868,541
+Midwest,Kansas,869,647
+Midwest,Kansas,870,749
+Midwest,Kansas,871,921
+Midwest,Kansas,872,735
+Midwest,Kansas,873,477
+Midwest,Kansas,874,773
+Midwest,Kansas,875,523
+Midwest,Kansas,876,510
+Midwest,Kansas,877,495
+Midwest,Kansas,878,398
+Midwest,Kansas,879,506
+Midwest,Kansas,880,398
+Midwest,Kansas,881,335
+Midwest,Kansas,882,600
+Midwest,Kansas,883,517
+Midwest,Kansas,884,618
+Midwest,Kansas,885,298
+Midwest,Kansas,886,387
+Midwest,Michigan,1061,1195
+Midwest,Michigan,1062,459
+Midwest,Michigan,1063,1003
+Midwest,Michigan,1064,1339
+Midwest,Michigan,1065,1201
+Midwest,Michigan,1066,797
+Midwest,Michigan,1067,454
+Midwest,Michigan,1068,462
+Midwest,Michigan,1069,486
+Midwest,Michigan,1070,614
+Midwest,Michigan,1071,522
+Midwest,Michigan,1072,989
+Midwest,Michigan,1073,1203
+Midwest,Michigan,1074,491
+Midwest,Michigan,1075,545
+Midwest,Michigan,1076,554
+Midwest,Michigan,1077,1035
+Midwest,Michigan,1078,1236
+Midwest,Michigan,1079,857
+Midwest,Michigan,1080,605
+Midwest,Michigan,1081,442
+Midwest,Michigan,1082,832
+Midwest,Michigan,1083,373
+Midwest,Michigan,1084,374
+Midwest,Michigan,1085,715
+Midwest,Michigan,1086,287
+Midwest,Michigan,1087,461
+Midwest,Michigan,1088,374
+Midwest,Michigan,1089,424
+Midwest,Michigan,1090,630
+Midwest,Michigan,1091,920
+Midwest,Michigan,1092,374
+Midwest,Michigan,1093,615
+Midwest,Michigan,1094,648
+Midwest,Michigan,1095,871
+Midwest,Michigan,1096,713
+Midwest,Michigan,1097,472
+Midwest,Michigan,1098,783
+Midwest,Michigan,1099,416
+Midwest,Michigan,1100,312
+Midwest,Michigan,1101,867
+Midwest,Michigan,1102,635
+Midwest,Michigan,1103,440
+Midwest,Michigan,1104,521
+Midwest,Michigan,1105,799
+Midwest,Michigan,1106,360
+Midwest,Michigan,1107,280
+Midwest,Michigan,1108,440
+Midwest,Michigan,1109,507
+Midwest,Michigan,1110,574
+Midwest,Michigan,1111,567
+Midwest,Michigan,1112,335
+Midwest,Michigan,1113,568
+Midwest,Michigan,1114,362
+Midwest,Michigan,1115,710
+Midwest,Michigan,1116,634
+Midwest,Michigan,1117,388
+Midwest,Michigan,1118,384
+Midwest,Michigan,1119,439
+Midwest,Michigan,1120,611
+Midwest,Michigan,1121,385
+Midwest,Michigan,1122,446
+Midwest,Michigan,1123,352
+Midwest,Michigan,1124,351
+Midwest,Michigan,1125,352
+Midwest,Michigan,1126,799
+Midwest,Michigan,1127,241
+Midwest,Michigan,1128,707
+Midwest,Minnesota,1129,396
+Midwest,Minnesota,1130,304
+Midwest,Minnesota,1131,1361
+Midwest,Minnesota,1132,1036
+Midwest,Minnesota,1133,955
+Midwest,Minnesota,1134,706
+Midwest,Minnesota,1135,985
+Midwest,Minnesota,1136,361
+Midwest,Minnesota,1137,949
+Midwest,Minnesota,1138,384
+Midwest,Minnesota,1139,369
+Midwest,Minnesota,1140,774
+Midwest,Minnesota,1141,272
+Midwest,Minnesota,1142,271
+Midwest,Minnesota,1143,285
+Midwest,Minnesota,1144,266
+Midwest,Minnesota,1145,423
+Midwest,Minnesota,1146,993
+Midwest,Minnesota,1147,1050
+Midwest,Minnesota,1148,808
+Midwest,Minnesota,1149,394
+Midwest,Minnesota,1150,295
+Midwest,Minnesota,1151,250
+Midwest,Minnesota,1152,831
+Midwest,Minnesota,1153,336
+Midwest,Minnesota,1154,284
+Midwest,Minnesota,1155,324
+Midwest,Minnesota,1156,634
+Midwest,Minnesota,1157,1074
+Midwest,Minnesota,1158,580
+Midwest,Minnesota,1159,334
+Midwest,Minnesota,1160,304
+Midwest,Minnesota,1161,368
+Midwest,Minnesota,1162,485
+Midwest,Minnesota,1163,868
+Midwest,Minnesota,1164,219
+Midwest,Minnesota,1165,281
+Midwest,Minnesota,1166,197
+Midwest,Minnesota,1167,350
+Midwest,Minnesota,1168,263
+Midwest,Minnesota,1169,332
+Midwest,Minnesota,1170,379
+Midwest,Minnesota,1171,246
+Midwest,Missouri,1193,494
+Midwest,Missouri,1194,406
+Midwest,Missouri,1195,585
+Midwest,Missouri,1196,572
+Midwest,Missouri,1197,631
+Midwest,Missouri,1198,580
+Midwest,Missouri,1199,725
+Midwest,Missouri,1200,759
+Midwest,Missouri,1201,570
+Midwest,Missouri,1202,927
+Midwest,Missouri,1203,819
+Midwest,Missouri,1204,747
+Midwest,Missouri,1205,469
+Midwest,Missouri,1206,273
+Midwest,Missouri,1207,492
+Midwest,Missouri,1208,492
+Midwest,Missouri,1209,1039
+Midwest,Missouri,1210,769
+Midwest,Missouri,1211,358
+Midwest,Missouri,1212,502
+Midwest,Missouri,1213,359
+Midwest,Missouri,1214,665
+Midwest,Missouri,1215,439
+Midwest,Missouri,1216,672
+Midwest,Missouri,1217,428
+Midwest,Missouri,1218,487
+Midwest,Missouri,1219,673
+Midwest,Missouri,1220,434
+Midwest,Missouri,1221,398
+Midwest,Missouri,1222,420
+Midwest,Missouri,1223,475
+Midwest,Missouri,1224,636
+Midwest,Missouri,1225,487
+Midwest,Missouri,1226,645
+Midwest,Missouri,1227,523
+Midwest,Missouri,1228,512
+Midwest,Missouri,1229,362
+Midwest,Missouri,1230,410
+Midwest,Missouri,1231,419
+Midwest,Missouri,1232,759
+Midwest,Missouri,1233,453
+Midwest,Missouri,1234,370
+Midwest,Missouri,1235,546
+Midwest,Missouri,1236,345
+Midwest,Missouri,1237,574
+Midwest,Missouri,1238,503
+Midwest,Missouri,1239,491
+Midwest,Nebraska,1247,916
+Midwest,Nebraska,1248,579
+Midwest,Nebraska,1249,569
+Midwest,Nebraska,1250,649
+Midwest,Nebraska,1251,469
+Midwest,Nebraska,1252,565
+Midwest,Nebraska,1253,514
+Midwest,Nebraska,1254,522
+Midwest,Nebraska,1255,317
+Midwest,Nebraska,1256,581
+Midwest,Nebraska,1257,474
+Midwest,Nebraska,1258,1055
+Midwest,Nebraska,1259,458
+Midwest,Nebraska,1260,300
+Midwest,North Dakota,1603,808
+Midwest,North Dakota,1604,946
+Midwest,North Dakota,1605,585
+Midwest,North Dakota,1606,503
+Midwest,North Dakota,1607,480
+Midwest,Ohio,1608,755
+Midwest,Ohio,1609,518
+Midwest,Ohio,1610,673
+Midwest,Ohio,1611,606
+Midwest,Ohio,1612,663
+Midwest,Ohio,1613,535
+Midwest,Ohio,1614,721
+Midwest,Ohio,1615,581
+Midwest,Ohio,1616,467
+Midwest,Ohio,1617,427
+Midwest,Ohio,1618,727
+Midwest,Ohio,1619,460
+Midwest,Ohio,1620,492
+Midwest,Ohio,1621,474
+Midwest,Ohio,1622,600
+Midwest,Ohio,1623,517
+Midwest,Ohio,1624,479
+Midwest,Ohio,1625,673
+Midwest,Ohio,1626,627
+Midwest,Ohio,1627,359
+Midwest,Ohio,1628,331
+Midwest,Ohio,1629,431
+Midwest,Ohio,1630,632
+Midwest,Ohio,1631,499
+Midwest,Ohio,1632,634
+Midwest,Ohio,1633,563
+Midwest,Ohio,1634,496
+Midwest,Ohio,1635,515
+Midwest,Ohio,1636,644
+Midwest,Ohio,1637,384
+Midwest,Ohio,1638,573
+Midwest,Ohio,1639,345
+Midwest,Ohio,1640,550
+Midwest,Ohio,1641,684
+Midwest,Ohio,1642,343
+Midwest,Ohio,1643,310
+Midwest,Ohio,1644,477
+Midwest,Ohio,1645,592
+Midwest,Ohio,1646,549
+Midwest,Ohio,1647,470
+Midwest,Ohio,1648,667
+Midwest,Ohio,1649,613
+Midwest,Ohio,1650,593
+Midwest,Ohio,1651,440
+Midwest,Ohio,1652,418
+Midwest,Ohio,1653,460
+Midwest,Ohio,1654,861
+Midwest,Ohio,1655,433
+Midwest,Ohio,1656,428
+Midwest,Ohio,1657,451
+Midwest,Ohio,1658,754
+Midwest,Ohio,1659,465
+Midwest,Ohio,1660,552
+Midwest,Ohio,1661,672
+Midwest,Ohio,1662,621
+Midwest,Ohio,1663,448
+Midwest,Ohio,1664,437
+Midwest,Ohio,1665,587
+Midwest,Ohio,1666,441
+Midwest,Ohio,1667,923
+Midwest,Ohio,1668,623
+Midwest,Ohio,1669,557
+Midwest,Ohio,1670,695
+Midwest,Ohio,1671,387
+Midwest,Ohio,1672,440
+Midwest,Ohio,1673,515
+Midwest,Ohio,1674,458
+Midwest,Ohio,1675,361
+Midwest,Ohio,1676,654
+Midwest,Ohio,1677,778
+Midwest,Ohio,1678,673
+Midwest,Ohio,1679,553
+Midwest,Ohio,1680,439
+Midwest,Ohio,1681,463
+Midwest,Ohio,1682,438
+Midwest,Ohio,1683,412
+Midwest,Ohio,1684,516
+Midwest,Ohio,1685,355
+Midwest,Ohio,1686,669
+Midwest,Ohio,1687,590
+Midwest,Ohio,1688,506
+Midwest,Ohio,1689,506
+Midwest,Ohio,1690,443
+Midwest,Ohio,1691,358
+Midwest,Ohio,1692,566
+Midwest,Ohio,1693,513
+Midwest,Ohio,1694,454
+Midwest,Ohio,1695,495
+Midwest,Ohio,1696,398
+Midwest,Ohio,1697,505
+Midwest,Ohio,1698,552
+Midwest,Ohio,1699,409
+Midwest,Ohio,1700,356
+Midwest,South Dakota,1889,625
+Midwest,South Dakota,1890,494
+Midwest,South Dakota,1891,737
+Midwest,South Dakota,1892,745
+Midwest,South Dakota,1893,444
+Midwest,South Dakota,1894,575
+Midwest,Wisconsin,2307,1742
+Midwest,Wisconsin,2308,710
+Midwest,Wisconsin,2309,816
+Midwest,Wisconsin,2310,585
+Midwest,Wisconsin,2311,659
+Midwest,Wisconsin,2312,1685
+Midwest,Wisconsin,2313,1159
+Midwest,Wisconsin,2314,782
+Midwest,Wisconsin,2315,358
+Midwest,Wisconsin,2316,1277
+Midwest,Wisconsin,2317,417
+Midwest,Wisconsin,2318,654
+Midwest,Wisconsin,2319,333
+Midwest,Wisconsin,2320,1251
+Midwest,Wisconsin,2321,559
+Midwest,Wisconsin,2322,558
+Midwest,Wisconsin,2323,495
+Midwest,Wisconsin,2324,685
+Midwest,Wisconsin,2325,637
+Midwest,Wisconsin,2326,392
+Midwest,Wisconsin,2327,251
+Midwest,Wisconsin,2328,247
+Midwest,Wisconsin,2329,218
+Midwest,Wisconsin,2330,249
+Midwest,Wisconsin,2331,1108
+Midwest,Wisconsin,2332,586
+Midwest,Wisconsin,2333,470
+Midwest,Wisconsin,2334,574
+Midwest,Wisconsin,2335,508
+Midwest,Wisconsin,2336,363
+Midwest,Wisconsin,2337,878
+Midwest,Wisconsin,2338,612
+Midwest,Wisconsin,2339,329
+Midwest,Wisconsin,2340,467
+Midwest,Wisconsin,2341,373
+Midwest,Wisconsin,2342,424
+Midwest,Wisconsin,2343,373
+Midwest,Wisconsin,2344,272
+Midwest,Wisconsin,2345,320
+Midwest,Wisconsin,2346,198
+Northeast,Connecticut,421,469
+Northeast,Connecticut,422,361
+Northeast,Connecticut,423,768
+Northeast,Connecticut,424,679
+Northeast,Connecticut,425,955
+Northeast,Connecticut,426,682
+Northeast,Connecticut,427,518
+Northeast,Connecticut,428,470
+Northeast,Connecticut,429,514
+Northeast,Connecticut,430,455
+Northeast,Connecticut,431,752
+Northeast,Connecticut,432,439
+Northeast,Connecticut,433,420
+Northeast,Connecticut,434,723
+Northeast,Connecticut,435,439
+Northeast,Connecticut,436,568
+Northeast,Connecticut,437,394
+Northeast,Connecticut,438,545
+Northeast,Connecticut,439,620
+Northeast,Connecticut,440,493
+Northeast,Connecticut,441,405
+Northeast,Connecticut,442,539
+Northeast,Connecticut,443,454
+Northeast,Connecticut,444,701
+Northeast,Connecticut,445,578
+Northeast,Connecticut,446,401
+Northeast,Maine,955,1030
+Northeast,Maine,956,350
+Northeast,Maine,957,374
+Northeast,Maine,958,511
+Northeast,Maine,959,815
+Northeast,Maine,960,902
+Northeast,Maine,961,688
+Northeast,Maine,962,441
+Northeast,Maine,963,325
+Northeast,Maine,964,350
+Northeast,Massachusetts,1009,587
+Northeast,Massachusetts,1010,494
+Northeast,Massachusetts,1011,435
+Northeast,Massachusetts,1012,615
+Northeast,Massachusetts,1013,487
+Northeast,Massachusetts,1014,534
+Northeast,Massachusetts,1015,566
+Northeast,Massachusetts,1016,472
+Northeast,Massachusetts,1017,360
+Northeast,Massachusetts,1018,786
+Northeast,Massachusetts,1019,419
+Northeast,Massachusetts,1020,679
+Northeast,Massachusetts,1021,615
+Northeast,Massachusetts,1022,481
+Northeast,Massachusetts,1023,417
+Northeast,Massachusetts,1024,605
+Northeast,Massachusetts,1025,488
+Northeast,Massachusetts,1026,435
+Northeast,Massachusetts,1027,582
+Northeast,Massachusetts,1028,479
+Northeast,Massachusetts,1029,689
+Northeast,Massachusetts,1030,505
+Northeast,Massachusetts,1031,785
+Northeast,Massachusetts,1032,842
+Northeast,Massachusetts,1033,588
+Northeast,Massachusetts,1034,496
+Northeast,Massachusetts,1035,440
+Northeast,Massachusetts,1036,900
+Northeast,Massachusetts,1037,378
+Northeast,Massachusetts,1038,530
+Northeast,Massachusetts,1039,459
+Northeast,Massachusetts,1040,409
+Northeast,Massachusetts,1041,465
+Northeast,Massachusetts,1042,468
+Northeast,Massachusetts,1043,375
+Northeast,Massachusetts,1044,518
+Northeast,Massachusetts,1045,564
+Northeast,Massachusetts,1046,405
+Northeast,Massachusetts,1047,385
+Northeast,Massachusetts,1048,486
+Northeast,Massachusetts,1049,534
+Northeast,Massachusetts,1050,458
+Northeast,Massachusetts,1051,549
+Northeast,Massachusetts,1052,896
+Northeast,Massachusetts,1053,438
+Northeast,Massachusetts,1054,641
+Northeast,Massachusetts,1055,497
+Northeast,Massachusetts,1056,482
+Northeast,Massachusetts,1057,500
+Northeast,Massachusetts,1058,423
+Northeast,Massachusetts,1059,401
+Northeast,Massachusetts,1060,452
+Northeast,New Hampshire,1279,515
+Northeast,New Hampshire,1280,518
+Northeast,New Hampshire,1281,413
+Northeast,New Hampshire,1282,444
+Northeast,New Hampshire,1283,832
+Northeast,New Hampshire,1284,619
+Northeast,New Hampshire,1285,575
+Northeast,New Hampshire,1286,749
+Northeast,New Hampshire,1287,479
+Northeast,New Hampshire,1288,488
+Northeast,New Jersey,1289,369
+Northeast,New Jersey,1290,524
+Northeast,New Jersey,1291,392
+Northeast,New Jersey,1292,367
+Northeast,New Jersey,1293,536
+Northeast,New Jersey,1294,369
+Northeast,New Jersey,1295,447
+Northeast,New Jersey,1296,608
+Northeast,New Jersey,1297,626
+Northeast,New Jersey,1298,546
+Northeast,New Jersey,1299,448
+Northeast,New Jersey,1300,427
+Northeast,New Jersey,1301,421
+Northeast,New Jersey,1302,515
+Northeast,New Jersey,1303,531
+Northeast,New Jersey,1304,393
+Northeast,New Jersey,1305,436
+Northeast,New Jersey,1306,391
+Northeast,New Jersey,1307,411
+Northeast,New Jersey,1308,599
+Northeast,New Jersey,1309,401
+Northeast,New Jersey,1310,468
+Northeast,New Jersey,1311,413
+Northeast,New Jersey,1312,349
+Northeast,New Jersey,1313,729
+Northeast,New Jersey,1314,358
+Northeast,New Jersey,1315,469
+Northeast,New Jersey,1316,443
+Northeast,New Jersey,1317,645
+Northeast,New Jersey,1318,500
+Northeast,New Jersey,1319,315
+Northeast,New Jersey,1320,636
+Northeast,New Jersey,1321,339
+Northeast,New Jersey,1322,455
+Northeast,New Jersey,1323,444
+Northeast,New Jersey,1324,643
+Northeast,New Jersey,1325,375
+Northeast,New Jersey,1326,475
+Northeast,New Jersey,1327,437
+Northeast,New Jersey,1328,485
+Northeast,New Jersey,1329,702
+Northeast,New Jersey,1330,542
+Northeast,New Jersey,1331,382
+Northeast,New Jersey,1332,307
+Northeast,New Jersey,1333,531
+Northeast,New Jersey,1334,444
+Northeast,New Jersey,1335,451
+Northeast,New Jersey,1336,313
+Northeast,New Jersey,1337,470
+Northeast,New Jersey,1338,562
+Northeast,New Jersey,1339,361
+Northeast,New Jersey,1340,629
+Northeast,New Jersey,1341,497
+Northeast,New Jersey,1342,391
+Northeast,New Jersey,1343,422
+Northeast,New Jersey,1344,421
+Northeast,New Jersey,1345,453
+Northeast,New Jersey,1346,476
+Northeast,New Jersey,1347,533
+Northeast,New Jersey,1348,340
+Northeast,New Jersey,1349,719
+Northeast,New Jersey,1350,617
+Northeast,New Jersey,1351,342
+Northeast,New Jersey,1352,375
+Northeast,New Jersey,1353,307
+Northeast,New Jersey,1354,404
+Northeast,New Jersey,1355,402
+Northeast,New Jersey,1356,530
+Northeast,New Jersey,1357,349
+Northeast,New Jersey,1358,530
+Northeast,New Jersey,1359,402
+Northeast,New Jersey,1360,349
+Northeast,New Jersey,1361,372
+Northeast,New York,1380,481
+Northeast,New York,1381,351
+Northeast,New York,1382,842
+Northeast,New York,1383,505
+Northeast,New York,1384,689
+Northeast,New York,1385,620
+Northeast,New York,1386,951
+Northeast,New York,1387,471
+Northeast,New York,1388,557
+Northeast,New York,1389,507
+Northeast,New York,1390,965
+Northeast,New York,1391,355
+Northeast,New York,1392,492
+Northeast,New York,1393,416
+Northeast,New York,1394,594
+Northeast,New York,1395,648
+Northeast,New York,1396,395
+Northeast,New York,1397,786
+Northeast,New York,1398,585
+Northeast,New York,1399,393
+Northeast,New York,1400,410
+Northeast,New York,1401,435
+Northeast,New York,1402,475
+Northeast,New York,1403,397
+Northeast,New York,1404,403
+Northeast,New York,1405,553
+Northeast,New York,1406,817
+Northeast,New York,1407,424
+Northeast,New York,1408,479
+Northeast,New York,1409,482
+Northeast,New York,1410,640
+Northeast,New York,1411,634
+Northeast,New York,1412,365
+Northeast,New York,1413,1123
+Northeast,New York,1414,307
+Northeast,New York,1415,431
+Northeast,New York,1416,367
+Northeast,New York,1417,457
+Northeast,New York,1418,820
+Northeast,New York,1419,394
+Northeast,New York,1420,383
+Northeast,New York,1421,559
+Northeast,New York,1422,483
+Northeast,New York,1423,430
+Northeast,New York,1424,710
+Northeast,New York,1425,701
+Northeast,New York,1426,364
+Northeast,New York,1427,713
+Northeast,New York,1428,456
+Northeast,New York,1429,705
+Northeast,New York,1430,671
+Northeast,New York,1431,721
+Northeast,New York,1432,485
+Northeast,New York,1433,351
+Northeast,New York,1434,309
+Northeast,New York,1435,328
+Northeast,New York,1436,374
+Northeast,New York,1437,454
+Northeast,New York,1438,422
+Northeast,New York,1439,1006
+Northeast,New York,1440,864
+Northeast,New York,1441,512
+Northeast,New York,1442,573
+Northeast,New York,1443,620
+Northeast,New York,1444,416
+Northeast,New York,1445,419
+Northeast,New York,1446,337
+Northeast,New York,1447,747
+Northeast,New York,1448,851
+Northeast,New York,1449,564
+Northeast,New York,1450,628
+Northeast,New York,1451,271
+Northeast,New York,1452,445
+Northeast,New York,1453,792
+Northeast,New York,1454,454
+Northeast,New York,1455,374
+Northeast,New York,1456,412
+Northeast,New York,1457,604
+Northeast,New York,1458,719
+Northeast,New York,1459,355
+Northeast,New York,1460,722
+Northeast,New York,1461,730
+Northeast,New York,1462,495
+Northeast,New York,1463,745
+Northeast,New York,1464,422
+Northeast,New York,1465,1274
+Northeast,New York,1466,473
+Northeast,New York,1467,429
+Northeast,New York,1468,626
+Northeast,New York,1469,387
+Northeast,New York,1470,421
+Northeast,New York,1471,560
+Northeast,New York,1472,637
+Northeast,New York,1473,508
+Northeast,New York,1474,317
+Northeast,New York,1475,641
+Northeast,New York,1476,345
+Northeast,New York,1477,566
+Northeast,New York,1478,363
+Northeast,New York,1479,384
+Northeast,New York,1480,574
+Northeast,New York,1481,681
+Northeast,New York,1482,653
+Northeast,New York,1483,615
+Northeast,New York,1484,533
+Northeast,New York,1485,345
+Northeast,New York,1486,618
+Northeast,New York,1487,383
+Northeast,New York,1488,360
+Northeast,New York,1489,480
+Northeast,New York,1490,317
+Northeast,New York,1491,345
+Northeast,New York,1492,372
+Northeast,New York,1493,758
+Northeast,New York,1494,340
+Northeast,New York,1495,593
+Northeast,New York,1496,518
+Northeast,New York,1497,329
+Northeast,New York,1498,559
+Northeast,New York,1499,424
+Northeast,New York,1500,410
+Northeast,New York,1501,296
+Northeast,New York,1502,491
+Northeast,New York,1503,893
+Northeast,New York,1504,870
+Northeast,New York,1505,406
+Northeast,New York,1506,608
+Northeast,New York,1507,585
+Northeast,New York,1508,361
+Northeast,New York,1509,363
+Northeast,New York,1510,603
+Northeast,New York,1511,756
+Northeast,New York,1512,520
+Northeast,New York,1513,413
+Northeast,New York,1514,430
+Northeast,New York,1515,304
+Northeast,New York,1516,347
+Northeast,New York,1517,525
+Northeast,New York,1518,526
+Northeast,New York,1519,307
+Northeast,New York,1520,341
+Northeast,New York,1521,419
+Northeast,New York,1522,495
+Northeast,New York,1523,338
+Northeast,New York,1524,437
+Northeast,Pennsylvania,1760,460
+Northeast,Pennsylvania,1761,496
+Northeast,Pennsylvania,1762,419
+Northeast,Pennsylvania,1763,494
+Northeast,Pennsylvania,1764,963
+Northeast,Pennsylvania,1765,502
+Northeast,Pennsylvania,1766,1372
+Northeast,Pennsylvania,1767,183
+Northeast,Pennsylvania,1768,350
+Northeast,Pennsylvania,1769,806
+Northeast,Pennsylvania,1770,1058
+Northeast,Pennsylvania,1771,1042
+Northeast,Pennsylvania,1772,855
+Northeast,Pennsylvania,1773,1191
+Northeast,Pennsylvania,1774,402
+Northeast,Pennsylvania,1775,583
+Northeast,Pennsylvania,1776,762
+Northeast,Pennsylvania,1777,503
+Northeast,Pennsylvania,1778,310
+Northeast,Pennsylvania,1779,1294
+Northeast,Pennsylvania,1780,543
+Northeast,Pennsylvania,1781,635
+Northeast,Pennsylvania,1782,437
+Northeast,Pennsylvania,1783,380
+Northeast,Pennsylvania,1784,615
+Northeast,Pennsylvania,1785,551
+Northeast,Pennsylvania,1786,497
+Northeast,Pennsylvania,1787,764
+Northeast,Pennsylvania,1788,766
+Northeast,Pennsylvania,1789,556
+Northeast,Pennsylvania,1790,1061
+Northeast,Pennsylvania,1791,718
+Northeast,Pennsylvania,1792,454
+Northeast,Pennsylvania,1793,685
+Northeast,Pennsylvania,1794,546
+Northeast,Pennsylvania,1795,573
+Northeast,Pennsylvania,1796,618
+Northeast,Pennsylvania,1797,325
+Northeast,Pennsylvania,1798,513
+Northeast,Pennsylvania,1799,470
+Northeast,Pennsylvania,1800,932
+Northeast,Pennsylvania,1801,512
+Northeast,Pennsylvania,1802,598
+Northeast,Pennsylvania,1803,1088
+Northeast,Pennsylvania,1804,566
+Northeast,Pennsylvania,1805,294
+Northeast,Pennsylvania,1806,407
+Northeast,Pennsylvania,1807,688
+Northeast,Pennsylvania,1808,635
+Northeast,Pennsylvania,1809,514
+Northeast,Pennsylvania,1810,553
+Northeast,Pennsylvania,1811,1012
+Northeast,Pennsylvania,1812,584
+Northeast,Pennsylvania,1813,514
+Northeast,Pennsylvania,1814,650
+Northeast,Pennsylvania,1815,622
+Northeast,Pennsylvania,1816,757
+Northeast,Pennsylvania,1817,305
+Northeast,Pennsylvania,1818,405
+Northeast,Pennsylvania,1819,450
+Northeast,Pennsylvania,1820,455
+Northeast,Pennsylvania,1821,612
+Northeast,Pennsylvania,1822,447
+Northeast,Pennsylvania,1823,482
+Northeast,Pennsylvania,1824,355
+Northeast,Pennsylvania,1825,380
+Northeast,Pennsylvania,1826,623
+Northeast,Pennsylvania,1827,482
+Northeast,Pennsylvania,1828,704
+Northeast,Pennsylvania,1829,457
+Northeast,Pennsylvania,1830,479
+Northeast,Pennsylvania,1831,1038
+Northeast,Pennsylvania,1832,264
+Northeast,Pennsylvania,1833,294
+Northeast,Pennsylvania,1834,925
+Northeast,Pennsylvania,1835,545
+Northeast,Pennsylvania,1836,451
+Northeast,Pennsylvania,1837,376
+Northeast,Pennsylvania,1838,292
+Northeast,Pennsylvania,1839,590
+Northeast,Pennsylvania,1840,467
+Northeast,Pennsylvania,1841,447
+Northeast,Pennsylvania,1842,442
+Northeast,Pennsylvania,1843,262
+Northeast,Pennsylvania,1844,318
+Northeast,Pennsylvania,1845,326
+Northeast,Pennsylvania,1846,425
+Northeast,Pennsylvania,1847,352
+Northeast,Pennsylvania,1848,378
+Northeast,Pennsylvania,1849,478
+Northeast,Pennsylvania,1850,455
+Northeast,Pennsylvania,1851,211
+Northeast,Rhode Island,1852,641
+Northeast,Rhode Island,1853,551
+Northeast,Rhode Island,1854,758
+Northeast,Rhode Island,1855,497
+Northeast,Rhode Island,1856,713
+Northeast,Rhode Island,1857,549
+Northeast,Rhode Island,1858,573
+Northeast,Vermont,2178,667
+Northeast,Vermont,2179,678
+Northeast,Vermont,2180,634
+Northeast,Vermont,2181,798
+South,Alabama,1,454
+South,Alabama,2,695
+South,Alabama,3,650
+South,Alabama,4,444
+South,Alabama,5,828
+South,Alabama,6,1961
+South,Alabama,7,390
+South,Alabama,8,625
+South,Alabama,9,855
+South,Alabama,10,501
+South,Alabama,11,669
+South,Alabama,12,401
+South,Alabama,13,479
+South,Alabama,14,620
+South,Alabama,15,571
+South,Alabama,16,528
+South,Alabama,17,568
+South,Alabama,18,600
+South,Alabama,19,637
+South,Alabama,20,510
+South,Alabama,21,303
+South,Alabama,22,623
+South,Alabama,23,606
+South,Alabama,24,426
+South,Alabama,25,529
+South,Alabama,26,861
+South,Alabama,27,632
+South,Alabama,28,792
+South,Alabama,29,413
+South,Alabama,30,347
+South,Alabama,31,504
+South,Alabama,32,481
+South,Alabama,33,403
+South,Alabama,34,369
+South,Arkansas,94,789
+South,Arkansas,95,976
+South,Arkansas,96,415
+South,Arkansas,97,502
+South,Arkansas,98,618
+South,Arkansas,99,725
+South,Arkansas,100,669
+South,Arkansas,101,526
+South,Arkansas,102,747
+South,Arkansas,103,522
+South,Arkansas,104,514
+South,Arkansas,105,697
+South,Arkansas,106,647
+South,Arkansas,107,383
+South,Arkansas,108,401
+South,Arkansas,109,655
+South,Arkansas,110,742
+South,Arkansas,111,824
+South,Arkansas,112,525
+South,Arkansas,113,491
+South,Delaware,447,684
+South,Delaware,448,626
+South,Delaware,449,1272
+South,Delaware,450,407
+South,Delaware,451,417
+South,Delaware,452,488
+South,District of Columbia,453,509
+South,District of Columbia,454,882
+South,District of Columbia,455,456
+South,District of Columbia,456,628
+South,District of Columbia,457,552
+South,Florida,458,377
+South,Florida,459,643
+South,Florida,460,648
+South,Florida,461,710
+South,Florida,462,512
+South,Florida,463,839
+South,Florida,464,703
+South,Florida,465,691
+South,Florida,466,451
+South,Florida,467,690
+South,Florida,468,741
+South,Florida,469,1268
+South,Florida,470,456
+South,Florida,471,365
+South,Florida,472,655
+South,Florida,473,890
+South,Florida,474,773
+South,Florida,475,452
+South,Florida,476,815
+South,Florida,477,678
+South,Florida,478,310
+South,Florida,479,539
+South,Florida,480,793
+South,Florida,481,611
+South,Florida,482,1073
+South,Florida,483,651
+South,Florida,484,691
+South,Florida,485,876
+South,Florida,486,433
+South,Florida,487,904
+South,Florida,488,874
+South,Florida,489,822
+South,Florida,490,495
+South,Florida,491,567
+South,Florida,492,710
+South,Florida,493,350
+South,Florida,494,660
+South,Florida,495,792
+South,Florida,496,860
+South,Florida,497,634
+South,Florida,498,710
+South,Florida,499,401
+South,Florida,500,529
+South,Florida,501,525
+South,Florida,502,685
+South,Florida,503,654
+South,Florida,504,469
+South,Florida,505,475
+South,Florida,506,418
+South,Florida,507,489
+South,Florida,508,635
+South,Florida,509,699
+South,Florida,510,422
+South,Florida,511,449
+South,Florida,512,949
+South,Florida,513,600
+South,Florida,514,507
+South,Florida,515,327
+South,Florida,516,404
+South,Florida,517,502
+South,Florida,518,458
+South,Florida,519,481
+South,Florida,520,475
+South,Florida,521,358
+South,Florida,522,583
+South,Florida,523,789
+South,Florida,524,788
+South,Florida,525,367
+South,Florida,526,349
+South,Florida,527,623
+South,Florida,528,501
+South,Florida,529,681
+South,Florida,530,439
+South,Florida,531,608
+South,Florida,532,593
+South,Florida,533,330
+South,Florida,534,937
+South,Florida,535,641
+South,Florida,536,440
+South,Florida,537,438
+South,Florida,538,663
+South,Florida,539,564
+South,Florida,540,490
+South,Florida,541,660
+South,Florida,542,568
+South,Florida,543,358
+South,Florida,544,441
+South,Florida,545,588
+South,Florida,546,290
+South,Florida,547,397
+South,Florida,548,916
+South,Florida,549,327
+South,Florida,550,560
+South,Florida,551,508
+South,Florida,552,529
+South,Florida,553,519
+South,Florida,554,550
+South,Florida,555,487
+South,Florida,556,492
+South,Florida,557,933
+South,Florida,558,420
+South,Florida,559,625
+South,Florida,560,621
+South,Florida,561,700
+South,Florida,562,852
+South,Florida,563,756
+South,Florida,564,591
+South,Florida,565,479
+South,Florida,566,515
+South,Florida,567,613
+South,Florida,568,643
+South,Florida,569,462
+South,Florida,570,824
+South,Florida,571,894
+South,Florida,572,666
+South,Florida,573,441
+South,Florida,574,582
+South,Florida,575,338
+South,Florida,576,648
+South,Florida,577,522
+South,Florida,578,551
+South,Florida,579,570
+South,Florida,580,442
+South,Florida,581,548
+South,Florida,582,480
+South,Florida,583,637
+South,Florida,584,453
+South,Florida,585,468
+South,Florida,586,429
+South,Florida,587,551
+South,Florida,588,628
+South,Florida,589,327
+South,Florida,590,593
+South,Florida,591,749
+South,Florida,592,539
+South,Florida,593,299
+South,Florida,594,877
+South,Florida,595,553
+South,Florida,596,266
+South,Florida,597,426
+South,Florida,598,363
+South,Florida,599,272
+South,Florida,600,257
+South,Florida,601,324
+South,Florida,602,414
+South,Florida,603,305
+South,Florida,604,492
+South,Florida,605,368
+South,Florida,606,391
+South,Florida,607,305
+South,Florida,608,397
+South,Georgia,609,1117
+South,Georgia,610,496
+South,Georgia,611,337
+South,Georgia,612,367
+South,Georgia,613,565
+South,Georgia,614,433
+South,Georgia,615,886
+South,Georgia,616,328
+South,Georgia,617,473
+South,Georgia,618,747
+South,Georgia,619,611
+South,Georgia,620,629
+South,Georgia,621,774
+South,Georgia,622,808
+South,Georgia,623,633
+South,Georgia,624,666
+South,Georgia,625,441
+South,Georgia,626,394
+South,Georgia,627,723
+South,Georgia,628,811
+South,Georgia,629,804
+South,Georgia,630,252
+South,Georgia,631,560
+South,Georgia,632,545
+South,Georgia,633,447
+South,Georgia,634,647
+South,Georgia,635,548
+South,Georgia,636,505
+South,Georgia,637,694
+South,Georgia,638,391
+South,Georgia,639,686
+South,Georgia,640,668
+South,Georgia,641,357
+South,Georgia,642,382
+South,Georgia,643,471
+South,Georgia,644,390
+South,Georgia,645,452
+South,Georgia,646,664
+South,Georgia,647,710
+South,Georgia,648,779
+South,Georgia,649,708
+South,Georgia,650,738
+South,Georgia,651,766
+South,Georgia,652,326
+South,Georgia,653,587
+South,Georgia,654,743
+South,Georgia,655,451
+South,Georgia,656,548
+South,Georgia,657,548
+South,Georgia,658,635
+South,Georgia,659,576
+South,Georgia,660,391
+South,Georgia,661,518
+South,Georgia,662,691
+South,Georgia,663,436
+South,Georgia,664,629
+South,Georgia,665,426
+South,Georgia,666,654
+South,Georgia,667,273
+South,Georgia,668,414
+South,Georgia,669,264
+South,Georgia,670,459
+South,Georgia,671,607
+South,Georgia,672,393
+South,Georgia,673,558
+South,Georgia,674,464
+South,Georgia,675,696
+South,Georgia,676,690
+South,Georgia,677,353
+South,Georgia,678,584
+South,Georgia,679,384
+South,Georgia,680,278
+South,Kentucky,887,458
+South,Kentucky,888,467
+South,Kentucky,889,621
+South,Kentucky,890,451
+South,Kentucky,891,642
+South,Kentucky,892,672
+South,Kentucky,893,519
+South,Kentucky,894,741
+South,Kentucky,895,474
+South,Kentucky,896,587
+South,Kentucky,897,785
+South,Kentucky,898,363
+South,Kentucky,899,448
+South,Kentucky,900,440
+South,Kentucky,901,549
+South,Kentucky,902,454
+South,Kentucky,903,515
+South,Kentucky,904,418
+South,Kentucky,905,812
+South,Kentucky,906,653
+South,Kentucky,907,548
+South,Kentucky,908,553
+South,Kentucky,909,399
+South,Kentucky,910,393
+South,Kentucky,911,482
+South,Kentucky,912,337
+South,Kentucky,913,509
+South,Kentucky,914,822
+South,Kentucky,915,820
+South,Kentucky,916,426
+South,Kentucky,917,451
+South,Kentucky,918,362
+South,Kentucky,919,790
+South,Kentucky,920,505
+South,Louisiana,921,483
+South,Louisiana,922,632
+South,Louisiana,923,816
+South,Louisiana,924,785
+South,Louisiana,925,502
+South,Louisiana,926,468
+South,Louisiana,927,774
+South,Louisiana,928,593
+South,Louisiana,929,534
+South,Louisiana,930,784
+South,Louisiana,931,953
+South,Louisiana,932,394
+South,Louisiana,933,566
+South,Louisiana,934,376
+South,Louisiana,935,644
+South,Louisiana,936,651
+South,Louisiana,937,363
+South,Louisiana,938,396
+South,Louisiana,939,889
+South,Louisiana,940,472
+South,Louisiana,941,528
+South,Louisiana,942,318
+South,Louisiana,943,646
+South,Louisiana,944,627
+South,Louisiana,945,296
+South,Louisiana,946,447
+South,Louisiana,947,468
+South,Louisiana,948,489
+South,Louisiana,949,407
+South,Louisiana,950,366
+South,Louisiana,951,424
+South,Louisiana,952,461
+South,Louisiana,953,411
+South,Louisiana,954,344
+South,Maryland,965,961
+South,Maryland,966,471
+South,Maryland,967,761
+South,Maryland,968,591
+South,Maryland,969,426
+South,Maryland,970,772
+South,Maryland,971,650
+South,Maryland,972,377
+South,Maryland,973,659
+South,Maryland,974,420
+South,Maryland,975,430
+South,Maryland,976,589
+South,Maryland,977,490
+South,Maryland,978,463
+South,Maryland,979,594
+South,Maryland,980,391
+South,Maryland,981,534
+South,Maryland,982,594
+South,Maryland,983,466
+South,Maryland,984,404
+South,Maryland,985,1003
+South,Maryland,986,648
+South,Maryland,987,530
+South,Maryland,988,614
+South,Maryland,989,503
+South,Maryland,990,416
+South,Maryland,991,356
+South,Maryland,992,496
+South,Maryland,993,455
+South,Maryland,994,392
+South,Maryland,995,321
+South,Maryland,996,420
+South,Maryland,997,535
+South,Maryland,998,481
+South,Maryland,999,539
+South,Maryland,1000,553
+South,Maryland,1001,520
+South,Maryland,1002,328
+South,Maryland,1003,758
+South,Maryland,1004,467
+South,Maryland,1005,559
+South,Maryland,1006,370
+South,Maryland,1007,483
+South,Maryland,1008,394
+South,Mississipi,1172,504
+South,Mississipi,1173,736
+South,Mississipi,1174,715
+South,Mississipi,1175,609
+South,Mississipi,1176,656
+South,Mississipi,1177,645
+South,Mississipi,1178,630
+South,Mississipi,1179,363
+South,Mississipi,1180,482
+South,Mississipi,1181,548
+South,Mississipi,1182,610
+South,Mississipi,1183,645
+South,Mississipi,1184,435
+South,Mississipi,1185,402
+South,Mississipi,1186,418
+South,Mississipi,1187,521
+South,Mississipi,1188,500
+South,Mississipi,1189,757
+South,Mississipi,1190,457
+South,Mississipi,1191,461
+South,Mississipi,1192,667
+South,North Carolina,1525,616
+South,North Carolina,1526,510
+South,North Carolina,1527,488
+South,North Carolina,1528,546
+South,North Carolina,1529,432
+South,North Carolina,1530,578
+South,North Carolina,1531,351
+South,North Carolina,1532,520
+South,North Carolina,1533,614
+South,North Carolina,1534,556
+South,North Carolina,1535,774
+South,North Carolina,1536,575
+South,North Carolina,1537,710
+South,North Carolina,1538,582
+South,North Carolina,1539,700
+South,North Carolina,1540,429
+South,North Carolina,1541,494
+South,North Carolina,1542,557
+South,North Carolina,1543,504
+South,North Carolina,1544,488
+South,North Carolina,1545,708
+South,North Carolina,1546,475
+South,North Carolina,1547,565
+South,North Carolina,1548,555
+South,North Carolina,1549,439
+South,North Carolina,1550,553
+South,North Carolina,1551,562
+South,North Carolina,1552,388
+South,North Carolina,1553,539
+South,North Carolina,1554,445
+South,North Carolina,1555,515
+South,North Carolina,1556,622
+South,North Carolina,1557,383
+South,North Carolina,1558,540
+South,North Carolina,1559,498
+South,North Carolina,1560,463
+South,North Carolina,1561,463
+South,North Carolina,1562,394
+South,North Carolina,1563,662
+South,North Carolina,1564,519
+South,North Carolina,1565,536
+South,North Carolina,1566,659
+South,North Carolina,1567,432
+South,North Carolina,1568,341
+South,North Carolina,1569,566
+South,North Carolina,1570,927
+South,North Carolina,1571,549
+South,North Carolina,1572,484
+South,North Carolina,1573,632
+South,North Carolina,1574,727
+South,North Carolina,1575,621
+South,North Carolina,1576,544
+South,North Carolina,1577,419
+South,North Carolina,1578,554
+South,North Carolina,1579,475
+South,North Carolina,1580,591
+South,North Carolina,1581,638
+South,North Carolina,1582,487
+South,North Carolina,1583,780
+South,North Carolina,1584,452
+South,North Carolina,1585,629
+South,North Carolina,1586,517
+South,North Carolina,1587,481
+South,North Carolina,1588,603
+South,North Carolina,1589,395
+South,North Carolina,1590,386
+South,North Carolina,1591,561
+South,North Carolina,1592,568
+South,North Carolina,1593,396
+South,North Carolina,1594,480
+South,North Carolina,1595,471
+South,North Carolina,1596,682
+South,North Carolina,1597,470
+South,North Carolina,1598,440
+South,North Carolina,1599,812
+South,North Carolina,1600,651
+South,North Carolina,1601,625
+South,North Carolina,1602,508
+South,Oklahoma,1701,616
+South,Oklahoma,1702,514
+South,Oklahoma,1703,336
+South,Oklahoma,1704,247
+South,Oklahoma,1705,1080
+South,Oklahoma,1706,339
+South,Oklahoma,1707,392
+South,Oklahoma,1708,509
+South,Oklahoma,1709,355
+South,Oklahoma,1710,812
+South,Oklahoma,1711,348
+South,Oklahoma,1712,476
+South,Oklahoma,1713,702
+South,Oklahoma,1714,501
+South,Oklahoma,1715,485
+South,Oklahoma,1716,557
+South,Oklahoma,1717,657
+South,Oklahoma,1718,553
+South,Oklahoma,1719,616
+South,Oklahoma,1720,420
+South,Oklahoma,1721,473
+South,Oklahoma,1722,1071
+South,Oklahoma,1723,511
+South,Oklahoma,1724,614
+South,Oklahoma,1725,440
+South,Oklahoma,1726,624
+South,Oklahoma,1727,295
+South,Oklahoma,1728,240
+South,South Carolina,1859,636
+South,South Carolina,1860,876
+South,South Carolina,1861,1040
+South,South Carolina,1862,933
+South,South Carolina,1863,729
+South,South Carolina,1864,877
+South,South Carolina,1865,939
+South,South Carolina,1866,480
+South,South Carolina,1867,705
+South,South Carolina,1868,809
+South,South Carolina,1869,503
+South,South Carolina,1870,773
+South,South Carolina,1871,757
+South,South Carolina,1872,730
+South,South Carolina,1873,613
+South,South Carolina,1874,530
+South,South Carolina,1875,546
+South,South Carolina,1876,740
+South,South Carolina,1877,644
+South,South Carolina,1878,841
+South,South Carolina,1879,796
+South,South Carolina,1880,812
+South,South Carolina,1881,651
+South,South Carolina,1882,596
+South,South Carolina,1883,628
+South,South Carolina,1884,517
+South,South Carolina,1885,821
+South,South Carolina,1886,432
+South,South Carolina,1887,483
+South,South Carolina,1888,578
+South,Tennessee,1895,860
+South,Tennessee,1896,533
+South,Tennessee,1897,750
+South,Tennessee,1898,612
+South,Tennessee,1899,571
+South,Tennessee,1900,471
+South,Tennessee,1901,832
+South,Tennessee,1902,766
+South,Tennessee,1903,297
+South,Tennessee,1904,659
+South,Tennessee,1905,494
+South,Tennessee,1906,565
+South,Tennessee,1907,852
+South,Tennessee,1908,524
+South,Tennessee,1909,731
+South,Tennessee,1910,346
+South,Tennessee,1911,599
+South,Tennessee,1912,480
+South,Tennessee,1913,748
+South,Tennessee,1914,835
+South,Tennessee,1915,609
+South,Tennessee,1916,531
+South,Tennessee,1917,495
+South,Tennessee,1918,695
+South,Tennessee,1919,626
+South,Tennessee,1920,621
+South,Tennessee,1921,591
+South,Tennessee,1922,524
+South,Tennessee,1923,292
+South,Tennessee,1924,455
+South,Tennessee,1925,685
+South,Tennessee,1926,482
+South,Tennessee,1927,464
+South,Tennessee,1928,764
+South,Tennessee,1929,505
+South,Tennessee,1930,475
+South,Tennessee,1931,397
+South,Tennessee,1932,595
+South,Tennessee,1933,501
+South,Tennessee,1934,784
+South,Tennessee,1935,361
+South,Tennessee,1936,587
+South,Tennessee,1937,718
+South,Tennessee,1938,410
+South,Tennessee,1939,504
+South,Tennessee,1940,417
+South,Tennessee,1941,449
+South,Tennessee,1942,320
+South,Tennessee,1943,569
+South,Texas,1944,654
+South,Texas,1945,455
+South,Texas,1946,1100
+South,Texas,1947,657
+South,Texas,1948,547
+South,Texas,1949,402
+South,Texas,1950,434
+South,Texas,1951,833
+South,Texas,1952,426
+South,Texas,1953,642
+South,Texas,1954,715
+South,Texas,1955,452
+South,Texas,1956,527
+South,Texas,1957,401
+South,Texas,1958,391
+South,Texas,1959,466
+South,Texas,1960,443
+South,Texas,1961,329
+South,Texas,1962,555
+South,Texas,1963,285
+South,Texas,1964,334
+South,Texas,1965,280
+South,Texas,1966,488
+South,Texas,1967,505
+South,Texas,1968,966
+South,Texas,1969,467
+South,Texas,1970,391
+South,Texas,1971,473
+South,Texas,1972,469
+South,Texas,1973,536
+South,Texas,1974,305
+South,Texas,1975,744
+South,Texas,1976,380
+South,Texas,1977,465
+South,Texas,1978,359
+South,Texas,1979,337
+South,Texas,1980,518
+South,Texas,1981,516
+South,Texas,1982,402
+South,Texas,1983,516
+South,Texas,1984,604
+South,Texas,1985,658
+South,Texas,1986,773
+South,Texas,1987,284
+South,Texas,1988,331
+South,Texas,1989,857
+South,Texas,1990,445
+South,Texas,1991,439
+South,Texas,1992,1049
+South,Texas,1993,448
+South,Texas,1994,340
+South,Texas,1995,817
+South,Texas,1996,325
+South,Texas,1997,429
+South,Texas,1998,510
+South,Texas,1999,533
+South,Texas,2000,321
+South,Texas,2001,462
+South,Texas,2002,602
+South,Texas,2003,506
+South,Texas,2004,454
+South,Texas,2005,648
+South,Texas,2006,453
+South,Texas,2007,617
+South,Texas,2008,436
+South,Texas,2009,1329
+South,Texas,2010,364
+South,Texas,2011,407
+South,Texas,2012,468
+South,Texas,2013,313
+South,Texas,2014,1175
+South,Texas,2015,592
+South,Texas,2016,530
+South,Texas,2017,569
+South,Texas,2018,789
+South,Texas,2019,771
+South,Texas,2020,342
+South,Texas,2021,627
+South,Texas,2022,537
+South,Texas,2023,268
+South,Texas,2024,280
+South,Texas,2025,604
+South,Texas,2026,456
+South,Texas,2027,415
+South,Texas,2028,347
+South,Texas,2029,666
+South,Texas,2030,351
+South,Texas,2031,1001
+South,Texas,2032,444
+South,Texas,2033,197
+South,Texas,2034,414
+South,Texas,2035,345
+South,Texas,2036,521
+South,Texas,2037,635
+South,Texas,2038,404
+South,Texas,2039,451
+South,Texas,2040,319
+South,Texas,2041,624
+South,Texas,2042,697
+South,Texas,2043,369
+South,Texas,2044,538
+South,Texas,2045,255
+South,Texas,2046,358
+South,Texas,2047,385
+South,Texas,2048,305
+South,Texas,2049,418
+South,Texas,2050,571
+South,Texas,2051,237
+South,Texas,2052,400
+South,Texas,2053,666
+South,Texas,2054,366
+South,Texas,2055,395
+South,Texas,2056,445
+South,Texas,2057,485
+South,Texas,2058,560
+South,Texas,2059,366
+South,Texas,2060,605
+South,Texas,2061,437
+South,Texas,2062,660
+South,Texas,2063,555
+South,Texas,2064,369
+South,Texas,2065,459
+South,Texas,2066,545
+South,Texas,2067,307
+South,Texas,2068,648
+South,Texas,2069,466
+South,Texas,2070,640
+South,Texas,2071,631
+South,Texas,2072,808
+South,Texas,2073,526
+South,Texas,2074,266
+South,Texas,2075,721
+South,Texas,2076,235
+South,Texas,2077,407
+South,Texas,2078,436
+South,Texas,2079,415
+South,Texas,2080,383
+South,Texas,2081,536
+South,Texas,2082,650
+South,Texas,2083,348
+South,Texas,2084,355
+South,Texas,2085,402
+South,Texas,2086,354
+South,Texas,2087,729
+South,Texas,2088,594
+South,Texas,2089,264
+South,Texas,2090,529
+South,Texas,2091,1240
+South,Texas,2092,450
+South,Texas,2093,526
+South,Texas,2094,459
+South,Texas,2095,715
+South,Texas,2096,271
+South,Texas,2097,269
+South,Texas,2098,330
+South,Texas,2099,424
+South,Texas,2100,699
+South,Texas,2101,249
+South,Texas,2102,583
+South,Texas,2103,368
+South,Texas,2104,493
+South,Texas,2105,359
+South,Texas,2106,417
+South,Texas,2107,501
+South,Texas,2108,278
+South,Texas,2109,491
+South,Texas,2110,701
+South,Texas,2111,413
+South,Texas,2112,295
+South,Texas,2113,573
+South,Texas,2114,564
+South,Texas,2115,340
+South,Texas,2116,573
+South,Texas,2117,546
+South,Texas,2118,407
+South,Texas,2119,264
+South,Texas,2120,534
+South,Texas,2121,403
+South,Texas,2122,296
+South,Texas,2123,292
+South,Texas,2124,535
+South,Texas,2125,558
+South,Texas,2126,535
+South,Texas,2127,422
+South,Texas,2128,302
+South,Texas,2129,482
+South,Texas,2130,415
+South,Texas,2131,288
+South,Texas,2132,490
+South,Texas,2133,209
+South,Texas,2134,480
+South,Texas,2135,730
+South,Texas,2136,343
+South,Texas,2137,284
+South,Texas,2138,396
+South,Texas,2139,447
+South,Texas,2140,582
+South,Texas,2141,550
+South,Texas,2142,653
+South,Texas,2143,451
+South,Texas,2144,371
+South,Texas,2145,266
+South,Texas,2146,454
+South,Texas,2147,400
+South,Texas,2148,356
+South,Texas,2149,371
+South,Texas,2150,385
+South,Texas,2151,351
+South,Texas,2152,519
+South,Texas,2153,436
+South,Texas,2154,227
+South,Texas,2155,372
+South,Virginia,2182,1010
+South,Virginia,2183,576
+South,Virginia,2184,565
+South,Virginia,2185,477
+South,Virginia,2186,404
+South,Virginia,2187,506
+South,Virginia,2188,977
+South,Virginia,2189,907
+South,Virginia,2190,345
+South,Virginia,2191,888
+South,Virginia,2192,674
+South,Virginia,2193,769
+South,Virginia,2194,700
+South,Virginia,2195,810
+South,Virginia,2196,647
+South,Virginia,2197,879
+South,Virginia,2198,510
+South,Virginia,2199,824
+South,Virginia,2200,523
+South,Virginia,2201,670
+South,Virginia,2202,662
+South,Virginia,2203,489
+South,Virginia,2204,653
+South,Virginia,2205,570
+South,Virginia,2206,534
+South,Virginia,2207,435
+South,Virginia,2208,544
+South,Virginia,2209,747
+South,Virginia,2210,498
+South,Virginia,2211,804
+South,Virginia,2212,480
+South,Virginia,2213,629
+South,Virginia,2214,394
+South,Virginia,2215,561
+South,Virginia,2216,520
+South,Virginia,2217,727
+South,Virginia,2218,467
+South,Virginia,2219,456
+South,Virginia,2220,476
+South,Virginia,2221,880
+South,Virginia,2222,542
+South,Virginia,2223,384
+South,Virginia,2224,703
+South,Virginia,2225,596
+South,Virginia,2226,486
+South,Virginia,2227,477
+South,Virginia,2228,814
+South,Virginia,2229,624
+South,Virginia,2230,713
+South,Virginia,2231,454
+South,Virginia,2232,360
+South,Virginia,2233,347
+South,Virginia,2234,415
+South,Virginia,2235,431
+South,Virginia,2236,460
+South,Virginia,2237,513
+South,West Virginia,2294,838
+South,West Virginia,2295,846
+South,West Virginia,2296,726
+South,West Virginia,2297,661
+South,West Virginia,2298,478
+South,West Virginia,2299,565
+South,West Virginia,2300,442
+South,West Virginia,2301,627
+South,West Virginia,2302,614
+South,West Virginia,2303,366
+South,West Virginia,2304,617
+South,West Virginia,2305,398
+South,West Virginia,2306,475
+West,Alaska,35,268
+West,Alaska,36,770
+West,Alaska,37,422
+West,Alaska,38,583
+West,Alaska,39,214
+West,Arizona,40,992
+West,Arizona,41,520
+West,Arizona,42,466
+West,Arizona,43,339
+West,Arizona,44,688
+West,Arizona,45,767
+West,Arizona,46,500
+West,Arizona,47,644
+West,Arizona,48,478
+West,Arizona,49,541
+West,Arizona,50,493
+West,Arizona,51,609
+West,Arizona,52,369
+West,Arizona,53,777
+West,Arizona,54,505
+West,Arizona,55,496
+West,Arizona,56,752
+West,Arizona,57,404
+West,Arizona,58,446
+West,Arizona,59,412
+West,Arizona,60,926
+West,Arizona,61,438
+West,Arizona,62,652
+West,Arizona,63,409
+West,Arizona,64,467
+West,Arizona,65,467
+West,Arizona,66,357
+West,Arizona,67,600
+West,Arizona,68,453
+West,Arizona,69,573
+West,Arizona,70,478
+West,Arizona,71,514
+West,Arizona,72,507
+West,Arizona,73,517
+West,Arizona,74,251
+West,Arizona,75,510
+West,Arizona,76,454
+West,Arizona,77,315
+West,Arizona,78,345
+West,Arizona,79,314
+West,Arizona,80,570
+West,Arizona,81,401
+West,Arizona,82,392
+West,Arizona,83,548
+West,Arizona,84,868
+West,Arizona,85,487
+West,Arizona,86,488
+West,Arizona,87,426
+West,Arizona,88,602
+West,Arizona,89,295
+West,Arizona,90,505
+West,Arizona,91,397
+West,Arizona,92,617
+West,Arizona,93,376
+West,California,114,688
+West,California,115,611
+West,California,116,736
+West,California,117,385
+West,California,118,935
+West,California,119,448
+West,California,120,683
+West,California,121,691
+West,California,122,753
+West,California,123,600
+West,California,124,708
+West,California,125,737
+West,California,126,886
+West,California,127,460
+West,California,128,690
+West,California,129,378
+West,California,130,314
+West,California,131,462
+West,California,132,799
+West,California,133,377
+West,California,134,739
+West,California,135,482
+West,California,136,495
+West,California,137,574
+West,California,138,526
+West,California,139,510
+West,California,140,553
+West,California,141,448
+West,California,142,849
+West,California,143,480
+West,California,144,1262
+West,California,145,377
+West,California,146,521
+West,California,147,541
+West,California,148,732
+West,California,149,736
+West,California,150,951
+West,California,151,264
+West,California,152,390
+West,California,153,545
+West,California,154,419
+West,California,155,415
+West,California,156,636
+West,California,157,604
+West,California,158,644
+West,California,159,539
+West,California,160,734
+West,California,161,880
+West,California,162,503
+West,California,163,628
+West,California,164,475
+West,California,165,351
+West,California,166,517
+West,California,167,620
+West,California,168,591
+West,California,169,561
+West,California,170,621
+West,California,171,374
+West,California,172,581
+West,California,173,451
+West,California,174,429
+West,California,175,614
+West,California,176,480
+West,California,177,408
+West,California,178,569
+West,California,179,554
+West,California,180,294
+West,California,181,268
+West,California,182,394
+West,California,183,625
+West,California,184,412
+West,California,185,681
+West,California,186,352
+West,California,187,399
+West,California,188,325
+West,California,189,488
+West,California,190,502
+West,California,191,373
+West,California,192,834
+West,California,193,537
+West,California,194,553
+West,California,195,487
+West,California,196,626
+West,California,197,254
+West,California,198,424
+West,California,199,505
+West,California,200,359
+West,California,201,390
+West,California,202,598
+West,California,203,394
+West,California,204,460
+West,California,205,591
+West,California,206,531
+West,California,207,603
+West,California,208,695
+West,California,209,510
+West,California,210,358
+West,California,211,411
+West,California,212,531
+West,California,213,453
+West,California,214,745
+West,California,215,508
+West,California,216,443
+West,California,217,588
+West,California,218,389
+West,California,219,506
+West,California,220,413
+West,California,221,285
+West,California,222,826
+West,California,223,494
+West,California,224,432
+West,California,225,402
+West,California,226,495
+West,California,227,589
+West,California,228,609
+West,California,229,480
+West,California,230,847
+West,California,231,485
+West,California,232,687
+West,California,233,390
+West,California,234,732
+West,California,235,692
+West,California,236,498
+West,California,237,416
+West,California,238,499
+West,California,239,747
+West,California,240,488
+West,California,241,483
+West,California,242,831
+West,California,243,502
+West,California,244,391
+West,California,245,822
+West,California,246,494
+West,California,247,440
+West,California,248,398
+West,California,249,389
+West,California,250,334
+West,California,251,574
+West,California,252,636
+West,California,253,478
+West,California,254,317
+West,California,255,464
+West,California,256,399
+West,California,257,333
+West,California,258,579
+West,California,259,611
+West,California,260,497
+West,California,261,493
+West,California,262,280
+West,California,263,349
+West,California,264,465
+West,California,265,360
+West,California,266,755
+West,California,267,459
+West,California,268,342
+West,California,269,421
+West,California,270,432
+West,California,271,671
+West,California,272,380
+West,California,273,403
+West,California,274,638
+West,California,275,633
+West,California,276,549
+West,California,277,518
+West,California,278,469
+West,California,279,699
+West,California,280,416
+West,California,281,913
+West,California,282,602
+West,California,283,513
+West,California,284,734
+West,California,285,365
+West,California,286,759
+West,California,287,346
+West,California,288,441
+West,California,289,496
+West,California,290,456
+West,California,291,507
+West,California,292,423
+West,California,293,537
+West,California,294,492
+West,California,295,531
+West,California,296,417
+West,California,297,413
+West,California,298,482
+West,California,299,396
+West,California,300,586
+West,California,301,756
+West,California,302,603
+West,California,303,541
+West,California,304,400
+West,California,305,595
+West,California,306,384
+West,California,307,365
+West,California,308,428
+West,California,309,490
+West,California,310,804
+West,California,311,631
+West,California,312,547
+West,California,313,487
+West,California,314,465
+West,California,315,384
+West,California,316,505
+West,California,317,536
+West,California,318,491
+West,California,319,314
+West,California,320,415
+West,California,321,363
+West,California,322,455
+West,California,323,615
+West,California,324,498
+West,California,325,523
+West,California,326,435
+West,California,327,444
+West,California,328,340
+West,California,329,292
+West,California,330,520
+West,California,331,661
+West,California,332,610
+West,California,333,561
+West,California,334,344
+West,California,335,487
+West,California,336,504
+West,California,337,516
+West,California,338,600
+West,California,339,403
+West,California,340,433
+West,California,341,386
+West,California,342,773
+West,California,343,416
+West,California,344,382
+West,California,345,323
+West,California,346,510
+West,California,347,382
+West,California,348,466
+West,California,349,519
+West,California,350,357
+West,California,351,209
+West,California,352,459
+West,California,353,332
+West,California,354,649
+West,California,355,528
+West,California,356,271
+West,California,357,465
+West,California,358,342
+West,California,359,349
+West,California,360,294
+West,California,361,336
+West,California,362,435
+West,California,363,415
+West,California,364,372
+West,California,365,413
+West,California,366,678
+West,California,367,266
+West,California,368,360
+West,California,369,442
+West,California,370,599
+West,California,371,431
+West,California,372,555
+West,California,373,586
+West,California,374,268
+West,California,375,564
+West,California,376,336
+West,California,377,475
+West,California,378,391
+West,Colorado,379,555
+West,Colorado,380,905
+West,Colorado,381,655
+West,Colorado,382,475
+West,Colorado,383,358
+West,Colorado,384,868
+West,Colorado,385,758
+West,Colorado,386,535
+West,Colorado,387,487
+West,Colorado,388,416
+West,Colorado,389,523
+West,Colorado,390,724
+West,Colorado,391,787
+West,Colorado,392,581
+West,Colorado,393,593
+West,Colorado,394,802
+West,Colorado,395,455
+West,Colorado,396,396
+West,Colorado,397,677
+West,Colorado,398,863
+West,Colorado,399,399
+West,Colorado,400,465
+West,Colorado,401,388
+West,Colorado,402,484
+West,Colorado,403,386
+West,Colorado,404,497
+West,Colorado,405,499
+West,Colorado,406,463
+West,Colorado,407,327
+West,Colorado,408,575
+West,Colorado,409,452
+West,Colorado,410,567
+West,Colorado,411,460
+West,Colorado,412,592
+West,Colorado,413,472
+West,Colorado,414,511
+West,Colorado,415,518
+West,Colorado,416,430
+West,Colorado,417,457
+West,Colorado,418,446
+West,Colorado,419,627
+West,Colorado,420,550
+West,Hawaii,681,710
+West,Hawaii,682,429
+West,Hawaii,683,320
+West,Hawaii,684,477
+West,Hawaii,685,840
+West,Hawaii,686,379
+West,Hawaii,687,430
+West,Hawaii,688,513
+West,Hawaii,689,451
+West,Hawaii,690,336
+West,Idaho,691,285
+West,Idaho,692,441
+West,Idaho,693,557
+West,Idaho,694,457
+West,Idaho,695,355
+West,Idaho,696,625
+West,Idaho,697,465
+West,Idaho,698,323
+West,Idaho,699,503
+West,Idaho,700,739
+West,Idaho,701,731
+West,Idaho,702,388
+West,Idaho,703,431
+West,Idaho,704,376
+West,Montana,1240,813
+West,Montana,1241,642
+West,Montana,1242,476
+West,Montana,1243,666
+West,Montana,1244,755
+West,Montana,1245,767
+West,Montana,1246,300
+West,Nevada,1261,822
+West,Nevada,1262,718
+West,Nevada,1263,922
+West,Nevada,1264,526
+West,Nevada,1265,817
+West,Nevada,1266,611
+West,Nevada,1267,674
+West,Nevada,1268,562
+West,Nevada,1269,528
+West,Nevada,1270,652
+West,Nevada,1271,591
+West,Nevada,1272,536
+West,Nevada,1273,511
+West,Nevada,1274,562
+West,Nevada,1275,711
+West,Nevada,1276,883
+West,Nevada,1277,582
+West,Nevada,1278,665
+West,New Mexico,1362,425
+West,New Mexico,1363,405
+West,New Mexico,1364,604
+West,New Mexico,1365,271
+West,New Mexico,1366,265
+West,New Mexico,1367,634
+West,New Mexico,1368,324
+West,New Mexico,1369,327
+West,New Mexico,1370,483
+West,New Mexico,1371,510
+West,New Mexico,1372,399
+West,New Mexico,1373,918
+West,New Mexico,1374,444
+West,New Mexico,1375,320
+West,New Mexico,1376,380
+West,New Mexico,1377,595
+West,New Mexico,1378,270
+West,New Mexico,1379,339
+West,Oregon,1729,543
+West,Oregon,1730,710
+West,Oregon,1731,726
+West,Oregon,1732,476
+West,Oregon,1733,511
+West,Oregon,1734,878
+West,Oregon,1735,716
+West,Oregon,1736,659
+West,Oregon,1737,650
+West,Oregon,1738,398
+West,Oregon,1739,345
+West,Oregon,1740,473
+West,Oregon,1741,570
+West,Oregon,1742,641
+West,Oregon,1743,953
+West,Oregon,1744,396
+West,Oregon,1745,448
+West,Oregon,1746,521
+West,Oregon,1747,411
+West,Oregon,1748,417
+West,Oregon,1749,391
+West,Oregon,1750,425
+West,Oregon,1751,595
+West,Oregon,1752,456
+West,Oregon,1753,673
+West,Oregon,1754,709
+West,Oregon,1755,415
+West,Oregon,1756,486
+West,Oregon,1757,562
+West,Oregon,1758,477
+West,Oregon,1759,393
+West,Utah,2156,401
+West,Utah,2157,734
+West,Utah,2158,364
+West,Utah,2159,261
+West,Utah,2160,258
+West,Utah,2161,560
+West,Utah,2162,333
+West,Utah,2163,419
+West,Utah,2164,325
+West,Utah,2165,780
+West,Utah,2166,633
+West,Utah,2167,442
+West,Utah,2168,656
+West,Utah,2169,653
+West,Utah,2170,395
+West,Utah,2171,624
+West,Utah,2172,545
+West,Utah,2173,483
+West,Utah,2174,455
+West,Utah,2175,471
+West,Utah,2176,371
+West,Utah,2177,308
+West,Washington,2238,598
+West,Washington,2239,583
+West,Washington,2240,1874
+West,Washington,2241,394
+West,Washington,2242,527
+West,Washington,2243,579
+West,Washington,2244,533
+West,Washington,2245,477
+West,Washington,2246,433
+West,Washington,2247,478
+West,Washington,2248,479
+West,Washington,2249,701
+West,Washington,2250,495
+West,Washington,2251,449
+West,Washington,2252,490
+West,Washington,2253,431
+West,Washington,2254,522
+West,Washington,2255,727
+West,Washington,2256,687
+West,Washington,2257,455
+West,Washington,2258,610
+West,Washington,2259,605
+West,Washington,2260,551
+West,Washington,2261,624
+West,Washington,2262,406
+West,Washington,2263,450
+West,Washington,2264,439
+West,Washington,2265,540
+West,Washington,2266,440
+West,Washington,2267,446
+West,Washington,2268,601
+West,Washington,2269,411
+West,Washington,2270,519
+West,Washington,2271,573
+West,Washington,2272,574
+West,Washington,2273,783
+West,Washington,2274,463
+West,Washington,2275,587
+West,Washington,2276,507
+West,Washington,2277,373
+West,Washington,2278,566
+West,Washington,2279,575
+West,Washington,2280,434
+West,Washington,2281,606
+West,Washington,2282,364
+West,Washington,2283,399
+West,Washington,2284,488
+West,Washington,2285,495
+West,Washington,2286,464
+West,Washington,2287,361
+West,Washington,2288,548
+West,Washington,2289,661
+West,Washington,2290,458
+West,Washington,2291,420
+West,Washington,2292,526
+West,Washington,2293,436
+West,Wyoming,2347,545
+West,Wyoming,2348,398
+West,Wyoming,2349,470
+West,Wyoming,2350,544
+West,Wyoming,2351,495
