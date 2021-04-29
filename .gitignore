@@ -49,7 +49,7 @@ htmlcov/
 .tox/
 .nox/
 .coverage
-.coveragerc
+*.coveragerc
 .coverage.*
 .cache
 nosetests.xml
@@ -58,7 +58,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 *.xml
-.flake8
+*.flake8
 
 # Translations
 *.mo
