@@ -44,11 +44,12 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Unit test / coverage reports / linting
 htmlcov/
 .tox/
 .nox/
 .coverage
+.coveragerc
 .coverage.*
 .cache
 nosetests.xml
@@ -57,6 +58,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 *.xml
+.flake8
 
 # Translations
 *.mo
