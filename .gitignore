@@ -58,7 +58,6 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 *.xml
-.flake8
 
 # Translations
 *.mo
