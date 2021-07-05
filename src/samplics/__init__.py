@@ -1,3 +1,4 @@
+from samplics.categorical import CrossTabulation, Tabulation, Ttest
 from samplics.datasets.datasets import (
     load_auto,
     load_birth,
@@ -12,7 +13,6 @@ from samplics.datasets.datasets import (
     load_psu_sample,
     load_ssu_sample,
 )
-from samplics.categorical import CrossTabulation, Tabulation, Ttest
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
 from samplics.sampling import OneMeanSampleSize, SampleSelection, SampleSize, allocate

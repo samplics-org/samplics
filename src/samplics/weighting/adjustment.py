@@ -16,14 +16,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils import checks, formats
-from samplics.utils.types import (
-    Array,
-    DictStrFloat,
-    DictStrInt,
-    DictStrNum,
-    Number,
-    StringNumber,
-)
+from samplics.utils.types import Array, DictStrFloat, DictStrInt, DictStrNum, Number, StringNumber
 
 
 class SampleWeight:

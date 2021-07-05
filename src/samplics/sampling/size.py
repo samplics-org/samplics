@@ -11,15 +11,11 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 
+from scipy.stats import nct
 from scipy.stats import norm as normal
 from scipy.stats import t as student
-from scipy.stats import nct
 
-from samplics.utils.formats import (
-    convert_numbers_to_dicts,
-    dict_to_dataframe,
-    numpy_array,
-)
+from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 

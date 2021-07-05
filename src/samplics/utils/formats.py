@@ -15,14 +15,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.checks import assert_not_unique
-from samplics.utils.types import (
-    Array,
-    DictStrInt,
-    DictStrNum,
-    Number,
-    Series,
-    StringNumber,
-)
+from samplics.utils.types import Array, DictStrInt, DictStrNum, Number, Series, StringNumber
 
 
 def numpy_array(arr: Array) -> np.ndarray:
