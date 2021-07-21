@@ -22,7 +22,7 @@ import pandas as pd
 
 from scipy.stats import t as student
 
-from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans
+from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans, dict_to_dataframe
 from samplics.utils.types import Array, Number, Series, StringNumber
 
 
@@ -60,6 +60,7 @@ class _SurveyEstimator:
         self.number_strata: Any = None
         self.number_psus: Any = None
         self.degree_of_freedom: Any = None
+        self.as_factor: bool = False  # whether to treat outcome as factor.
 
     def __str__(self) -> Any:
         print(f"SAMPLICS - Estimation of {self.parameter.title()}\n")
@@ -75,8 +76,31 @@ class _SurveyEstimator:
             and isinstance(self.upper_ci, dict)
             and isinstance(self.coef_var, dict)
         ):
-            if self.domains is not None:
-                estimation["DOMAINS"] = self.domains
+            if self.domains is not None and (self.parameter == "proportion" or self.as_factor):
+                domains = list()
+                levels = list()
+                point_est = list()
+                stderror = list()
+                lower_ci = list()
+                upper_ci = list()
+                coef_var = list()
+                for domain in self.domains:
+                    domains += np.repeat(domain, len(self.point_est[domain])).tolist()
+                    levels += list(self.point_est[domain].keys())
+                    point_est += list(self.point_est[domain].values())
+                    stderror += list(self.stderror[domain].values())
+                    lower_ci += list(self.lower_ci[domain].values())
+                    upper_ci += list(self.upper_ci[domain].values())
+                    coef_var += list(self.coef_var[domain].values())
+                estimation["DOMAIN"] = domains
+                estimation["LEVEL"] = levels
+                estimation[parameter] = point_est
+                estimation["SE"] = stderror
+                estimation["LCI"] = lower_ci
+                estimation["UCI"] = upper_ci
+                estimation["CV"] = coef_var
+            elif self.domains is not None:
+                estimation["DOMAIN"] = self.domains
                 estimation[parameter] = self.point_est.values()
                 estimation["SE"] = self.stderror.values()
                 estimation["LCI"] = self.lower_ci.values()
@@ -608,7 +632,6 @@ class TaylorEstimator(_SurveyEstimator):
                     lower_ci = {}
                     upper_ci = {}
                     coef_var = {}
-                    # breakpoint()
                     for level in self.variance[key]:
                         stderror[level] = math.sqrt(self.variance[key][level])
                         lower_ci[level] = self.point_est[key][level] - t_quantile * stderror[level]
@@ -692,6 +715,7 @@ class TaylorEstimator(_SurveyEstimator):
                 raise AssertionError("fpc dictionary keys must be the same as the strata!")
             else:
                 self.fpc = fpc
+        self.as_factor = True
 
         if by is None:
             self._estimate(
@@ -744,3 +768,59 @@ class TaylorEstimator(_SurveyEstimator):
                 self.stderror[b] = by_est.stderror
                 self.lower_ci[b] = by_est.lower_ci
                 self.upper_ci[b] = by_est.upper_ci
+
+    def to_dataframe(
+        self,
+        col_names: list[str] = [
+            "_parameter",
+            "_domain",
+            "_estimate",
+            "_stderror",
+            "_lci",
+            "_uci",
+            "_cv",
+        ],
+    ) -> pd.DataFrame:
+        """Returns a pandas dataframe from dictionaries with same keys and one value per key.
+
+        Args:
+            col_names (list, optional): list of string to be used for the dataframe columns names.
+                Defaults to ["_area", "_estimate", "_mse", "_mse_boot"].
+
+        Returns:
+            [pd.DataFrame]: a pandas dataframe
+        """
+
+        ncols = len(col_names)
+
+        if self.point_est is None:
+            raise AssertionError("No estimates yet. Must first run estimate().")
+        elif self.deff is None and ncols not in (7, 8):
+            raise AssertionError("col_names must have 5 or 6 values")
+        elif self.deff is None and ncols == 8:
+            col_names.pop()  # remove the last element same as .pop(-1)
+
+        if self.deff == {}:
+            est_df = dict_to_dataframe(
+                col_names,
+                dict(zip(self.domains, self.domains)),
+                self.point_est,
+                self.stderror,
+                self.lower_ci,
+                self.upper_ci,
+                self.coef_var,
+            )
+        else:
+            est_df = dict_to_dataframe(
+                col_names,
+                dict(zip(self.domains, self.domains)),
+                self.point_est,
+                self.stderror,
+                self.lower_ci,
+                self.upper_ci,
+                self.coef_var,
+                self.deff,
+            )
+        est_df.iloc[:, 0] = self.parameter
+
+        return est_df

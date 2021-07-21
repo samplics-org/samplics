@@ -1011,3 +1011,44 @@ def test_factor_mean_estimator_with_str_nor_psu_domain():
 #     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d2"][1.0], 0.8206556)
 #     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d3"][0.0], 0.1981554)
 #     assert np.isclose(svy_factor_total_with_str_domain.upper_ci["d3"][1.0], 0.8350427)
+
+
+"""Testing conversion to DataFrame"""
+svy_est = TaylorEstimator("mean")
+
+
+def test_factor_mean_estimator_with_str_dataframe():
+    svy_est.estimate(y, weight, stratum=stratum, psu=psu, domain=domain, remove_nan=True)
+    svy_est_df = svy_est.to_dataframe()
+
+    assert svy_est_df.columns.tolist() == [
+        "_parameter",
+        "_domain",
+        "_estimate",
+        "_stderror",
+        "_lci",
+        "_uci",
+        "_cv",
+    ]
+
+    assert svy_est_df.iloc[0, 0] == "mean"
+    assert svy_est_df.iloc[1, 0] == "mean"
+    assert svy_est_df.iloc[2, 0] == "mean"
+    assert svy_est_df.iloc[0, 1] == "d1"
+    assert svy_est_df.iloc[1, 1] == "d2"
+    assert svy_est_df.iloc[2, 1] == "d3"
+    assert np.isclose(svy_est_df.iloc[0, 2], 0.831160, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 2], 0.797226, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 2], 0.819036, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 3], 0.020046, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 3], 0.026301, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 3], 0.018208, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 4], 0.790614, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 4], 0.744026, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 4], 0.782207, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 5], 0.871706, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 5], 0.850426, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 5], 0.855865, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 6], 0.024118, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 6], 0.032991, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 6], 0.022231, 1e-4)

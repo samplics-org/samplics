@@ -123,8 +123,8 @@ def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
         number_keys = len(keys)
         values = list()
         for k, arg in enumerate(args):
-            argk_keys = list(args[k].keys())
-            if not isinstance(arg, dict) or (keys != argk_keys) or number_keys != len(argk_keys):
+            args_keys = list(args[k].keys())
+            if not isinstance(arg, dict) or (keys != args_keys) or number_keys != len(args_keys):
                 raise AssertionError(
                     "All input parameters must be dictionaries with the same keys."
                 )
