@@ -143,10 +143,10 @@ def load_nhanes2jk():
     )
 
 
-def load_nmhis():
+def load_nmihs():
     colnames = None
     name = "NMIHS Subsample"
-    description = "A subset of NMHIS data. This file is not meant to be representative of NMHIS. It is just an subset to illustrate the syntax in this tutorial."
+    description = "A subset of nmihs data. This file is not meant to be representative of nmihs. It is just an subset to illustrate the syntax in this tutorial."
     design = {}
     source = ""
 

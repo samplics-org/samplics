@@ -7,7 +7,7 @@ from samplics.datasets.datasets import (
     load_nhanes2,
     load_nhanes2brr,
     load_nhanes2jk,
-    load_nmhis,
+    load_nmihs,
     load_psu_frame,
     load_psu_sample,
     load_ssu_sample,
@@ -99,12 +99,12 @@ def test_loading_nnhanes2jk_subset():
 
 
 def test_loading_nmihs_subset():
-    nmihs_subset = load_nmhis()
+    nmihs_subset = load_nmihs()
 
     assert nmihs_subset["name"] == "NMIHS Subsample"
     assert (
         nmihs_subset["description"]
-        == "A subset of NMHIS data. This file is not meant to be representative of NMHIS. It is just an subset to illustrate the syntax in this tutorial."
+        == "A subset of nmihs data. This file is not meant to be representative of nmihs. It is just an subset to illustrate the syntax in this tutorial."
     )
     assert nmihs_subset["nrows"] == 603
     assert nmihs_subset["ncols"] == 52
