@@ -2,7 +2,15 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from samplics.utils.formats import *
+from samplics.utils.formats import (
+    numpy_array,
+    array_to_dict,
+    dataframe_to_array,
+    sample_size_dict,
+    dict_to_dataframe,
+    sample_units,
+    convert_numbers_to_dicts,
+)
 
 
 df = pd.DataFrame({"one": [1, 2, 2, 3, 0], "two": [4, 9, 5, 6, 6]})
@@ -82,9 +90,9 @@ def test_sample_units3(all_units=[1, 2, 2, 3, 3, 3], unique=False):
 
 
 def test_dict_to_dataframe():
-    df = dict_to_dataframe(["domain", "size"], samp_size)
+    df = dict_to_dataframe(["parameter", "domain", "size"], samp_size)
     assert isinstance(df, pd.DataFrame) == True
-    assert (df.columns == ["domain", "size"]).all()
+    assert (df.columns == ["parameter", "domain", "size"]).all()
 
 
 dict1 = {"one": 1, "two": 2, "three": 3}

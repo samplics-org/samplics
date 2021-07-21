@@ -771,39 +771,53 @@ class TaylorEstimator(_SurveyEstimator):
 
     def to_dataframe(
         self,
-        col_names: list[str] = [
-            "_parameter",
-            "_domain",
-            "_estimate",
-            "_stderror",
-            "_lci",
-            "_uci",
-            "_cv",
-        ],
+        col_names: Optional(list) = None,
     ) -> pd.DataFrame:
-        """Returns a pandas dataframe from dictionaries with same keys and one value per key.
-
-        Args:
-            col_names (list, optional): list of string to be used for the dataframe columns names.
-                Defaults to ["_area", "_estimate", "_mse", "_mse_boot"].
-
-        Returns:
-            [pd.DataFrame]: a pandas dataframe
-        """
-
-        ncols = len(col_names)
 
         if self.point_est is None:
             raise AssertionError("No estimates yet. Must first run estimate().")
-        elif self.deff is None and ncols not in (7, 8):
-            raise AssertionError("col_names must have 5 or 6 values")
-        elif self.deff is None and ncols == 8:
-            col_names.pop()  # remove the last element same as .pop(-1)
+        elif col_names is None:
+            if self.parameter == "proportion" or self.as_factor:
+                col_names = [
+                    "_parameter",
+                    "_domain",
+                    "_level",
+                    "_estimate",
+                    "_stderror",
+                    "_lci",
+                    "_uci",
+                    "_cv",
+                    "_deff",
+                ]
+            else:
+                col_names = [
+                    "_parameter",
+                    "_domain",
+                    "_estimate",
+                    "_stderror",
+                    "_lci",
+                    "_uci",
+                    "_cv",
+                    "_deff",
+                ]
+            if self.deff == {}:
+                col_names.pop()
+            if self.domains == []:
+                col_names.pop(1)
+        else:
+            ncols = len(col_names)
+            if self.deff is not None and self.as_factor is not None and ncols != 9:
+                raise AssertionError("col_names must have 9 values")
+            if self.deff is None and self.as_factor is not None and ncols != 8:
+                raise AssertionError("col_names must have 8 values")
+            if self.deff is not None and self.as_factor is None and ncols != 8:
+                raise AssertionError("col_names must have 8 values")
+            if self.deff is None and self.as_factor is None and ncols != 7:
+                raise AssertionError("col_names must have 7 values")
 
         if self.deff == {}:
             est_df = dict_to_dataframe(
                 col_names,
-                dict(zip(self.domains, self.domains)),
                 self.point_est,
                 self.stderror,
                 self.lower_ci,
@@ -813,7 +827,6 @@ class TaylorEstimator(_SurveyEstimator):
         else:
             est_df = dict_to_dataframe(
                 col_names,
-                dict(zip(self.domains, self.domains)),
                 self.point_est,
                 self.stderror,
                 self.lower_ci,

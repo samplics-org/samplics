@@ -1024,6 +1024,7 @@ def test_factor_mean_estimator_with_str_dataframe():
     assert svy_est_df.columns.tolist() == [
         "_parameter",
         "_domain",
+        "_level",
         "_estimate",
         "_stderror",
         "_lci",
@@ -1052,3 +1053,73 @@ def test_factor_mean_estimator_with_str_dataframe():
     assert np.isclose(svy_est_df.iloc[0, 6], 0.024118, 1e-4)
     assert np.isclose(svy_est_df.iloc[1, 6], 0.032991, 1e-4)
     assert np.isclose(svy_est_df.iloc[2, 6], 0.022231, 1e-4)
+
+
+"""Testing conversion to DataFrame with as_factor=True"""
+svy_est = TaylorEstimator("mean")
+
+
+def test_factor_mean_estimator_with_str_dataframe_as_factor():
+    svy_est.estimate(
+        y, weight, stratum=stratum, psu=psu, domain=domain, as_factor=True, remove_nan=True
+    )
+    svy_est_df = svy_est.to_dataframe()
+
+    assert svy_est_df.columns.tolist() == [
+        "_parameter",
+        "_domain",
+        "_level",
+        "_estimate",
+        "_stderror",
+        "_lci",
+        "_uci",
+        "_cv",
+    ]
+    assert svy_est_df.iloc[0, 0] == "mean"
+    assert svy_est_df.iloc[1, 0] == "mean"
+    assert svy_est_df.iloc[2, 0] == "mean"
+    assert svy_est_df.iloc[3, 0] == "mean"
+    assert svy_est_df.iloc[4, 0] == "mean"
+    assert svy_est_df.iloc[5, 0] == "mean"
+    assert svy_est_df.iloc[0, 1] == "d1"
+    assert svy_est_df.iloc[1, 1] == "d1"
+    assert svy_est_df.iloc[2, 1] == "d2"
+    assert svy_est_df.iloc[3, 1] == "d2"
+    assert svy_est_df.iloc[4, 1] == "d3"
+    assert svy_est_df.iloc[5, 1] == "d3"
+    # assert svy_est_df.iloc[0, 2] == ""
+    # assert svy_est_df.iloc[1, 2] == ""
+    # assert svy_est_df.iloc[2, 2] == ""
+    # assert svy_est_df.iloc[3, 2] == ""
+    # assert svy_est_df.iloc[4, 2] == ""
+    # assert svy_est_df.iloc[5, 2] == ""
+    assert np.isclose(svy_est_df.iloc[0, 3], 0.168840, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 3], 0.831160, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 3], 0.202774, 1e-4)
+    assert np.isclose(svy_est_df.iloc[3, 3], 0.797226, 1e-4)
+    assert np.isclose(svy_est_df.iloc[4, 3], 0.180964, 1e-4)
+    assert np.isclose(svy_est_df.iloc[5, 3], 0.819036, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 4], 0.020046, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 4], 0.020046, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 4], 0.026301, 1e-4)
+    assert np.isclose(svy_est_df.iloc[3, 4], 0.026301, 1e-4)
+    assert np.isclose(svy_est_df.iloc[4, 4], 0.018208, 1e-4)
+    assert np.isclose(svy_est_df.iloc[5, 4], 0.018208, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 5], 0.132068, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 5], 0.786665, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 5], 0.154709, 1e-4)
+    assert np.isclose(svy_est_df.iloc[3, 5], 0.738841, 1e-4)
+    assert np.isclose(svy_est_df.iloc[4, 5], 0.147002, 1e-4)
+    assert np.isclose(svy_est_df.iloc[5, 5], 0.779258, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 6], 0.213335, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 6], 0.867932, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 6], 0.261159, 1e-4)
+    assert np.isclose(svy_est_df.iloc[3, 6], 0.845291, 1e-4)
+    assert np.isclose(svy_est_df.iloc[4, 6], 0.220742, 1e-4)
+    assert np.isclose(svy_est_df.iloc[5, 6], 0.852998, 1e-4)
+    assert np.isclose(svy_est_df.iloc[0, 7], 0.118726, 1e-4)
+    assert np.isclose(svy_est_df.iloc[1, 7], 0.024118, 1e-4)
+    assert np.isclose(svy_est_df.iloc[2, 7], 0.129708, 1e-4)
+    assert np.isclose(svy_est_df.iloc[3, 7], 0.032991, 1e-4)
+    assert np.isclose(svy_est_df.iloc[4, 7], 0.100617, 1e-4)
+    assert np.isclose(svy_est_df.iloc[5, 7], 0.022231, 1e-4)

@@ -116,12 +116,39 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     return all_units
 
 
+# def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
+
+#     if isinstance(args[0], dict):
+#         keys = list(args[0].keys())
+#         number_keys = len(keys)
+#         values = list()
+#         for k, arg in enumerate(args):
+#             args_keys = list(args[k].keys())
+#             if not isinstance(arg, dict) or (keys != args_keys) or number_keys != len(args_keys):
+#                 raise AssertionError(
+#                     "All input parameters must be dictionaries with the same keys."
+#                 )
+
+#             values.append(list(arg.values()))
+
+#         values_df = pd.DataFrame(
+#             values,
+#         ).T
+#         values_df.insert(0, "00", keys)
+#     else:
+#         values_df = pd.DataFrame({args})
+
+#     values_df.columns = col_names
+
+#     return values_df
+
+
 def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
 
     if isinstance(args[0], dict):
+        values_df = pd.DataFrame(columns=col_names)
         keys = list(args[0].keys())
         number_keys = len(keys)
-        values = list()
         for k, arg in enumerate(args):
             args_keys = list(args[k].keys())
             if not isinstance(arg, dict) or (keys != args_keys) or number_keys != len(args_keys):
@@ -129,16 +156,28 @@ def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
                     "All input parameters must be dictionaries with the same keys."
                 )
 
-            values.append(list(arg.values()))
-
-        values_df = pd.DataFrame(
-            values,
-        ).T
-        values_df.insert(0, "00", keys)
+            if isinstance(
+                args[0].get(keys[0]), dict
+            ):  # For the case of nested dictionaries e.g. proportion or as_factor=True
+                keys_list = list()
+                levels = list()
+                values = list()
+                for key in keys:
+                    keys_list += np.repeat(key, len(list(arg[key].keys()))).tolist()
+                    levels += list(arg[key].keys())
+                    values += list(arg[key].values())
+                if k == 0:
+                    values_df.iloc[:, 1] = keys_list
+                    values_df.iloc[:, 2] = levels
+                values_df[col_names[k + 3]] = values
+            else:
+                if k == 0:
+                    values_df.iloc[:, 1] = keys
+                values_df[col_names[k + 2]] = arg.values()
     else:
         values_df = pd.DataFrame({args})
-
-    values_df.columns = col_names
+        values_df.insert(0, "_parameter", None)
+        values_df.columns = col_names
 
     return values_df
 

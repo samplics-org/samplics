@@ -36,7 +36,8 @@ import pandas as pd
 import statsmodels.api as sm
 
 from samplics.sae.sae_core_functions import area_stats
-from samplics.utils import basic_functions, formats
+from samplics.utils.basic_functions import sumby
+from samplics.utils.formats import numpy_array, dict_to_dataframe
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 
@@ -226,9 +227,9 @@ class EblupUnitModel:
             Defaults to 100.
         """
 
-        areas = formats.numpy_array(areas)
-        ys = formats.numpy_array(ys)
-        Xs = formats.numpy_array(Xs)
+        areas = numpy_array(areas)
+        ys = numpy_array(ys)
+        Xs = numpy_array(Xs)
 
         self.ys = ys
         self.Xs = Xs
@@ -242,15 +243,15 @@ class EblupUnitModel:
             else:
                 Xs = np.insert(Xs, 0, 1, axis=1)
         if samp_weight is not None:
-            samp_weight = formats.numpy_array(samp_weight)
+            samp_weight = numpy_array(samp_weight)
 
         if isinstance(scales, (float, int)):
             scales = np.asarray(np.ones(ys.shape[0]) * scales)
         else:
-            scales = formats.numpy_array(scales)
+            scales = numpy_array(scales)
         self.scales = scales
 
-        self.afactors = dict(zip(self.areas_list, basic_functions.sumby(areas, scales)))
+        self.afactors = dict(zip(self.areas_list, sumby(areas, scales)))
 
         reml = True if self.method == "REML" else False
         basic_model = sm.MixedLM(ys, Xs, areas)
@@ -333,7 +334,7 @@ class EblupUnitModel:
                 "The model must be fitted first with .fit() before running the prediction."
             )
 
-        Xmean = formats.numpy_array(Xmean)
+        Xmean = numpy_array(Xmean)
         self.Xp_mean = Xmean
         if intercept:
             if Xmean.ndim == 1:
@@ -350,10 +351,10 @@ class EblupUnitModel:
             Xs_mean = self.Xs_mean
             Xs = self.Xs
 
-        area = formats.numpy_array(area)
+        area = numpy_array(area)
         pop_size_dict = {}
         if pop_size is not None:
-            pop_size = formats.numpy_array(pop_size)
+            pop_size = numpy_array(pop_size)
             pop_size_dict = dict(zip(area, pop_size))
 
         self.areap = area
@@ -530,32 +531,43 @@ class EblupUnitModel:
 
     def to_dataframe(
         self,
-        col_names: list[str] = ["_area", "_estimate", "_mse", "_mse_boot"],
+        col_names: Optional(list) = None,
+        # col_names: list[str] = ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"],
     ) -> pd.DataFrame:
         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
 
         Args:
             col_names (list, optional): list of string to be used for the dataframe columns names.
-                Defaults to ["_area", "_estimate", "_mse", "_mse_boot"].
+                Defaults to ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"].
 
         Returns:
             [pd.DataFrame]: a pandas dataframe
         """
 
-        ncols = len(col_names)
-
         if self.area_est is None:
-            raise AssertionError("No prediction yet. Must predict the area level estimates.")
-        elif self.area_mse_boot is None and ncols not in (3, 4):
-            raise AssertionError("col_names must have 3 or 4 values")
-        elif self.area_mse_boot is None and ncols == 4:
-            col_names.pop()  # remove the last element same as .pop(-1)
-
-        if self.area_mse_boot is None:
-            area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse)
+            raise AssertionError("No estimates yet. Must first run predict().")
+        elif col_names is None:
+            col_names = ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]
+            if self.area_mse_boot is None:
+                col_names.pop()
         else:
-            area_df = formats.dict_to_dataframe(
-                col_names, self.area_est, self.area_mse, self.area_mse_boot
-            )
+            ncols = len(col_names)
+            if ncols != 5 and self.area_mse_boot is not None:
+                raise AssertionError("col_names must have 5 values")
 
-        return area_df
+        if self.area_mse_boot is not None:
+            est_df = dict_to_dataframe(
+                col_names,
+                self.area_est,
+                self.area_mse,
+                self.area_mse_boot,
+            )
+        else:
+            est_df = dict_to_dataframe(
+                col_names,
+                self.area_est,
+                self.area_mse,
+            )
+        est_df.iloc[:, 0] = "mean"
+
+        return est_df

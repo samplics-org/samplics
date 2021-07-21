@@ -242,7 +242,7 @@ size_nat_wald = SampleSize()
 def test_size_nat_wald_basics():
     assert size_nat_wald.parameter == "proportion"
     assert size_nat_wald.method == "wald"
-    assert size_nat_wald.stratification == False
+    assert not size_nat_wald.stratification
 
 
 def test_size_nat_wald_size():
@@ -264,7 +264,7 @@ def test_size_nat_wald_size_with_deff():
 def test_size_nat_wald_df():
     size_nat_wald.calculate(0.80, 0.10)
     size_df = size_nat_wald.to_dataframe()
-    assert (size_df.columns == ["_target", "_half_ci", "_samp_size"]).all()
+    assert (size_df.columns == ["_parameter", "_target", "_half_ci", "_samp_size"]).all()
 
 
 ## Wald's method - stratified
@@ -278,7 +278,7 @@ deff = {"stratum1": 1, "stratum2": 1.5, "stratum3": 2.5}
 def test_size_str_wald_basics():
     assert size_str_wald.parameter == "proportion"
     assert size_str_wald.method == "wald"
-    assert size_str_wald.stratification == True
+    assert size_str_wald.stratification
 
 
 def test_size_str_wald_size1():
@@ -322,7 +322,9 @@ def test_size_str_wald_df():
     size_str_wald.calculate(0.80, 0.10, number_strata=5)
     size_df = size_str_wald.to_dataframe()
     assert size_df.shape[0] == 5
-    assert (size_df.columns == ["_stratum", "_target", "_half_ci", "_samp_size"]).all()
+    assert (
+        size_df.columns == ["_parameter", "_stratum", "_target", "_half_ci", "_samp_size"]
+    ).all()
 
 
 ## Fleiss' method
@@ -435,7 +437,7 @@ def test_size_nat_fleiss_size_with_deff4():
 def test_size_nat_fleiss_df():
     size_nat_fleiss.calculate(0.80, 0.10)
     size_df = size_nat_fleiss.to_dataframe()
-    assert (size_df.columns == ["_target", "_half_ci", "_samp_size"]).all()
+    assert (size_df.columns == ["_parameter", "_target", "_half_ci", "_samp_size"]).all()
 
 
 ## Fleiss' method - stratified
@@ -493,4 +495,6 @@ def test_size_str_fleiss_df():
     size_str_fleiss.calculate(0.80, 0.10, number_strata=5)
     size_df = size_str_fleiss.to_dataframe()
     assert size_df.shape[0] == 5
-    assert (size_df.columns == ["_stratum", "_target", "_half_ci", "_samp_size"]).all()
+    assert (
+        size_df.columns == ["_parameter", "_stratum", "_target", "_half_ci", "_samp_size"]
+    ).all()

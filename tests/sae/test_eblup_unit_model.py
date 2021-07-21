@@ -25,7 +25,9 @@ pop_size = np.array([545, 566, 394, 424, 564, 570, 402, 567, 687, 569, 965, 556]
 """REML Method"""
 eblup_bhf_reml = EblupUnitModel()
 eblup_bhf_reml.fit(
-    ys, Xs, areas,
+    ys,
+    Xs,
+    areas,
 )
 
 eblup_bhf_reml.predict(Xmean, areas_list)
@@ -37,13 +39,17 @@ def test_eblup_bhf_reml():
 
 def test_fixed_effects_bhf_reml():
     assert np.isclose(
-        eblup_bhf_reml.fixed_effects, np.array([17.96398, 0.3663352, -0.0303638]), atol=1e-6,
+        eblup_bhf_reml.fixed_effects,
+        np.array([17.96398, 0.3663352, -0.0303638]),
+        atol=1e-6,
     ).all()
 
 
 def test_fe_std_bhf_reml():
     assert np.isclose(
-        eblup_bhf_reml.fe_std, np.array([30.986801, 0.065101, 0.067583]), atol=1e-6,
+        eblup_bhf_reml.fe_std,
+        np.array([30.986801, 0.065101, 0.067583]),
+        atol=1e-6,
     ).all()
 
 
@@ -190,20 +196,24 @@ def test_y_predicted_bhf_reml_fpc():
 
 def test_bhf_reml_to_dataframe_default():
     df = eblup_bhf_reml.to_dataframe()
-    assert df.shape[1] == 3
-    assert (df.columns == ["_area", "_estimate", "_mse"]).all()
+    assert df.shape[1] == 4
+    assert (df.columns == ["_parameter", "_area", "_estimate", "_mse"]).all()
 
 
 def test_bhf_reml_to_dataframe_not_default():
-    df = eblup_bhf_reml.to_dataframe(col_names=["small_area", "modelled_estimate", "taylor_mse"])
-    assert df.shape[1] == 3
-    assert (df.columns == ["small_area", "modelled_estimate", "taylor_mse"]).all()
+    df = eblup_bhf_reml.to_dataframe(
+        col_names=["parameter", "small_area", "modelled_estimate", "taylor_mse"]
+    )
+    assert df.shape[1] == 4
+    assert (df.columns == ["parameter", "small_area", "modelled_estimate", "taylor_mse"]).all()
 
 
 # Bootstrap with REML
 eblup_bhf_reml_boot = EblupUnitModel()
 eblup_bhf_reml_boot.fit(
-    ys, Xs, areas,
+    ys,
+    Xs,
+    areas,
 )
 eblup_bhf_reml_boot.predict(Xmean, areas_list)
 eblup_bhf_reml_boot.bootstrap_mse(number_reps=5, show_progress=False)
@@ -212,19 +222,20 @@ df1_reml = eblup_bhf_reml_boot.to_dataframe()
 
 
 def test_bhf_reml_to_dataframe_boot_default():
-    assert df1_reml.shape[1] == 4
-    assert (df1_reml.columns == ["_area", "_estimate", "_mse", "_mse_boot"]).all()
+    assert df1_reml.shape[1] == 5
+    assert (df1_reml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]).all()
 
 
 df2_reml = eblup_bhf_reml_boot.to_dataframe(
-    col_names=["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+    col_names=["parameter", "small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
 )
 
 
 def test_bhf_reml_to_dataframe_boot_not_default():
-    assert df2_reml.shape[1] == 4
+    assert df2_reml.shape[1] == 5
     assert (
-        df2_reml.columns == ["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+        df2_reml.columns
+        == ["parameter", "small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
     ).all()
 
 
@@ -291,13 +302,17 @@ def test_eblup_bhf_ml():
 
 def test_fixed_effects_bhf_ml():
     assert np.isclose(
-        eblup_bhf_ml.fixed_effects, np.array([18.08888, 0.36566, -0.03017]), atol=1e-5,
+        eblup_bhf_ml.fixed_effects,
+        np.array([18.08888, 0.36566, -0.03017]),
+        atol=1e-5,
     ).all()
 
 
 def test_fe_std_bhf_ml():
     assert np.isclose(
-        eblup_bhf_ml.fe_std, np.array([29.82724469, 0.06262676, 0.06506189]), atol=1e-5,
+        eblup_bhf_ml.fe_std,
+        np.array([29.82724469, 0.06262676, 0.06506189]),
+        atol=1e-5,
     ).all()
 
 
@@ -444,7 +459,9 @@ def test_area_est_bhf_ml_fpc():
 # Bootstrap with ML
 eblup_bhf_ml_boot = EblupUnitModel(method="ML")
 eblup_bhf_ml_boot.fit(
-    ys, Xs, areas,
+    ys,
+    Xs,
+    areas,
 )
 eblup_bhf_ml_boot.predict(Xmean, areas_list)
 eblup_bhf_ml_boot.bootstrap_mse(number_reps=5, show_progress=False)
@@ -453,18 +470,21 @@ df1_ml = eblup_bhf_ml_boot.to_dataframe()
 
 
 def test_bhf_ml_to_dataframe_boot_default():
-    assert df1_ml.shape[1] == 4
-    assert (df1_ml.columns == ["_area", "_estimate", "_mse", "_mse_boot"]).all()
+    assert df1_ml.shape[1] == 5
+    assert (df1_ml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]).all()
 
 
 df2_ml = eblup_bhf_ml_boot.to_dataframe(
-    col_names=["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+    col_names=["parameter", "small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
 )
 
 
 def test_bhf_ml_to_dataframe_boot_not_default():
-    assert df2_ml.shape[1] == 4
-    assert (df2_ml.columns == ["small_area", "modelled_estimate", "taylor_mse", "boot_mse"]).all()
+    assert df2_ml.shape[1] == 5
+    assert (
+        df2_ml.columns
+        == ["parameter", "small_area", "modelled_estimate", "taylor_mse", "boot_mse"]
+    ).all()
 
 
 # Shorter output
