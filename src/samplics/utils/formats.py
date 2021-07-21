@@ -116,33 +116,6 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
     return all_units
 
 
-# def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
-
-#     if isinstance(args[0], dict):
-#         keys = list(args[0].keys())
-#         number_keys = len(keys)
-#         values = list()
-#         for k, arg in enumerate(args):
-#             args_keys = list(args[k].keys())
-#             if not isinstance(arg, dict) or (keys != args_keys) or number_keys != len(args_keys):
-#                 raise AssertionError(
-#                     "All input parameters must be dictionaries with the same keys."
-#                 )
-
-#             values.append(list(arg.values()))
-
-#         values_df = pd.DataFrame(
-#             values,
-#         ).T
-#         values_df.insert(0, "00", keys)
-#     else:
-#         values_df = pd.DataFrame({args})
-
-#     values_df.columns = col_names
-
-#     return values_df
-
-
 def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
 
     if isinstance(args[0], dict):
