@@ -38,11 +38,23 @@ y = yrbs["y"]
 # fpc_array = yrbs["fpc"]
 # fpc_dict = dict(zip(stratum, fpc_array))
 
-
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
 svy_total_without_str = TaylorEstimator("total")
-# svy_total_without_str.estimate(y, weight, psu=psu, by=domain, remove_nan=True)
-# breakpoint()
+
+
+def test_total_estimator_without_str_to_datafrane():
+    svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
+    est_df = svy_total_without_str.to_dataframe()
+
+    assert (
+        est_df.columns == ["_parameter", "_estimate", "_stderror", "_lci", "_uci", "_cv"]
+    ).all()
+    assert est_df._parameter[0] == "total"
+    assert np.isclose(est_df._estimate[0], 7938.333)
+    assert np.isclose(est_df._stderror[0], 560.0856)
+    assert np.isclose(est_df._lci[0], 6813.915)
+    assert np.isclose(est_df._uci[0], 9062.752)
+    assert np.isclose(est_df._cv[0], 560.0856 / 7938.333)
 
 
 def test_total_estimator_without_str():
@@ -1024,7 +1036,6 @@ def test_factor_mean_estimator_with_str_dataframe():
     assert svy_est_df.columns.tolist() == [
         "_parameter",
         "_domain",
-        "_level",
         "_estimate",
         "_stderror",
         "_lci",

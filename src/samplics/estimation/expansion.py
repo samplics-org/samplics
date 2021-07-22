@@ -345,10 +345,7 @@ class TaylorEstimator(_SurveyEstimator):
 
     @staticmethod
     def _variance_stratum_within(
-        y_score_s: np.ndarray,
-        number_psus_in_s: np.ndarray,
-        psu_s: np.ndarray,
-        ssu_s: np.ndarray,
+        y_score_s: np.ndarray, number_psus_in_s: np.ndarray, psu_s: np.ndarray, ssu_s: np.ndarray,
     ) -> float:
 
         variance = 0.0
@@ -413,8 +410,7 @@ class TaylorEstimator(_SurveyEstimator):
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> tuple[
-        Union[dict[StringNumber, Any], np.ndarray],
-        Union[dict[StringNumber, Any], np.ndarray],
+        Union[dict[StringNumber, Any], np.ndarray], Union[dict[StringNumber, Any], np.ndarray],
     ]:
 
         if self.parameter == "ratio" and x is None:
@@ -715,7 +711,7 @@ class TaylorEstimator(_SurveyEstimator):
                 raise AssertionError("fpc dictionary keys must be the same as the strata!")
             else:
                 self.fpc = fpc
-        self.as_factor = True
+        self.as_factor = as_factor
 
         if by is None:
             self._estimate(
@@ -769,10 +765,7 @@ class TaylorEstimator(_SurveyEstimator):
                 self.lower_ci[b] = by_est.lower_ci
                 self.upper_ci[b] = by_est.upper_ci
 
-    def to_dataframe(
-        self,
-        col_names: Optional(list) = None,
-    ) -> pd.DataFrame:
+    def to_dataframe(self, col_names: Optional(list) = None,) -> pd.DataFrame:
 
         if self.point_est is None:
             raise AssertionError("No estimates yet. Must first run estimate().")
@@ -802,7 +795,7 @@ class TaylorEstimator(_SurveyEstimator):
                 ]
             if self.deff == {}:
                 col_names.pop()
-            if self.domains == []:
+            if self.domains is None:
                 col_names.pop(1)
         else:
             ncols = len(col_names)

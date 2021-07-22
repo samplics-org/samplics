@@ -94,9 +94,7 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 
 
 def sample_size_dict(
-    sample_size: Union[DictStrInt, int],
-    stratification: bool,
-    stratum: Array,
+    sample_size: Union[DictStrInt, int], stratification: bool, stratum: Array,
 ) -> Union[DictStrInt, int]:
     if not isinstance(sample_size, dict) and stratification:
         return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
