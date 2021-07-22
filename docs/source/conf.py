@@ -211,5 +211,5 @@ html_theme_options = {
 
 # To add customized css
 def setup(app):
-    app.add_stylesheet("_source/samplics_style.css")
-    app.add_stylesheet("samplics_style.css")
+    app.add_css_file("_source/samplics_style.css")
+    app.add_css_file("samplics_style.css")
