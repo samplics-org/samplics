@@ -19,6 +19,7 @@ from samplics.sampling import OneMeanSampleSize, SampleSelection, SampleSize, al
 from samplics.utils.basic_functions import transform
 from samplics.utils.formats import array_to_dict
 from samplics.weighting import ReplicateWeight, SampleWeight
+from samplics.regression import SurveyGLM
 
 
 __all__ = [
@@ -47,6 +48,7 @@ __all__ = [
     "SampleSelection",
     "SampleSize",
     "SampleWeight",
+    "SurveyGLM",
     "ReplicateWeight",
     "ReplicateEstimator",
     "TaylorEstimator",
