@@ -2,7 +2,7 @@
 name = "samplics"
 version = "0.3.10"
 description = "Select, weight and analyze complex sample data"
-authors = ["Mamadou S Diallo <msdiallo@quantifyafrica.org>"]
+authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
 license = "MIT"
 
 readme = "README.md"
