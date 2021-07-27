@@ -10,8 +10,11 @@ y = api_strat["api00"]
 x = api_strat[["ell", "meals", "mobility"]]
 x.insert(0, "intercept", 1)
 
+# breakpoint()
+weight = api_strat["pw"]
+
 svyglm = SurveyGLM()
-svyglm_results = svyglm.fit(y=y, x=x)
+svyglm_results = svyglm.fit(y=y, x=x, samp_weight=weight)
 
 svyglm_results.summary()
 
