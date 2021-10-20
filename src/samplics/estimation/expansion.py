@@ -711,6 +711,7 @@ class TaylorEstimator(_SurveyEstimator):
                 raise AssertionError("fpc dictionary keys must be the same as the strata!")
             else:
                 self.fpc = fpc
+
         self.as_factor = as_factor
 
         if by is None:
