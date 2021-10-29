@@ -6,7 +6,7 @@
 [<img src="https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage)
 [![docs](https://readthedocs.org/projects/samplics/badge/?version=latest)](https://samplics.readthedocs.io/en/latest/?badge=latest)
 
-In large scale surveys, often complex random mechanisms are used to select samples. Estimates derived from such samples must reflect the random mechanism. _Samplics_ is a python package that implements a set of sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four subpackages.
+In large-scale surveys, often complex random mechanisms are used to select samples. Estimates derived from such samples must reflect the random mechanism. _Samplics_ is a python package that implements a set of sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four sub-packages.
 
 **Sampling** provides a set of random selection techniques used to draw a sample from a population. It also provides procedures for calculating sample sizes. The sampling subpackage contains:
 
@@ -32,20 +32,18 @@ For more details, visit https://samplics.readthedocs.io/en/latest/
 
 ## Usage
 
-Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision of 0.10.
+Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision (half confidence interval) of 0.10.
 
 > ```python
-> import samplics
 > from samplics.sampling import SampleSize
 >
 > sample_size = SampleSize(parameter = "proportion")
-> sample_size.calculate(target=0.80, precision=0.10)
+> sample_size.calculate(target=0.80, half_ci=0.10)
 > ```
 
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements e.g. expected proportions, desired precisions and associated design effects.
 
 > ```python
-> import samplics
 > from samplics.sampling import SampleSize
 >
 > sample_size = SampleSize(parameter="proportion", method="wald", stratification=True)
@@ -55,17 +53,21 @@ Furthermore, the population is located in four natural regions i.e. North, South
 > deff = {"North": 1, "South": 1.5, "East": 2.5, "West": 2.0}
 >
 > sample_size = SampleSize(parameter = "proportion", method="Fleiss", stratification=True)
-> sample_size.calculate(target=expected_proportions, precision=half_ci, deff=deff)
+> sample_size.calculate(target=expected_proportions, half_ci=half_ci, deff=deff)
 > ```
 
 To select a sample of primary sampling units using PPS method,
-we can use code similar to:
+we can use code similar to the snippets below. Note that we first use the `datasets` module to import the example dataset.
 
 > ```python
-> import samplics
+> # First we import the example dataset
+> from samplics.datasets import load_psu_frame
+> psu_frame_dict = load_psu_frame()
+> psu_frame = psu_frame_dict["data"]
+>
+> # Code for the sample selection
 > from samplics.sampling import SampleSelection
 >
-> psu_frame = pd.read_csv("psu_frame.csv")
 > psu_sample_size = {"East":3, "West": 2, "North": 2, "South": 3}
 > pps_design = SampleSelection(
 >    method="pps-sys",
@@ -73,12 +75,38 @@ we can use code similar to:
 >    with_replacement=False
 >    )
 >
-> frame["psu_prob"] = pps_design.inclusion_probs(
+> psu_frame["psu_prob"] = pps_design.inclusion_probs(
 >    psu_frame["cluster"],
 >    psu_sample_size,
 >    psu_frame["region"],
 >    psu_frame["number_households_census"]
 >    )
+> ```
+
+The initial weighting step is to obtain the design sample weights. In this example, we show a simple example of two-stage sampling design.
+
+> ```python
+> import pandas as pd
+>
+> from samplics.datasets import load_psu_sample, load_ssu_sample
+> from samplics.weighting import SampleWeight
+>
+> # Load PSU sample data
+> psu_sample_dict = load_psu_sample()
+> psu_sample = psu_sample_dict["data"]
+>
+> # Load PSU sample data
+> ssu_sample_dict = load_ssu_sample()
+> ssu_sample = ssu_sample_dict["data"]
+>
+> full_sample = pd.merge(
+>     psu_sample[["cluster", "region", "psu_prob"]],
+>     ssu_sample[["cluster", "household", "ssu_prob"]],
+>     on="cluster"
+> )
+>
+> full_sample["inclusion_prob"] = full_sample["psu_prob"] * full_sample["ssu_prob"]
+> full_sample["design_weight"] = 1 / full_sample["inclusion_prob"]
 > ```
 
 To adjust the design sample weight for nonresponse,
@@ -103,48 +131,95 @@ we can use code similar to:
 >    )
 > ```
 
-To estimate population parameters, we can use code similar to:
+To estimate population parameters using Taylor-based and replication-based methods, we can use code similar to:
 
 > ```python
-> import samplics
-> from samplics.estimation import TaylorEstimation, ReplicateEstimator
->
 > # Taylor-based
-> zinc_mean_str = TaylorEstimator("mean").estimate(
->    y=nhanes2f["zinc"],
->    samp_weight=nhanes2f["finalwgt"],
->    stratum=nhanes2f["stratid"],
->    psu=nhanes2f["psuid"],
->    remove_nan=True
+> from samplics.datasets import load_nhanes2
+>
+> nhanes2_dict = load_nhanes2()
+> nhanes2 = nhanes2_dict["data"]
+>
+> from samplics.estimation import TaylorEstimator
+>
+> zinc_mean_str = TaylorEstimator("mean")
+> zinc_mean_str.estimate(
+>     y=nhanes2["zinc"],
+>     samp_weight=nhanes2["finalwgt"],
+>     stratum=nhanes2["stratid"],
+>     psu=nhanes2["psuid"],
+>     remove_nan=True,
 > )
 >
 > # Replicate-based
+> from samplics.datasets import load_nhanes2brr
+>
+> nhanes2brr_dict = load_nhanes2brr()
+> nhanes2brr = nhanes2brr_dict["data"]
+>
+> from samplics.estimation import ReplicateEstimator
+>
 > ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
->    y=nhanes2brr["weight"],
->    samp_weight=nhanes2brr["finalwgt"],
->    x=nhanes2brr["height"],
->    rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
->    remove_nan = True
+>     y=nhanes2brr["weight"],
+>     samp_weight=nhanes2brr["finalwgt"],
+>     x=nhanes2brr["height"],
+>     rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
+>     remove_nan=True,
 > )
+>
 > ```
 
 To predict small area parameters, we can use code similar to:
 
 > ```python
-> import samplics
-> from samplics.estimation import EblupAreaModel, EblupUnitModel
+> import numpy as np
+> import pandas as pd
 >
 > # Area-level basic method
+> from samplics.datasets import load_expenditure_milk
+>
+> milk_exp_dict = load_expenditure_milk()
+> milk_exp = milk_exp_dict["data"]
+>
+> from samplics.sae import EblupAreaModel
+>
 > fh_model_reml = EblupAreaModel(method="REML")
 > fh_model_reml.fit(
->    yhat=yhat, X=X, area=area, intercept=False, error_std=sigma_e, tol=1e-4,
+>     yhat=milk_exp["direct_est"],
+>     X=pd.get_dummies(milk_exp["major_area"], drop_first=True),
+>     area=milk_exp["small_area"],
+>     error_std=milk_exp["std_error"],
+>     intercept=True,
+>     tol=1e-8,
 > )
-> fh_model_reml.predict(X=X, area=area, intercept=False)
->
+> fh_model_reml.predict(
+>     X=pd.get_dummies(milk_exp["major_area"], drop_first=True),
+>     area=milk_exp["small_area"],
+>     intercept=True,
+> )
 > # Unit-level basic method
+> from samplics.datasets import load_county_crop, load_county_crop_means
+>
+> # Load County Crop sample data
+> countycrop_dict = load_county_crop()
+> countycrop = countycrop_dict["data"]
+> # Load County Crop Area Means sample data
+> countycropmeans_dict = load_county_crop_means()
+> countycrop_means = countycropmeans_dict["data"]
+>
+> from samplics.sae import EblupUnitModel
+>
 > eblup_bhf_reml = EblupUnitModel()
-> eblup_bhf_reml.fit(ys, Xs, areas,)
-> eblup_bhf_reml.predict(Xmean, areas_list)
+> eblup_bhf_reml.fit(
+>     countycrop["corn_area"],
+>     countycrop[["corn_pixel", "soybeans_pixel"]],
+>     countycrop["county_id"],
+> )
+> eblup_bhf_reml.predict(
+>     Xmean=countycrop_means[["ave_corn_pixel", "ave_corn_pixel"]],
+>     area=np.linspace(1, 12, 12),
+> )
+>
 > ```
 
 ## Installation
