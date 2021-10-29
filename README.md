@@ -124,14 +124,14 @@ we can use code similar to:
 >     size=full_sample.shape[0],
 >     p=(0.10, 0.70, 0.15, 0.05),
 > )
->
-> > status_mapping = {
+> # Map custom response statuses to teh generic samplics statuses
+> status_mapping = {
 >    "in": "ineligible",
 >    "rr": "respondent",
 >    "nr": "non-respondent",
 >    "uk":"unknown"
 >    }
->
+> # adjust sample weights
 > full_sample["nr_weight"] = SampleWeight().adjust(
 >    samp_weight=full_sample["design_weight"],
 >    adjust_class=full_sample["region"],
