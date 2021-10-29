@@ -2,5 +2,5 @@ docutils>=0.14,<0.18
 recommonmark
 sphinx
 sphinx-bootstrap-theme
-nbsphinx>=0.7.1,<0.8 #version 0.8.x has trouble rendering .ipynb files
+nbsphinx==0.7.1 #version 0.8.x has trouble rendering .ipynb files
 samplics
