@@ -31,7 +31,7 @@ packages = [
 matplotlib = "^3.4" 
 numpy = "^1.16" 
 pandas = "^1.2" 
-python = "^3.8.3" #Pandas 1.0 requires at least Python 3.6.1
+python = "^3.7" #Pandas 1.0 requires at least Python 3.6.1
 scipy = "^1.1" 
 statsmodels = "^0.12" 
 
