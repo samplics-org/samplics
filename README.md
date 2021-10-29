@@ -197,6 +197,7 @@ To predict small area parameters, we can use code similar to:
 >     area=milk_exp["small_area"],
 >     intercept=True,
 > )
+>
 > # Unit-level basic method
 > from samplics.datasets import load_county_crop, load_county_crop_means
 >
