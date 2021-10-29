@@ -47,7 +47,7 @@ In this tutorial, we illustrate the calculation and allocation of some common sa
 
 .. toctree::
    :maxdepth: 1
-
+   
    sample_size_calculation
 
 

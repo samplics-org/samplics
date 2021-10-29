@@ -9,13 +9,13 @@ samplics.estimation.expansion
    :undoc-members:
    :show-inheritance:
 
-samplics.estimation.regression
-------------------------------
+.. samplics.estimation.regression
+.. ------------------------------
 
-.. automodule:: samplics.estimation.regression
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. .. automodule:: samplics.estimation.regression
+..    :members:
+..    :undoc-members:
+..    :show-inheritance:
 
 samplics.estimation.replication
 -------------------------------
