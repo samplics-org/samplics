@@ -1,4 +1,4 @@
-samplics
+samplics; python_version > "3.9.1"
 sphinx_bootstrap_theme
 nbsphinx
 recommonmark
