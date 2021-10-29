@@ -72,7 +72,7 @@ exclude = '''
 )/
 '''
 line-length = 99
-target-version = ["py37", "py38", "py39"]
+target-version = ["py38", "py39"]
 
 [tool.isort]
 atomic = true
