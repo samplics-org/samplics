@@ -2,5 +2,4 @@ samplics
 sphinx_bootstrap_theme
 nbsphinx
 recommonmark
-
-'docutils>=0.14,<0.18'
+docutils>=0.14,<0.18
