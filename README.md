@@ -113,10 +113,18 @@ To adjust the design sample weight for nonresponse,
 we can use code similar to:
 
 > ```python
-> import samplics
+> import numpy as np
+>
 > from samplics.weighting import SampleWeight
 >
-> status_mapping = {
+> np.random.seed(7)
+> full_sample["response_status"] = np.random.choice(
+>     ["ineligible", "respondent", "non-respondent", "unknown"],
+>     size=full_sample.shape[0],
+>     p=(0.10, 0.70, 0.15, 0.05),
+> )
+>
+> > status_mapping = {
 >    "in": "ineligible",
 >    "rr": "respondent",
 >    "nr": "non-respondent",
