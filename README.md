@@ -117,6 +117,7 @@ we can use code similar to:
 >
 > from samplics.weighting import SampleWeight
 >
+> # Simulate response
 > np.random.seed(7)
 > full_sample["response_status"] = np.random.choice(
 >     ["ineligible", "respondent", "non-respondent", "unknown"],
