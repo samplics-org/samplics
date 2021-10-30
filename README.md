@@ -240,7 +240,7 @@ Python 3.7 or newer is required and the main dependencies are [numpy](https://nu
 
 ## Contribution
 
-If you would like to contribute to the project, please read [contributing to samplics](https://github.com/CONTRIBUTING.md)
+If you would like to contribute to the project, please read [contributing to samplics](https://github.com/samplics-org/samplics/blob/main/CONTRIBUTING.md)
 
 ## License
 

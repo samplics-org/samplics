@@ -28,7 +28,7 @@ We encourage everyone to be friendly, patient, considerate and respectful of oth
 
 - Ensure that the PR describes clearly the problem and the solution. Include relevant issue number if applicable
 
-- Before submitting, please read the [contributing to samplics](https://github.com/CONTRIBUTING.md)
+- Before submitting, please read the [contributing to samplics](https://github.com/samplics-org/samplics/blob/main/CONTRIBUTING.md)
 
 3. Proposing a new features
 
