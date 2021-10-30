@@ -238,6 +238,10 @@ To predict small area parameters, we can use code similar to:
 
 Python 3.7 or newer is required and the main dependencies are [numpy](https://numpy.org), [pandas](https://pandas.pydata.org), [scpy](https://www.scipy.org), and [statsmodel](https://www.statsmodels.org/stable/index.html).
 
+## Contribution
+
+If you would like to contribute to the project, please read the [contributing to samplics](https://github.com/CONTRIBUTING.md)
+
 ## License
 
 [MIT](https://github.com/survey-methods/samplics/blob/master/license.txt)
