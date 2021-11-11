@@ -230,8 +230,8 @@ class SampleSize:
 
     def calculate(
         self,
-        half_ci: Union[DictStrNum, Number],
         target: Union[DictStrNum, Number],
+        half_ci: Union[DictStrNum, Number],
         sigma: Optional[Union[DictStrNum, Number]] = None,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
@@ -282,8 +282,15 @@ class SampleSize:
         if self.parameter is "mean" and sigma is None:
             raise AssertionError("sigma must be provided to calculate sample size for mean.")
 
-        if self.parameter == "proportion" and abs(target) > 1:
-            raise ValueError("Target for proportions must be between 0 and 1.")
+        if self.parameter == "proportion":
+            if isinstance(target, (int, float)) and not 0 <= target <= 1:
+                raise ValueError("Target for proportions must be between 0 and 1.")
+            if isinstance(target, dict):
+                for s in target:
+                    if not 0 <= target[s] <= 1:
+                        raise ValueError("Target for proportions must be between 0 and 1.")
+
+            
 
         if self.parameter == "proportion" and sigma is None:
             if isinstance(target, (int, float)):
