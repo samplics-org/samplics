@@ -27,6 +27,8 @@ class SampleSize:
     ) -> None:
 
         self.parameter = parameter.lower()
+        if self.parameter not in ("proportion", "mean"):
+            raise AssertionError("Parameter must be proportion or mean.")
         self.method = method.lower()
         if self.method not in ("wald", "fleiss"):
             raise AssertionError("Sample size calculation method not valid.")
@@ -109,7 +111,7 @@ class SampleSize:
             else:
                 return math.ceil(self.deff_c * z_value ** 2 * sigma / half_ci ** 2)
         else:
-            raise TypeError("target and half_ci must be numbers or dictionnaires!")
+            raise TypeError("target and half_ci must be numbers or dictionaries!")
 
     def _calculate_fleiss(
         self,
@@ -171,7 +173,7 @@ class SampleSize:
                 )
             )
         else:
-            raise TypeError("target and half_ci must be numbers or dictionnaires!")
+            raise TypeError("target and half_ci must be numbers or dictionaries!")
 
     def calculate(
         self,
