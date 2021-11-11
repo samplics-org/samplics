@@ -27,11 +27,14 @@ class SampleSize:
     ) -> None:
 
         self.parameter = parameter.lower()
+        self.method = method.lower()
         if self.parameter not in ("proportion", "mean"):
             raise AssertionError("Parameter must be proportion or mean.")
-        self.method = method.lower()
         if self.method not in ("wald", "fleiss"):
             raise AssertionError("Sample size calculation method not valid.")
+        if self.parameter == "mean":
+            self.method = "wald"
+
         self.stratification = stratification
         self.target: Union[DictStrNum, Number]
         self.samp_size: Union[DictStrNum, Number] = 0
@@ -42,7 +45,7 @@ class SampleSize:
         self.pop_size: Optional[Union[DictStrNum, Number]] = None
 
     def icc(self) -> Union[DictStrNum, Number]:
-        pass
+        pass  # TODO
 
     def deff(
         self,
@@ -62,7 +65,7 @@ class SampleSize:
         else:
             raise ValueError("Combination of types not supported.")
 
-    def _calculate_wald(
+    def _calculate_ss_prop_wald(
         self,
         target: Union[DictStrNum, Number],
         half_ci: Union[DictStrNum, Number],
@@ -113,7 +116,7 @@ class SampleSize:
         else:
             raise TypeError("target and half_ci must be numbers or dictionaries!")
 
-    def _calculate_fleiss(
+    def _calculate_ss_prop_fleiss(
         self,
         target: Union[DictStrNum, Number],
         half_ci: Union[DictStrNum, Number],
@@ -175,10 +178,64 @@ class SampleSize:
         else:
             raise TypeError("target and half_ci must be numbers or dictionaries!")
 
+    def _calculate_ss_mean(
+        self,
+        target: Union[DictStrNum, Number],
+        half_ci: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
+        pop_size: Optional[Union[DictStrNum, Number]],
+        stratum: Optional[Array],
+    ) -> Union[DictStrNum, Number]:
+
+        z_value = normal().ppf(1 - self.alpha / 2)
+
+        if (
+            isinstance(target, dict)
+            and isinstance(half_ci, dict)
+            and isinstance(sigma, dict)
+            and isinstance(self.deff_c, dict)
+            and stratum is not None
+        ):
+            samp_size: DictStrNum = {}
+            for s in stratum:
+                if isinstance(pop_size, dict):
+                    samp_size[s] = math.ceil(
+                        self.deff_c[s]
+                        * pop_size[s]
+                        * z_value ** 2
+                        * sigma[s] ** 2
+                        / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value ** 2 * sigma[s] ** 2)
+                    )
+                else:
+                    samp_size[s] = math.ceil(
+                        self.deff_c[s] * (z_value * sigma[s] / half_ci[s]) ** 2
+                    )
+            return samp_size
+        elif (
+            isinstance(target, (int, float))
+            and isinstance(half_ci, (int, float))
+            and isinstance(sigma, (int, float))
+            and isinstance(self.deff_c, (int, float))
+        ):
+            sigma = target * (1 - target)
+            if isinstance(pop_size, (int, float)):
+                return math.ceil(
+                    self.deff_c
+                    * pop_size
+                    * z_value ** 2
+                    * sigma ** 2
+                    / ((pop_size - 1) * half_ci ** 2 + z_value ** 2 * sigma ** 2)
+                )
+            else:
+                return math.ceil(self.deff_c * (z_value * sigma / half_ci) ** 2)
+        else:
+            raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
+
     def calculate(
         self,
         target: Union[DictStrNum, Number],
         half_ci: Union[DictStrNum, Number],
+        sigma: Optional[Union[DictStrNum, Number]] = None,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
@@ -213,6 +270,9 @@ class SampleSize:
         number_dictionaries = (
             is_target_dict + is_half_ci_dict + is_deff_dict + is_resp_rate_dict + is_pop_size_dict
         )
+
+        if self.parameter is "mean" and sigma is None:
+            raise AssertionError("sigma must be provided to calculate sample size for mean.")
 
         stratum: Optional[list[StringNumber]] = None
         if not self.stratification and (
