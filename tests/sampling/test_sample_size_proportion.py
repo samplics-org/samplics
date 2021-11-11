@@ -434,10 +434,16 @@ def test_size_nat_fleiss_size_with_deff4():
     assert size_nat_fleiss.half_ci == 0.03
 
 
-def test_size_nat_fleiss_df():
+def test_size_nat_fleiss_df1():
     size_nat_fleiss.calculate(0.80, 0.10)
     size_df = size_nat_fleiss.to_dataframe()
     assert (size_df.columns == ["_parameter", "_target", "_half_ci", "_samp_size"]).all()
+
+
+def test_size_nat_fleiss_df2():
+    size_nat_fleiss.calculate(0.80, 0.10)
+    size_df = size_nat_fleiss.to_dataframe(["param", "proportion", "half_ci", "size"])
+    assert (size_df.columns == ["param", "proportion", "half_ci", "size"]).all()
 
 
 ## Fleiss' method - stratified
@@ -491,10 +497,17 @@ def test_size_str_fleiss_size5():
     assert size_str_fleiss.samp_size["_stratum_5"] == 132
 
 
-def test_size_str_fleiss_df():
+def test_size_str_fleiss_df1():
     size_str_fleiss.calculate(0.80, 0.10, number_strata=5)
     size_df = size_str_fleiss.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
         size_df.columns == ["_parameter", "_stratum", "_target", "_half_ci", "_samp_size"]
     ).all()
+
+
+def test_size_str_fleiss_df2():
+    size_str_fleiss.calculate(0.80, 0.10, number_strata=5)
+    size_df = size_str_fleiss.to_dataframe(["param", "str", "proportion", "half_ci", "size"])
+    assert size_df.shape[0] == 5
+    assert (size_df.columns == ["param", "str", "proportion", "half_ci", "size"]).all()

@@ -30,14 +30,14 @@ class SampleSize:
         self.method = method.lower()
         if self.parameter not in ("proportion", "mean"):
             raise AssertionError("Parameter must be proportion or mean.")
-        if self.method not in ("wald", "fleiss"):
-            raise AssertionError("Sample size calculation method not valid.")
-        if self.parameter == "mean":
-            self.method = "wald"
+        if self.parameter == "proportion" and self.method not in ("wald", "fleiss"):
+            raise AssertionError("For proportion, the method must be wald or Fleiss.")
+        if self.parameter == "mean" and self.method not in ("wald"):
+            raise AssertionError("For mean, the method must be wald.")
 
         self.stratification = stratification
-        self.target: Optional[Union[DictStrNum, Number]] = None
-        self.sigma: Optional[Union[DictStrNum, Number]] = None
+        self.target: Union[DictStrNum, Number]
+        self.sigma: Union[DictStrNum, Number]
         self.samp_size: Union[DictStrNum, Number] = 0
         self.deff_c: Union[DictStrNum, Number] = 1.0
         self.deff_w: Union[DictStrNum, Number] = 1.0
@@ -231,7 +231,7 @@ class SampleSize:
     def calculate(
         self,
         half_ci: Union[DictStrNum, Number],
-        target: Optional[Union[DictStrNum, Number]] = None,
+        target: Union[DictStrNum, Number],
         sigma: Optional[Union[DictStrNum, Number]] = None,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
@@ -282,6 +282,17 @@ class SampleSize:
         if self.parameter is "mean" and sigma is None:
             raise AssertionError("sigma must be provided to calculate sample size for mean.")
 
+        if self.parameter == "proportion" and abs(target) > 1:
+            raise ValueError("Target for proportions must be between 0 and 1.")
+
+        if self.parameter == "proportion" and sigma is None:
+            if isinstance(target, (int, float)):
+                sigma = target * (1 - target)
+            if isinstance(target, dict):
+                sigma = {}
+                for s in target:
+                    sigma[s] = target[s] * (1 - target[s])
+
         stratum: Optional[list[StringNumber]] = None
         if not self.stratification and (
             isinstance(half_ci, dict)
@@ -295,33 +306,29 @@ class SampleSize:
         elif (
             not self.stratification
             and isinstance(half_ci, (int, float))
-            and (isinstance(target, (int, float)) or target is None)
-            and (isinstance(sigma, (int, float)) or sigma is None)
+            and isinstance(target, (int, float))
+            and isinstance(sigma, (int, float))
             and isinstance(deff, (int, float))
             and isinstance(resp_rate, (int, float))
         ):
             self.half_ci = half_ci
-            if target is not None:
-                self.target = target
-            if sigma is not None:
-                self.sigma = sigma
+            self.target = target
+            self.sigma = sigma
             self.deff_c = deff
             self.resp_rate = resp_rate
         elif (
             self.stratification
             and isinstance(half_ci, (int, float))
-            and (isinstance(target, (int, float)) or target is None)
-            and (isinstance(sigma, (int, float)) or sigma is None)
+            and isinstance(target, (int, float))
+            and isinstance(sigma, (int, float))
             and isinstance(deff, (int, float))
             and isinstance(resp_rate, (int, float))
         ):
             if number_strata is not None:
                 stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
                 self.half_ci = dict(zip(stratum, np.repeat(half_ci, number_strata)))
-                if target is not None:
-                    self.target = dict(zip(stratum, np.repeat(target, number_strata)))
-                if sigma is not None:
-                    self.sigma = dict(zip(stratum, np.repeat(sigma, number_strata)))
+                self.target = dict(zip(stratum, np.repeat(target, number_strata)))
+                self.sigma = dict(zip(stratum, np.repeat(sigma, number_strata)))
                 self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
                 self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
                 if isinstance(pop_size, (int, float)):
@@ -379,13 +386,12 @@ class SampleSize:
         pop_size_values: Union[np.ndarray, Number]
         if (
             isinstance(self.half_ci, dict)
-            and (isinstance(self.target, dict) or self.target is None)
+            and isinstance(self.target, dict)
             and isinstance(self.sigma, dict)
             and isinstance(self.resp_rate, dict)
         ):
             half_ci_values = np.array(list(self.half_ci.values()))
-            if self.target is not None:
-                target_values = np.array(list(self.target.values()))
+            target_values = np.array(list(self.target.values()))
             sigma_values = np.array(list(self.sigma.values()))
             resp_rate_values = np.array(list(self.resp_rate.values()))
             if isinstance(self.pop_size, dict):
@@ -467,27 +473,29 @@ class SampleSize:
         if self.samp_size is None:
             raise AssertionError("No sample size calculated.")
         elif col_names is None:
-            col_names = ["_parameter", "_stratum", "_target", "_half_ci", "_samp_size"]
+            col_names = [
+                "_parameter",
+                "_stratum",
+                "_target",
+                "_sigma",
+                "_half_ci",
+                "_samp_size",
+            ]
             if not self.stratification:
                 col_names.pop(1)
         else:
             ncols = len(col_names)
-            if (ncols != 5 and self.stratification) or (ncols != 4 and not self.stratification):
-                raise AssertionError("col_names must have 5 values")
-        if self.stratification:
-            est_df = dict_to_dataframe(
-                col_names,
-                self.target,
-                self.half_ci,
-                self.samp_size,
-            )
-        else:
-            est_df = dict_to_dataframe(
-                col_names,
-                self.target,
-                self.half_ci,
-                self.samp_size,
-            )
+            if (ncols != 6 and self.stratification) or (ncols != 5 and not self.stratification):
+                raise AssertionError(
+                    "col_names must have 6 values for stratified design and 5 for not stratified design."
+                )
+        est_df = dict_to_dataframe(
+            col_names,
+            self.target,
+            self.sigma,
+            self.half_ci,
+            self.samp_size,
+        )
         est_df.iloc[:, 0] = self.parameter
 
         return est_df
