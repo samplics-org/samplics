@@ -66,66 +66,61 @@ class SampleSize:
         else:
             raise ValueError("Combination of types not supported.")
 
+    @staticmethod
     def _calculate_ss_prop_wald(
-        self,
         target: Union[DictStrNum, Number],
         half_ci: Union[DictStrNum, Number],
         pop_size: Optional[Union[DictStrNum, Number]],
-        stratum: Optional[Array],
+        deff_c: Union[DictStrNum, Number],
+        alpha: float,
     ) -> Union[DictStrNum, Number]:
 
-        z_value = normal().ppf(1 - self.alpha / 2)
+        z_value = normal().ppf(1 - alpha / 2)
 
-        if (
-            isinstance(target, dict)
-            and isinstance(half_ci, dict)
-            and isinstance(self.deff_c, dict)
-            and stratum is not None
-        ):
+        if isinstance(target, dict) and isinstance(half_ci, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
-            for s in stratum:
+            for s in half_ci:
                 sigma_s = target[s] * (1 - target[s])
                 if isinstance(pop_size, dict):
                     samp_size[s] = math.ceil(
-                        self.deff_c[s]
+                        deff_c[s]
                         * pop_size[s]
                         * z_value ** 2
                         * sigma_s
                         / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value * sigma_s)
                     )
                 else:
-                    samp_size[s] = math.ceil(
-                        self.deff_c[s] * z_value ** 2 * sigma_s / half_ci[s] ** 2
-                    )
+                    samp_size[s] = math.ceil(deff_c[s] * z_value ** 2 * sigma_s / half_ci[s] ** 2)
             return samp_size
         elif (
             isinstance(target, (int, float))
             and isinstance(half_ci, (int, float))
-            and isinstance(self.deff_c, (int, float))
+            and isinstance(deff_c, (int, float))
         ):
             sigma = target * (1 - target)
             if isinstance(pop_size, (int, float)):
                 return math.ceil(
-                    self.deff_c
+                    deff_c
                     * pop_size
                     * z_value ** 2
                     * sigma
                     / ((pop_size - 1) * half_ci ** 2 + z_value * sigma)
                 )
             else:
-                return math.ceil(self.deff_c * z_value ** 2 * sigma / half_ci ** 2)
+                return math.ceil(deff_c * z_value ** 2 * sigma / half_ci ** 2)
         else:
             raise TypeError("target and half_ci must be numbers or dictionaries!")
 
+    @staticmethod
     def _calculate_ss_prop_fleiss(
-        self,
         target: Union[DictStrNum, Number],
         half_ci: Union[DictStrNum, Number],
         # pop_size: Optional[Union[DictStrNum, Number]],
-        stratum: Optional[Array],
+        deff_c: Union[DictStrNum, Number],
+        alpha: float,
     ) -> Union[DictStrNum, Number]:
 
-        z_value = normal().ppf(1 - self.alpha / 2)
+        z_value = normal().ppf(1 - alpha / 2)
 
         def fleiss_factor(p: float, d: float) -> float:
 
@@ -140,18 +135,12 @@ class SampleSize:
             else:
                 raise ValueError("Parameters p or d not valid.")
 
-        if (
-            self.stratification
-            and isinstance(target, dict)
-            and isinstance(half_ci, dict)
-            and isinstance(self.deff_c, dict)
-            and stratum is not None
-        ):
+        if isinstance(target, dict) and isinstance(half_ci, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
-            for s in stratum:
+            for s in half_ci:
                 fct = fleiss_factor(target[s], half_ci[s])
                 samp_size[s] = math.ceil(
-                    self.deff_c[s]
+                    deff_c[s]
                     * (
                         fct * (z_value ** 2) / (4 * half_ci[s] ** 2)
                         + 1 / half_ci[s]
@@ -161,14 +150,13 @@ class SampleSize:
                 )
             return samp_size
         elif (
-            not self.stratification
-            and isinstance(target, (int, float))
+            isinstance(target, (int, float))
             and isinstance(half_ci, (int, float))
-            and isinstance(self.deff_c, (int, float))
+            and isinstance(deff_c, (int, float))
         ):
             fct = fleiss_factor(target, half_ci)
             return math.ceil(
-                self.deff_c
+                deff_c
                 * (
                     fct * (z_value ** 2) / (4 * half_ci ** 2)
                     + 1 / half_ci
@@ -184,23 +172,15 @@ class SampleSize:
         half_ci: Union[DictStrNum, Number],
         sigma: Union[DictStrNum, Number],
         pop_size: Optional[Union[DictStrNum, Number]],
-        stratum: Optional[Array],
         deff_c: Union[DictStrNum, Number],
         alpha: float,
     ) -> Union[DictStrNum, Number]:
 
         z_value = normal().ppf(1 - alpha / 2)
 
-        # breakpoint()
-
-        if (
-            isinstance(half_ci, dict)
-            and isinstance(sigma, dict)
-            and isinstance(deff_c, dict)
-            and stratum is not None
-        ):
+        if isinstance(half_ci, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
-            for s in stratum:
+            for s in half_ci:
                 if isinstance(pop_size, dict):
                     samp_size[s] = math.ceil(
                         deff_c[s]
@@ -435,21 +415,22 @@ class SampleSize:
                 half_ci=self.half_ci,
                 target=self.target,
                 pop_size=self.pop_size,
-                stratum=stratum,
+                deff_c=self.deff_c,
+                alpha=self.alpha,
             )
         elif self.parameter == "proportion" and self.method == "fleiss":
             samp_size = self._calculate_ss_prop_fleiss(
                 half_ci=self.half_ci,
                 target=self.target,
                 # pop_size=self.pop_size,
-                stratum=stratum,
+                deff_c=self.deff_c,
+                alpha=self.alpha,
             )
         elif self.parameter == "mean" and self.method == "wald":
             samp_size = self._calculate_ss_mean_wald(
                 half_ci=self.half_ci,
                 sigma=self.sigma,
                 pop_size=self.pop_size,
-                stratum=stratum,
                 deff_c=self.deff_c,
                 alpha=self.alpha,
             )
