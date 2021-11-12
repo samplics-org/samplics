@@ -143,3 +143,10 @@ def test_size_mean_str_wald_fpc():
     assert size_str_mean_wald_fpc.samp_size["stratum1"] == 58
     assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
     assert size_str_mean_wald_fpc.samp_size["stratum3"] == 62
+
+
+def test_size_mean_str_wald_fpc():
+    size_str_mean_wald_fpc.calculate(half_ci=half_ci2, target=2, sigma=sigma2, pop_size=1000)
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 58
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 58
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 58
