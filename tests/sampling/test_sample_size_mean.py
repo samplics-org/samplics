@@ -3,6 +3,9 @@ import pytest
 from samplics.sampling import SampleSize
 
 
+size_str_mean_wald = SampleSize(parameter="mean", stratification=True)
+
+
 @pytest.mark.xfail(strict=True, reason="Invalid method for proprotion")
 def test_size_invalid_method_for_proportion():
     SampleSize(parameter="proportion", method="Whatever")
@@ -125,3 +128,18 @@ def test_size_mean_str_wald_df2():
     size_df = size_str_mean_wald.to_dataframe(["param", "str", "mean", "sigma", "E", "size"])
     assert size_df.shape[0] == 3
     assert (size_df.columns == ["param", "str", "mean", "sigma", "E", "size"]).all()
+
+
+size_str_mean_wald_fpc = SampleSize(parameter="mean", stratification=True)
+
+
+half_ci2 = {"stratum1": 0.5, "stratum2": 0.5, "stratum3": 0.5}
+sigma2 = {"stratum1": 2, "stratum2": 2, "stratum3": 2}
+pop_size2 = {"stratum1": 1000, "stratum2": 10000, "stratum3": 10000000}
+
+
+def test_size_mean_str_wald_fpc():
+    size_str_mean_wald_fpc.calculate(half_ci=half_ci2, target=2, sigma=sigma2, pop_size=pop_size2)
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 58
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 62
