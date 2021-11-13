@@ -30,6 +30,18 @@ def assert_probabilities(probs: Array) -> None:
             raise ValueError(err_msg)
 
 
+def assert_proportions(probs: Array) -> None:
+
+    err_msg = "Probabilities must be between 0 and 1, inclusively!"
+
+    if isinstance(probs, (int, float)):
+        if probs > 1 or probs < 0:
+            raise ValueError(err_msg)
+    elif isinstance(probs, (np.ndarray, pd.Series)):
+        if probs.any() > 1 or probs.any() < 0:
+            raise ValueError(err_msg)
+
+
 def assert_weights(weights: Array) -> None:
     weights = formats.numpy_array(weights)
     if weights.any() < 0:

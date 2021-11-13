@@ -28,12 +28,12 @@ class SampleSize:
 
         self.parameter = parameter.lower()
         self.method = method.lower()
-        if self.parameter not in ("proportion", "mean"):
-            raise AssertionError("Parameter must be proportion or mean.")
+        if self.parameter not in ("proportion", "mean", "total"):
+            raise AssertionError("Parameter must be proportion, mean, or total.")
         if self.parameter == "proportion" and self.method not in ("wald", "fleiss"):
             raise AssertionError("For proportion, the method must be wald or Fleiss.")
         if self.parameter == "mean" and self.method not in ("wald"):
-            raise AssertionError("For mean, the method must be wald.")
+            raise AssertionError("For mean and total, the method must be wald.")
 
         self.stratification = stratification
         self.target: Union[DictStrNum, Number]
@@ -245,7 +245,7 @@ class SampleSize:
         is_half_ci_dict = isinstance(half_ci, dict)
         is_deff_dict = isinstance(deff, dict)
         is_resp_rate_dict = isinstance(resp_rate, dict)
-        is_pop_size_dict = isinstance(resp_rate, dict)
+        is_pop_size_dict = isinstance(pop_size, dict)
 
         number_dictionaries = (
             is_target_dict
@@ -323,9 +323,8 @@ class SampleSize:
             else:
                 raise ValueError("Number of strata not specified!")
         elif self.stratification and number_dictionaries > 0:
-
             dict_number = 0
-            for ll in [target, half_ci, sigma, deff, resp_rate]:
+            for ll in [target, half_ci, sigma, deff, resp_rate, pop_size]:
                 if isinstance(ll, dict):
                     dict_number += 1
                     if dict_number == 1:
@@ -367,45 +366,45 @@ class SampleSize:
             elif isinstance(pop_size, dict):
                 self.pop_size = pop_size
 
-        target_values: Union[np.ndarray, Number]
-        half_ci_values: Union[np.ndarray, Number]
-        sigma_values: Union[np.ndarray, Number]
-        resp_rate_values: Union[np.ndarray, Number]
-        pop_size_values: Union[np.ndarray, Number]
-        if (
-            isinstance(self.half_ci, dict)
-            and isinstance(self.target, dict)
-            and isinstance(self.sigma, dict)
-            and isinstance(self.resp_rate, dict)
-        ):
-            half_ci_values = np.array(list(self.half_ci.values()))
-            target_values = np.array(list(self.target.values()))
-            sigma_values = np.array(list(self.sigma.values()))
-            resp_rate_values = np.array(list(self.resp_rate.values()))
-            if isinstance(self.pop_size, dict):
-                pop_size_values = np.array(list(self.pop_size.values()))
-        elif (
-            isinstance(self.target, (int, float))
-            and isinstance(self.sigma, (int, float))
-            and isinstance(self.half_ci, (int, float))
-            and isinstance(self.resp_rate, (int, float))
-        ):
-            target_values = self.target
-            half_ci_values = self.half_ci
-            sigma_values = self.sigma
-            resp_rate_values = self.resp_rate
-            if isinstance(self.pop_size, (int, float)):
-                pop_size_values = self.pop_size
-        else:
-            raise TypeError("Wrong type for self.target, self.half_ci, or self.resp_rate")
+        # target_values: Union[np.ndarray, Number]
+        # half_ci_values: Union[np.ndarray, Number]
+        # sigma_values: Union[np.ndarray, Number]
+        # resp_rate_values: Union[np.ndarray, Number]
+        # pop_size_values: Union[np.ndarray, Number]
+        # if (
+        #     isinstance(self.half_ci, dict)
+        #     and isinstance(self.target, dict)
+        #     and isinstance(self.sigma, dict)
+        #     and isinstance(self.resp_rate, dict)
+        # ):
+        #     half_ci_values = np.array(list(self.half_ci.values()))
+        #     target_values = np.array(list(self.target.values()))
+        #     sigma_values = np.array(list(self.sigma.values()))
+        #     resp_rate_values = np.array(list(self.resp_rate.values()))
+        #     if isinstance(self.pop_size, dict):
+        #         pop_size_values = np.array(list(self.pop_size.values()))
+        # elif (
+        #     isinstance(self.target, (int, float))
+        #     and isinstance(self.sigma, (int, float))
+        #     and isinstance(self.half_ci, (int, float))
+        #     and isinstance(self.resp_rate, (int, float))
+        # ):
+        #     target_values = self.target
+        #     half_ci_values = self.half_ci
+        #     sigma_values = self.sigma
+        #     resp_rate_values = self.resp_rate
+        #     if isinstance(self.pop_size, (int, float)):
+        #         pop_size_values = self.pop_size
+        # else:
+        #     raise TypeError("Wrong type for self.target, self.half_ci, or self.resp_rate")
 
-        if self.parameter == "proportion" and (
-            np.asarray(0 > target_values).any()
-            or np.asarray(target_values > 1).any()
-            or np.asarray(0 > half_ci_values).any()
-            or np.asarray(half_ci_values > 1).all()
-        ):
-            raise ValueError("Proportion values must be between 0 and 1.")
+        # if self.parameter == "proportion" and (
+        #     np.asarray(0 > target_values).any()
+        #     or np.asarray(target_values > 1).any()
+        #     or np.asarray(0 > half_ci_values).any()
+        #     or np.asarray(half_ci_values > 1).all()
+        # ):
+        #     raise ValueError("Proportion values must be between 0 and 1.")
 
         self.alpha = alpha
 
@@ -426,7 +425,7 @@ class SampleSize:
                 deff_c=self.deff_c,
                 alpha=self.alpha,
             )
-        elif self.parameter == "mean" and self.method == "wald":
+        elif self.parameter in ("mean", "total") and self.method == "wald":
             samp_size = self._calculate_ss_mean_wald(
                 half_ci=self.half_ci,
                 sigma=self.sigma,
@@ -435,15 +434,15 @@ class SampleSize:
                 alpha=self.alpha,
             )
 
-        if np.asarray(0 < resp_rate_values).all() and np.asarray(resp_rate_values <= 1).all():
-            if isinstance(samp_size, dict) and isinstance(self.resp_rate, dict):
-                for s in samp_size:
-                    samp_size[s] = math.ceil(samp_size[s] / self.resp_rate[s])
-            elif isinstance(samp_size, (int, float)) and isinstance(self.resp_rate, (int, float)):
-                samp_size = math.ceil(samp_size / self.resp_rate)
+        # if np.asarray(0 < resp_rate_values).all() and np.asarray(resp_rate_values <= 1).all():
+        #     if isinstance(samp_size, dict) and isinstance(self.resp_rate, dict):
+        #         for s in samp_size:
+        #             samp_size[s] = math.ceil(samp_size[s] / self.resp_rate[s])
+        #     elif isinstance(samp_size, (int, float)) and isinstance(self.resp_rate, (int, float)):
+        #         samp_size = math.ceil(samp_size / self.resp_rate)
 
-        else:
-            raise ValueError("Response rates must be between 0 and 1 (proportion).")
+        # else:
+        #     raise ValueError("Response rates must be between 0 and 1 (proportion).")
 
         self.samp_size = samp_size
 
@@ -586,6 +585,197 @@ def allocate(
 
 def calculate_clusters() -> None:
     pass
+
+
+class SampleSizeForDifference:
+    """SampleSizeHypothesisTesting implements sample size calculation when the objective is to compare groups or against a target"""
+
+    def __init__(
+        self,
+        parameter: str = "proportion",
+        method: str = "wald",
+        stratification: bool = False,
+        two_side: bool = True,
+        params_estimated: bool = True,
+    ) -> None:
+
+        self.parameter = parameter.lower()
+        self.method = method.lower()
+        if self.parameter not in ("proportion", "mean", "total"):
+            raise AssertionError("Parameter must be proportion, mean, total.")
+        if self.parameter == "proportion" and self.method not in ("wald", "fleiss"):
+            raise AssertionError("For proportion, the method must be wald or Fleiss.")
+        if self.parameter == "mean" and self.method not in ("wald"):
+            raise AssertionError("For mean and total, the method must be wald.")
+
+        self.stratification = stratification
+        self.test_type = "two-side" if two_side else "one-side"
+        self.params_estimated = params_estimated
+
+        self.alpha = Number
+        self.beta = Number
+        self.samp_size: Union[DictStrNum, Number]
+        self.power: Union[DictStrNum, Number]
+        self.delta: Union[DictStrNum, Number]
+        self.sigma: Union[DictStrNum, Number]
+        self.deff_c: Union[DictStrNum, Number]
+        self.deff_w: Union[DictStrNum, Number]
+        self.resp_rate: Union[DictStrNum, Number]
+        self.pop_size: Optional[Union[DictStrNum, Number]] = None
+
+    def calculate(
+        self,
+        delta: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
+        deff: Union[DictStrNum, Number, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Number] = 1.0,
+        number_strata: Optional[int] = None,
+        pop_size: Optional[Union[DictStrNum, Number]] = None,
+        alpha: float = 0.05,
+        beta: float = 0.20,
+    ) -> None:
+
+        is_delta_dict = isinstance(delta, dict)
+        is_sigma_dict = isinstance(sigma, dict)
+        is_deff_dict = isinstance(deff, dict)
+        is_resp_rate_dict = isinstance(resp_rate, dict)
+        is_pop_size_dict = isinstance(pop_size, dict)
+
+        number_dictionaries = (
+            is_delta_dict + is_sigma_dict + is_deff_dict + is_resp_rate_dict + is_pop_size_dict
+        )
+
+        if self.parameter == "proportion":
+            if isinstance(delta, (int, float)) and not 0 <= delta <= 1:
+                raise ValueError("Target for proportions must be between 0 and 1.")
+            if isinstance(delta, dict):
+                for s in delta:
+                    if not 0 <= delta[s] <= 1:
+                        raise ValueError("Target for proportions must be between 0 and 1.")
+
+        stratum: Optional[list[StringNumber]] = None
+        if not self.stratification and (
+            isinstance(delta, dict)
+            or isinstance(sigma, dict)
+            or isinstance(deff, dict)
+            or isinstance(resp_rate, dict)
+            or isinstance(pop_size, dict)
+        ):
+            raise AssertionError("No python dictionary needed for non-stratified sample.")
+        elif (
+            not self.stratification
+            and isinstance(delta, (int, float))
+            and isinstance(sigma, (int, float))
+            and isinstance(deff, (int, float))
+            and isinstance(resp_rate, (int, float))
+        ):
+            self.delta = delta
+            self.sigma = sigma
+            self.deff_c = deff
+            self.resp_rate = resp_rate
+        elif (
+            self.stratification
+            and isinstance(delta, (int, float))
+            and isinstance(sigma, (int, float))
+            and isinstance(deff, (int, float))
+            and isinstance(resp_rate, (int, float))
+        ):
+            if number_strata is not None:
+                stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
+                self.target = dict(zip(stratum, np.repeat(delta, number_strata)))
+                self.sigma = dict(zip(stratum, np.repeat(sigma, number_strata)))
+                self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
+                self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
+                if isinstance(pop_size, (int, float)):
+                    self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
+            else:
+                raise ValueError("Number of strata not specified!")
+        elif self.stratification and number_dictionaries > 0:
+            dict_number = 0
+            for ll in [delta, sigma, deff, resp_rate, pop_size]:
+                if isinstance(ll, dict):
+                    dict_number += 1
+                    if dict_number == 1:
+                        stratum = list(ll.keys())
+                    elif dict_number > 0:
+                        if stratum != list(ll.keys()):
+                            raise AssertionError("Python dictionaries have different keys")
+            number_strata = len(stratum) if stratum is not None else 0
+            if not is_delta_dict and isinstance(delta, (int, float)) and stratum is not None:
+                self.delta = dict(zip(stratum, np.repeat(delta, number_strata)))
+            elif isinstance(delta, dict):
+                self.delta = delta
+            if not is_sigma_dict and isinstance(sigma, (int, float)) and stratum is not None:
+                self.sigma = dict(zip(stratum, np.repeat(sigma, number_strata)))
+            elif isinstance(sigma, dict):
+                self.sigma = sigma
+            if not is_deff_dict and isinstance(deff, (int, float)) and stratum is not None:
+                self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
+            elif isinstance(deff, dict):
+                self.deff_c = deff
+            if (
+                not is_resp_rate_dict
+                and isinstance(resp_rate, (int, float))
+                and stratum is not None
+            ):
+                self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
+            elif isinstance(resp_rate, dict):
+                self.resp_rate = resp_rate
+            if (
+                not isinstance(pop_size, dict)
+                and isinstance(pop_size, (int, float))
+                and stratum is not None
+            ):
+                self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
+            elif isinstance(pop_size, dict):
+                self.pop_size = pop_size
+
+
+class SampleSizeHypothesisTesing:
+    """SampleSizeHypothesisTesting implements sample size calculation when the objective is to compare groups or against a target"""
+
+    def __init__(
+        self,
+        parameter: str = "proportion",
+        method: str = "wald",
+        stratification: bool = False,
+        two_side: bool = True,
+        params_estimated: bool = True,
+    ) -> None:
+
+        self.stratification = stratification
+        self.test_type = "two-side" if two_side else "one-side"
+        self.params_estimated = params_estimated
+
+        self.alpha = Number
+        self.beta = Number
+        self.samp_size: Union[DictStrNum, Number]
+        self.power: Union[DictStrNum, Number]
+        self.delta: Union[DictStrNum, Number]
+        self.param_0: Union[DictStrNum, Number]
+        self.param_a: Union[DictStrNum, Number]
+        self.stddev_0: Union[DictStrNum, Number]
+        self.stddev_a: Union[DictStrNum, Number]
+        self.deff_c: Union[DictStrNum, Number]
+        self.deff_w: Union[DictStrNum, Number]
+        self.resp_rate: Union[DictStrNum, Number]
+        self.pop_size: Optional[Union[DictStrNum, Number]] = None
+
+    def calculate(
+        self,
+        delta: Union[DictStrNum, Number],
+        param_0: Union[DictStrNum, Number],
+        param_a: Union[DictStrNum, Number],
+        stddev_0: Union[DictStrNum, Number],
+        stddev_a: Union[DictStrNum, Number],
+        deff: Union[DictStrNum, Number, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Number] = 1.0,
+        number_strata: Optional[int] = None,
+        pop_size: Optional[Union[DictStrNum, Number]] = None,
+        alpha: float = 0.05,
+        beta: float = 0.20,
+    ) -> None:
+        pass
 
 
 class OneMeanSampleSize:
