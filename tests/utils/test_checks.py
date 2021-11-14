@@ -40,6 +40,9 @@ def test_in_range_np_pd_successes():
     assert assert_in_range(low=11, high=23, x=pd.Series([20, 17, 11, 20, 23]))
     assert assert_in_range(low=-11, high=23, x=np.array([-2, 17, -11, 20, 23]))
     assert assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]))
+    assert assert_in_range(
+        low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]), y=pd.Series([11, 15, 17])
+    )
 
 
 def test_in_range_for_np_pd_fails():
@@ -51,7 +54,6 @@ def test_in_range_for_np_pd_fails():
 
 def test_in_range_for_lists_successes():
     assert assert_in_range(low=11, high=23, x=[20, 17, 11, 20, 23])
-    assert assert_in_range(low=11, high=23, x=[20, 17, 11, 20, 23])
     assert assert_in_range(low=-11, high=23, x=[-2, 17, -11, 20, 23])
     assert assert_in_range(low=-11, high=23, x=[-10, 17, -11, 20, 23])
 
@@ -61,3 +63,17 @@ def test_in_range_for_lists_fails():
     assert not assert_in_range(low=11, high=23, x=pd.Series([20, -107, 11, 20, 23]))
     assert not assert_in_range(low=-101, high=0, x=np.array([-2, -17, -11, -20, 0.0023]))
     assert not assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11.0001, 20, 23]))
+
+
+def test_in_range_for_dicts_successes():
+    assert assert_in_range(low=11, high=23, x={"one": 11, "two": 23, "three": 17})
+    assert assert_in_range(low=-11, high=23, x={"one": -11, "two": 23, "three": 17, 4: 0.23})
+    assert assert_in_range(low=-11, high=23, x={3: 0.23})
+
+
+def test_in_range_for_dicts_successes():
+    assert not assert_in_range(low=11, high=23, x={"one": 101, "two": 23, "three": 17})
+    assert not assert_in_range(
+        low=-11, high=23, x={"one": -11.0001, "two": 23, "three": 17, 4: 0.23}
+    )
+    assert not assert_in_range(low=-11, high=-23, x={3: 0.23})

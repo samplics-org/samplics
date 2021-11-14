@@ -41,7 +41,6 @@ def assert_proportions(**kargs: Union[Number, Iterable]) -> None:
 
 
 def assert_in_range(low: Number, high: Number, **kargs: Union[Number, Iterable]) -> bool:
-
     for k in kargs:
         if isinstance(kargs[k], (int, float)):
             if kargs[k] > high or kargs[k] < low:
@@ -50,10 +49,11 @@ def assert_in_range(low: Number, high: Number, **kargs: Union[Number, Iterable])
             if (kargs[k] > high).any() or (kargs[k] < low).any():
                 return False
         elif isinstance(kargs[k], Iterable):
-            for j in kargs[k]:
-                if isinstance(kargs[k], dict) and (kargs[k][j] > high or kargs[k][j] < low):
-                    return False
-                elif j > high or j < low:
+            for i in kargs[k]:
+                if isinstance(kargs[k], dict):
+                    if (kargs[k][i] > high or kargs[k][i] < low):
+                        return False
+                elif i > high or i < low:
                     return False
 
     return True
