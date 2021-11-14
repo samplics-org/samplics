@@ -33,30 +33,30 @@ def assert_probabilities(probs: Array) -> None:
     #     raise ValueError(err_msg)
 
 
-def assert_proportions(*args: Union[Number, Iterable]) -> None:
+def assert_proportions(**kargs: Union[Number, Iterable]) -> None:
 
     err_msg = "Proportions must be between 0 and 1, inclusively!"
-    if not assert_in_range(0, 1, args):
+    if not assert_in_range(0, 1, kargs):
         raise ValueError(err_msg)
 
 
-def assert_in_range(low: Number, high: Number, *args: Union[Number, Iterable]) -> bool:
+def assert_in_range(low: Number, high: Number, **kargs: Union[Number, Iterable]) -> bool:
 
-    for arg in args:
-        if isinstance(arg, (int, float)):
-            if arg > high or arg < low:
+    for k in kargs:
+        if isinstance(kargs[k], (int, float)):
+            if kargs[k] > high or kargs[k] < low:
                 return False
-        elif isinstance(arg, (np.ndarray, pd.Series)):
-            if arg.any() > high or arg.any() < low:
+        elif isinstance(kargs[k], (np.ndarray, pd.Series)):
+            if (kargs[k] > high).any() or (kargs[k] < low).any():
                 return False
-        elif isinstance(arg, Iterable):
-            for k in arg:
-                if isinstance(arg, dict) and (arg[k] > high or arg[k] < low):
+        elif isinstance(kargs[k], Iterable):
+            for j in kargs[k]:
+                if isinstance(kargs[k], dict) and (kargs[k][j] > high or kargs[k][j] < low):
                     return False
-                elif k > high or k < low:
+                elif j > high or j < low:
                     return False
 
-        return True
+    return True
 
 
 def assert_weights(weights: Array) -> None:
