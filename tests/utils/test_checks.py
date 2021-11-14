@@ -70,18 +70,28 @@ def test_in_range_for_lists_fails():
     assert not assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11.0001, 20, 23]))
 
 
+@pytest.mark.parametrize(
+    "x",
+    [
+        {"one": 11, "two": 23, "three": 17},
+        {"one": -11, "two": 23, "three": 17, 4: 0.23},
+        {3: 0.23},
+    ],
+)
 def test_in_range_for_dicts_successes():
-    assert assert_in_range(low=11, high=23, x={"one": 11, "two": 23, "three": 17})
-    assert assert_in_range(low=-11, high=23, x={"one": -11, "two": 23, "three": 17, 4: 0.23})
-    assert assert_in_range(low=-11, high=23, x={3: 0.23})
+    assert assert_in_range(low=11, high=23, x=x)
 
 
-def test_in_range_for_dicts_successes():
-    assert not assert_in_range(low=11, high=23, x={"one": 101, "two": 23, "three": 17})
-    assert not assert_in_range(
-        low=-11, high=23, x={"one": -11.0001, "two": 23, "three": 17, 4: 0.23}
-    )
-    assert not assert_in_range(low=-11, high=-23, x={3: 0.23})
+@pytest.mark.parametrize(
+    "x",
+    [
+        {"one": 101, "two": 23, "three": 17},
+        {"one": -11.0001, "two": 23, "three": 17, 3: 0.23},
+        {4: 0.23},
+    ],
+)
+def test_in_range_for_dicts_successes(x):
+    assert not assert_in_range(low=11, high=23, x=x)
 
 
 @pytest.mark.parametrize("x", [0.0, 0.00001, 0.3, 0.45, 0.85, 0.9999, 1.0])
@@ -91,8 +101,27 @@ def test_assert_proportions_for_numbers_successes(x):
 
 @pytest.mark.xfail(strict=True, reason="Numbers not between 0 and 1")
 @pytest.mark.parametrize("x", [-0.0, -0.00001, -1.000001, -1.1])
-def test_assert_proportions_for_numbers_successes(x):
+def test_assert_proportions_for_numbers_fails1(x):
     assert assert_proportions(x=x)
-    # assert assert_proportions(x=-0.00001)
-    # assert assert_proportions(x=-1.00001)
-    # assert assert_proportions(x=-1.0)
+
+
+@pytest.mark.xfail(strict=True, reason="At least one number in lists not between 0 and 1")
+@pytest.mark.parametrize("x", [[-0.0, 0.1, 0, 3], [-0.00001], [-1.000001, -1.1]])
+def test_assert_proportions_for_numbers_fails2(x):
+    assert assert_proportions(x=x)
+
+
+@pytest.mark.xfail(strict=True, reason="At least one number in numpy arrays not between 0 and 1")
+@pytest.mark.parametrize(
+    "x", [np.array([-0.0, 0.1, 0, 3]), np.array([-0.00001]), np.array([-1.000001, -1.1])]
+)
+def test_assert_proportions_for_numbers_fails3(x):
+    assert assert_proportions(x=x)
+
+
+@pytest.mark.xfail(strict=True, reason="At least one number in numpy pandas not between 0 and 1")
+@pytest.mark.parametrize(
+    "x", [pd.Series([-0.0, 0.1, 0, 3]), pd.Series([-0.00001]), pd.Series([-1.000001, -1.1])]
+)
+def test_assert_proportions_for_numbers_fails3(x):
+    assert assert_proportions(x=x)
