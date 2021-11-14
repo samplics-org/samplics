@@ -18,19 +18,12 @@ from samplics.utils import formats
 from samplics.utils.types import Array, Number, StringNumber
 
 
-def assert_probabilities(probs: Array) -> None:
+def assert_probabilities(**kargs: Union[Number, Iterable]) -> None:
 
     err_msg = "Probabilities must be between 0 and 1, inclusively!"
-
-    if isinstance(probs, (int, float)):
-        if probs > 1 or probs < 0:
+    for k in kargs:
+        if not assert_in_range(0, 1, x=kargs[k]):
             raise ValueError(err_msg)
-    elif isinstance(probs, (np.ndarray, pd.Series)):
-        if probs.any() > 1 or probs.any() < 0:
-            raise ValueError(err_msg)
-
-    # if not assert_in_range(0, 1, args):
-    #     raise ValueError(err_msg)
 
 
 def assert_proportions(**kargs: Union[Number, Iterable]) -> None:

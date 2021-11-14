@@ -27,7 +27,7 @@ class Ttest:
 
         if samp_type.lower() not in ("one-sample", "two-sample"):
             raise ValueError("Parameter 'type' must be equal to 'one-sample', 'two-sample'!")
-        assert_probabilities(alpha)
+        assert_probabilities(x=alpha)
 
         self.samp_type = samp_type.lower()
         self.paired = paired
