@@ -54,28 +54,32 @@ def assert_in_range(low: Number, high: Number, x: Union[Number, Iterable]) -> bo
 
 def assert_weights(weights: Array) -> None:
     weights = formats.numpy_array(weights)
-    if weights.any() < 0:
+    if (weights < 0).any():
         raise ValueError("Sample weights must be positive values")
 
 
 def assert_not_unique(array_unique_values: Array) -> None:
     if np.unique(array_unique_values).size != len(array_unique_values):
         raise AssertionError(
-            "array_unique_values must contains unique values identifying all the units in the sampling frame."
+            "The array must contains unique values identifying all the units in the sampling frame."
         )
 
 
 def assert_response_status(
-    response_status: Any, response_dict: Optional[dict[str, StringNumber]]
+    response_status: str, response_dict: Optional[dict[str, StringNumber]]
 ) -> None:
     if response_status is None:
         raise AssertionError("response_status is not provided")
-    elif not np.isin(response_status, ("in", "rr", "nr", "uk")).all() and response_dict is None:
+    elif (
+        not np.isin(response_status.lower(), ("in", "rr", "nr", "uk")).all()
+        and response_dict is None
+    ):
         raise AssertionError(
             "The response status must only contains values in ('in', 'rr', 'nr', 'uk') or the mapping should be provided using response_dict parameter"
         )
     elif isinstance(response_dict, dict):
-        resp_keys = np.array(list(response_dict.keys()))
+        # resp_keys = list(response_dict.keys())
+        resp_keys = [x.lower() for x in response_dict]
         if not np.isin(resp_keys, ("in", "rr", "nr", "uk")).all():
             raise AssertionError("Response mapping dictionnary has unexpected value(s)")
 

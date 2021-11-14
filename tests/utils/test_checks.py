@@ -4,7 +4,14 @@ import numpy as np
 import pandas as pd
 
 
-from samplics.utils.checks import assert_in_range, assert_proportions
+from samplics.utils.checks import (
+    assert_brr_number_psus,
+    assert_in_range,
+    assert_proportions,
+    assert_weights,
+    assert_not_unique,
+    assert_response_status,
+)
 
 
 @pytest.mark.parametrize(
@@ -148,3 +155,83 @@ def test_assert_proportions_for_pandas_Series_fails(x):
 @pytest.mark.parametrize("x", [{"one": 0.1, "two": 1.1}, {"one": -1, 3: 0.5}, {1: -0.1, 2: 1}])
 def test_assert_proportions_for_dicts_fails(x):
     assert assert_proportions(x=x) is None
+
+
+def test_assert_weights():
+    assert assert_weights([1]) is None
+    assert assert_weights([1, 2, 3, 5]) is None
+    assert assert_weights(np.array([1, 2, 3, 5])) is None
+    assert assert_weights(pd.Series([1, 2, 3, 5])) is None
+
+
+@pytest.mark.xfail(strict=True, reason="Negative weights")
+def test_assert_weights():
+    assert assert_weights([-1]) is None
+    assert assert_weights([1, 12, 3, 5]) is None
+    assert assert_weights(np.array([1, 2, 3, -5])) is None
+    assert assert_weights(pd.Series([-1, 2, 3, 5])) is None
+
+
+def test_assert_not_unique():
+    assert assert_not_unique([1]) is None
+    assert assert_not_unique([1, 2, 3, 5]) is None
+    assert assert_not_unique(np.array([1, 2, 3, 5])) is None
+    assert assert_not_unique(pd.Series([1, 2, 3, 5])) is None
+
+
+@pytest.mark.xfail(strict=True, reason="Duplicate values")
+def test_assert_not_unique():
+    assert assert_not_unique([1, 3, 3, 5]) is None
+    assert assert_not_unique(np.array([1, 2, 3, 5, 5])) is None
+    assert assert_not_unique(pd.Series([1, 1, 2, 3, 5])) is None
+
+
+def test_assert_response_status11():
+    assert assert_response_status("in", None) is None
+    assert assert_response_status("rr", None) is None
+    assert assert_response_status("nr", None) is None
+    assert assert_response_status("NR", None) is None
+    assert assert_response_status("uk", None) is None
+    assert assert_response_status("Uk", None) is None
+
+
+@pytest.mark.xfail(strict=True, reason="response status missing")
+def test_assert_response_status0():
+    assert assert_response_status(None, {"in": "inelgible"}) is None
+    assert assert_response_status(None, {"nr": "inelgible"}) is None
+
+
+@pytest.mark.xfail(strict=True, reason="Not in the standard dictionary")
+def test_assert_response_status12():
+    assert assert_response_status("inn", None) is None
+    assert assert_response_status("rRR", None) is None
+    assert assert_response_status("nonresponse", None) is None
+    assert assert_response_status("uuk", None) is None
+
+
+def test_assert_response_status21():
+    assert assert_response_status("in", {"in": "ineligible"}) is None
+    assert assert_response_status("in", {"iN": 1}) is None
+    assert assert_response_status("nr", {"in": "ineligible"}) is None
+    assert assert_response_status("nr", {"in": 1}) is None
+    assert assert_response_status("nr", {"in": "ineligible", "nr": "nonresponse"}) is None
+
+
+@pytest.mark.xfail(strict=True, reason="Not in the standard dictionary")
+def test_assert_response_status22():
+    assert assert_response_status("in", {"inn": "ineligible"}) is None
+    assert assert_response_status("in", {"in2": 1}) is None
+    assert assert_response_status("nr", {"ineligible": "ineligible"}) is None
+    assert assert_response_status("nr", {"Nonresp": 1}) is None
+    assert assert_response_status("nr", {"nr2": "ineligible", "nr": "nonresponse"}) is None
+
+
+def test_assert_brr_number_psus_sucesses():
+    assert assert_brr_number_psus(np.array([1, 2, 4, 3, 3, 4])) is None
+    assert assert_brr_number_psus(np.array([1, 2, 3, 4])) is None
+    assert assert_brr_number_psus(np.array([1, 4])) is None
+
+
+@pytest.mark.xfail(strict=True, reason="Not a multiple of 2")
+def test_assert_brr_number_psus_fails():
+    assert assert_brr_number_psus(np.array([1, 2, 3])) is None
