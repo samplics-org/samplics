@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import math
 
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -17,6 +17,53 @@ from scipy.stats import t as student
 
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
+
+
+def calculate_power(
+    two_sides: bool,
+    delta: Union[Number, Array],
+    sigma: Union[Number, Array],
+    samp_size: Number,
+    alpha: float,
+):
+
+    if isinstance(delta, (int, float)) and isinstance(sigma, (int, float)):
+        if two_sides:
+            return (
+                1
+                - normal().cdf(
+                    normal().ppf(1 - alpha / 2) - delta / (sigma / math.sqrt(samp_size))
+                )
+                + normal().cdf(
+                    -normal().ppf(1 - alpha / 2) - delta / (sigma / math.sqrt(samp_size))
+                )
+            )
+        else:
+            return 1 - normal().cdf(
+                normal().ppf(1 - alpha) - delta / (sigma / math.sqrt(samp_size))
+            )
+    elif isinstance(delta, (np.np.ndarray, pd.Series, list, tuple)) and isinstance(
+        sigma, (np.np.ndarray, pd.Series, list, tuple)
+    ):
+        delta = numpy_array(delta)
+        sigma = numpy_array(sigma)
+        power = np.zeros(delta.shape[0])
+        for k in range(delta.shape[0]):
+            if two_sides:
+                power[k] = (
+                    1
+                    - normal().cdf(
+                        normal().ppf(1 - alpha / 2) - delta[k] / (sigma[k] / math.sqrt(samp_size))
+                    )
+                    + normal().cdf(
+                        -normal().ppf(1 - alpha / 2) - delta[k] / (sigma[k] / math.sqrt(samp_size))
+                    )
+                )
+            else:
+                power[k] = 1 - normal().cdf(
+                    normal().ppf(1 - alpha) - delta[k] / (sigma[k] / math.sqrt(samp_size))
+                )
+            return power
 
 
 class SampleSize:
@@ -566,6 +613,7 @@ class SampleSizeForDifference:
         self.beta = Number
         self.samp_size: Union[DictStrNum, Number]
         self.power: Union[DictStrNum, Number]
+        self.actual_power: Union[DictStrNum, Number]
         self.delta: Union[DictStrNum, Number]
         self.sigma: Union[DictStrNum, Number]
         self.deff_c: Union[DictStrNum, Number]
@@ -713,9 +761,9 @@ class SampleSizeForDifference:
         self.alpha = alpha
         self.power = power
 
-        samp_size: Union[DictStrNum, Number]
+        # samp_size: Union[DictStrNum, Number]
         if self.parameter in ("proportion", "mean", "total") and self.method == "wald":
-            samp_size = self._calculate_ss_difference_mean_wald(
+            self.samp_size = self._calculate_ss_difference_mean_wald(
                 two_sides=self.two_sides,
                 delta=self.delta,
                 sigma=self.sigma,
@@ -724,10 +772,17 @@ class SampleSizeForDifference:
                 power=self.power,
             )
 
-        self.samp_size = samp_size
+        # self.samp_size = samp_size
 
-        # if isinstance(self.samp_size, (int, float):
-        #     self.actual_power = normal().cdf()
+        if self.stratification:
+            for k in self.samp_size:
+                self.actual_power[k] = calculate_power(
+                    self.two_sides, self.delta[k], self.sigma[k], self.samp_size[k], self.alpha
+                )
+        else:
+            self.actual_power = calculate_power(
+                self.two_sides, self.delta, self.sigma, self.samp_size, self.alpha
+            )
 
 
 class SampleSizeHypothesisTesing:
