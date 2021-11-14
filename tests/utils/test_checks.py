@@ -190,9 +190,7 @@ def test_assert_response_status11():
     assert assert_response_status("in", None) is None
     assert assert_response_status("rr", None) is None
     assert assert_response_status("nr", None) is None
-    assert assert_response_status("NR", None) is None
     assert assert_response_status("uk", None) is None
-    assert assert_response_status("Uk", None) is None
 
 
 @pytest.mark.xfail(strict=True, reason="response status missing")
