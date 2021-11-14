@@ -35,14 +35,14 @@ def test_in_range_for_floats_fails():
     assert not assert_in_range(low=-10.0, high=39.33, x=0.7, y=100.01, z=39.3)
 
 
-def test_np_pd_series_in_range_successes():
+def test_in_range_np_pd_successes():
     assert assert_in_range(low=11, high=23, x=np.array([20, 17, 11, 20, 23]))
     assert assert_in_range(low=11, high=23, x=pd.Series([20, 17, 11, 20, 23]))
     assert assert_in_range(low=-11, high=23, x=np.array([-2, 17, -11, 20, 23]))
     assert assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]))
 
 
-def test_np_pd_series_in_range_fails():
+def test_in_range_for_np_pd_fails():
     assert not assert_in_range(low=11, high=23, x=np.array([20, 17, 111, 20, 23]))
     assert not assert_in_range(low=11, high=23, x=pd.Series([20, -107, 11, 20, 23]))
     assert not assert_in_range(low=-101, high=0, x=np.array([-2, -17, -11, -20, 0.0023]))
