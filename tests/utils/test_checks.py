@@ -49,14 +49,14 @@ def test_in_range_for_np_pd_fails():
     assert not assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11.0001, 20, 23]))
 
 
-def test_np_list_in_range_successes():
+def test_in_range_for_lists_successes():
     assert assert_in_range(low=11, high=23, x=[20, 17, 11, 20, 23])
     assert assert_in_range(low=11, high=23, x=[20, 17, 11, 20, 23])
     assert assert_in_range(low=-11, high=23, x=[-2, 17, -11, 20, 23])
     assert assert_in_range(low=-11, high=23, x=[-10, 17, -11, 20, 23])
 
 
-def test_list_in_range_fails():
+def test_in_range_for_lists_fails():
     assert not assert_in_range(low=11, high=23, x=np.array([20, 17, 111, 20, 23]))
     assert not assert_in_range(low=11, high=23, x=pd.Series([20, -107, 11, 20, 23]))
     assert not assert_in_range(low=-101, high=0, x=np.array([-2, -17, -11, -20, 0.0023]))
