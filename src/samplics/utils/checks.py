@@ -9,13 +9,13 @@ Functions:
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Iterable, Optional, Union
 
 import numpy as np
 import pandas as pd
 
 from samplics.utils import formats
-from samplics.utils.types import Array, StringNumber
+from samplics.utils.types import Array, Number, StringNumber
 
 
 def assert_probabilities(probs: Array) -> None:
@@ -29,17 +29,34 @@ def assert_probabilities(probs: Array) -> None:
         if probs.any() > 1 or probs.any() < 0:
             raise ValueError(err_msg)
 
+    # if not assert_in_range(0, 1, args):
+    #     raise ValueError(err_msg)
 
-def assert_proportions(probs: Array) -> None:
 
-    err_msg = "Probabilities must be between 0 and 1, inclusively!"
+def assert_proportions(*args: Union[Number, Iterable]) -> None:
 
-    if isinstance(probs, (int, float)):
-        if probs > 1 or probs < 0:
-            raise ValueError(err_msg)
-    elif isinstance(probs, (np.ndarray, pd.Series)):
-        if probs.any() > 1 or probs.any() < 0:
-            raise ValueError(err_msg)
+    err_msg = "Proportions must be between 0 and 1, inclusively!"
+    if not assert_in_range(0, 1, args):
+        raise ValueError(err_msg)
+
+
+def assert_in_range(low: Number, high: Number, *args: Union[Number, Iterable]) -> bool:
+
+    for arg in args:
+        if isinstance(arg, (int, float)):
+            if arg > high or arg < low:
+                return False
+        elif isinstance(arg, (np.ndarray, pd.Series)):
+            if arg.any() > high or arg.any() < low:
+                return False
+        elif isinstance(arg, Iterable):
+            for k in arg:
+                if isinstance(arg, dict) and (arg[k] > high or arg[k] < low):
+                    return False
+                elif k > high or k < low:
+                    return False
+
+        return True
 
 
 def assert_weights(weights: Array) -> None:
