@@ -587,7 +587,7 @@ class SampleSizeForDifference:
             z_alpha = normal().ppf(1 - alpha / 2)
         else:
             z_alpha = normal().ppf(1 - alpha)
-        z_beta = normal().ppf(1 - power / 2)
+        z_beta = normal().ppf(1 - power)
 
         if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
@@ -612,7 +612,7 @@ class SampleSizeForDifference:
         number_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
-        beta: float = 0.20,
+        power: float = 0.80,
     ) -> None:
 
         is_delta_dict = isinstance(delta, dict)
@@ -710,6 +710,23 @@ class SampleSizeForDifference:
             elif isinstance(pop_size, dict):
                 self.pop_size = pop_size
 
+        self.alpha = alpha
+        self.power = power
+
+        samp_size: Union[DictStrNum, Number]
+        if self.parameter in ("proportion", "mean", "total") and self.method == "wald":
+            samp_size = self._calculate_ss_mean_wald(
+                two_side=self.two_side,
+                delta=self.delta,
+                sigma=self.sigma,
+                pop_size=self.pop_size,
+                deff_c=self.deff_c,
+                alpha=self.alpha,
+                power=self.power,
+            )
+
+        self.samp_size = samp_size
+
 
 class SampleSizeHypothesisTesing:
     """SampleSizeHypothesisTesting implements sample size calculation when the objective is to compare groups or against a target"""
@@ -753,7 +770,7 @@ class SampleSizeHypothesisTesing:
         number_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
-        beta: float = 0.20,
+        power: float = 0.80,
     ) -> None:
         pass
 
