@@ -4,35 +4,41 @@ import numpy as np
 import pandas as pd
 
 
-from samplics.utils.checks import assert_in_range
+from samplics.utils.checks import assert_in_range, assert_proportions
 
 
 def test_in_range_ints_successes():
     assert assert_in_range(low=10, high=39, x=35)
     assert assert_in_range(low=-39, high=-10, x=-35)
     assert assert_in_range(low=0, high=1, x=0.35)
-    assert assert_in_range(low=-10, high=39, x=0, y=1, z=39)
+    assert assert_in_range(low=-10, high=39, x=0)
+    assert assert_in_range(low=-10, high=39, x=1)
+    assert assert_in_range(low=-10, high=39, x=39)
 
 
 def test_in_range_for_ints_fails():
     assert not assert_in_range(low=10, high=39, x=5)
     assert not assert_in_range(low=-39, high=-10, x=-135)
     assert not assert_in_range(low=0, high=1, x=1.35)
-    assert not assert_in_range(low=-10, high=39, x=0, y=100, z=39)
+    assert not assert_in_range(low=-10, high=39, x=-30)
+    assert not assert_in_range(low=-10, high=39, x=1000)
 
 
 def test_fin_range_for_floats_successes():
     assert assert_in_range(low=10.1, high=39.0, x=35.22)
     assert assert_in_range(low=-39.2, high=-10.1, x=-35.35)
     assert assert_in_range(low=0.0, high=1.0, x=0.35)
-    assert assert_in_range(low=-10.0, high=39.0, x=0.0, y=1.9, z=39.0)
+    assert assert_in_range(low=-10.0, high=39.0, x=0.0)
+    assert assert_in_range(low=-10.0, high=39.0, x=1.9)
+    assert assert_in_range(low=-10.0, high=39.0, x=0.039)
 
 
 def test_in_range_for_floats_fails():
     assert not assert_in_range(low=10.0, high=39.0, x=5.5)
     assert not assert_in_range(low=-39.3, high=-10.1, x=-135.23)
     assert not assert_in_range(low=0.0, high=1.00, x=1.35)
-    assert not assert_in_range(low=-10.0, high=39.33, x=0.7, y=100.01, z=39.3)
+    assert not assert_in_range(low=-10.0, high=39.33, x=100.01)
+    assert not assert_in_range(low=-10.0, high=39.3, x=39.33)
 
 
 def test_in_range_np_pd_successes():
@@ -40,9 +46,8 @@ def test_in_range_np_pd_successes():
     assert assert_in_range(low=11, high=23, x=pd.Series([20, 17, 11, 20, 23]))
     assert assert_in_range(low=-11, high=23, x=np.array([-2, 17, -11, 20, 23]))
     assert assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]))
-    assert assert_in_range(
-        low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]), y=pd.Series([11, 15, 17])
-    )
+    assert assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]))
+    assert assert_in_range(low=-11, high=23, x=pd.Series([11, 15, 17]))
 
 
 def test_in_range_for_np_pd_fails():
@@ -77,3 +82,17 @@ def test_in_range_for_dicts_successes():
         low=-11, high=23, x={"one": -11.0001, "two": 23, "three": 17, 4: 0.23}
     )
     assert not assert_in_range(low=-11, high=-23, x={3: 0.23})
+
+
+@pytest.mark.parametrize("x", [0.0, 0.00001, 0.3, 0.45, 0.85, 0.9999, 1.0])
+def test_assert_proportions_for_numbers_successes(x):
+    assert assert_proportions(x=x) is None
+
+
+@pytest.mark.xfail(strict=True, reason="Numbers not between 0 and 1")
+@pytest.mark.parametrize("x", [-0.0, -0.00001, -1.000001, -1.1])
+def test_assert_proportions_for_numbers_successes(x):
+    assert assert_proportions(x=x)
+    # assert assert_proportions(x=-0.00001)
+    # assert assert_proportions(x=-1.00001)
+    # assert assert_proportions(x=-1.0)
