@@ -8,14 +8,14 @@ from samplics.utils.checks import assert_in_range, assert_proportions
 
 
 @pytest.mark.parametrize(
-    "x1",
-    [0, 1, 39],
+    "x1, x2, x3, x4",
+    [(35, -35, 0.35, [0, 1, 39])],
 )
-def test_in_range_ints_successes(x1):
-    assert assert_in_range(low=10, high=39, x=35)
-    assert assert_in_range(low=-39, high=-10, x=-35)
-    assert assert_in_range(low=0, high=1, x=0.35)
-    assert assert_in_range(low=-10, high=39, x=x1)
+def test_in_range_ints_successes(x1, x2, x3, x4):
+    assert assert_in_range(low=10, high=39, x=x1)
+    assert assert_in_range(low=-39, high=-10, x=x2)
+    assert assert_in_range(low=0, high=1, x=x3)
+    assert assert_in_range(low=-10, high=39, x=x4)
 
 
 def test_in_range_for_ints_fails():
@@ -43,13 +43,22 @@ def test_in_range_for_floats_fails():
     assert not assert_in_range(low=-10.0, high=39.3, x=39.33)
 
 
-def test_in_range_np_pd_successes():
-    assert assert_in_range(low=11, high=23, x=np.array([20, 17, 11, 20, 23]))
-    assert assert_in_range(low=11, high=23, x=pd.Series([20, 17, 11, 20, 23]))
-    assert assert_in_range(low=-11, high=23, x=np.array([-2, 17, -11, 20, 23]))
-    assert assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]))
-    assert assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11, 20, 23]))
-    assert assert_in_range(low=-11, high=23, x=pd.Series([11, 15, 17]))
+@pytest.mark.parametrize(
+    "x1",
+    [np.array([20, 17, 11, 20, 23]), pd.Series([20, 17, 11, 20, 23])],
+)
+@pytest.mark.parametrize(
+    "x2",
+    [
+        np.array([-2, 17, -11, 20, 23]),
+        pd.Series([-10, 17, -11, 20, 23]),
+        pd.Series([-10, 17, -11, 20, 23]),
+        pd.Series([11, 15, 17]),
+    ],
+)
+def test_in_range_np_pd_successes(x1, x2):
+    assert assert_in_range(low=11, high=23, x=x1)
+    assert assert_in_range(low=-11, high=23, x=x2)
 
 
 def test_in_range_for_np_pd_fails():
@@ -101,29 +110,41 @@ def test_assert_proportions_for_numbers_successes(x):
     assert assert_proportions(x=x) is None
 
 
-@pytest.mark.xfail(strict=True, reason="Numbers not between 0 and 1")
+@pytest.mark.xfail(strict=True, reason="Number is not between 0 and 1")
 @pytest.mark.parametrize("x", [-0.0, -0.00001, -1.000001, -1.1])
-def test_assert_proportions_for_numbers_fails1(x):
+def test_assert_proportions_for_numbers_fails(x):
     assert assert_proportions(x=x)
 
 
-@pytest.mark.xfail(strict=True, reason="At least one number in lists not between 0 and 1")
+@pytest.mark.xfail(strict=True, reason="At least one number in the lists is not between 0 and 1")
 @pytest.mark.parametrize("x", [[-0.0, 0.1, 0, 3], [-0.00001], [-1.000001, -1.1]])
-def test_assert_proportions_for_numbers_fails2(x):
+def test_assert_proportions_for_list_fails(x):
     assert assert_proportions(x=x)
 
 
-@pytest.mark.xfail(strict=True, reason="At least one number in numpy arrays not between 0 and 1")
+@pytest.mark.xfail(
+    strict=True, reason="At least one number in the numpy arrays is not between 0 and 1"
+)
 @pytest.mark.parametrize(
     "x", [np.array([-0.0, 0.1, 0, 3]), np.array([-0.00001]), np.array([-1.000001, -1.1])]
 )
-def test_assert_proportions_for_numbers_fails3(x):
+def test_assert_proportions_for_numpy_arrays_fails(x):
     assert assert_proportions(x=x)
 
 
-@pytest.mark.xfail(strict=True, reason="At least one number in numpy pandas not between 0 and 1")
+@pytest.mark.xfail(
+    strict=True, reason="At least one number in the pandas series is not between 0 and 1"
+)
 @pytest.mark.parametrize(
     "x", [pd.Series([-0.0, 0.1, 0, 3]), pd.Series([-0.00001]), pd.Series([-1.000001, -1.1])]
 )
-def test_assert_proportions_for_numbers_fails3(x):
-    assert assert_proportions(x=x)
+def test_assert_proportions_for_pandas_Series_fails(x):
+    assert assert_proportions(x=x) is None
+
+
+@pytest.mark.xfail(
+    strict=True, reason="At least one number in the dictionaries is not between 0 and 1"
+)
+@pytest.mark.parametrize("x", [{"one": 0.1, "two": 1.1}, {"one": -1, 3: 0.5}, {1: -0.1, 2: 1}])
+def test_assert_proportions_for_dicts_fails(x):
+    assert assert_proportions(x=x) is None
