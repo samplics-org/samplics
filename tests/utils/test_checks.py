@@ -7,13 +7,15 @@ import pandas as pd
 from samplics.utils.checks import assert_in_range, assert_proportions
 
 
-def test_in_range_ints_successes():
+@pytest.mark.parametrize(
+    "x1",
+    [0, 1, 39],
+)
+def test_in_range_ints_successes(x1):
     assert assert_in_range(low=10, high=39, x=35)
     assert assert_in_range(low=-39, high=-10, x=-35)
     assert assert_in_range(low=0, high=1, x=0.35)
-    assert assert_in_range(low=-10, high=39, x=0)
-    assert assert_in_range(low=-10, high=39, x=1)
-    assert assert_in_range(low=-10, high=39, x=39)
+    assert assert_in_range(low=-10, high=39, x=x1)
 
 
 def test_in_range_for_ints_fails():
