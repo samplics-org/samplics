@@ -366,46 +366,6 @@ class SampleSize:
             elif isinstance(pop_size, dict):
                 self.pop_size = pop_size
 
-        # target_values: Union[np.ndarray, Number]
-        # half_ci_values: Union[np.ndarray, Number]
-        # sigma_values: Union[np.ndarray, Number]
-        # resp_rate_values: Union[np.ndarray, Number]
-        # pop_size_values: Union[np.ndarray, Number]
-        # if (
-        #     isinstance(self.half_ci, dict)
-        #     and isinstance(self.target, dict)
-        #     and isinstance(self.sigma, dict)
-        #     and isinstance(self.resp_rate, dict)
-        # ):
-        #     half_ci_values = np.array(list(self.half_ci.values()))
-        #     target_values = np.array(list(self.target.values()))
-        #     sigma_values = np.array(list(self.sigma.values()))
-        #     resp_rate_values = np.array(list(self.resp_rate.values()))
-        #     if isinstance(self.pop_size, dict):
-        #         pop_size_values = np.array(list(self.pop_size.values()))
-        # elif (
-        #     isinstance(self.target, (int, float))
-        #     and isinstance(self.sigma, (int, float))
-        #     and isinstance(self.half_ci, (int, float))
-        #     and isinstance(self.resp_rate, (int, float))
-        # ):
-        #     target_values = self.target
-        #     half_ci_values = self.half_ci
-        #     sigma_values = self.sigma
-        #     resp_rate_values = self.resp_rate
-        #     if isinstance(self.pop_size, (int, float)):
-        #         pop_size_values = self.pop_size
-        # else:
-        #     raise TypeError("Wrong type for self.target, self.half_ci, or self.resp_rate")
-
-        # if self.parameter == "proportion" and (
-        #     np.asarray(0 > target_values).any()
-        #     or np.asarray(target_values > 1).any()
-        #     or np.asarray(0 > half_ci_values).any()
-        #     or np.asarray(half_ci_values > 1).all()
-        # ):
-        #     raise ValueError("Proportion values must be between 0 and 1.")
-
         self.alpha = alpha
 
         samp_size: Union[DictStrNum, Number]
@@ -433,16 +393,6 @@ class SampleSize:
                 deff_c=self.deff_c,
                 alpha=self.alpha,
             )
-
-        # if np.asarray(0 < resp_rate_values).all() and np.asarray(resp_rate_values <= 1).all():
-        #     if isinstance(samp_size, dict) and isinstance(self.resp_rate, dict):
-        #         for s in samp_size:
-        #             samp_size[s] = math.ceil(samp_size[s] / self.resp_rate[s])
-        #     elif isinstance(samp_size, (int, float)) and isinstance(self.resp_rate, (int, float)):
-        #         samp_size = math.ceil(samp_size / self.resp_rate)
-
-        # else:
-        #     raise ValueError("Response rates must be between 0 and 1 (proportion).")
 
         self.samp_size = samp_size
 
@@ -622,6 +572,36 @@ class SampleSizeForDifference:
         self.deff_w: Union[DictStrNum, Number]
         self.resp_rate: Union[DictStrNum, Number]
         self.pop_size: Optional[Union[DictStrNum, Number]] = None
+
+    @staticmethod
+    def _calculate_ss_difference_mean_wald(
+        two_side: bool,
+        delta: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
+        deff_c: Union[DictStrNum, Number],
+        alpha: float,
+        power: float,
+    ) -> Union[DictStrNum, Number]:
+
+        if two_side:
+            z_alpha = normal().ppf(1 - alpha / 2)
+        else:
+            z_alpha = normal().ppf(1 - alpha)
+        z_beta = normal().ppf(1 - power / 2)
+
+        if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
+            samp_size: DictStrNum = {}
+            for s in delta:
+                samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) * sigma[s] / delta) ** 2)
+            return samp_size
+        elif (
+            isinstance(delta, (int, float))
+            and isinstance(sigma, (int, float))
+            and isinstance(deff_c, (int, float))
+        ):
+            return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / delta) ** 2)
+        else:
+            raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
 
     def calculate(
         self,
