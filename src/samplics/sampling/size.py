@@ -545,7 +545,7 @@ class SampleSizeForDifference:
         parameter: str = "proportion",
         method: str = "wald",
         stratification: bool = False,
-        two_side: bool = True,
+        two_sides: bool = True,
         params_estimated: bool = True,
     ) -> None:
 
@@ -559,7 +559,7 @@ class SampleSizeForDifference:
             raise AssertionError("For mean and total, the method must be wald.")
 
         self.stratification = stratification
-        self.test_type = "two-side" if two_side else "one-side"
+        self.two_sides = two_sides
         self.params_estimated = params_estimated
 
         self.alpha = Number
@@ -575,7 +575,7 @@ class SampleSizeForDifference:
 
     @staticmethod
     def _calculate_ss_difference_mean_wald(
-        two_side: bool,
+        two_sides: bool,
         delta: Union[DictStrNum, Number],
         sigma: Union[DictStrNum, Number],
         deff_c: Union[DictStrNum, Number],
@@ -583,11 +583,11 @@ class SampleSizeForDifference:
         power: float,
     ) -> Union[DictStrNum, Number]:
 
-        if two_side:
+        if two_sides:
             z_alpha = normal().ppf(1 - alpha / 2)
         else:
             z_alpha = normal().ppf(1 - alpha)
-        z_beta = normal().ppf(1 - power)
+        z_beta = normal().ppf(power)
 
         if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
@@ -610,7 +610,7 @@ class SampleSizeForDifference:
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
-        pop_size: Optional[Union[DictStrNum, Number]] = None,
+        # pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
         power: float = 0.80,
     ) -> None:
@@ -619,10 +619,10 @@ class SampleSizeForDifference:
         is_sigma_dict = isinstance(sigma, dict)
         is_deff_dict = isinstance(deff, dict)
         is_resp_rate_dict = isinstance(resp_rate, dict)
-        is_pop_size_dict = isinstance(pop_size, dict)
+        # is_pop_size_dict = isinstance(pop_size, dict)
 
         number_dictionaries = (
-            is_delta_dict + is_sigma_dict + is_deff_dict + is_resp_rate_dict + is_pop_size_dict
+            is_delta_dict + is_sigma_dict + is_deff_dict + is_resp_rate_dict  # + is_pop_size_dict
         )
 
         if self.parameter == "proportion":
@@ -639,7 +639,7 @@ class SampleSizeForDifference:
             or isinstance(sigma, dict)
             or isinstance(deff, dict)
             or isinstance(resp_rate, dict)
-            or isinstance(pop_size, dict)
+            # or isinstance(pop_size, dict)
         ):
             raise AssertionError("No python dictionary needed for non-stratified sample.")
         elif (
@@ -666,13 +666,13 @@ class SampleSizeForDifference:
                 self.sigma = dict(zip(stratum, np.repeat(sigma, number_strata)))
                 self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
                 self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
-                if isinstance(pop_size, (int, float)):
-                    self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
+                # if isinstance(pop_size, (int, float)):
+                #     self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
             else:
                 raise ValueError("Number of strata not specified!")
         elif self.stratification and number_dictionaries > 0:
             dict_number = 0
-            for ll in [delta, sigma, deff, resp_rate, pop_size]:
+            for ll in [delta, sigma, deff, resp_rate]:  # , pop_size]:
                 if isinstance(ll, dict):
                     dict_number += 1
                     if dict_number == 1:
@@ -701,31 +701,33 @@ class SampleSizeForDifference:
                 self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
             elif isinstance(resp_rate, dict):
                 self.resp_rate = resp_rate
-            if (
-                not isinstance(pop_size, dict)
-                and isinstance(pop_size, (int, float))
-                and stratum is not None
-            ):
-                self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
-            elif isinstance(pop_size, dict):
-                self.pop_size = pop_size
+            # if (
+            #     not isinstance(pop_size, dict)
+            #     and isinstance(pop_size, (int, float))
+            #     and stratum is not None
+            # ):
+            #     self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
+            # elif isinstance(pop_size, dict):
+            #     self.pop_size = pop_size
 
         self.alpha = alpha
         self.power = power
 
         samp_size: Union[DictStrNum, Number]
         if self.parameter in ("proportion", "mean", "total") and self.method == "wald":
-            samp_size = self._calculate_ss_mean_wald(
-                two_side=self.two_side,
+            samp_size = self._calculate_ss_difference_mean_wald(
+                two_sides=self.two_sides,
                 delta=self.delta,
                 sigma=self.sigma,
-                pop_size=self.pop_size,
                 deff_c=self.deff_c,
                 alpha=self.alpha,
                 power=self.power,
             )
 
         self.samp_size = samp_size
+
+        # if isinstance(self.samp_size, (int, float):
+        #     self.actual_power = normal().cdf()
 
 
 class SampleSizeHypothesisTesing:
@@ -736,12 +738,12 @@ class SampleSizeHypothesisTesing:
         parameter: str = "proportion",
         method: str = "wald",
         stratification: bool = False,
-        two_side: bool = True,
+        two_sides: bool = True,
         params_estimated: bool = True,
     ) -> None:
 
         self.stratification = stratification
-        self.test_type = "two-side" if two_side else "one-side"
+        self.two_sides = two_sides
         self.params_estimated = params_estimated
 
         self.alpha = Number

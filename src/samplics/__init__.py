@@ -15,7 +15,7 @@ from samplics.datasets.datasets import (
 )
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
-from samplics.sampling import OneMeanSampleSize, SampleSelection, SampleSize, allocate
+from samplics.sampling import SampleSelection, SampleSize, SampleSizeForDifference, allocate
 from samplics.utils.basic_functions import transform
 from samplics.utils.formats import array_to_dict
 from samplics.weighting import ReplicateWeight, SampleWeight
@@ -44,9 +44,9 @@ __all__ = [
     "load_psu_frame",
     "load_psu_sample",
     "load_ssu_sample",
-    "OneMeanSampleSize",
     "SampleSelection",
     "SampleSize",
+    "SampleSizeForDifference",
     "SampleWeight",
     "SurveyGLM",
     "ReplicateWeight",

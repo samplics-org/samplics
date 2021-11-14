@@ -1,5 +1,5 @@
 from samplics.sampling.selection import SampleSelection
-from samplics.sampling.size import OneMeanSampleSize, SampleSize, TwoMeanSampleSize, allocate
+from samplics.sampling.size import SampleSize, SampleSizeForDifference, allocate
 
 
-__all__ = ["allocate", "SampleSelection", "SampleSize", "OneMeanSampleSize", "TwoMeanSampleSize"]
+__all__ = ["allocate", "SampleSelection", "SampleSize", "SampleSizeForDifference"]
