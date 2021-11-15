@@ -3,6 +3,49 @@ import pytest
 import numpy as np
 
 from samplics.sampling import SampleSizeForDifference
+from samplics.sampling.size import calculate_power
+
+
+def test_calculate_power_two_sides():
+    assert np.isclose(
+        calculate_power(two_sides=True, delta=2, sigma=3, samp_size=18, alpha=0.05), 0.807, 0.001
+    )
+    assert np.isclose(
+        calculate_power(two_sides=True, delta=0.8, sigma=3, samp_size=111, alpha=0.05),
+        0.802,
+        0.001,
+    )
+    assert np.isclose(
+        calculate_power(two_sides=True, delta=0.6, sigma=3, samp_size=197, alpha=0.05),
+        0.801,
+        0.001,
+    )
+    assert np.isclose(
+        calculate_power(two_sides=True, delta=0.2, sigma=3, samp_size=1766, alpha=0.05),
+        0.800,
+        0.001,
+    )
+
+
+def test_calculate_power_one_side():
+    assert np.isclose(
+        calculate_power(two_sides=False, delta=2, sigma=3, samp_size=14, alpha=0.05), 0.802, 0.001
+    )
+    assert np.isclose(
+        calculate_power(two_sides=False, delta=0.8, sigma=3, samp_size=87, alpha=0.05),
+        0.800,
+        0.001,
+    )
+    assert np.isclose(
+        calculate_power(two_sides=False, delta=0.6, sigma=3, samp_size=155, alpha=0.05),
+        0.801,
+        0.001,
+    )
+    assert np.isclose(
+        calculate_power(two_sides=False, delta=0.2, sigma=3, samp_size=1392, alpha=0.05),
+        0.801,
+        0.001,
+    )
 
 
 size_diff_mean_one_side = SampleSizeForDifference(parameter="mean", two_sides=False)
