@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import math
 
-from typing import Iterable, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -303,12 +303,12 @@ class SampleSize:
             + is_pop_size_dict
         )
 
-        if self.parameter is "proportion" and target is None:
+        if self.parameter == "proportion" and target is None:
             raise AssertionError(
                 "target must be provided to calculate sample size for proportion."
             )
 
-        if self.parameter is "mean" and sigma is None:
+        if self.parameter == "mean" and sigma is None:
             raise AssertionError("sigma must be provided to calculate sample size for mean.")
 
         if self.parameter == "proportion":

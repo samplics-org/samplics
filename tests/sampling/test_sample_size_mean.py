@@ -16,7 +16,7 @@ def test_size_invalid_method_for_mean():
     SampleSize(parameter="mean", method="fleiss")
 
 
-## Wald's method
+# Wald's method
 size_mean_nat = SampleSize(parameter="mean")
 
 
@@ -71,7 +71,7 @@ def test_size_nat_wald_df2():
     assert (size_df.columns == ["param", "mean", "sigma", "half_ci", "samp_size"]).all()
 
 
-## Wald's method - stratified
+# Wald's method - stratified
 size_str_mean_wald = SampleSize(parameter="mean", stratification=True)
 
 half_ci = {"stratum1": 1, "stratum2": 1, "stratum3": 3}
@@ -138,14 +138,14 @@ sigma2 = {"stratum1": 2, "stratum2": 2, "stratum3": 2}
 pop_size2 = {"stratum1": 1000, "stratum2": 10000, "stratum3": 10000000}
 
 
-def test_size_mean_str_wald_fpc():
+def test_size_mean_str_wald_fpc1():
     size_str_mean_wald_fpc.calculate(half_ci=half_ci2, target=2, sigma=sigma2, pop_size=pop_size2)
     assert size_str_mean_wald_fpc.samp_size["stratum1"] == 58
     assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
     assert size_str_mean_wald_fpc.samp_size["stratum3"] == 62
 
 
-def test_size_mean_str_wald_fpc():
+def test_size_mean_str_wald_fpc2():
     size_str_mean_wald_fpc.calculate(half_ci=half_ci2, target=2, sigma=sigma2, pop_size=1000)
     assert size_str_mean_wald_fpc.samp_size["stratum1"] == 58
     assert size_str_mean_wald_fpc.samp_size["stratum2"] == 58
