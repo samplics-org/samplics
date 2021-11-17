@@ -987,6 +987,3 @@ class OneMeanSampleSize:
                     # + student.cdf(-t_prob_alpha1 + t_adj_fct)
                 )
 
-
-class TwoMeanSampleSize:
-    pass
