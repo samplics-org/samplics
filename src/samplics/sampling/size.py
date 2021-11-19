@@ -947,12 +947,12 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
 
         del self.params_estimated
 
-
     @staticmethod
     def _calculate_ss_wald(
         two_sides: bool,
-        delta: Union[DictStrNum, Number],
-        sigma: Union[DictStrNum, Number],
+        prop_0: Union[DictStrNum, Number],
+        prop_1: Union[DictStrNum, Number],
+        arcsin: bool,
         deff_c: Union[DictStrNum, Number],
         alpha: float,
         power: float,
@@ -960,30 +960,78 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
 
         if two_sides:
             z_alpha = normal().ppf(1 - alpha / 2)
+            const = 1
         else:
             z_alpha = normal().ppf(1 - alpha)
+            const = 2
         z_beta = normal().ppf(power)
 
-        if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
+        if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
-            for s in delta:
-                samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) * sigma[s] / delta) ** 2)
+            for s in prop_0:
+                if arcsin:
+                    samp_size[s] = math.ceil(
+                        deff_c[s]
+                        * (
+                            (z_alpha + z_beta)
+                            / (
+                                const * math.asin(math.sqrt(prop_0[s]))
+                                - const * math.asin(math.sqrt(prop_1[s]))
+                            )
+                        )
+                        ** 2
+                    )
+                else:
+                    samp_size[s] = math.ceil(
+                        deff_c[s]
+                        * (
+                            (
+                                z_alpha * math.sqrt(prop_0[s] * (1 - prop_0[s]))
+                                + z_beta * math.sqrt(prop_1[s] * (1 - prop_1[s]))
+                            )
+                            / (prop_1[s] - prop_0[s])
+                        )
+                        ** 2
+                    )
             return samp_size
         elif (
-            isinstance(delta, (int, float))
-            and isinstance(sigma, (int, float))
+            isinstance(prop_0, (int, float))
+            and isinstance(prop_1, (int, float))
             and isinstance(deff_c, (int, float))
         ):
-            return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / delta) ** 2)
+            if arcsin:
+                return math.ceil(
+                    deff_c
+                    * (
+                        (z_alpha + z_beta)
+                        / (
+                            const * math.asin(math.sqrt(prop_0))
+                            - const * math.asin(math.sqrt(prop_1))
+                        )
+                    )
+                    ** 2
+                )
+            else:
+                return math.ceil(
+                    deff_c
+                    * (
+                        (
+                            z_alpha * math.sqrt(prop_0 * (1 - prop_0))
+                            + z_beta * math.sqrt(prop_1 * (1 - prop_1))
+                        )
+                        / (prop_1 - prop_0)
+                    )
+                    ** 2
+                )
         else:
             raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
-            
+
     def calculate(
         self,
-        total_0: Union[DictStrNum, Number],
-        total_1: Union[DictStrNum, Number],
+        prop_0: Union[DictStrNum, Number],
+        prop_1: Union[DictStrNum, Number],
         sigma: Union[DictStrNum, Number],
-        arcsin_transformation: bool = True,
+        arcsin: bool = True,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
@@ -992,16 +1040,22 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         power: float = 0.80,
     ) -> None:
 
-        delta: Union[DictStrNum, Number]
-        if isinstance(total_0, (int, float)) and isinstance(total_1, (int, float)):
-            delta = total_1 - total_0
-        elif isinstance(total_0, dict) and isinstance(total_1, dict):
-            delta = {k: total_1[k] - total_0[k] for k in total_0}
-        else:
-            raise AssertionError("target_0 and targget_1 are not the same type.")
+        # delta: Union[DictStrNum, Number]
+        # if isinstance(prop_0, (int, float)) and isinstance(prop_1, (int, float)):
+        #     delta = total_1 - total_0
+        # elif isinstance(total_0, dict) and isinstance(total_1, dict):
+        #     delta = {k: total_1[k] - total_0[k] for k in total_0}
+        # else:
+        #     raise AssertionError("target_0 and targget_1 are not the same type.")
 
         self._input_parameters_validation(
-            delta=delta, sigma=sigma, deff=deff, resp_rate=resp_rate, number_strata=number_strata
+            prop_0=prop_0,
+            prop_1=prop_1,
+            sigma=sigma,
+            arcsin=arcsin,
+            deff=deff,
+            resp_rate=resp_rate,
+            number_strata=number_strata,
         )
 
         self.alpha = alpha
