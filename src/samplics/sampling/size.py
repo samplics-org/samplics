@@ -950,6 +950,7 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
     @staticmethod
     def _calculate_ss_wald(
         two_sides: bool,
+        delta: Union[DictStrNum, Number],
         prop_0: Union[DictStrNum, Number],
         prop_1: Union[DictStrNum, Number],
         arcsin: bool,
@@ -960,27 +961,15 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
 
         if two_sides:
             z_alpha = normal().ppf(1 - alpha / 2)
-            const = 1
         else:
             z_alpha = normal().ppf(1 - alpha)
-            const = 2
         z_beta = normal().ppf(power)
 
         if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
             for s in prop_0:
                 if arcsin:
-                    samp_size[s] = math.ceil(
-                        deff_c[s]
-                        * (
-                            (z_alpha + z_beta)
-                            / (
-                                const * math.asin(math.sqrt(prop_0[s]))
-                                - const * math.asin(math.sqrt(prop_1[s]))
-                            )
-                        )
-                        ** 2
-                    )
+                    samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) / delta[s]) ** 2)
                 else:
                     samp_size[s] = math.ceil(
                         deff_c[s]
@@ -989,7 +978,7 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
                                 z_alpha * math.sqrt(prop_0[s] * (1 - prop_0[s]))
                                 + z_beta * math.sqrt(prop_1[s] * (1 - prop_1[s]))
                             )
-                            / (prop_1[s] - prop_0[s])
+                            / delta[s]
                         )
                         ** 2
                     )
@@ -1000,17 +989,7 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
             and isinstance(deff_c, (int, float))
         ):
             if arcsin:
-                return math.ceil(
-                    deff_c
-                    * (
-                        (z_alpha + z_beta)
-                        / (
-                            const * math.asin(math.sqrt(prop_0))
-                            - const * math.asin(math.sqrt(prop_1))
-                        )
-                    )
-                    ** 2
-                )
+                return math.ceil(deff_c * ((z_alpha + z_beta) / delta) ** 2)
             else:
                 return math.ceil(
                     deff_c
@@ -1019,7 +998,7 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
                             z_alpha * math.sqrt(prop_0 * (1 - prop_0))
                             + z_beta * math.sqrt(prop_1 * (1 - prop_1))
                         )
-                        / (prop_1 - prop_0)
+                        / delta
                     )
                     ** 2
                 )
@@ -1040,17 +1019,30 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         power: float = 0.80,
     ) -> None:
 
-        # delta: Union[DictStrNum, Number]
-        # if isinstance(prop_0, (int, float)) and isinstance(prop_1, (int, float)):
-        #     delta = total_1 - total_0
-        # elif isinstance(total_0, dict) and isinstance(total_1, dict):
-        #     delta = {k: total_1[k] - total_0[k] for k in total_0}
-        # else:
-        #     raise AssertionError("target_0 and targget_1 are not the same type.")
+        const = 1 if self.two_sides else 2
+        self.arcsin = arcsin
+
+        delta: Union[DictStrNum, Number]
+        if isinstance(prop_0, (int, float)) and isinstance(prop_1, (int, float)):
+            if self.arcsin:
+                delta = const * math.asin(math.sqrt(prop_0)) - const * math.asin(math.sqrt(prop_1))
+            else:
+                delta = prop_1 - prop_0
+
+        elif isinstance(prop_0, dict) and isinstance(prop_1, dict):
+            if self.arcsin:
+                delta = {
+                    k: const * math.asin(math.sqrt(prop_0[k]))
+                    - const * math.asin(math.sqrt(prop_1[k]))
+                    for k in prop_0
+                }
+            else:
+                delta = {k: prop_1[k] - prop_0[k] for k in prop_0}
+        else:
+            raise AssertionError("target_0 and targget_1 are not the same type.")
 
         self._input_parameters_validation(
-            prop_0=prop_0,
-            prop_1=prop_1,
+            delta=delta,
             sigma=sigma,
             arcsin=arcsin,
             deff=deff,
@@ -1065,6 +1057,8 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         self.samp_size = self._calculate_ss_wald(
             two_sides=self.two_sides,
             delta=self.delta,
+            prop_0=prop_0,
+            prop_1=prop_1,
             sigma=self.sigma,
             deff_c=self.deff_c,
             alpha=self.alpha,
