@@ -955,15 +955,9 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         prop_1: Union[DictStrNum, Number],
         arcsin: bool,
         deff_c: Union[DictStrNum, Number],
-        alpha: float,
-        power: float,
+        z_alpha: float,
+        z_beta: float,
     ) -> Union[DictStrNum, Number]:
-
-        if two_sides:
-            z_alpha = normal().ppf(1 - alpha / 2)
-        else:
-            z_alpha = normal().ppf(1 - alpha)
-        z_beta = normal().ppf(power)
 
         if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
@@ -1010,7 +1004,8 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         prop_0: Union[DictStrNum, Number],
         prop_1: Union[DictStrNum, Number],
         sigma: Union[DictStrNum, Number],
-        arcsin: bool = True,
+        arcsin: bool = False,
+        continuity: bool = False,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
@@ -1039,7 +1034,7 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
             else:
                 delta = {k: prop_1[k] - prop_0[k] for k in prop_0}
         else:
-            raise AssertionError("target_0 and targget_1 are not the same type.")
+            raise AssertionError("target_0 and target_1 are not the same type.")
 
         self._input_parameters_validation(
             delta=delta,
@@ -1053,6 +1048,13 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         self.alpha = alpha
         self.power = power
 
+        # self.samp_size = samp_size
+        if self.two_sides:
+            z_alpha = normal().ppf(1 - self.alpha / 2)
+        else:
+            z_alpha = normal().ppf(1 - self.alpha)
+        z_beta = normal().ppf(self.power)
+
         # samp_size: Union[DictStrNum, Number]
         self.samp_size = self._calculate_ss_wald(
             two_sides=self.two_sides,
@@ -1061,18 +1063,30 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
             prop_1=prop_1,
             sigma=self.sigma,
             deff_c=self.deff_c,
-            alpha=self.alpha,
-            power=self.power,
+            z_alpha=z_alpha,
+            z_beta=z_beta,
         )
 
-        # self.samp_size = samp_size
-
         if self.stratification:
-            for k in self.samp_size:
-                self.actual_power[k] = calculate_power(
-                    self.two_sides, self.delta[k], self.sigma[k], self.samp_size[k], self.alpha
-                )
+            if continuity:
+                for s in self.samp_size:
+                    self.samp_size[s] = self.samp_size[s] + 1 / (
+                        z_alpha * math.sqrt(prop_0[s] * (1 - prop_0[s]) / self.samp_size[s])
+                        + z_beta * math.sqrt(prop_1[s] * (1 - prop_1[s]))
+                    )
+
+                    self.actual_power[s] = calculate_power(
+                        self.two_sides, self.delta[s], self.sigma[s], self.samp_size[s], self.alpha
+                    )
         else:
-            self.actual_power = calculate_power(
-                self.two_sides, self.delta, self.sigma, self.samp_size, self.alpha
-            )
+            if continuity:
+                self.samp_size = self.samp_size + 1 / (
+                    (
+                        z_alpha * math.sqrt(prop_0 * (1 - prop_0) / self.samp_size)
+                        + z_beta * math.sqrt(prop_1 * (1 - prop_1))
+                    )
+                )
+
+                self.actual_power = calculate_power(
+                    self.two_sides, self.delta, self.sigma, self.samp_size, self.alpha
+                )
