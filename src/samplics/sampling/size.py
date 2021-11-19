@@ -90,6 +90,61 @@ def calculate_power(
             return power
 
 
+def calculate_sample_size_for_proportion_wald(
+    target: Union[DictStrNum, Number, Array],
+    half_ci: Union[DictStrNum, Number, Array],
+    pop_size: Optional[Union[DictStrNum, Number, Array]],
+    deff_c: Union[DictStrNum, Number, Array],
+    alpha: float,
+) -> Union[DictStrNum, Number, Array]:
+
+    z_value = normal().ppf(1 - alpha / 2)
+
+    if isinstance(target, dict) and isinstance(half_ci, dict) and isinstance(deff_c, dict):
+        samp_size: DictStrNum = {}
+        for s in half_ci:
+            sigma_s = target[s] * (1 - target[s])
+            if isinstance(pop_size, dict):
+                samp_size[s] = math.ceil(
+                    deff_c[s]
+                    * pop_size[s]
+                    * z_value ** 2
+                    * sigma_s
+                    / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value * sigma_s)
+                )
+            else:
+                samp_size[s] = math.ceil(deff_c[s] * z_value ** 2 * sigma_s / half_ci[s] ** 2)
+        return samp_size
+    elif (
+        isinstance(target, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(half_ci, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(deff_c, (np.ndarray, pd.Series, list, tuple))
+    ):
+        target = numpy_array(target)
+        half_ci = numpy_array(half_ci)
+        deff_c = numpy_array(deff_c)
+        samp_size = np.ceil(deff_c * (z_value ** 2) * target * (1 - target) / (half_ci ** 2))
+        return samp_size
+    elif (
+        isinstance(target, (int, float))
+        and isinstance(half_ci, (int, float))
+        and isinstance(deff_c, (int, float))
+    ):
+        sigma = target * (1 - target)
+        if isinstance(pop_size, (int, float)):
+            return math.ceil(
+                deff_c
+                * pop_size
+                * z_value ** 2
+                * sigma
+                / ((pop_size - 1) * half_ci ** 2 + z_value * sigma)
+            )
+        else:
+            return math.ceil(deff_c * z_value ** 2 * sigma / half_ci ** 2)
+    else:
+        raise TypeError("target and half_ci must be numbers or dictionaries!")
+
+
 class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
@@ -137,50 +192,50 @@ class SampleSize:
         else:
             raise ValueError("Combination of types not supported.")
 
-    @staticmethod
-    def _calculate_ss_prop_wald(
-        target: Union[DictStrNum, Number],
-        half_ci: Union[DictStrNum, Number],
-        pop_size: Optional[Union[DictStrNum, Number]],
-        deff_c: Union[DictStrNum, Number],
-        alpha: float,
-    ) -> Union[DictStrNum, Number]:
+    # @staticmethod
+    # def _calculate_ss_prop_wald(
+    #     target: Union[DictStrNum, Number],
+    #     half_ci: Union[DictStrNum, Number],
+    #     pop_size: Optional[Union[DictStrNum, Number]],
+    #     deff_c: Union[DictStrNum, Number],
+    #     alpha: float,
+    # ) -> Union[DictStrNum, Number]:
 
-        z_value = normal().ppf(1 - alpha / 2)
+    #     z_value = normal().ppf(1 - alpha / 2)
 
-        if isinstance(target, dict) and isinstance(half_ci, dict) and isinstance(deff_c, dict):
-            samp_size: DictStrNum = {}
-            for s in half_ci:
-                sigma_s = target[s] * (1 - target[s])
-                if isinstance(pop_size, dict):
-                    samp_size[s] = math.ceil(
-                        deff_c[s]
-                        * pop_size[s]
-                        * z_value ** 2
-                        * sigma_s
-                        / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value * sigma_s)
-                    )
-                else:
-                    samp_size[s] = math.ceil(deff_c[s] * z_value ** 2 * sigma_s / half_ci[s] ** 2)
-            return samp_size
-        elif (
-            isinstance(target, (int, float))
-            and isinstance(half_ci, (int, float))
-            and isinstance(deff_c, (int, float))
-        ):
-            sigma = target * (1 - target)
-            if isinstance(pop_size, (int, float)):
-                return math.ceil(
-                    deff_c
-                    * pop_size
-                    * z_value ** 2
-                    * sigma
-                    / ((pop_size - 1) * half_ci ** 2 + z_value * sigma)
-                )
-            else:
-                return math.ceil(deff_c * z_value ** 2 * sigma / half_ci ** 2)
-        else:
-            raise TypeError("target and half_ci must be numbers or dictionaries!")
+    #     if isinstance(target, dict) and isinstance(half_ci, dict) and isinstance(deff_c, dict):
+    #         samp_size: DictStrNum = {}
+    #         for s in half_ci:
+    #             sigma_s = target[s] * (1 - target[s])
+    #             if isinstance(pop_size, dict):
+    #                 samp_size[s] = math.ceil(
+    #                     deff_c[s]
+    #                     * pop_size[s]
+    #                     * z_value ** 2
+    #                     * sigma_s
+    #                     / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value * sigma_s)
+    #                 )
+    #             else:
+    #                 samp_size[s] = math.ceil(deff_c[s] * z_value ** 2 * sigma_s / half_ci[s] ** 2)
+    #         return samp_size
+    #     elif (
+    #         isinstance(target, (int, float))
+    #         and isinstance(half_ci, (int, float))
+    #         and isinstance(deff_c, (int, float))
+    #     ):
+    #         sigma = target * (1 - target)
+    #         if isinstance(pop_size, (int, float)):
+    #             return math.ceil(
+    #                 deff_c
+    #                 * pop_size
+    #                 * z_value ** 2
+    #                 * sigma
+    #                 / ((pop_size - 1) * half_ci ** 2 + z_value * sigma)
+    #             )
+    #         else:
+    #             return math.ceil(deff_c * z_value ** 2 * sigma / half_ci ** 2)
+    #     else:
+    #         raise TypeError("target and half_ci must be numbers or dictionaries!")
 
     @staticmethod
     def _calculate_ss_prop_fleiss(
@@ -423,7 +478,7 @@ class SampleSize:
 
         samp_size: Union[DictStrNum, Number]
         if self.parameter == "proportion" and self.method == "wald":
-            samp_size = self._calculate_ss_prop_wald(
+            samp_size = calculate_sample_size_for_proportion_wald(
                 half_ci=self.half_ci,
                 target=self.target,
                 pop_size=self.pop_size,
