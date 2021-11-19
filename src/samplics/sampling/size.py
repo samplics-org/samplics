@@ -601,37 +601,7 @@ class SampleSizeForDifference:
         self.resp_rate: Union[DictStrNum, Number]
         self.pop_size: Optional[Union[DictStrNum, Number]] = None
 
-    @staticmethod
-    def _calculate_ss_difference_mean_wald(
-        two_sides: bool,
-        delta: Union[DictStrNum, Number],
-        sigma: Union[DictStrNum, Number],
-        deff_c: Union[DictStrNum, Number],
-        alpha: float,
-        power: float,
-    ) -> Union[DictStrNum, Number]:
-
-        if two_sides:
-            z_alpha = normal().ppf(1 - alpha / 2)
-        else:
-            z_alpha = normal().ppf(1 - alpha)
-        z_beta = normal().ppf(power)
-
-        if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
-            samp_size: DictStrNum = {}
-            for s in delta:
-                samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) * sigma[s] / delta) ** 2)
-            return samp_size
-        elif (
-            isinstance(delta, (int, float))
-            and isinstance(sigma, (int, float))
-            and isinstance(deff_c, (int, float))
-        ):
-            return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / delta) ** 2)
-        else:
-            raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
-
-    def calculate(
+    def _input_parameters_validation(
         self,
         delta: Union[DictStrNum, Number],
         sigma: Union[DictStrNum, Number],
@@ -639,8 +609,6 @@ class SampleSizeForDifference:
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
         # pop_size: Optional[Union[DictStrNum, Number]] = None,
-        alpha: float = 0.05,
-        power: float = 0.80,
     ) -> None:
 
         is_delta_dict = isinstance(delta, dict)
@@ -738,6 +706,50 @@ class SampleSizeForDifference:
             # elif isinstance(pop_size, dict):
             #     self.pop_size = pop_size
 
+    @staticmethod
+    def _calculate_ss_difference_mean_wald(
+        two_sides: bool,
+        delta: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
+        deff_c: Union[DictStrNum, Number],
+        alpha: float,
+        power: float,
+    ) -> Union[DictStrNum, Number]:
+
+        if two_sides:
+            z_alpha = normal().ppf(1 - alpha / 2)
+        else:
+            z_alpha = normal().ppf(1 - alpha)
+        z_beta = normal().ppf(power)
+
+        if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
+            samp_size: DictStrNum = {}
+            for s in delta:
+                samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) * sigma[s] / delta) ** 2)
+            return samp_size
+        elif (
+            isinstance(delta, (int, float))
+            and isinstance(sigma, (int, float))
+            and isinstance(deff_c, (int, float))
+        ):
+            return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / delta) ** 2)
+        else:
+            raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
+
+    def calculate(
+        self,
+        delta: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
+        deff: Union[DictStrNum, Number, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Number] = 1.0,
+        number_strata: Optional[int] = None,
+        # pop_size: Optional[Union[DictStrNum, Number]] = None,
+        alpha: float = 0.05,
+        power: float = 0.80,
+    ) -> None:
+
+        self._input_parameters_validation(delta, sigma, deff, resp_rate, number_strata)
+
         self.alpha = alpha
         self.power = power
 
@@ -804,7 +816,7 @@ class SampleSizeOneGroup:
         self,
         target_0: Union[DictStrNum, Number],
         target_1: Union[DictStrNum, Number],
-        stddev: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
@@ -812,7 +824,26 @@ class SampleSizeOneGroup:
         alpha: float = 0.05,
         power: float = 0.80,
     ) -> None:
-        pass
+
+        delta: Union[DictStrNum, Number]
+        if isinstance(target_0, (int, float)) and isinstance(target_1, (int, float)):
+            delta = target_1 - target_0
+        elif isinstance(target_0, dict) and isinstance(target_1, dict):
+            delta = {k: target_1[k] - target_0[k] for k in target_0}
+        else:
+            raise AssertionError("target_0 and targget_1 are not the same type.")
+
+        SampSizeDiff = SampleSizeForDifference(
+            parameter=self.parameter,
+            method=self.method,
+            stratification=self.stratification,
+            two_sides=self.two_sides,
+            params_estimated=self.params_estimated,
+        )
+
+        SampSizeDiff.calculate(
+            delta=delta, sigma=sigma, deff=deff, resp_rate=resp_rate, alpha=alpha, power=power
+        )
 
 
 class SampleSizeTwoGroups:
