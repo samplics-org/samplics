@@ -268,24 +268,6 @@ class SampleSize:
         pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
     ) -> None:
-        """calculate the sample allocation.
-
-        Args:
-            target (Union[dict[Any, Number], Number]): the expected proportion used to calculate
-                the sample size. It can be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.
-            half_ci (Union[dict[Any, Number], Number]): level of half_ci or half confidence
-                interval. It can be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.
-            deff (Union[dict[Any, float], float], optional): design effect. It can be a single
-                number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.. Defaults to 1.0.
-            resp_rate (Union[dict[Any, float], float], optional): expected response rate. It can
-                be a single number for non-stratified designs or if all the strata have the same targeted proportion. Use a dictionary for stratified designs.. Defaults to 1.0.
-            number_strata (Optional[int], optional): number of strata. Defaults to None.
-            alpha (float, optional): level of significance. Defaults to 0.05.
-
-        Raises:
-            AssertionError: when a dictionary is provided for a non-stratified design.
-            AssertionError: when the dictionaries have different keys.
-        """
 
         is_target_dict = isinstance(target, dict)
         is_sigma_dict = isinstance(sigma, dict)
@@ -600,10 +582,8 @@ class SampleSizeForDifference:
         self.method = method.lower()
         if self.parameter not in ("proportion", "mean", "total"):
             raise AssertionError("Parameter must be proportion, mean, total.")
-        if self.parameter == "proportion" and self.method not in ("wald", "fleiss"):
-            raise AssertionError("For proportion, the method must be wald or Fleiss.")
-        if self.parameter == "mean" and self.method not in ("wald"):
-            raise AssertionError("For mean and total, the method must be wald.")
+        if self.method not in ("wald"):
+            raise AssertionError("The method must be wald.")
 
         self.stratification = stratification
         self.two_sides = two_sides
@@ -785,7 +765,57 @@ class SampleSizeForDifference:
             )
 
 
-class SampleSizeHypothesisTesing:
+class SampleSizeOneGroup:
+    """SampleSizeHypothesisTesting implements sample size calculation when the objective is to compare groups or against a target"""
+
+    def __init__(
+        self,
+        parameter: str = "proportion",
+        method: str = "wald",
+        stratification: bool = False,
+        two_sides: bool = True,
+        params_estimated: bool = True,
+    ) -> None:
+
+        self.parameter = parameter.lower()
+        self.method = method.lower()
+        if self.parameter not in ("proportion", "mean", "total"):
+            raise AssertionError("Parameter must be proportion, mean, total.")
+        if self.method not in ("wald"):
+            raise AssertionError("The method must be wald.")
+
+        self.stratification = stratification
+        self.two_sides = two_sides
+        self.params_estimated = params_estimated
+
+        self.alpha = Number
+        self.beta = Number
+        self.samp_size: Union[DictStrNum, Number]
+        self.power: Union[DictStrNum, Number]
+        self.target_0: Union[DictStrNum, Number]
+        self.target_1: Union[DictStrNum, Number]
+        self.stddev: Union[DictStrNum, Number]
+        self.deff_c: Union[DictStrNum, Number]
+        self.deff_w: Union[DictStrNum, Number]
+        self.resp_rate: Union[DictStrNum, Number]
+        self.pop_size: Optional[Union[DictStrNum, Number]] = None
+
+    def calculate(
+        self,
+        target_0: Union[DictStrNum, Number],
+        target_1: Union[DictStrNum, Number],
+        stddev: Union[DictStrNum, Number],
+        deff: Union[DictStrNum, Number, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Number] = 1.0,
+        number_strata: Optional[int] = None,
+        pop_size: Optional[Union[DictStrNum, Number]] = None,
+        alpha: float = 0.05,
+        power: float = 0.80,
+    ) -> None:
+        pass
+
+
+class SampleSizeTwoGroups:
     """SampleSizeHypothesisTesting implements sample size calculation when the objective is to compare groups or against a target"""
 
     def __init__(
@@ -806,10 +836,11 @@ class SampleSizeHypothesisTesing:
         self.samp_size: Union[DictStrNum, Number]
         self.power: Union[DictStrNum, Number]
         self.delta: Union[DictStrNum, Number]
-        self.param_0: Union[DictStrNum, Number]
         self.param_a: Union[DictStrNum, Number]
-        self.stddev_0: Union[DictStrNum, Number]
         self.stddev_a: Union[DictStrNum, Number]
+        self.param_b: Union[DictStrNum, Number]
+        self.stddev_a: Union[DictStrNum, Number]
+        self.stddev_b: Union[DictStrNum, Number]
         self.deff_c: Union[DictStrNum, Number]
         self.deff_w: Union[DictStrNum, Number]
         self.resp_rate: Union[DictStrNum, Number]
@@ -818,10 +849,10 @@ class SampleSizeHypothesisTesing:
     def calculate(
         self,
         delta: Union[DictStrNum, Number],
-        param_0: Union[DictStrNum, Number],
         param_a: Union[DictStrNum, Number],
-        stddev_0: Union[DictStrNum, Number],
+        param_b: Union[DictStrNum, Number],
         stddev_a: Union[DictStrNum, Number],
+        stddev_b: Union[DictStrNum, Number],
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
@@ -986,4 +1017,3 @@ class OneMeanSampleSize:
                     - nct.cdf(t_prob_alpha1, self.samp_size - 1, -t_adj_fct)
                     # + student.cdf(-t_prob_alpha1 + t_adj_fct)
                 )
-
