@@ -575,7 +575,7 @@ class _SampleSizeForDifference:
         method: str = "wald",
         stratification: bool = False,
         two_sides: bool = True,
-        params_estimated: bool = True,
+        params_estimated: bool = False,
     ) -> None:
 
         self.parameter = parameter.lower()
@@ -707,7 +707,7 @@ class _SampleSizeForDifference:
             #     self.pop_size = pop_size
 
     @staticmethod
-    def _calculate_ss_difference_wald(
+    def _calculate_ss_wald(
         two_sides: bool,
         delta: Union[DictStrNum, Number],
         sigma: Union[DictStrNum, Number],
@@ -757,7 +757,7 @@ class _SampleSizeForDifference:
 
         # samp_size: Union[DictStrNum, Number]
         if self.parameter in ("proportion", "mean", "total") and self.method == "wald":
-            self.samp_size = self._calculate_ss_difference_wald(
+            self.samp_size = self._calculate_ss_wald(
                 two_sides=self.two_sides,
                 delta=self.delta,
                 sigma=self.sigma,
@@ -830,7 +830,7 @@ class SampleSizeOneMean(_SampleSizeForDifference):
         self.power = power
 
         # samp_size: Union[DictStrNum, Number]
-        self.samp_size = self._calculate_ss_difference_wald(
+        self.samp_size = self._calculate_ss_wald(
             two_sides=self.two_sides,
             delta=self.delta,
             sigma=self.sigma,
@@ -871,8 +871,8 @@ class SampleSizeOneTotal(_SampleSizeForDifference):
             params_estimated=params_estimated,
         )
 
-        self.mean_0: Union[DictStrNum, Number]
-        self.mean_1: Union[DictStrNum, Number]
+        self.total_0: Union[DictStrNum, Number]
+        self.total_1: Union[DictStrNum, Number]
 
     def calculate(
         self,
@@ -903,7 +903,7 @@ class SampleSizeOneTotal(_SampleSizeForDifference):
         self.power = power
 
         # samp_size: Union[DictStrNum, Number]
-        self.samp_size = self._calculate_ss_difference_wald(
+        self.samp_size = self._calculate_ss_wald(
             two_sides=self.two_sides,
             delta=self.delta,
             sigma=self.sigma,
@@ -925,52 +925,109 @@ class SampleSizeOneTotal(_SampleSizeForDifference):
             )
 
 
-class SampleSizeTwoGroups:
-    """SampleSizeHypothesisTesting implements sample size calculation when the objective is to compare groups or against a target"""
+class SampleSizeOneProportion(_SampleSizeForDifference):
+    """SampleSizeOneProportion implements sample size calculation for one mean"""
 
     def __init__(
         self,
-        parameter: str = "proportion",
         method: str = "wald",
         stratification: bool = False,
         two_sides: bool = True,
-        params_estimated: bool = True,
     ) -> None:
 
-        self.stratification = stratification
-        self.two_sides = two_sides
-        self.params_estimated = params_estimated
+        _SampleSizeForDifference(
+            parameter="proportion",
+            method=method,
+            stratification=stratification,
+            two_sides=two_sides,
+        )
 
-        self.alpha = Number
-        self.beta = Number
-        self.samp_size: Union[DictStrNum, Number]
-        self.power: Union[DictStrNum, Number]
-        self.delta: Union[DictStrNum, Number]
-        self.param_a: Union[DictStrNum, Number]
-        self.stddev_a: Union[DictStrNum, Number]
-        self.param_b: Union[DictStrNum, Number]
-        self.stddev_a: Union[DictStrNum, Number]
-        self.stddev_b: Union[DictStrNum, Number]
-        self.deff_c: Union[DictStrNum, Number]
-        self.deff_w: Union[DictStrNum, Number]
-        self.resp_rate: Union[DictStrNum, Number]
-        self.pop_size: Optional[Union[DictStrNum, Number]] = None
+        self.proportion_0: Union[DictStrNum, Number]
+        self.proportion_1: Union[DictStrNum, Number]
 
+        del self.params_estimated
+
+
+    @staticmethod
+    def _calculate_ss_wald(
+        two_sides: bool,
+        delta: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
+        deff_c: Union[DictStrNum, Number],
+        alpha: float,
+        power: float,
+    ) -> Union[DictStrNum, Number]:
+
+        if two_sides:
+            z_alpha = normal().ppf(1 - alpha / 2)
+        else:
+            z_alpha = normal().ppf(1 - alpha)
+        z_beta = normal().ppf(power)
+
+        if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
+            samp_size: DictStrNum = {}
+            for s in delta:
+                samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) * sigma[s] / delta) ** 2)
+            return samp_size
+        elif (
+            isinstance(delta, (int, float))
+            and isinstance(sigma, (int, float))
+            and isinstance(deff_c, (int, float))
+        ):
+            return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / delta) ** 2)
+        else:
+            raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
+            
     def calculate(
         self,
-        delta: Union[DictStrNum, Number],
-        param_a: Union[DictStrNum, Number],
-        param_b: Union[DictStrNum, Number],
-        stddev_a: Union[DictStrNum, Number],
-        stddev_b: Union[DictStrNum, Number],
+        total_0: Union[DictStrNum, Number],
+        total_1: Union[DictStrNum, Number],
+        sigma: Union[DictStrNum, Number],
+        arcsin_transformation: bool = True,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
         number_strata: Optional[int] = None,
-        pop_size: Optional[Union[DictStrNum, Number]] = None,
+        # pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
         power: float = 0.80,
     ) -> None:
-        pass
+
+        delta: Union[DictStrNum, Number]
+        if isinstance(total_0, (int, float)) and isinstance(total_1, (int, float)):
+            delta = total_1 - total_0
+        elif isinstance(total_0, dict) and isinstance(total_1, dict):
+            delta = {k: total_1[k] - total_0[k] for k in total_0}
+        else:
+            raise AssertionError("target_0 and targget_1 are not the same type.")
+
+        self._input_parameters_validation(
+            delta=delta, sigma=sigma, deff=deff, resp_rate=resp_rate, number_strata=number_strata
+        )
+
+        self.alpha = alpha
+        self.power = power
+
+        # samp_size: Union[DictStrNum, Number]
+        self.samp_size = self._calculate_ss_wald(
+            two_sides=self.two_sides,
+            delta=self.delta,
+            sigma=self.sigma,
+            deff_c=self.deff_c,
+            alpha=self.alpha,
+            power=self.power,
+        )
+
+        # self.samp_size = samp_size
+
+        if self.stratification:
+            for k in self.samp_size:
+                self.actual_power[k] = calculate_power(
+                    self.two_sides, self.delta[k], self.sigma[k], self.samp_size[k], self.alpha
+                )
+        else:
+            self.actual_power = calculate_power(
+                self.two_sides, self.delta, self.sigma, self.samp_size, self.alpha
+            )
 
 
 class OneMeanSampleSize:
