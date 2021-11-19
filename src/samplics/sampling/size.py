@@ -21,13 +21,33 @@ from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 def calculate_power(
     two_sides: bool,
-    delta: Union[Number, Array],
-    sigma: Union[Number, Array],
-    samp_size: Number,
+    delta: Union[DictStrNum, Number, Array],
+    sigma: Union[DictStrNum, Number, Array],
+    samp_size: Union[DictStrNum, Number, Array],
     alpha: float,
 ):
 
-    if isinstance(delta, (int, float)) and isinstance(sigma, (int, float)):
+    if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(samp_size, dict):
+        if two_sides:
+            return {
+                s: 1
+                - normal().cdf(
+                    normal().ppf(1 - alpha / 2) - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
+                )
+                + normal().cdf(
+                    -normal().ppf(1 - alpha / 2) - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
+                )
+                for s in delta
+            }
+        else:
+            return 1 - normal().cdf(
+                normal().ppf(1 - alpha) - delta / (sigma / math.sqrt(samp_size))
+            )
+    elif (
+        isinstance(delta, (int, float))
+        and isinstance(sigma, (int, float))
+        and isinstance(samp_size, (int, float))
+    ):
         if two_sides:
             return (
                 1
@@ -42,8 +62,10 @@ def calculate_power(
             return 1 - normal().cdf(
                 normal().ppf(1 - alpha) - delta / (sigma / math.sqrt(samp_size))
             )
-    elif isinstance(delta, (np.np.ndarray, pd.Series, list, tuple)) and isinstance(
-        sigma, (np.np.ndarray, pd.Series, list, tuple)
+    elif (
+        isinstance(delta, (np.np.ndarray, pd.Series, list, tuple))
+        and isinstance(sigma, (np.np.ndarray, pd.Series, list, tuple))
+        and isinstance(samp_size, (np.np.ndarray, pd.Series, list, tuple))
     ):
         delta = numpy_array(delta)
         sigma = numpy_array(sigma)
@@ -53,15 +75,17 @@ def calculate_power(
                 power[k] = (
                     1
                     - normal().cdf(
-                        normal().ppf(1 - alpha / 2) - delta[k] / (sigma[k] / math.sqrt(samp_size))
+                        normal().ppf(1 - alpha / 2)
+                        - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
                     )
                     + normal().cdf(
-                        -normal().ppf(1 - alpha / 2) - delta[k] / (sigma[k] / math.sqrt(samp_size))
+                        -normal().ppf(1 - alpha / 2)
+                        - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
                     )
                 )
             else:
                 power[k] = 1 - normal().cdf(
-                    normal().ppf(1 - alpha) - delta[k] / (sigma[k] / math.sqrt(samp_size))
+                    normal().ppf(1 - alpha) - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
                 )
             return power
 
