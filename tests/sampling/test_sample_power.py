@@ -85,3 +85,23 @@ def test_power_for_one_prop_one_sides_number():
     assert np.isclose(power_less[1], 0.0008, atol=0.001)
     assert np.isclose(power_less[2], 0.0008, atol=0.001)
     assert np.isclose(power_less[3], 0.0236, atol=0.001)
+
+
+def test_power_for_one_prop_one_sides_number():
+
+    samp_size = {1: 75, 2: 55, 3: 37, 4: 5}
+    prop_0 = {1: 0.2, 2: 0.37, 3: 0.95, 4: 0.85}
+    prop_1 = {1: 0.1, 2: 0.47, 3: 0.99, 4: 0.90}
+    power_less = power_for_one_proportion(
+        samp_size=samp_size,
+        prop_0=prop_0,
+        prop_1=prop_1,
+        arcsin=True,
+        testing_type="greater",
+        alpha=0.05,
+    )
+
+    assert np.isclose(power_less[1], 2.027e-5, atol=0.001)
+    assert np.isclose(power_less[2], 0.4446, atol=0.001)
+    assert np.isclose(power_less[3], 0.4530, atol=0.001)
+    assert np.isclose(power_less[4], 0.0960, atol=0.001)
