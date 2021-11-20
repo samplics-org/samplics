@@ -11,12 +11,76 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 
-from scipy.stats import nct
 from scipy.stats import norm as normal
 from scipy.stats import t as student
 
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
+
+
+def power_for_proportion(
+    two_sides: bool,
+    prop_0: Union[DictStrNum, Number, Array],
+    prop_1: Union[DictStrNum, Number, Array],
+    samp_size: Union[DictStrNum, Number, Array],
+    arcsin: bool = True,
+    alpha: float = 0.05,
+):
+
+    z_value = normal().ppf(1 - alpha / 2)
+
+    if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(samp_size, dict):
+        if two_sides:
+            powerr: dict = {}
+            for s in prop_0:
+                z = (prop_1[s] - prop_0[s]) / math.sqrt(prop_1[s] * (1 - prop_1[s]) / samp_size[s])
+                powerr[s] = normal().cdf(z - z_value) + normal().cdf(-z - z_value)
+        else:
+            powerr: dict = {}
+            for s in prop_0:
+                z = (prop_1[s] - prop_0[s]) / math.sqrt(prop_1[s] * (1 - prop_1[s]) / samp_size[s])
+                powerr[s] = normal().cdf(z - z_value) + normal().cdf(-z - z_value)
+    elif (
+        isinstance(prop_0, (int, float))
+        and isinstance(prop_1, (int, float))
+        and isinstance(samp_size, (int, float))
+    ):
+        if arcsin:
+            h = 2 * math.asin(math.sqrt(prop_1)) - 2 * math.asin(math.sqrt(prop_0))
+            if two_sides:
+                return (
+                    1
+                    - normal().cdf(z_value - h * math.sqrt(samp_size))
+                    + normal().cdf(-z_value - h * math.sqrt(samp_size))
+                )
+            else:
+                return (
+                    1
+                    - normal().cdf(z_value - h * math.sqrt(samp_size))
+                    # + normal().cdf(-z_value - h * math.sqrt(samp_size))
+                )
+        else:
+            if two_sides:
+                z = (prop_1 - prop_0) / math.sqrt(prop_1 * (1 - prop_1) / samp_size)
+                return normal().cdf(z - z_value) + normal().cdf(-z - z_value)
+            else:
+                z = (prop_1 - prop_0) / math.sqrt(prop_1 * (1 - prop_1) / samp_size)
+                return normal().cdf(z - z_value) + normal().cdf(-z - z_value)
+    elif (
+        isinstance(prop_0, (np.np.ndarray, pd.Series, list, tuple))
+        and isinstance(prop_1, (np.np.ndarray, pd.Series, list, tuple))
+        and isinstance(samp_size, (np.np.ndarray, pd.Series, list, tuple))
+    ):
+        prop_0 = numpy_array(prop_0)
+        prop_1 = numpy_array(prop_1)
+        samp_size = numpy_array(samp_size)
+
+        if two_sides:
+            z = (prop_1 - prop_0) / np.sqrt(prop_1 * (1 - prop_1) / samp_size)
+            return normal().cdf(z - z_value) + normal().cdf(-z - z_value)
+        else:
+            z = (prop_1 - prop_0) / np.sqrt(prop_1 * (1 - prop_1) / samp_size)
+            return normal().cdf(z - z_value) + normal().cdf(-z - z_value)
 
 
 def calculate_power(
@@ -852,7 +916,8 @@ class SampleSizeOneMean(_SampleSizeForDifference):
         params_estimated: bool = True,
     ) -> None:
 
-        _SampleSizeForDifference(
+        _SampleSizeForDifference.__init__(
+            self,
             parameter="mean",
             method=method,
             stratification=stratification,
@@ -925,7 +990,8 @@ class SampleSizeOneTotal(_SampleSizeForDifference):
         params_estimated: bool = True,
     ) -> None:
 
-        _SampleSizeForDifference(
+        _SampleSizeForDifference.__init__(
+            self,
             parameter="total",
             method=method,
             stratification=stratification,
@@ -997,7 +1063,8 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         two_sides: bool = True,
     ) -> None:
 
-        _SampleSizeForDifference(
+        _SampleSizeForDifference.__init__(
+            self,
             parameter="proportion",
             method=method,
             stratification=stratification,
@@ -1009,9 +1076,113 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
 
         del self.params_estimated
 
+    def _input_parameters_validation(
+        self,
+        prop_0: Union[DictStrNum, Number],
+        prop_1: Union[DictStrNum, Number],
+        deff: Union[DictStrNum, Number, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Number] = 1.0,
+        number_strata: Optional[int] = None,
+    ) -> None:
+
+        is_prop0_dict = isinstance(prop_0, dict)
+        is_prop1_dict = isinstance(prop_1, dict)
+        is_deff_dict = isinstance(deff, dict)
+        is_resp_rate_dict = isinstance(resp_rate, dict)
+
+        number_dictionaries = (
+            is_prop0_dict + is_prop1_dict + is_deff_dict + is_resp_rate_dict  # + is_pop_size_dict
+        )
+
+        if self.parameter == "proportion":
+            if (isinstance(prop_0, (int, float)) and not 0 <= prop_0 <= 1) or (
+                isinstance(prop_1, (int, float)) and not 0 <= prop_1 <= 1
+            ):
+                raise ValueError("Target for proportions must be between 0 and 1.")
+            if isinstance(prop_0, dict) and isinstance(prop_1, dict):
+                for s in prop_0:
+                    if (not 0 <= prop_0[s] <= 1) or (not 0 <= prop_1[s] <= 1):
+                        raise ValueError("Target for proportions must be between 0 and 1.")
+
+        stratum: Optional[list[StringNumber]] = None
+        if not self.stratification and (
+            isinstance(prop_0, dict)
+            or isinstance(prop_1, dict)
+            or isinstance(deff, dict)
+            or isinstance(resp_rate, dict)
+            # or isinstance(pop_size, dict)
+        ):
+            raise AssertionError("No python dictionary needed for non-stratified sample.")
+        elif (
+            not self.stratification
+            and isinstance(prop_0, (int, float))
+            and isinstance(prop_1, (int, float))
+            and isinstance(deff, (int, float))
+            and isinstance(resp_rate, (int, float))
+        ):
+            self.prop_0 = prop_0
+            self.prop_1 = prop_1
+            self.deff_c = deff
+            self.resp_rate = resp_rate
+        elif (
+            self.stratification
+            and isinstance(prop_0, (int, float))
+            and isinstance(prop_1, (int, float))
+            and isinstance(deff, (int, float))
+            and isinstance(resp_rate, (int, float))
+        ):
+            if number_strata is not None:
+                stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
+                self.target = dict(zip(stratum, np.repeat(prop_0, number_strata)))
+                self.sigma = dict(zip(stratum, np.repeat(prop_1, number_strata)))
+                self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
+                self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
+                # if isinstance(pop_size, (int, float)):
+                #     self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
+            else:
+                raise ValueError("Number of strata not specified!")
+        elif self.stratification and number_dictionaries > 0:
+            dict_number = 0
+            for ll in [prop_0, prop_1, deff, resp_rate]:  # , pop_size]:
+                if isinstance(ll, dict):
+                    dict_number += 1
+                    if dict_number == 1:
+                        stratum = list(ll.keys())
+                    elif dict_number > 0:
+                        if stratum != list(ll.keys()):
+                            raise AssertionError("Python dictionaries have different keys")
+            number_strata = len(stratum) if stratum is not None else 0
+            if not is_prop0_dict and isinstance(prop_0, (int, float)) and stratum is not None:
+                self.prop_0 = dict(zip(stratum, np.repeat(prop_0, number_strata)))
+            elif isinstance(prop_0, dict):
+                self.prop_0 = prop_0
+            if not is_prop1_dict and isinstance(prop_1, (int, float)) and stratum is not None:
+                self.prop1 = dict(zip(stratum, np.repeat(prop_1, number_strata)))
+            elif isinstance(prop_1, dict):
+                self.prop_1 = prop_1
+            if not is_deff_dict and isinstance(deff, (int, float)) and stratum is not None:
+                self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
+            elif isinstance(deff, dict):
+                self.deff_c = deff
+            if (
+                not is_resp_rate_dict
+                and isinstance(resp_rate, (int, float))
+                and stratum is not None
+            ):
+                self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
+            elif isinstance(resp_rate, dict):
+                self.resp_rate = resp_rate
+            # if (
+            #     not isinstance(pop_size, dict)
+            #     and isinstance(pop_size, (int, float))
+            #     and stratum is not None
+            # ):
+            #     self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
+            # elif isinstance(pop_size, dict):
+            #     self.pop_size = pop_size
+
     @staticmethod
     def _calculate_ss_wald(
-        two_sides: bool,
         delta: Union[DictStrNum, Number],
         prop_0: Union[DictStrNum, Number],
         prop_1: Union[DictStrNum, Number],
@@ -1065,7 +1236,6 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         self,
         prop_0: Union[DictStrNum, Number],
         prop_1: Union[DictStrNum, Number],
-        sigma: Union[DictStrNum, Number],
         arcsin: bool = False,
         continuity: bool = False,
         deff: Union[DictStrNum, Number, Number] = 1.0,
@@ -1079,12 +1249,21 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         const = 1 if self.two_sides else 2
         self.arcsin = arcsin
 
+        self._input_parameters_validation(
+            prop_0=prop_0,
+            prop_1=prop_1,
+            deff=deff,
+            resp_rate=resp_rate,
+            number_strata=number_strata,
+        )
+
         delta: Union[DictStrNum, Number]
         if isinstance(prop_0, (int, float)) and isinstance(prop_1, (int, float)):
             if self.arcsin:
                 delta = const * math.asin(math.sqrt(prop_0)) - const * math.asin(math.sqrt(prop_1))
             else:
                 delta = prop_1 - prop_0
+            sigma = prop_1 * (1 - prop_1)
 
         elif isinstance(prop_0, dict) and isinstance(prop_1, dict):
             if self.arcsin:
@@ -1095,18 +1274,12 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
                 }
             else:
                 delta = {k: prop_1[k] - prop_0[k] for k in prop_0}
+            sigma = {k: prop_1[k] * (1 - prop_0[k]) for k in prop_1}
         else:
             raise AssertionError("target_0 and target_1 are not the same type.")
 
-        self._input_parameters_validation(
-            delta=delta,
-            sigma=sigma,
-            arcsin=arcsin,
-            deff=deff,
-            resp_rate=resp_rate,
-            number_strata=number_strata,
-        )
-
+        self.delta = delta
+        self.sigma = sigma
         self.alpha = alpha
         self.power = power
 
@@ -1119,11 +1292,10 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
 
         # samp_size: Union[DictStrNum, Number]
         self.samp_size = self._calculate_ss_wald(
-            two_sides=self.two_sides,
             delta=self.delta,
             prop_0=prop_0,
             prop_1=prop_1,
-            sigma=self.sigma,
+            arcsin=self.arcsin,
             deff_c=self.deff_c,
             z_alpha=z_alpha,
             z_beta=z_beta,
@@ -1132,23 +1304,32 @@ class SampleSizeOneProportion(_SampleSizeForDifference):
         if self.stratification:
             if continuity:
                 for s in self.samp_size:
-                    self.samp_size[s] = self.samp_size[s] + 1 / (
-                        z_alpha * math.sqrt(prop_0[s] * (1 - prop_0[s]) / self.samp_size[s])
-                        + z_beta * math.sqrt(prop_1[s] * (1 - prop_1[s]))
+                    self.samp_size[s] = math.ceil(
+                        self.samp_size[s]
+                        + 1
+                        / (
+                            z_alpha * math.sqrt(prop_0[s] * (1 - prop_0[s]) / self.samp_size[s])
+                            + z_beta * math.sqrt(prop_1[s] * (1 - prop_1[s]))
+                        )
                     )
 
-                    self.actual_power[s] = calculate_power(
-                        self.two_sides, self.delta[s], self.sigma[s], self.samp_size[s], self.alpha
-                    )
+            self.actual_power[s] = power_for_proportion(
+                self.two_sides, self.delta[s], self.sigma[s], self.samp_size[s], self.alpha
+            )
+
         else:
             if continuity:
-                self.samp_size = self.samp_size + 1 / (
-                    (
-                        z_alpha * math.sqrt(prop_0 * (1 - prop_0) / self.samp_size)
-                        + z_beta * math.sqrt(prop_1 * (1 - prop_1))
+                self.samp_size = math.ceil(
+                    self.samp_size
+                    + 1
+                    / (
+                        (
+                            z_alpha * math.sqrt(prop_0 * (1 - prop_0) / self.samp_size)
+                            + z_beta * math.sqrt(prop_1 * (1 - prop_1))
+                        )
                     )
                 )
 
-                self.actual_power = calculate_power(
-                    self.two_sides, self.delta, self.sigma, self.samp_size, self.alpha
-                )
+            self.actual_power = power_for_proportion(
+                self.two_sides, self.delta, self.sigma, self.samp_size, self.alpha
+            )

@@ -15,7 +15,20 @@ from samplics.datasets.datasets import (
 )
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
-from samplics.sampling import SampleSelection, SampleSize, allocate
+from samplics.sampling import (
+    SampleSelection,
+    SampleSize,
+    SampleSizeOneMean,
+    SampleSizeOneProportion,
+    SampleSizeOneTotal,
+    allocate,
+    calculate_power,
+    power_for_proportion,
+    power_for_one_proportion,
+    sample_size_for_mean_wald,
+    sample_size_for_proportion_fleiss,
+    sample_size_for_proportion_wald,
+)
 from samplics.utils.basic_functions import transform
 from samplics.utils.formats import array_to_dict
 from samplics.weighting import ReplicateWeight, SampleWeight
@@ -25,6 +38,7 @@ from samplics.regression import SurveyGLM
 __all__ = [
     "allocate",
     "array_to_dict",
+    "calculate_power",
     "CrossTabulation",
     "Tabulation",
     "Ttest",
@@ -44,8 +58,16 @@ __all__ = [
     "load_psu_frame",
     "load_psu_sample",
     "load_ssu_sample",
+    "power_for_proportion",
+    "power_for_one_proportion",
     "SampleSelection",
     "SampleSize",
+    "SampleSizeOneMean",
+    "SampleSizeOneProportion",
+    "SampleSizeOneTotal",
+    "sample_size_for_mean_wald",
+    "sample_size_for_proportion_fleiss",
+    "sample_size_for_proportion_wald",
     "SampleWeight",
     "SurveyGLM",
     "ReplicateWeight",
