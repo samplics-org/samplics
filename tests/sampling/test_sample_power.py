@@ -21,10 +21,10 @@ def test_power_for_one_prop_two_sides_number():
         testing_type="two-side",
         alpha=0.01,
     )
-    assert np.isclose(power1, 0.8359, 0.001)
-    assert np.isclose(power2, 0.9932, 0.001)
-    assert np.isclose(power3, 0.9999, 0.001)
-    assert np.isclose(power4, 0.3200, 0.001)
+    assert np.isclose(power1, 0.8359, atol=0.001)
+    assert np.isclose(power2, 0.9932, atol=0.001)
+    assert np.isclose(power3, 0.9999, atol=0.001)
+    assert np.isclose(power4, 0.3200, atol=0.001)
 
 
 def test_power_for_one_prop_two_sides_array():
@@ -41,10 +41,10 @@ def test_power_for_one_prop_two_sides_array():
         alpha=alpha,
     )
 
-    assert np.isclose(power[0], 0.8359, 0.001)
-    assert np.isclose(power[1], 0.9932, 0.001)
-    assert np.isclose(power[2], 0.9999, 0.001)
-    assert np.isclose(power[3], 0.3200, 0.001)
+    assert np.isclose(power[0], 0.8359, atol=0.001)
+    assert np.isclose(power[1], 0.9932, atol=0.001)
+    assert np.isclose(power[2], 0.9999, atol=0.001)
+    assert np.isclose(power[3], 0.3200, atol=0.001)
 
 
 def test_power_for_one_prop_two_sides_dict():
@@ -61,22 +61,27 @@ def test_power_for_one_prop_two_sides_dict():
         alpha=alpha,
     )
 
-    assert np.isclose(power["one"], 0.8359, 0.001)
-    assert np.isclose(power["two"], 0.9932, 0.001)
-    assert np.isclose(power["three"], 0.9999, 0.001)
-    assert np.isclose(power["four"], 0.3200, 0.001)
+    assert np.isclose(power["one"], 0.8359, atol=0.001)
+    assert np.isclose(power["two"], 0.9932, atol=0.001)
+    assert np.isclose(power["three"], 0.9999, atol=0.001)
+    assert np.isclose(power["four"], 0.3200, atol=0.001)
 
 
 def test_power_for_one_prop_one_sides_number():
+
+    samp_size = np.array([75, 55, 37, 5])
+    prop_0 = (0.2, 0.37, 0.95, 0.85)
+    prop_1 = [0.1, 0.47, 0.99, 0.90]
     power_less = power_for_one_proportion(
-        samp_size=75, prop_0=0.35, prop_1=0.55, arcsin=True, testing_type="less", alpha=0.05
+        samp_size=samp_size,
+        prop_0=prop_0,
+        prop_1=prop_1,
+        arcsin=True,
+        testing_type="less",
+        alpha=0.05,
     )
-    power_greater = power_for_one_proportion(
-        samp_size=75, prop_0=0.35, prop_1=0.55, arcsin=True, testing_type="greater", alpha=0.05
-    )
-    power_less2 = power_for_one_proportion(
-        samp_size=75, prop_0=0.55, prop_1=0.35, arcsin=True, testing_type="less", alpha=0.05
-    )
-    assert np.isclose(power_less, 1.287e-7, 0.001)
-    assert np.isclose(power_greater, 0.9687, 0.001)
-    assert np.isclose(power_less2, 0.9687, 0.001)
+
+    assert np.isclose(power_less[0], 0.7924, atol=0.001)
+    assert np.isclose(power_less[1], 0.0008, atol=0.001)
+    assert np.isclose(power_less[2], 0.0008, atol=0.001)
+    assert np.isclose(power_less[3], 0.0236, atol=0.001)
