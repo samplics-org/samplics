@@ -223,7 +223,7 @@ def sample_size_for_proportion_fleiss(
 
 def sample_size_for_mean_wald(
     half_ci: Union[DictStrNum, Number, Array],
-    sigma: Union[DictStrNum, Number],
+    sigma: Union[DictStrNum, Number, Array],
     pop_size: Optional[Union[DictStrNum, Number, Array]],
     deff_c: Union[DictStrNum, Number, Array],
     alpha: float,
@@ -245,6 +245,15 @@ def sample_size_for_mean_wald(
             else:
                 samp_size[s] = math.ceil(deff_c[s] * (z_value * sigma[s] / half_ci[s]) ** 2)
         return samp_size
+    elif (
+        isinstance(half_ci, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(sigma, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(deff_c, (np.ndarray, pd.Series, list, tuple))
+    ):
+        half_ci = numpy_array(half_ci)
+        sigma = numpy_array(sigma)
+        deff_c = numpy_array(deff_c)
+        return np.ceil(deff_c * (z_value * sigma / half_ci) ** 2)
     elif (
         isinstance(half_ci, (int, float))
         and isinstance(sigma, (int, float))
@@ -310,49 +319,6 @@ class SampleSize:
             return deff_c
         else:
             raise ValueError("Combination of types not supported.")
-
-    @staticmethod
-    def _calculate_ss_mean_wald(
-        half_ci: Union[DictStrNum, Number],
-        sigma: Union[DictStrNum, Number],
-        pop_size: Optional[Union[DictStrNum, Number]],
-        deff_c: Union[DictStrNum, Number],
-        alpha: float,
-    ) -> Union[DictStrNum, Number]:
-
-        z_value = normal().ppf(1 - alpha / 2)
-
-        if isinstance(half_ci, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
-            samp_size: DictStrNum = {}
-            for s in half_ci:
-                if isinstance(pop_size, dict):
-                    samp_size[s] = math.ceil(
-                        deff_c[s]
-                        * pop_size[s]
-                        * z_value ** 2
-                        * sigma[s] ** 2
-                        / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value ** 2 * sigma[s] ** 2)
-                    )
-                else:
-                    samp_size[s] = math.ceil(deff_c[s] * (z_value * sigma[s] / half_ci[s]) ** 2)
-            return samp_size
-        elif (
-            isinstance(half_ci, (int, float))
-            and isinstance(sigma, (int, float))
-            and isinstance(deff_c, (int, float))
-        ):
-            if isinstance(pop_size, (int, float)):
-                return math.ceil(
-                    deff_c
-                    * pop_size
-                    * z_value ** 2
-                    * sigma ** 2
-                    / ((pop_size - 1) * half_ci ** 2 + z_value ** 2 * sigma ** 2)
-                )
-            else:
-                return math.ceil(deff_c * (z_value * sigma / half_ci) ** 2)
-        else:
-            raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
 
     def calculate(
         self,
@@ -511,7 +477,7 @@ class SampleSize:
                 alpha=self.alpha,
             )
         elif self.parameter in ("mean", "total") and self.method == "wald":
-            samp_size = self._calculate_ss_mean_wald(
+            samp_size = sample_size_for_mean_wald(
                 half_ci=self.half_ci,
                 sigma=self.sigma,
                 pop_size=self.pop_size,
