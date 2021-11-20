@@ -40,7 +40,7 @@ def power_for_one_proportion(
         z_value = normal().ppf(1 - alpha / 2) if type == "two-side" else normal().ppf(1 - alpha)
 
     if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(samp_size, dict):
-        powerr: dict = {}
+        power: dict = {}
         for s in prop_0:
             if arcsin:
                 z = (
@@ -57,11 +57,11 @@ def power_for_one_proportion(
                 )
 
             if type == "two-side":
-                powerr[s] = normal().cdf(abs(z) - z_value)
+                power[s] = normal().cdf(abs(z) - z_value)
             elif type == "greater":
-                powerr[s] = normal().cdf(z - z_value)
+                power[s] = normal().cdf(z - z_value)
             else:  # type == "less":
-                powerr[s] = normal().cdf(-z - z_value)
+                power[s] = normal().cdf(-z - z_value)
     elif (
         isinstance(prop_0, (int, float))
         and isinstance(prop_1, (int, float))
@@ -75,11 +75,11 @@ def power_for_one_proportion(
             z = (prop_1 - prop_0) / math.sqrt(prop_1 * (1 - prop_1) / samp_size)
 
         if type == "two-side":
-            powerr = normal().cdf(abs(z) - z_value)
+            power = normal().cdf(abs(z) - z_value)
         elif type == "greater":
-            powerr = normal().cdf(z - z_value)
+            power = normal().cdf(z - z_value)
         else:  # type == "less":
-            powerr = normal().cdf(-z - z_value)
+            power = normal().cdf(-z - z_value)
     elif (
         isinstance(prop_0, (np.ndarray, pd.Series, list, tuple))
         and isinstance(prop_1, (np.ndarray, pd.Series, list, tuple))
@@ -98,13 +98,13 @@ def power_for_one_proportion(
                 z = (prop_1 - prop_0) / np.sqrt(prop_1 * (1 - prop_1) / samp_size)
 
             if type == "two-side":
-                powerr = normal().cdf(np.abs(z) - z_value)
+                power = normal().cdf(np.abs(z) - z_value)
             elif type == "greater":
-                powerr = normal().cdf(z - z_value)
+                power = normal().cdf(z - z_value)
             else:  # type == "less":
-                powerr = normal().cdf(-z - z_value)
+                power = normal().cdf(-z - z_value)
 
-    return powerr
+    return power
 
 
 # def calculate_power(
