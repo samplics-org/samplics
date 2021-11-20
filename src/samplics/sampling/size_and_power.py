@@ -28,16 +28,16 @@ def power_for_one_proportion(
 ) -> Union[DictStrNum, Number, Array]:
 
     type = testing_type.lower()
-    if type not in ("two-side", "less", "greater"):
+    if type not in ("two-sided", "less", "greater"):
         raise AssertionError("type must be 'two-sided', 'less', 'greater'.")
 
     assert_proportions(prop_0=prop_0, prop_1=prop_1, alpha=alpha)
 
     if isinstance(alpha, (int, float)):
-        z_value = normal().ppf(1 - alpha / 2) if type == "two-side" else normal().ppf(1 - alpha)
+        z_value = normal().ppf(1 - alpha / 2) if type == "two-sided" else normal().ppf(1 - alpha)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
         alpha = numpy_array(alpha)
-        z_value = normal().ppf(1 - alpha / 2) if type == "two-side" else normal().ppf(1 - alpha)
+        z_value = normal().ppf(1 - alpha / 2) if type == "two-sided" else normal().ppf(1 - alpha)
 
     if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(samp_size, dict):
         power: dict = {}
@@ -52,11 +52,11 @@ def power_for_one_proportion(
             if isinstance(alpha, dict):
                 z_value = (
                     normal().ppf(1 - alpha[s] / 2)
-                    if type == "two-side"
+                    if type == "two-sided"
                     else normal().ppf(1 - alpha[s])
                 )
 
-            if type == "two-side":
+            if type == "two-sided":
                 power[s] = normal().cdf(abs(z) - z_value)
             elif type == "greater":
                 power[s] = normal().cdf(z - z_value)
@@ -74,7 +74,7 @@ def power_for_one_proportion(
         else:
             z = (prop_1 - prop_0) / math.sqrt(prop_1 * (1 - prop_1) / samp_size)
 
-        if type == "two-side":
+        if type == "two-sided":
             power = normal().cdf(abs(z) - z_value)
         elif type == "greater":
             power = normal().cdf(z - z_value)
@@ -97,7 +97,7 @@ def power_for_one_proportion(
             else:
                 z = (prop_1 - prop_0) / np.sqrt(prop_1 * (1 - prop_1) / samp_size)
 
-            if type == "two-side":
+            if type == "two-sided":
                 power = normal().cdf(np.abs(z) - z_value)
             elif type == "greater":
                 power = normal().cdf(z - z_value)
