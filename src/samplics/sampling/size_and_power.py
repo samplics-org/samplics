@@ -107,6 +107,16 @@ def power_for_one_proportion(
     return power
 
 
+def power_for_one_mean(
+    samp_size: Union[DictStrNum, Number, Array],
+    mean_0: Union[DictStrNum, Number, Array],
+    mean_1: Union[DictStrNum, Number, Array],
+    testing_type: str = "two-sided",
+    alpha: Union[Number, Array] = 0.05,
+) -> Union[DictStrNum, Number, Array]:
+    pass
+
+
 # def calculate_power(
 #     two_sides: bool,
 #     delta: Union[DictStrNum, Number, Array],
