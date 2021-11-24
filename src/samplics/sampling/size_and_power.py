@@ -13,7 +13,7 @@ import pandas as pd
 
 from scipy.stats import norm as normal
 
-from samplics.utils.formats import dict_to_dataframe, numpy_array
+from samplics.utils.formats import numpy_array
 from samplics.utils.types import Array, DictStrNum, Number
 from samplics.utils.checks import assert_proportions
 
