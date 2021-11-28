@@ -141,6 +141,10 @@ def power_for_one_mean(
                 )
                 for s in mean_0
             }
+        elif type == "greater":
+            return 1 - normal().cdf(
+                normal().ppf(1 - alpha) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+            )
         else:
             return 1 - normal().cdf(
                 normal().ppf(1 - alpha) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
@@ -152,20 +156,16 @@ def power_for_one_mean(
         and isinstance(samp_size, (int, float))
     ):
         if type == "two-sided":
-            return (
-                1
-                - normal().cdf(
-                    normal().ppf(1 - alpha / 2)
-                    - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
-                )
-                + normal().cdf(
-                    -normal().ppf(1 - alpha / 2)
-                    - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
-                )
+            return normal().cdf(
+                abs(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha / 2)
+            )
+        elif type == "greate":
+            return normal().cdf(
+                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
             )
         else:
-            return 1 - normal().cdf(
-                normal().ppf(1 - alpha) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+            return normal().cdf(
+                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
             )
     elif (
         isinstance(mean_0, (np.np.ndarray, pd.Series, list, tuple))

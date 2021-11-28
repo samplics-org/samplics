@@ -233,9 +233,28 @@ def test_power_for_one_prop_greater_number_no_arcsin():
     assert np.isclose(power_less[4], 0.1017, atol=0.001)
 
 
-# For One MEAN 
+# For One MEAN
+
 
 def test_power_for_one_mean_two_sides_number():
     power1 = power_for_one_mean(
-        samp_size=107, mean_0=0.2, mean_1=0.1, sigma=0.05, testing_type="two-sided", alpha=0.05
+        samp_size=18, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
     )
+    power2 = power_for_one_mean(
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
+    )
+
+    assert np.isclose(power1, 0.807, atol=0.001)
+    assert np.isclose(power2, 0.91518, atol=0.001)
+
+
+def test_power_for_one_mean_two_sides_number():
+    power1 = power_for_one_mean(
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="greater", alpha=0.05
+    )
+    # power2 = power_for_one_mean(
+    #     samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
+    # )
+
+    assert np.isclose(power1, 0.9543, atol=0.001)
+    # assert np.isclose(power2, 0.9543, atol=0.001)
