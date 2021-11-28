@@ -1,7 +1,7 @@
 import nox
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
+@nox.session(python=["3.7", "3.8", "3.9", "3.10"])
 def tests(session):
     session.run("poetry", "install")
     session.run("pytest", "-v", "tests")
@@ -18,7 +18,11 @@ def test_coverage(session):
 def docs(session):
     session.install(".")
     session.install(
-        "sphinx", "sphinx-autobuild", "sphinx_bootstrap_theme", "nbsphinx", "recommonmark",
+        "sphinx",
+        "sphinx-autobuild",
+        "sphinx_bootstrap_theme",
+        "nbsphinx",
+        "recommonmark",
     )
     session.chdir("docs")
     session.run("make", "clean")

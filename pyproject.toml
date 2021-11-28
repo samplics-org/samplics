@@ -18,6 +18,7 @@ classifiers = [
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
   "Development Status :: 4 - Beta",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering",
@@ -72,7 +73,7 @@ exclude = '''
 )/
 '''
 line-length = 99
-target-version = ["py37", "py38", "py39"]
+target-version = ["py37", "py38", "py39", "py310"]
 
 [tool.isort]
 atomic = true

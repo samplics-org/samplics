@@ -111,81 +111,75 @@ def power_for_one_mean(
     samp_size: Union[DictStrNum, Number, Array],
     mean_0: Union[DictStrNum, Number, Array],
     mean_1: Union[DictStrNum, Number, Array],
+    sigma: Union[DictStrNum, Number, Array],
     testing_type: str = "two-sided",
     alpha: Union[Number, Array] = 0.05,
 ) -> Union[DictStrNum, Number, Array]:
-    pass
 
-
-# def calculate_power(
-#     two_sides: bool,
-#     delta: Union[DictStrNum, Number, Array],
-#     sigma: Union[DictStrNum, Number, Array],
-#     samp_size: Union[DictStrNum, Number, Array],
-#     alpha: float,
-# ):
-
-#     if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(samp_size, dict):
-#         if two_sides:
-#             return {
-#                 s: 1
-#                 - normal().cdf(
-#                     normal().ppf(1 - alpha / 2) - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
-#                 )
-#                 + normal().cdf(
-#                     -normal().ppf(1 - alpha / 2) - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
-#                 )
-#                 for s in delta
-#             }
-#         else:
-#             return 1 - normal().cdf(
-#                 normal().ppf(1 - alpha) - delta / (sigma / math.sqrt(samp_size))
-#             )
-#     elif (
-#         isinstance(delta, (int, float))
-#         and isinstance(sigma, (int, float))
-#         and isinstance(samp_size, (int, float))
-#     ):
-#         if two_sides:
-#             return (
-#                 1
-#                 - normal().cdf(
-#                     normal().ppf(1 - alpha / 2) - delta / (sigma / math.sqrt(samp_size))
-#                 )
-#                 + normal().cdf(
-#                     -normal().ppf(1 - alpha / 2) - delta / (sigma / math.sqrt(samp_size))
-#                 )
-#             )
-#         else:
-#             return 1 - normal().cdf(
-#                 normal().ppf(1 - alpha) - delta / (sigma / math.sqrt(samp_size))
-#             )
-#     elif (
-#         isinstance(delta, (np.np.ndarray, pd.Series, list, tuple))
-#         and isinstance(sigma, (np.np.ndarray, pd.Series, list, tuple))
-#         and isinstance(samp_size, (np.np.ndarray, pd.Series, list, tuple))
-#     ):
-#         delta = numpy_array(delta)
-#         sigma = numpy_array(sigma)
-#         power = np.zeros(delta.shape[0])
-#         for k in range(delta.shape[0]):
-#             if two_sides:
-#                 power[k] = (
-#                     1
-#                     - normal().cdf(
-#                         normal().ppf(1 - alpha / 2)
-#                         - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
-#                     )
-#                     + normal().cdf(
-#                         -normal().ppf(1 - alpha / 2)
-#                         - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
-#                     )
-#                 )
-#             else:
-#                 power[k] = 1 - normal().cdf(
-#                     normal().ppf(1 - alpha) - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
-#                 )
-#             return power
+    if isinstance(mean_0, dict) and isinstance(mean_1, dict) and isinstance(sigma, dict) and isinstance(samp_size, dict):
+        if testing_type == "two-sided":
+            return {
+                s: 1
+                - normal().cdf(
+                    normal().ppf(1 - alpha / 2) - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
+                )
+                + normal().cdf(
+                    -normal().ppf(1 - alpha / 2) - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
+                )
+                for s in mean_0
+            }
+        else:
+            return 1 - normal().cdf(
+                normal().ppf(1 - alpha) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+            )
+    elif (
+        isinstance(mean_0, (int, float))
+        and isinstance(mean_1, (int, float))
+        and isinstance(sigma, (int, float))
+        and isinstance(samp_size, (int, float))
+    ):
+        if testing_type=="two-sided":
+            return (
+                1
+                - normal().cdf(
+                    normal().ppf(1 - alpha / 2) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                )
+                + normal().cdf(
+                    -normal().ppf(1 - alpha / 2) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                )
+            )
+        else:
+            return 1 - normal().cdf(
+                normal().ppf(1 - alpha) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+            )
+    elif (
+        isinstance(mean_0, (np.np.ndarray, pd.Series, list, tuple))
+        and isinstance(mean_1, (np.np.ndarray, pd.Series, list, tuple))
+        and isinstance(sigma, (np.np.ndarray, pd.Series, list, tuple))
+        and isinstance(samp_size, (np.np.ndarray, pd.Series, list, tuple))
+    ):
+        mean_0 = numpy_array(mean_0)
+        mean_1 = numpy_array(mean_1)
+        sigma = numpy_array(sigma)
+        power = np.zeros(mean_0.shape[0])
+        for k in range(mean_0.shape[0]):
+            if testing_type=="two-sided":
+                power[k] = (
+                    1
+                    - normal().cdf(
+                        normal().ppf(1 - alpha / 2)
+                        - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    )
+                    + normal().cdf(
+                        -normal().ppf(1 - alpha / 2)
+                        - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    )
+                )
+            else:
+                power[k] = 1 - normal().cdf(
+                    normal().ppf(1 - alpha) - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                )
+            return power
 
 
 # def sample_size_for_proportion_wald(
