@@ -294,15 +294,15 @@ def test_power_for_one_mean_one_sided_number():
 
 def test_power_for_one_mean_with_delta_one_sided_number():
     power1 = power_for_one_mean(
-        samp_size=25, mean_0=50, mean_1=52, sigma=3, delta=0.05, testing_type="greater", alpha=0.05
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, delta=0.5, testing_type="greater", alpha=0.05
     )
     power2 = power_for_one_mean(
-        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="less", alpha=0.05
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, delta=0.5, testing_type="less", alpha=0.05
     )
     power3 = power_for_one_mean(
-        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="less", alpha=0.01
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, delta=0.5, testing_type="less", alpha=0.01
     )
 
     assert np.isclose(power1, 0.2091e-07, atol=0.001)
-    assert np.isclose(power2, 0.9543, atol=0.001)
-    assert np.isclose(power3, 0.8430, atol=0.001)
+    assert np.isclose(power2, 0.80376, atol=0.001)
+    assert np.isclose(power3, 0.56893, atol=0.001)
