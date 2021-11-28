@@ -101,7 +101,7 @@ def power_for_one_proportion(
                 power = normal().cdf(np.abs(z) - z_value)
             elif type == "greater":
                 power = normal().cdf(z - z_value)
-            else:  # type == "less":
+            else:  # type == "less":π
                 power = normal().cdf(-z - z_value)
 
     return power
@@ -116,13 +116,12 @@ def power_for_one_mean(
     alpha: Union[Number, Array] = 0.05,
 ) -> Union[DictStrNum, Number, Array]:
 
-
     type = testing_type.lower()
     if type not in ("two-sided", "less", "greater"):
         raise AssertionError("type must be 'two-sided', 'less', 'greater'.")
 
     assert_proportions(alpha=alpha)
-
+    
     if isinstance(mean_0, dict) and isinstance(mean_1, dict) and isinstance(sigma, dict) and isinstance(samp_size, dict):
         if type == "two-sided":
             return {
@@ -145,7 +144,7 @@ def power_for_one_mean(
         and isinstance(sigma, (int, float))
         and isinstance(samp_size, (int, float))
     ):
-        if type == "two-sided":
+        if type =="two-sided":
             return (
                 1
                 - normal().cdf(
@@ -186,7 +185,7 @@ def power_for_one_mean(
                 power[k] = 1 - normal().cdf(
                     normal().ppf(1 - alpha) - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
                 )
-            return power
+        return power
 
 
 # def sample_size_for_proportion_wald(
