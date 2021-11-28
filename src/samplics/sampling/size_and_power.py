@@ -154,15 +154,36 @@ def power_for_one_mean(
         and isinstance(samp_size, (int, float))
     ):
         if type == "two-sided":
-            return normal().cdf(
-                (abs(mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
-                - normal().ppf(1 - alpha / 2)
-            )
+            if delta == 0.0:
+                return normal().cdf(
+                    abs(mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                    - normal().ppf(1 - alpha / 2)
+                )
+            else:
+                return (
+                    2
+                    * (
+                        normal().cdf(
+                            (abs(mean_1 - mean_0) - delta) / (sigma / math.sqrt(samp_size))
+                            - normal().ppf(1 - alpha)
+                        )
+                        + normal().cdf(
+                            -(abs(mean_1 - mean_0) - delta) / (sigma / math.sqrt(samp_size))
+                            - normal().ppf(1 - alpha)
+                        )
+                    )
+                    - 1
+                )
         elif type == "greater":
-            return normal().cdf(
-                ((mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
-                - normal().ppf(1 - alpha)
-            )
+            if delta == 0.0:
+                return normal().cdf(
+                    (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                )
+            else:
+                return normal().cdf(
+                    ((mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
+                    - normal().ppf(1 - alpha)
+                )
         else:
             return normal().cdf(
                 (-(mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
