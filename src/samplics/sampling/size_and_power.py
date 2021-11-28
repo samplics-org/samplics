@@ -138,7 +138,7 @@ def power_for_one_mean(
         and isinstance(sigma, (int, float))
         and isinstance(samp_size, (int, float))
     ):
-        if testing_type=="two-sided":
+        if testing_type == "two-sided":
             return (
                 1
                 - normal().cdf(
@@ -163,7 +163,7 @@ def power_for_one_mean(
         sigma = numpy_array(sigma)
         power = np.zeros(mean_0.shape[0])
         for k in range(mean_0.shape[0]):
-            if testing_type=="two-sided":
+            if testing_type == "two-sided":
                 power[k] = (
                     1
                     - normal().cdf(
