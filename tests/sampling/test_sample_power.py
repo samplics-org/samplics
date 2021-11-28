@@ -4,7 +4,7 @@ from samplics.sampling import power_for_one_proportion, power_for_one_mean
 
 
 # FOR ONE PROPORTION - WITH ARCSIN transformation
-def test_power_for_one_prop_two_sides_number():
+def test_power_for_one_prop_two_sided_number():
     power1 = power_for_one_proportion(
         samp_size=107, prop_0=0.2, prop_1=0.1, arcsin=True, testing_type="two-sided", alpha=0.05
     )
@@ -28,7 +28,7 @@ def test_power_for_one_prop_two_sides_number():
     assert np.isclose(power4, 0.3200, atol=0.001)
 
 
-def test_power_for_one_prop_two_sides_array():
+def test_power_for_one_prop_two_sided_array():
     samp_size = np.array([107, 25, 500, 50])
     prop_0 = (0.2, 0.3, 0.95, 0.0950)
     prop_1 = [0.1, 0.7, 0.99, 0.1990]
@@ -48,7 +48,7 @@ def test_power_for_one_prop_two_sides_array():
     assert np.isclose(power[3], 0.3200, atol=0.001)
 
 
-def test_power_for_one_prop_two_sides_dict():
+def test_power_for_one_prop_two_sided_dict():
     samp_size = {"one": 107, "two": 25, "three": 500, "four": 50}
     prop_0 = {"one": 0.2, "two": 0.3, "three": 0.95, "four": 0.095}
     prop_1 = {"one": 0.1, "two": 0.7, "three": 0.99, "four": 0.199}
@@ -109,7 +109,7 @@ def test_power_for_one_prop_greater_number():
 
 
 # FOR ONE PROPORTION - WITHOUT ARCSIN transformation
-def test_power_for_one_prop_two_sides_number_no_arcsin():
+def test_power_for_one_prop_two_sided_number_no_arcsin():
     power1 = power_for_one_proportion(
         samp_size=107, prop_0=0.2, prop_1=0.1, arcsin=False, testing_type="two-sided", alpha=0.05
     )
@@ -133,7 +133,7 @@ def test_power_for_one_prop_two_sides_number_no_arcsin():
     assert np.isclose(power4, 0.2315, atol=0.001)
 
 
-def test_power_for_one_prop_two_sides_array_no_arcsin():
+def test_power_for_one_prop_two_sided_array_no_arcsin():
     samp_size = np.array([107, 25, 500, 50])
     prop_0 = (0.2, 0.3, 0.95, 0.0950)
     prop_1 = [0.1, 0.7, 0.99, 0.1990]
@@ -153,7 +153,7 @@ def test_power_for_one_prop_two_sides_array_no_arcsin():
     assert np.isclose(power[3], 0.2315, atol=0.001)
 
 
-def test_power_for_one_prop_two_sides_dict_no_arcsin():
+def test_power_for_one_prop_two_sided_dict_no_arcsin():
     samp_size = {"one": 107, "two": 25, "three": 500, "four": 50}
     prop_0 = {"one": 0.2, "two": 0.3, "three": 0.95, "four": 0.095}
     prop_1 = {"one": 0.1, "two": 0.7, "three": 0.99, "four": 0.199}
@@ -236,7 +236,7 @@ def test_power_for_one_prop_greater_number_no_arcsin():
 # For One MEAN
 
 
-def test_power_for_one_mean_two_sides_number():
+def test_power_for_one_mean_two_sided_number():
     power1 = power_for_one_mean(
         samp_size=18, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
     )
@@ -249,16 +249,20 @@ def test_power_for_one_mean_two_sides_number():
 
     assert np.isclose(power1, 0.807, atol=0.001)
     assert np.isclose(power2, 0.91518, atol=0.001)
-    assert np.isclose(power3, 0.91518, atol=0.001)
+    assert np.isclose(power3, 0.7756, atol=0.001)
 
 
-def test_power_for_one_mean_two_sides_number():
+def test_power_for_one_mean_one_sided_number():
     power1 = power_for_one_mean(
         samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="greater", alpha=0.05
     )
     power2 = power_for_one_mean(
         samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="less", alpha=0.05
     )
+    power3 = power_for_one_mean(
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="less", alpha=0.01
+    )
 
     assert np.isclose(power1, 0.2091e-07, atol=0.001)
     assert np.isclose(power2, 0.9543, atol=0.001)
+    assert np.isclose(power3, 0.8430, atol=0.001)
