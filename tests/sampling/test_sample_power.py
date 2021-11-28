@@ -1,9 +1,9 @@
 import numpy as np
 
-from samplics.sampling import power_for_one_proportion
+from samplics.sampling import power_for_one_proportion, power_for_one_mean
 
 
-# WITH ARCSIN transformation
+# FOR ONE PROPORTION - WITH ARCSIN transformation
 def test_power_for_one_prop_two_sides_number():
     power1 = power_for_one_proportion(
         samp_size=107, prop_0=0.2, prop_1=0.1, arcsin=True, testing_type="two-sided", alpha=0.05
@@ -108,7 +108,7 @@ def test_power_for_one_prop_greater_number():
     assert np.isclose(power_less[4], 0.0960, atol=0.001)
 
 
-# WITHOUT ARCSIN transformation
+# FOR ONE PROPORTION - WITHOUT ARCSIN transformation
 def test_power_for_one_prop_two_sides_number_no_arcsin():
     power1 = power_for_one_proportion(
         samp_size=107, prop_0=0.2, prop_1=0.1, arcsin=False, testing_type="two-sided", alpha=0.05
@@ -231,3 +231,11 @@ def test_power_for_one_prop_greater_number_no_arcsin():
     assert np.isclose(power_less[2], 0.4369, atol=0.001)
     assert np.isclose(power_less[3], 0.7883, atol=0.001)
     assert np.isclose(power_less[4], 0.1017, atol=0.001)
+
+
+# For One MEAN 
+
+def test_power_for_one_mean_two_sides_number():
+    power1 = power_for_one_mean(
+        samp_size=107, mean_0=0.2, mean_1=0.1, sigma=0.05, testing_type="two-sided", alpha=0.05
+    )

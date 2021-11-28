@@ -7,12 +7,11 @@ from samplics.sampling.size import (
     allocate,
     calculate_power,
     power_for_proportion,
-    power_for_one_mean,
     sample_size_for_mean_wald,
     sample_size_for_proportion_fleiss,
     sample_size_for_proportion_wald,
 )
-from samplics.sampling.size_and_power import power_for_one_proportion
+from samplics.sampling.size_and_power import power_for_one_proportion, power_for_one_mean
 
 __all__ = [
     "allocate",

@@ -121,16 +121,23 @@ def power_for_one_mean(
         raise AssertionError("type must be 'two-sided', 'less', 'greater'.")
 
     assert_proportions(alpha=alpha)
-    
-    if isinstance(mean_0, dict) and isinstance(mean_1, dict) and isinstance(sigma, dict) and isinstance(samp_size, dict):
+
+    if (
+        isinstance(mean_0, dict)
+        and isinstance(mean_1, dict)
+        and isinstance(sigma, dict)
+        and isinstance(samp_size, dict)
+    ):
         if type == "two-sided":
             return {
                 s: 1
                 - normal().cdf(
-                    normal().ppf(1 - alpha / 2) - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
+                    normal().ppf(1 - alpha / 2)
+                    - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
                 )
                 + normal().cdf(
-                    -normal().ppf(1 - alpha / 2) - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
+                    -normal().ppf(1 - alpha / 2)
+                    - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
                 )
                 for s in mean_0
             }
@@ -144,14 +151,16 @@ def power_for_one_mean(
         and isinstance(sigma, (int, float))
         and isinstance(samp_size, (int, float))
     ):
-        if type =="two-sided":
+        if type == "two-sided":
             return (
                 1
                 - normal().cdf(
-                    normal().ppf(1 - alpha / 2) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                    normal().ppf(1 - alpha / 2)
+                    - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
                 )
                 + normal().cdf(
-                    -normal().ppf(1 - alpha / 2) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                    -normal().ppf(1 - alpha / 2)
+                    - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
                 )
             )
         else:
@@ -183,7 +192,8 @@ def power_for_one_mean(
                 )
             else:
                 power[k] = 1 - normal().cdf(
-                    normal().ppf(1 - alpha) - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    normal().ppf(1 - alpha)
+                    - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
                 )
         return power
 
