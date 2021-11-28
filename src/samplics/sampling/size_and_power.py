@@ -112,6 +112,7 @@ def power_for_one_mean(
     mean_0: Union[DictStrNum, Number, Array],
     mean_1: Union[DictStrNum, Number, Array],
     sigma: Union[DictStrNum, Number, Array],
+    delta: Union[DictStrNum, Number, Array] = 0.0,
     testing_type: str = "two-sided",
     alpha: Union[Number, Array] = 0.05,
 ) -> Union[DictStrNum, Number, Array]:
@@ -131,18 +132,20 @@ def power_for_one_mean(
         if type == "two-sided":
             return {
                 s: normal().cdf(
-                    abs(mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
+                    (abs(mean_0[s] - mean_1[s]) - delta) / (sigma[s] / math.sqrt(samp_size[s]))
                     - normal().ppf(1 - alpha / 2)
                 )
                 for s in mean_0
             }
         elif type == "greater":
             return normal().cdf(
-                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                ((mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
         else:
             return normal().cdf(
-                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                (-(mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
     elif (
         isinstance(mean_0, (int, float))
@@ -152,15 +155,18 @@ def power_for_one_mean(
     ):
         if type == "two-sided":
             return normal().cdf(
-                abs(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha / 2)
+                (abs(mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha / 2)
             )
         elif type == "greater":
             return normal().cdf(
-                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                ((mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
         else:
             return normal().cdf(
-                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                (-(mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
     elif (
         isinstance(mean_0, (np.np.ndarray, pd.Series, list, tuple))
@@ -175,17 +181,17 @@ def power_for_one_mean(
         for k in range(mean_0.shape[0]):
             if type == "two-sided":
                 power[k] = normal().cdf(
-                    abs(mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    (abs(mean_0[k] - mean_1[k]) - delta) / (sigma[k] / math.sqrt(samp_size[k]))
                     - normal().ppf(1 - alpha / 2)
                 )
             elif type == "greater":
                 power[k] = normal().cdf(
-                    (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    ((mean_0[k] - mean_1[k]) - delta) / (sigma[k] / math.sqrt(samp_size[k]))
                     - normal().ppf(1 - alpha)
                 )
             else:
                 power[k] = normal().cdf(
-                    -(mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    (-(mean_0[k] - mean_1[k]) - delta) / (sigma[k] / math.sqrt(samp_size[k]))
                     - normal().ppf(1 - alpha)
                 )
         return power
