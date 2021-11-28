@@ -130,24 +130,19 @@ def power_for_one_mean(
     ):
         if type == "two-sided":
             return {
-                s: 1
-                - normal().cdf(
-                    normal().ppf(1 - alpha / 2)
-                    - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
-                )
-                + normal().cdf(
-                    -normal().ppf(1 - alpha / 2)
-                    - (mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
+                s: normal().cdf(
+                    abs(mean_0[s] - mean_1[s]) / (sigma[s] / math.sqrt(samp_size[s]))
+                    - normal().ppf(1 - alpha / 2)
                 )
                 for s in mean_0
             }
         elif type == "greater":
-            return 1 - normal().cdf(
-                normal().ppf(1 - alpha) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+            return normal().cdf(
+                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
             )
         else:
-            return 1 - normal().cdf(
-                normal().ppf(1 - alpha) - (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+            return normal().cdf(
+                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
             )
     elif (
         isinstance(mean_0, (int, float))
@@ -159,7 +154,7 @@ def power_for_one_mean(
             return normal().cdf(
                 abs(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha / 2)
             )
-        elif type == "greate":
+        elif type == "greater":
             return normal().cdf(
                 (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
             )
@@ -179,21 +174,19 @@ def power_for_one_mean(
         power = np.zeros(mean_0.shape[0])
         for k in range(mean_0.shape[0]):
             if type == "two-sided":
-                power[k] = (
-                    1
-                    - normal().cdf(
-                        normal().ppf(1 - alpha / 2)
-                        - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
-                    )
-                    + normal().cdf(
-                        -normal().ppf(1 - alpha / 2)
-                        - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
-                    )
+                power[k] = normal().cdf(
+                    abs(mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    - normal().ppf(1 - alpha / 2)
+                )
+            elif type == "greater":
+                power[k] = normal().cdf(
+                    (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    - normal().ppf(1 - alpha)
                 )
             else:
-                power[k] = 1 - normal().cdf(
-                    normal().ppf(1 - alpha)
-                    - (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                power[k] = normal().cdf(
+                    -(mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                    - normal().ppf(1 - alpha)
                 )
         return power
 

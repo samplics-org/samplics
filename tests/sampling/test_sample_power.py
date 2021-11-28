@@ -243,18 +243,22 @@ def test_power_for_one_mean_two_sides_number():
     power2 = power_for_one_mean(
         samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
     )
+    power3 = power_for_one_mean(
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.01
+    )
 
     assert np.isclose(power1, 0.807, atol=0.001)
     assert np.isclose(power2, 0.91518, atol=0.001)
+    assert np.isclose(power3, 0.91518, atol=0.001)
 
 
 def test_power_for_one_mean_two_sides_number():
     power1 = power_for_one_mean(
         samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="greater", alpha=0.05
     )
-    # power2 = power_for_one_mean(
-    #     samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
-    # )
+    power2 = power_for_one_mean(
+        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="less", alpha=0.05
+    )
 
-    assert np.isclose(power1, 0.9543, atol=0.001)
-    # assert np.isclose(power2, 0.9543, atol=0.001)
+    assert np.isclose(power1, 0.2091e-07, atol=0.001)
+    assert np.isclose(power2, 0.9543, atol=0.001)
