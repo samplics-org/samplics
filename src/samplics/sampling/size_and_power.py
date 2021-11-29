@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import math
 
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -108,12 +108,12 @@ def power_for_one_proportion(
 
 
 def power_for_two_proportions(
-    samp_size: Union[DictStrNum, Number, Array],
     prop_a: Union[DictStrNum, Number, Array],
     prop_b: Union[DictStrNum, Number, Array],
-    samp_size_a: Union[DictStrNum, Number, Array],
-    samp_size_b: Union[DictStrNum, Number, Array],
-    ratio: Union[DictStrNum, Number, Array] = 1.0,
+    samp_size: Optional[Union[DictStrNum, Number, Array]] = None,
+    ratio: Optional[Union[DictStrNum, Number, Array]] = None,
+    samp_size_a: Optional[Union[DictStrNum, Number, Array]] = None,
+    samp_size_b: Optional[Union[DictStrNum, Number, Array]] = None,
     testing_type: str = "two-sided",
     alpha: Union[Number, Array] = 0.05,
 ) -> Union[DictStrNum, Number, Array]:
