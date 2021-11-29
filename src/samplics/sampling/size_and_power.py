@@ -19,9 +19,9 @@ from samplics.utils.types import Array, DictStrNum, Number
 
 
 def power_for_one_proportion(
-    samp_size: Union[DictStrNum, Number, Array],
     prop_0: Union[DictStrNum, Number, Array],
     prop_1: Union[DictStrNum, Number, Array],
+    samp_size: Union[DictStrNum, Number, Array],
     arcsin: bool = True,
     testing_type: str = "two-sided",
     alpha: Union[Number, Array] = 0.05,
@@ -107,11 +107,29 @@ def power_for_one_proportion(
     return power
 
 
-def power_for_one_mean(
+def power_for_two_proportions(
     samp_size: Union[DictStrNum, Number, Array],
+    prop_a: Union[DictStrNum, Number, Array],
+    prop_b: Union[DictStrNum, Number, Array],
+    samp_size_a: Union[DictStrNum, Number, Array],
+    samp_size_b: Union[DictStrNum, Number, Array],
+    ratio: Union[DictStrNum, Number, Array] = 1.0,
+    testing_type: str = "two-sided",
+    alpha: Union[Number, Array] = 0.05,
+) -> Union[DictStrNum, Number, Array]:
+
+    type = testing_type.lower()
+    if type not in ("two-sided", "less", "greater"):
+        raise AssertionError("type must be 'two-sided', 'less', 'greater'.")
+
+    assert_proportions(prop_a=prop_a, prop_b=prop_b, alpha=alpha)
+
+
+def power_for_one_mean(
     mean_0: Union[DictStrNum, Number, Array],
     mean_1: Union[DictStrNum, Number, Array],
     sigma: Union[DictStrNum, Number, Array],
+    samp_size: Union[DictStrNum, Number, Array],
     testing_type: str = "two-sided",
     alpha: Union[Number, Array] = 0.05,
 ) -> Union[DictStrNum, Number, Array]:
