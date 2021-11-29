@@ -37,7 +37,7 @@ import statsmodels.api as sm
 
 from samplics.sae.sae_core_functions import area_stats
 from samplics.utils.basic_functions import sumby
-from samplics.utils.formats import numpy_array, dict_to_dataframe
+from samplics.utils.formats import dict_to_dataframe, numpy_array
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 

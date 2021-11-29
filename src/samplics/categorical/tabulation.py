@@ -10,10 +10,11 @@ import itertools
 
 from typing import Any, Optional, Union
 
+from patsy import dmatrix
+
 import numpy as np
 import pandas as pd
 
-from patsy import dmatrix
 from scipy.stats import chi2, f
 
 from samplics.estimation import TaylorEstimator

@@ -22,7 +22,7 @@ import pandas as pd
 
 from scipy.stats import t as student
 
-from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans, dict_to_dataframe
+from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber
 
 

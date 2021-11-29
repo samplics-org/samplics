@@ -13,9 +13,9 @@ import pandas as pd
 
 from scipy.stats import norm as normal
 
+from samplics.utils.checks import assert_proportions
 from samplics.utils.formats import numpy_array
 from samplics.utils.types import Array, DictStrNum, Number
-from samplics.utils.checks import assert_proportions
 
 
 def power_for_one_proportion(
@@ -181,14 +181,26 @@ def power_for_one_mean(
                 )
             else:
                 return normal().cdf(
-                    ((mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
+                    (mean_1 - mean_0 - delta) / (sigma / math.sqrt(samp_size))
+                    - normal().ppf(1 - alpha)
+                ) + normal().cdf(
+                    -(mean_1 - mean_0 - delta) / (sigma / math.sqrt(samp_size))
                     - normal().ppf(1 - alpha)
                 )
         else:
-            return normal().cdf(
-                (-(mean_0 - mean_1) - delta) / (sigma / math.sqrt(samp_size))
-                - normal().ppf(1 - alpha)
-            )
+            if delta == 0.0:
+                return normal().cdf(
+                    -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                )
+            else:
+                return normal().cdf(
+                    (mean_1 - mean_0 - delta) / (sigma / math.sqrt(samp_size))
+                    - normal().ppf(1 - alpha)
+                ) + normal().cdf(
+                    -(mean_1 - mean_0 - delta) / (sigma / math.sqrt(samp_size))
+                    - normal().ppf(1 - alpha)
+                )
+
     elif (
         isinstance(mean_0, (np.np.ndarray, pd.Series, list, tuple))
         and isinstance(mean_1, (np.np.ndarray, pd.Series, list, tuple))
@@ -201,15 +213,39 @@ def power_for_one_mean(
         power = np.zeros(mean_0.shape[0])
         for k in range(mean_0.shape[0]):
             if type == "two-sided":
-                power[k] = normal().cdf(
-                    (abs(mean_0[k] - mean_1[k]) - delta) / (sigma[k] / math.sqrt(samp_size[k]))
-                    - normal().ppf(1 - alpha / 2)
-                )
+                if delta[k] == 0.0:
+                    power[k] = normal().cdf(
+                        abs(mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                        - normal().ppf(1 - alpha / 2)
+                    )
+                else:
+                    power[k] = (
+                        2
+                        * (
+                            normal().cdf(
+                                (abs(mean_0[k] - mean_1[k]) - delta)
+                                / (sigma[k] / math.sqrt(samp_size[k]))
+                                - normal().ppf(1 - alpha / 2)
+                            )
+                            + normal().cdf(
+                                -(abs(mean_0[k] - mean_1[k]) - delta)
+                                / (sigma[k] / math.sqrt(samp_size[k]))
+                                - normal().ppf(1 - alpha / 2)
+                            )
+                        )
+                        - 1
+                    )
             elif type == "greater":
-                power[k] = normal().cdf(
-                    ((mean_0[k] - mean_1[k]) - delta) / (sigma[k] / math.sqrt(samp_size[k]))
-                    - normal().ppf(1 - alpha)
-                )
+                if delta[k] == 0.0:
+                    power[k] = normal().cdf(
+                        (mean_0[k] - mean_1[k]) / (sigma[k] / math.sqrt(samp_size[k]))
+                        - normal().ppf(1 - alpha)
+                    )
+                else:
+                    power[k] = normal().cdf(
+                        ((mean_0[k] - mean_1[k]) - delta) / (sigma[k] / math.sqrt(samp_size[k]))
+                        - normal().ppf(1 - alpha)
+                    )
             else:
                 power[k] = normal().cdf(
                     (-(mean_0[k] - mean_1[k]) - delta) / (sigma[k] / math.sqrt(samp_size[k]))

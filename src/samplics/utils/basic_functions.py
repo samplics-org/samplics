@@ -16,6 +16,7 @@ from __future__ import annotations
 from typing import Optional, Union
 
 import matplotlib.pyplot as plt
+
 import numpy as np
 import pandas as pd
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-from samplics.sampling import power_for_one_proportion, power_for_one_mean
+from samplics.sampling import power_for_one_mean, power_for_one_proportion
 
 
 # FOR ONE PROPORTION - WITH ARCSIN transformation

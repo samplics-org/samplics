@@ -3,14 +3,13 @@ import pytest
 import numpy as np
 import pandas as pd
 
-
 from samplics.utils.checks import (
     assert_brr_number_psus,
     assert_in_range,
-    assert_proportions,
-    assert_weights,
     assert_not_unique,
+    assert_proportions,
     assert_response_status,
+    assert_weights,
 )
 
 

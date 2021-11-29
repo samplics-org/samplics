@@ -8,8 +8,8 @@ import numpy as np
 import statsmodels.api as sm
 
 from samplics.estimation.expansion import TaylorEstimator
+from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber
-from samplics.utils.formats import fpc_as_dict, numpy_array, remove_nans, dict_to_dataframe
 
 
 class SurveyGLM:

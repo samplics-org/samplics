@@ -1,15 +1,16 @@
-import numpy as np
-import pandas as pd
 import pytest
 
+import numpy as np
+import pandas as pd
+
 from samplics.utils.formats import (
-    numpy_array,
     array_to_dict,
-    dataframe_to_array,
-    sample_size_dict,
-    dict_to_dataframe,
-    sample_units,
     convert_numbers_to_dicts,
+    dataframe_to_array,
+    dict_to_dataframe,
+    numpy_array,
+    sample_size_dict,
+    sample_units,
 )
 
 

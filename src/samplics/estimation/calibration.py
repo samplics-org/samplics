@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
+from samplics.utils.types import Array, Number, Series, StringNumber
+
+
 # import numpy as np
 # import pandas as pd
 
-from samplics.utils.types import Array, Number, Series, StringNumber
 
 
 class CalibrateEstimator:
