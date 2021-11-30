@@ -132,7 +132,7 @@ def power_for_one_mean(
     samp_size: Union[DictStrNum, Number, Array],
     testing_type: str = "two-sided",
     alpha: Union[Number, Array] = 0.05,
-) -> Union[DictStrNum, Number, Array]:
+) -> Union[DictStrNum, Number, Array]:  
 
     type = testing_type.lower()
     if type not in ("two-sided", "less", "greater"):
