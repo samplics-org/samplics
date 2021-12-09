@@ -10,6 +10,9 @@ SAMPLICS: sample analytics
 .. image:: https://readthedocs.org/projects/samplics/badge/?version=latest
   :target: https://samplics.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
+
+.. image:: https://joss.theoj.org/papers/10.21105/joss.03376/status.svg
+   :target: https://doi.org/10.21105/joss.03376
          
 In large scale surveys, often complex random mechanisms are used to select
 samples. Estimations obtained from such samples must reflect the random
