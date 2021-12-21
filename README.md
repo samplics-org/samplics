@@ -1,4 +1,4 @@
-****<img src="./img/samplics_logo.jpg" width="150" height="110" align="left" />
+<img src="./img/samplics_logo.jpg" width="150" height="110" align="left" />
 
 # _Sample Analytics_
 
