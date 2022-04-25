@@ -67,9 +67,9 @@ def power_for_proportion(
                 z = (prop_1 - prop_0) / math.sqrt(prop_1 * (1 - prop_1) / samp_size)
                 return normal().cdf(z - z_value) + normal().cdf(-z - z_value)
     elif (
-        isinstance(prop_0, (np.np.ndarray, pd.Series, list, tuple))
-        and isinstance(prop_1, (np.np.ndarray, pd.Series, list, tuple))
-        and isinstance(samp_size, (np.np.ndarray, pd.Series, list, tuple))
+        isinstance(prop_0, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(prop_1, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(samp_size, (np.ndarray, pd.Series, list, tuple))
     ):
         prop_0 = numpy_array(prop_0)
         prop_1 = numpy_array(prop_1)
@@ -127,9 +127,9 @@ def calculate_power(
                 normal().ppf(1 - alpha) - delta / (sigma / math.sqrt(samp_size))
             )
     elif (
-        isinstance(delta, (np.np.ndarray, pd.Series, list, tuple))
-        and isinstance(sigma, (np.np.ndarray, pd.Series, list, tuple))
-        and isinstance(samp_size, (np.np.ndarray, pd.Series, list, tuple))
+        isinstance(delta, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(sigma, (np.ndarray, pd.Series, list, tuple))
+        and isinstance(samp_size, (np.ndarray, pd.Series, list, tuple))
     ):
         delta = numpy_array(delta)
         sigma = numpy_array(sigma)
@@ -201,7 +201,7 @@ def sample_size_for_proportion_wald(
                 * pop_size
                 * z_value ** 2
                 * sigma
-                / ((pop_size - 1) * half_ci ** 2 + z_value * sigma)
+                / ((pop_size - 1) * half_ci ** 2 + z_value ** 2 * sigma)
             )
         else:
             return math.ceil(deff_c * z_value ** 2 * sigma / half_ci ** 2)
@@ -356,10 +356,10 @@ class SampleSize:
         self.stratification = stratification
         self.target: Union[DictStrNum, Number]
         self.sigma: Union[DictStrNum, Number]
+        self.half_ci: Union[DictStrNum, Number]
         self.samp_size: Union[DictStrNum, Number] = 0
         self.deff_c: Union[DictStrNum, Number] = 1.0
         self.deff_w: Union[DictStrNum, Number] = 1.0
-        self.half_ci: Union[DictStrNum, Number]
         self.resp_rate: Union[DictStrNum, Number] = 1.0
         self.pop_size: Optional[Union[DictStrNum, Number]] = None
 
@@ -459,6 +459,8 @@ class SampleSize:
             self.sigma = sigma
             self.deff_c = deff
             self.resp_rate = resp_rate
+            if isinstance(pop_size, (int, float)):
+                self.pop_size = pop_size
         elif (
             self.stratification
             and isinstance(half_ci, (int, float))

@@ -267,6 +267,16 @@ def test_size_nat_wald_df():
     assert (size_df.columns == ["_parameter", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
+def test_size_nat_wald_pop_size1():
+    size_nat_wald.calculate(0.50, 0.03)
+    assert size_nat_wald.samp_size == 1068
+
+
+def test_size_nat_wald_pop_size2():
+    size_nat_wald.calculate(0.50, 0.03, pop_size=1251)
+    assert size_nat_wald.samp_size == 577
+
+
 ## Wald's method - stratified
 size_str_wald = SampleSize(parameter="Proportion", method="Wald", stratification=True)
 
