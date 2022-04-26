@@ -386,8 +386,8 @@ class SampleSize:
 
     def calculate(
         self,
-        target: Union[DictStrNum, Number],
         half_ci: Union[DictStrNum, Number],
+        target: Optional[Union[DictStrNum, Number]] = None,
         sigma: Optional[Union[DictStrNum, Number]] = None,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
