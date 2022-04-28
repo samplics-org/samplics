@@ -39,6 +39,14 @@ def test_size_nat_wald():
     assert size_mean_nat.sigma == 2
 
 
+def test_size_nat_wald_no_target():
+    size_mean_nat.calculate(half_ci=1, sigma=2)
+    assert size_mean_nat.samp_size == 16
+    assert size_mean_nat.deff_c == 1.0
+    assert size_mean_nat.half_ci == 1
+    assert size_mean_nat.sigma == 2
+
+
 def test_size_nat_wald_deff0():
     size_mean_nat.calculate(half_ci=1, target=2, sigma=2, deff=0)
     assert size_mean_nat.samp_size == 0
@@ -48,7 +56,7 @@ def test_size_nat_wald_deff0():
 
 
 def test_size_nat_wald_deff1():
-    size_mean_nat.calculate(half_ci=1, target=2, sigma=2, deff=1.3)
+    size_mean_nat.calculate(half_ci=1, sigma=2, deff=1.3)
     assert size_mean_nat.samp_size == 20
     assert size_mean_nat.deff_c == 1.3
     assert size_mean_nat.half_ci == 1
