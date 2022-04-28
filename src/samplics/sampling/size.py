@@ -7,6 +7,7 @@ from __future__ import annotations
 import math
 
 from typing import Optional, Union
+from xml.sax.handler import all_properties
 
 import numpy as np
 import pandas as pd
@@ -153,68 +154,82 @@ def calculate_power(
                 )
             return power
 
+def _ss_for_proportion_wald(
+    target: Union[ Number, Array],
+    half_ci: Union[ Number, Array],
+    pop_size: Optional[Union[ Number, Array]],
+    deff_c: Union[Number, Array],
+    alpha: float,
+) -> Union[ Number, Array]:
+
+    if isinstance(target, (np.ndarray, pd.Series, list, tuple)):
+        target = numpy_array(target)
+    if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
+        half_ci = numpy_array(half_ci)
+    if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
+        deff_c = numpy_array(deff_c)
+    if isinstance(pop_size, (np.ndarray, pd.Series, list, tuple)):
+        pop_size = numpy_array(pop_size)
+    if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
+        alpha = numpy_array(alpha)
+
+    z_value = normal().ppf(1 - alpha / 2)
+
+    if isinstance(pop_size, (np.ndarray, int, float)):
+        return math.ceil(
+                deff_c
+                * pop_size
+                * z_value ** 2
+                * target * (1 - target)
+                / ((pop_size - 1) * half_ci ** 2 + z_value ** 2 * target * (1 - target))
+            )
+    else:
+        return math.ceil(deff_c * z_value ** 2 * target * (1 - target) / half_ci ** 2)
+
+def _ss_for_proportion_wald_stratified(
+    target: DictStrNum,
+    half_ci: DictStrNum,
+    pop_size: Optional[DictStrNum],
+    deff_c: DictStrNum,
+    alpha: DictStrNum,
+) -> DictStrNum:
+
+    samp_size: DictStrNum = {}
+    for s in half_ci:
+        pop_size_c = None if pop_size is None else pop_size[s]
+        samp_size[s] = _ss_for_proportion_wald(target=target[s],half_ci=half_ci[s],pop_size=pop_size_c, deff_c=deff_c[s], alpha=alpha[s])
+
+    return samp_size
 
 def sample_size_for_proportion_wald(
     target: Union[DictStrNum, Number, Array],
     half_ci: Union[DictStrNum, Number, Array],
-    pop_size: Optional[Union[DictStrNum, Number, Array]],
-    deff_c: Union[DictStrNum, Number, Array],
-    alpha: float,
+    pop_size: Optional[Union[DictStrNum, Number, Array]] = None,
+    deff_c: Union[DictStrNum, Number, Array] = 1.0,
+    alpha: Union[DictStrNum, Number, Array] = 0.05,
+    stratification: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    z_value = normal().ppf(1 - alpha / 2)
-
-    if isinstance(target, dict) and isinstance(half_ci, dict) and isinstance(deff_c, dict):
-        samp_size: DictStrNum = {}
-        for s in half_ci:
-            sigma_s = target[s] * (1 - target[s])
-            if isinstance(pop_size, dict):
-                samp_size[s] = math.ceil(
-                    deff_c[s]
-                    * pop_size[s]
-                    * z_value ** 2
-                    * sigma_s
-                    / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value * sigma_s)
-                )
-            else:
-                samp_size[s] = math.ceil(deff_c[s] * z_value ** 2 * sigma_s / half_ci[s] ** 2)
-        return samp_size
-    elif (
-        isinstance(target, (np.ndarray, pd.Series, list, tuple))
-        and isinstance(half_ci, (np.ndarray, pd.Series, list, tuple))
-        and isinstance(deff_c, (np.ndarray, pd.Series, list, tuple))
-    ):
-        target = numpy_array(target)
-        half_ci = numpy_array(half_ci)
-        deff_c = numpy_array(deff_c)
-        samp_size = np.ceil(deff_c * (z_value ** 2) * target * (1 - target) / (half_ci ** 2))
-        return samp_size
-    elif (
-        isinstance(target, (int, float))
-        and isinstance(half_ci, (int, float))
-        and isinstance(deff_c, (int, float))
-    ):
-        sigma = target * (1 - target)
-        if isinstance(pop_size, (int, float)):
-            return math.ceil(
-                deff_c
-                * pop_size
-                * z_value ** 2
-                * sigma
-                / ((pop_size - 1) * half_ci ** 2 + z_value ** 2 * sigma)
-            )
-        else:
-            return math.ceil(deff_c * z_value ** 2 * sigma / half_ci ** 2)
+    if stratification:
+        return _ss_for_proportion_wald_stratified(target=target, half_ci=half_ci, pop_size=pop_size, deff_c=deff_c, alpha=alpha)
     else:
-        raise TypeError("target and half_ci must be numbers or dictionaries!")
+        return _ss_for_proportion_wald(target=target, half_ci=half_ci, pop_size=pop_size, deff_c=deff_c, alpha=alpha)
 
+def _ss_for_proportion_fleiss(
+    target: Union[ Number, Array],
+    half_ci: Union[ Number, Array],
+    deff_c: Union[Number, Array],
+    alpha: Union[Number, Array],
+) -> Union[ Number, Array]:
 
-def sample_size_for_proportion_fleiss(
-    target: Union[DictStrNum, Number, Array],
-    half_ci: Union[DictStrNum, Number, Array],
-    deff_c: Union[DictStrNum, Number, Array],
-    alpha: float,
-) -> Union[DictStrNum, Number, Array]:
+    if isinstance(target, (np.ndarray, pd.Series, list, tuple)):
+        target = numpy_array(target)
+    if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
+        half_ci = numpy_array(half_ci)
+    if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
+        deff_c = numpy_array(deff_c)
+    if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
+        alpha = numpy_array(alpha)
 
     z_value = normal().ppf(1 - alpha / 2)
 
@@ -231,111 +246,109 @@ def sample_size_for_proportion_fleiss(
         else:
             raise ValueError("Parameters p or d not valid.")
 
-    if isinstance(target, dict) and isinstance(half_ci, dict) and isinstance(deff_c, dict):
-        samp_size: DictStrNum = {}
-        for s in half_ci:
-            fct = fleiss_factor(target[s], half_ci[s])
-            samp_size[s] = math.ceil(
-                deff_c[s]
-                * (
-                    fct * (z_value ** 2) / (4 * half_ci[s] ** 2)
-                    + 1 / half_ci[s]
-                    - 2 * z_value ** 2
-                    + (z_value + 2) / fct
-                )
-            )
-        return samp_size
-    elif (
-        isinstance(target, (np.ndarray, pd.Series, list, tuple))
-        and isinstance(half_ci, (np.ndarray, pd.Series, list, tuple))
-        and isinstance(deff_c, (np.ndarray, pd.Series, list, tuple))
-    ):
-        target = numpy_array(target)
-        half_ci = numpy_array(half_ci)
-        deff_c = numpy_array(deff_c)
-        samp_size = np.zeros(target.shape[0])
+    if isinstance(target, np.ndarray):
+        fct = np.zeros(target.shape[0])
         for k in range(target.shape[0]):
-            fct = fleiss_factor(target[k], half_ci[k])
-            samp_size[k] = math.ceil(
-                deff_c[k]
-                * (
-                    fct * (z_value ** 2) / (4 * half_ci[k] ** 2)
-                    + 1 / half_ci[k]
-                    - 2 * z_value ** 2
-                    + (z_value + 2) / fct
-                )
-            )
-        return samp_size
-    elif (
-        isinstance(target, (int, float))
-        and isinstance(half_ci, (int, float))
-        and isinstance(deff_c, (int, float))
-    ):
-        fct = fleiss_factor(target, half_ci)
-        return math.ceil(
-            deff_c
-            * (
-                fct * (z_value ** 2) / (4 * half_ci ** 2)
-                + 1 / half_ci
-                - 2 * z_value ** 2
-                + (z_value + 2) / fct
-            )
-        )
+            fct[k] = fleiss_factor(target[k], half_ci[k])
     else:
-        raise TypeError("target and half_ci must be numbers or dictionaries!")
+        fct = fleiss_factor(target, half_ci)
 
+    return math.ceil(
+        deff_c
+        * (
+            fct * (z_value ** 2) / (4 * half_ci ** 2)
+            + 1 / half_ci
+            - 2 * z_value ** 2
+            + (z_value + 2) / fct
+        )
+    )
+
+def _ss_for_proportion_fleiss_stratified(
+    target: DictStrNum,
+    half_ci: DictStrNum,
+    deff_c: DictStrNum,
+    alpha: DictStrNum,
+) -> DictStrNum:
+
+    samp_size: DictStrNum = {}
+    for s in half_ci:
+        samp_size[s] = _ss_for_proportion_fleiss(target=target[s],half_ci=half_ci[s], deff_c=deff_c[s], alpha=alpha[s])
+
+    return samp_size
+
+def sample_size_for_proportion_fleiss(
+    target: Union[DictStrNum, Number, Array],
+    half_ci: Union[DictStrNum, Number, Array],
+    deff_c: Union[DictStrNum, Number, Array] = 1.0,
+    alpha: Union[DictStrNum, Number, Array] = 0.05,
+    stratification: bool = False,
+) -> Union[DictStrNum, Number, Array]:
+
+    if stratification:
+        return _ss_for_proportion_fleiss_stratified(target=target, half_ci=half_ci,  deff_c=deff_c, alpha=alpha)
+    else:
+        return _ss_for_proportion_fleiss(target=target, half_ci=half_ci, deff_c=deff_c, alpha=alpha)
+
+def _ss_for_mean_wald(
+    half_ci: Union[ Number, Array],
+    sigma: Union[Number, Array],
+    pop_size: Optional[Union[ Number, Array]],
+    deff_c: Union[Number, Array],
+    alpha: Union[Number, Array],
+) -> Union[ Number, Array]:
+
+    if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
+        half_ci = numpy_array(half_ci)
+    if isinstance(sigma, (np.ndarray, pd.Series, list, tuple)):
+        sigma = numpy_array(sigma)
+    if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
+        deff_c = numpy_array(deff_c)
+    if isinstance(pop_size, (np.ndarray, pd.Series, list, tuple)):
+        pop_size = numpy_array(pop_size)
+    if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
+        alpha = numpy_array(alpha)
+
+    z_value = normal().ppf(1 - alpha / 2)
+
+    if isinstance(pop_size, (np.ndarray, int, float)):
+        return math.ceil(
+                (deff_c
+                * pop_size
+                * z_value ** 2
+                * sigma **2)
+                / ((pop_size - 1) * half_ci ** 2 + z_value ** 2 * sigma**2)
+            )
+    else:
+        return math.ceil(deff_c * z_value ** 2 * sigma**2 / half_ci ** 2)
+
+def _ss_for_mean_wald_stratified(
+    half_ci: DictStrNum,
+    sigma: Union[Number, Array],
+    pop_size: Optional[DictStrNum],
+    deff_c: DictStrNum,
+    alpha: DictStrNum,
+) -> DictStrNum:
+
+    samp_size: DictStrNum = {}
+    for s in half_ci:
+        pop_size_c = None if pop_size is None else pop_size[s]
+        samp_size[s] = _ss_for_mean_wald(half_ci=half_ci[s], sigma=sigma[s],pop_size=pop_size_c, deff_c=deff_c[s], alpha=alpha[s])
+
+    return samp_size
 
 def sample_size_for_mean_wald(
     half_ci: Union[DictStrNum, Number, Array],
     sigma: Union[DictStrNum, Number, Array],
-    pop_size: Optional[Union[DictStrNum, Number, Array]],
-    deff_c: Union[DictStrNum, Number, Array],
-    alpha: float,
+    pop_size: Optional[Union[DictStrNum, Number, Array]] = None,
+    deff_c: Union[DictStrNum, Number, Array] = 1.0,
+    alpha: Union[DictStrNum, Number, Array] = 0.05,
+    stratification: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    z_value = normal().ppf(1 - alpha / 2)
-
-    if isinstance(half_ci, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
-        samp_size: DictStrNum = {}
-        for s in half_ci:
-            if isinstance(pop_size, dict):
-                samp_size[s] = math.ceil(
-                    deff_c[s]
-                    * pop_size[s]
-                    * z_value ** 2
-                    * sigma[s] ** 2
-                    / ((pop_size[s] - 1) * half_ci[s] ** 2 + z_value ** 2 * sigma[s] ** 2)
-                )
-            else:
-                samp_size[s] = math.ceil(deff_c[s] * (z_value * sigma[s] / half_ci[s]) ** 2)
-        return samp_size
-    elif (
-        isinstance(half_ci, (np.ndarray, pd.Series, list, tuple))
-        and isinstance(sigma, (np.ndarray, pd.Series, list, tuple))
-        and isinstance(deff_c, (np.ndarray, pd.Series, list, tuple))
-    ):
-        half_ci = numpy_array(half_ci)
-        sigma = numpy_array(sigma)
-        deff_c = numpy_array(deff_c)
-        return np.ceil(deff_c * (z_value * sigma / half_ci) ** 2)
-    elif (
-        isinstance(half_ci, (int, float))
-        and isinstance(sigma, (int, float))
-        and isinstance(deff_c, (int, float))
-    ):
-        if isinstance(pop_size, (int, float)):
-            return math.ceil(
-                deff_c
-                * pop_size
-                * z_value ** 2
-                * sigma ** 2
-                / ((pop_size - 1) * half_ci ** 2 + z_value ** 2 * sigma ** 2)
-            )
-        else:
-            return math.ceil(deff_c * (z_value * sigma / half_ci) ** 2)
+    if stratification:
+        return _ss_for_mean_wald_stratified(half_ci=half_ci, sigma=sigma, pop_size=pop_size, deff_c=deff_c, alpha=alpha)
     else:
-        raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
-
+        return _ss_for_mean_wald(half_ci=half_ci, sigma=sigma, pop_size=pop_size, deff_c=deff_c, alpha=alpha)
 
 class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
@@ -396,22 +409,6 @@ class SampleSize:
         alpha: float = 0.05,
     ) -> None:
 
-        # is_target_dict = isinstance(target, dict)
-        # is_sigma_dict = isinstance(sigma, dict)
-        # is_half_ci_dict = isinstance(half_ci, dict)
-        # is_deff_dict = isinstance(deff, dict)
-        # is_resp_rate_dict = isinstance(resp_rate, dict)
-        # is_pop_size_dict = isinstance(pop_size, dict)
-
-        # number_dictionaries = (
-        #     is_target_dict
-        #     + is_sigma_dict
-        #     + is_half_ci_dict
-        #     + is_deff_dict
-        #     + is_resp_rate_dict
-        #     + is_pop_size_dict
-        # )
-
         if self.parameter == "proportion" and target is None:
             raise AssertionError(
                 "target must be provided to calculate sample size for proportion."
@@ -436,125 +433,38 @@ class SampleSize:
                 for s in target:
                     sigma[s] = target[s] * (1 - target[s])
 
-        stratum: Optional[list[StringNumber]] = None
-
-        # if not self.stratification and (
-        #     isinstance(half_ci, dict)
-        #     or isinstance(target, dict)
-        #     or isinstance(sigma, dict)
-        #     or isinstance(deff, dict)
-        #     or isinstance(resp_rate, dict)
-        #     or isinstance(pop_size, dict)
-        # ):
-        #     raise AssertionError("No python dictionary needed for non-stratified sample.")
-        # elif (
-        #     not self.stratification
-        #     and isinstance(half_ci, (int, float))
-        #     # and isinstance(target, (int, float))
-        #     # and isinstance(sigma, (int, float))
-        #     and isinstance(deff, (int, float))
-        #     and isinstance(resp_rate, (int, float))
-        # ):
-        #     self.half_ci = half_ci
-        #     self.deff_c = deff
-        #     self.resp_rate = resp_rate
-        #     if isinstance(target, (int, float)):
-        #         self.target = target
-        #     if isinstance(sigma, (int, float)):
-        #         self.sigma = sigma
-        #     if isinstance(pop_size, (int, float)):
-        #         self.pop_size = pop_size
-        # elif (
-        #     self.stratification
-        #     and isinstance(half_ci, (int, float))
-        #     and isinstance(target, (int, float))
-        #     and isinstance(sigma, (int, float))
-        #     and isinstance(deff, (int, float))
-        #     and isinstance(resp_rate, (int, float))
-        # ):
-        #     if number_strata is not None:
-        #         stratum = ["_stratum_" + str(i) for i in range(1, number_strata + 1)]
-        #         self.half_ci = dict(zip(stratum, np.repeat(half_ci, number_strata)))
-        #         self.target = dict(zip(stratum, np.repeat(target, number_strata)))
-        #         self.sigma = dict(zip(stratum, np.repeat(sigma, number_strata)))
-        #         self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
-        #         self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
-        #         if isinstance(pop_size, (int, float)):
-        #             self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
-        #     else:
-        #         raise ValueError("Number of strata not specified!")
-        # elif self.stratification and number_dictionaries > 0:
-        #     dict_number = 0
-        #     for ll in [target, half_ci, sigma, deff, resp_rate, pop_size]:
-        #         if isinstance(ll, dict):
-        #             dict_number += 1
-        #             if dict_number == 1:
-        #                 stratum = list(ll.keys())
-        #             elif dict_number > 0:
-        #                 if stratum != list(ll.keys()):
-        #                     raise AssertionError("Python dictionaries have different keys")
-        #     number_strata = len(stratum) if stratum is not None else 0
-        #     if not is_target_dict and isinstance(target, (int, float)) and stratum is not None:
-        #         self.target = dict(zip(stratum, np.repeat(target, number_strata)))
-        #     elif isinstance(target, dict):
-        #         self.target = target
-        #     if not is_sigma_dict and isinstance(sigma, (int, float)) and stratum is not None:
-        #         self.sigma = dict(zip(stratum, np.repeat(sigma, number_strata)))
-        #     elif isinstance(sigma, dict):
-        #         self.sigma = sigma
-        #     if not is_half_ci_dict and isinstance(half_ci, (int, float)) and stratum is not None:
-        #         self.half_ci = dict(zip(stratum, np.repeat(half_ci, number_strata)))
-        #     elif isinstance(half_ci, dict):
-        #         self.half_ci = half_ci
-        #     if not is_deff_dict and isinstance(deff, (int, float)) and stratum is not None:
-        #         self.deff_c = dict(zip(stratum, np.repeat(deff, number_strata)))
-        #     elif isinstance(deff, dict):
-        #         self.deff_c = deff
-        #     if (
-        #         not is_resp_rate_dict
-        #         and isinstance(resp_rate, (int, float))
-        #         and stratum is not None
-        #     ):
-        #         self.resp_rate = dict(zip(stratum, np.repeat(resp_rate, number_strata)))
-        #     elif isinstance(resp_rate, dict):
-        #         self.resp_rate = resp_rate
-        #     if (
-        #         not isinstance(pop_size, dict)
-        #         and isinstance(pop_size, (int, float))
-        #         and stratum is not None
-        #     ):
-        #         self.pop_size = dict(zip(stratum, np.repeat(pop_size, number_strata)))
-        #     elif isinstance(pop_size, dict):
-        #         self.pop_size = pop_size
-
-        self.alpha = alpha
+        if self.stratification:
+            self.half_ci, self.target, self.sigma, self.deff_c, self.resp_rate, self.pop_size, self.alpha = convert_numbers_to_dicts(number_strata, half_ci,target,sigma, deff,resp_rate,pop_size,alpha) 
+        else:
+            self.half_ci, self.target, self.sigma, self.deff_c, self.resp_rate, self.pop_size, self.alpha = half_ci, target, sigma, deff, resp_rate, pop_size, alpha
 
         samp_size: Union[DictStrNum, Number]
         if self.parameter == "proportion" and self.method == "wald":
-            samp_size = sample_size_for_proportion_wald(
+            self.samp_size = sample_size_for_proportion_wald(
                 half_ci=self.half_ci,
                 target=self.target,
                 pop_size=self.pop_size,
                 deff_c=self.deff_c,
                 alpha=self.alpha,
+                stratification=self.stratification
             )
         elif self.parameter == "proportion" and self.method == "fleiss":
-            samp_size = sample_size_for_proportion_fleiss(
+            self.samp_size = sample_size_for_proportion_fleiss(
                 half_ci=self.half_ci,
                 target=self.target,
                 deff_c=self.deff_c,
                 alpha=self.alpha,
+                stratification=self.stratification
             )
         elif self.parameter in ("mean", "total") and self.method == "wald":
-            samp_size = sample_size_for_mean_wald(
+            self.samp_size = sample_size_for_mean_wald(
                 half_ci=self.half_ci,
                 sigma=self.sigma,
                 pop_size=self.pop_size,
                 deff_c=self.deff_c,
                 alpha=self.alpha,
+                stratification=self.stratification
             )
-
-        self.samp_size = samp_size
 
     def to_dataframe(self, col_names: Optional[list[str]] = None) -> pd.DataFrame:
         """Coverts the dictionaries to a pandas dataframe
@@ -879,14 +789,14 @@ class _SampleSizeForDifference:
         if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(deff_c, dict):
             samp_size: DictStrNum = {}
             for s in delta:
-                samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) * sigma[s] / delta) ** 2)
+                samp_size[s] = math.ceil(deff_c[s] * ((z_alpha + z_beta) * sigma[s] / (epsilon[s]-delta[s])) ** 2)
             return samp_size
         elif (
             isinstance(delta, (int, float))
             and isinstance(sigma, (int, float))
             and isinstance(deff_c, (int, float))
         ):
-            return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / delta) ** 2)
+            return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / (epsilon-delta)) ** 2)
         else:
             raise TypeError("target, half_ci, and sigma must be numbers or dictionaries!")
 
@@ -913,6 +823,7 @@ class _SampleSizeForDifference:
         if self.parameter in ("proportion", "mean", "total") and self.method == "wald":
             self.samp_size = self._calculate_ss_wald(
                 two_sides=self.two_sides,
+                epsilon=self.epsilon,
                 delta=self.delta,
                 sigma=self.sigma,
                 deff_c=self.deff_c,
@@ -980,6 +891,7 @@ class SampleSizeOneMean(_SampleSizeForDifference):
 
         self._input_parameters_validation(
             epsilon=epsilon,
+            delta=delta,
             sigma=sigma,
             deff=deff,
             resp_rate=resp_rate,
@@ -993,6 +905,7 @@ class SampleSizeOneMean(_SampleSizeForDifference):
         self.samp_size = self._calculate_ss_wald(
             two_sides=self.two_sides,
             epsilon=self.epsilon,
+            delta=self.delta,
             sigma=self.sigma,
             deff_c=self.deff_c,
             alpha=self.alpha,

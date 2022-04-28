@@ -2,17 +2,16 @@ import pytest
 
 from samplics.sampling import SampleSize, allocate
 
-
 region = ["Dakar", "Kaolack", "Ziguinchor"]
 pop_size = {"Dakar": 500, "Kaolack": 300, "Ziguinchor": 200}
 
 
 @pytest.mark.xfail(reason="stratum is required")
-def testation_equal_stratum_error():
+def test_equal_stratum_error():
     allocate(method="equal")
 
 
-def testation_equal():
+def test_equal():
     sizes, rates = allocate(method="equal", stratum=region, pop_size=pop_size, constant=15)
     assert sizes["Dakar"] == 15
     assert sizes["Kaolack"] == 15
@@ -25,12 +24,12 @@ def testation_equal():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
-def testation_equal_error():
+def test_equal_error():
     with pytest.raises(ValueError):
         allocate(method="equal", stratum=region, pop_size=pop_size, constant=[23])
 
 
-def testation_proportional():
+def test_proportional():
     sizes, rates = allocate(
         method="proportional", stratum=region, samp_size=100, pop_size=pop_size
     )
@@ -42,12 +41,12 @@ def testation_proportional():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
-def testation_proportional_error():
+def test_proportional_error():
     with pytest.raises(ValueError):
         allocate(method="equal", stratum=region, samp_size=100, pop_size=5)
 
 
-def testation_fixed_rate_number():
+def test_fixed_rate_number():
     sizes, rates = allocate(method="fixed_rate", stratum=region, pop_size=pop_size, rate=0.05)
     assert sizes["Dakar"] == 25
     assert sizes["Kaolack"] == 15
@@ -60,12 +59,12 @@ def testation_fixed_rate_number():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
-def testation_fixed_rate_error():
+def test_fixed_rate_error():
     with pytest.raises(ValueError):
         allocate(method="fixed_rate", stratum=region, pop_size=[5])
 
 
-def testation_variable_rate():
+def test_variable_rate():
     input_rates = {"Dakar": 0.05, "Kaolack": 0.10, "Ziguinchor": 0.20}
     sizes, rates = allocate(
         method="variable_rate", stratum=region, pop_size=pop_size, rate=input_rates
@@ -81,12 +80,12 @@ def testation_variable_rate():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
-def testationf_variable_rate_error():
+def testf_variable_rate_error():
     with pytest.raises(ValueError):
         allocate(method="variable_rate", stratum=region, pop_size=[5])
 
 
-def testation_proportional_rate():
+def test_proportional_rate():
     pop_size2 = {"Dakar": 5000, "Kaolack": 3000, "Ziguinchor": 2000}
     sizes, rates = allocate(
         method="proportional_rate", stratum=region, pop_size=pop_size2, rate=0.000005
@@ -102,7 +101,7 @@ def testation_proportional_rate():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size2["Ziguinchor"]
 
 
-def testation_proportional_rate_error1():
+def test_proportional_rate_error1():
     rate = {"Dakar": 0.005, "Kaolack": 0.010, "Ziguinchor": 0.020}
     with pytest.raises(ValueError):
         allocate(method="proportional_rate", stratum=region, pop_size=pop_size, rate=rate)
@@ -129,7 +128,7 @@ def test_deff_optimum_mean():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
-def testation_optimum_mean_error1():
+def test_optimum_mean_error1():
     rate = {"Dakar": 0.005, "Kaolack": 0.010, "Ziguinchor": 0.020}
     stddev = {"Dakar": 5, "Kaolack": 10, "Ziguinchor": 20}
     with pytest.raises(ValueError):
@@ -138,7 +137,7 @@ def testation_optimum_mean_error1():
         )
 
 
-def testation_optimum_mean_error2():
+def test_optimum_mean_error2():
     with pytest.raises(ValueError):
         allocate(method="optimum_mean", stratum=region, pop_size=pop_size, stddev=[5])
 
@@ -159,7 +158,7 @@ def test_deff_optimum_comparison():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
-def testation_optimum_comparison_error1():
+def test_optimum_comparison_error1():
     rate = {"Dakar": 0.005, "Kaolack": 0.010, "Ziguinchor": 0.020}
     stddev = {"Dakar": 5, "Kaolack": 10, "Ziguinchor": 20}
     with pytest.raises(ValueError):
@@ -172,7 +171,7 @@ def testation_optimum_comparison_error1():
         )
 
 
-def testation_equal_errors_error2():
+def test_equal_errors_error2():
     with pytest.raises(ValueError):
         allocate(method="equal_errors", stratum=region, pop_size=pop_size, stddev=[5])
 
@@ -196,7 +195,7 @@ def test_deff_equal_errors():
     assert rates["Ziguinchor"] == sizes["Ziguinchor"] / pop_size["Ziguinchor"]
 
 
-def testation_equal_errors_error1():
+def test_equal_errors_error1():
     stddev = {"Dakar": 5, "Kaolack": 10, "Ziguinchor": 20}
     with pytest.raises(ValueError):
         allocate(
@@ -208,7 +207,7 @@ def testation_equal_errors_error1():
         )
 
 
-def testation_optimum_comparison_error2():
+def test_optimum_comparison_error2():
     with pytest.raises(ValueError):
         allocate(method="optimum_comparison", stratum=region, pop_size=pop_size, stddev=[5])
 

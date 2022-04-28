@@ -188,7 +188,7 @@ def convert_numbers_to_dicts(
     dict_number = 0
     stratum: Optional[list[StringNumber]] = None
     for arg in args:
-        if not isinstance(arg, (int, float, dict)):
+        if arg is not None and not isinstance(arg, (int, float, dict)):
             raise TypeError("Arguments must be of type int, float or dict!")
 
         if isinstance(arg, dict):
