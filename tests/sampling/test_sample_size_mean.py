@@ -148,7 +148,7 @@ pop_size2 = {"stratum1": 1000, "stratum2": 10000, "stratum3": 10000000}
 
 def test_size_mean_str_wald_fpc1():
     size_str_mean_wald_fpc.calculate(half_ci=half_ci2, sigma=sigma2, pop_size=pop_size2)
-    assert size_str_mean_wald_fpc.samp_size["stratum1"] ==   58
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 58
     assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
     assert size_str_mean_wald_fpc.samp_size["stratum3"] == 62
 
