@@ -1,9 +1,8 @@
 from samplics.sampling.selection import SampleSelection
 from samplics.sampling.size import (
     SampleSize,
-    SampleSizeOneMean,
-    SampleSizeOneProportion,
-    SampleSizeOneTotal,
+    SampleSizeMeanOneSample,
+    SampleSizePropOneSample,
     allocate,
     calculate_power,
     power_for_proportion,
@@ -22,9 +21,8 @@ __all__ = [
     "power_for_one_mean",
     "SampleSelection",
     "SampleSize",
-    "SampleSizeOneMean",
-    "SampleSizeOneProportion",
-    "SampleSizeOneTotal",
+    "SampleSizeMeanOneSample",
+    "SampleSizePropOneSample",
     "sample_size_for_mean_wald",
     "sample_size_for_proportion_fleiss",
     "sample_size_for_proportion_wald",
