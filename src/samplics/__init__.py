@@ -20,7 +20,9 @@ from samplics.sampling import (
     SampleSelection,
     SampleSize,
     SampleSizeMeanOneSample,
+    SampleSizeMeanTwoSample,
     SampleSizePropOneSample,
+    SampleSizePropTwoSample,
     allocate,
     calculate_power,
     power_for_one_mean,
@@ -64,7 +66,9 @@ __all__ = [
     "SampleSelection",
     "SampleSize",
     "SampleSizeMeanOneSample",
+    "SampleSizeMeanTwoSample",
     "SampleSizePropOneSample",
+    "SampleSizePropTwoSample",
     "sample_size_for_mean_wald",
     "sample_size_for_proportion_fleiss",
     "sample_size_for_proportion_wald",
@@ -76,4 +80,4 @@ __all__ = [
     "transform",
 ]
 
-__version__ = "0.3.17"
+__version__ = "0.3.20"

@@ -14,7 +14,11 @@ import pandas as pd
 
 from scipy.stats import norm as normal
 from scipy.stats import t as student
-from samplics.sampling.size_functions import calculate_ss_wald_mean
+from samplics.sampling.size_functions import (
+    calculate_ss_wald_mean_one_sample,
+    calculate_ss_wald_mean_two_sample,
+    calculate_ss_wald_prop_two_sample,
+)
 
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
@@ -660,7 +664,7 @@ def calculate_clusters() -> None:
 
 
 class SampleSizeMeanOneSample:
-    """SampleSizeOneSample implements sample size calculation for one sample"""
+    """SampleSizeMeanOneSample implements sample size calculation for mean under one-sample design"""
 
     def __init__(
         self,
@@ -679,36 +683,36 @@ class SampleSizeMeanOneSample:
         self.two_sides = two_sides
         self.params_estimated = params_estimated
 
-        self.samp_size: Union[DictStrNum, Number]
-        self.actual_power: Union[DictStrNum, Number]
+        self.samp_size: Union[DictStrNum, Array, Number]
+        self.actual_power: Union[DictStrNum, Array, Number]
 
-        self.mean_0: Union[DictStrNum, Number]
-        self.mean_1: Union[DictStrNum, Number]
-        self.epsilon: Union[DictStrNum, Number]
-        self.delta: Union[DictStrNum, Number]
-        self.sigma: Union[DictStrNum, Number]
+        self.mean_0: Union[DictStrNum, Array, Number]
+        self.mean_1: Union[DictStrNum, Array, Number]
+        self.epsilon: Union[DictStrNum, Array, Number]
+        self.delta: Union[DictStrNum, Array, Number]
+        self.sigma: Union[DictStrNum, Array, Number]
 
-        self.deff_c: Union[DictStrNum, Number]
-        self.deff_w: Union[DictStrNum, Number]
-        self.resp_rate: Union[DictStrNum, Number]
-        self.pop_size: Optional[Union[DictStrNum, Number]] = None
+        self.deff_c: Union[DictStrNum, Array, Number]
+        self.deff_w: Union[DictStrNum, Array, Number]
+        self.resp_rate: Union[DictStrNum, Array, Number]
+        self.pop_size: Optional[Union[DictStrNum, Array, Number]] = None
 
-        self.alpha: Union[DictStrNum, Number]
-        self.beta: Union[DictStrNum, Number]
-        self.power: Union[DictStrNum, Number]
+        self.alpha: Union[DictStrNum, Array, Number]
+        self.beta: Union[DictStrNum, Array, Number]
+        self.power: Union[DictStrNum, Array, Number]
 
     def calculate(
         self,
-        mean_0: Union[DictStrNum, Number],
-        mean_1: Union[DictStrNum, Number],
-        sigma: Union[DictStrNum, Number],
-        delta: Union[DictStrNum, Number] = 0.0,
-        deff: Union[DictStrNum, Number, Number] = 1.0,
-        resp_rate: Union[DictStrNum, Number] = 1.0,
+        mean_0: Union[DictStrNum, Array, Number],
+        mean_1: Union[DictStrNum, Array, Number],
+        sigma: Union[DictStrNum, Array, Number],
+        delta: Union[DictStrNum, Array, Number] = 0.0,
+        deff: Union[DictStrNum, Array, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Array, Number] = 1.0,
         number_strata: Optional[int] = None,
-        pop_size: Optional[Union[DictStrNum, Number]] = None,
-        alpha: Union[DictStrNum, Number] = 0.05,
-        power: Union[DictStrNum, Number] = 0.80,
+        pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
+        alpha: Union[DictStrNum, Array, Number] = 0.05,
+        power: Union[DictStrNum, Array, Number] = 0.80,
     ) -> None:
 
         if self.stratification:
@@ -766,7 +770,7 @@ class SampleSizeMeanOneSample:
         else:
             self.epsilon = mean_1 - mean_0
 
-        self.samp_size = calculate_ss_wald_mean(
+        self.samp_size = calculate_ss_wald_mean_one_sample(
             two_sides=self.two_sides,
             epsilon=self.epsilon,
             delta=self.delta,
@@ -789,7 +793,7 @@ class SampleSizeMeanOneSample:
 
 
 class SampleSizePropOneSample:
-    """SampleSizeOneSample implements sample size calculation for one sample"""
+    """SampleSizePropOneSample implements sample size calculation for propoertion under one-sample design"""
 
     def __init__(
         self,
@@ -828,22 +832,21 @@ class SampleSizePropOneSample:
 
     def calculate(
         self,
-        prop_0: Union[DictStrNum, Number],
-        prop_1: Union[DictStrNum, Number],
-        delta: Union[DictStrNum, Number] = 0.0,
+        prop_0: Union[DictStrNum, Array, Number],
+        prop_1: Union[DictStrNum, Array, Number],
+        delta: Union[DictStrNum, Array, Number] = 0.0,
         arcsin: bool = False,
         continuity: bool = False,
-        deff: Union[DictStrNum, Number, Number] = 1.0,
-        resp_rate: Union[DictStrNum, Number] = 1.0,
+        deff: Union[DictStrNum, Array, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Array, Number] = 1.0,
         number_strata: Optional[int] = None,
-        pop_size: Optional[Union[DictStrNum, Number]] = None,
-        alpha: Union[DictStrNum, Number] = 0.05,
-        power: Union[DictStrNum, Number] = 0.80,
+        pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
+        alpha: Union[DictStrNum, Array, Number] = 0.05,
+        power: Union[DictStrNum, Array, Number] = 0.80,
     ) -> None:
 
         if self.stratification:
             (
-                self.half_ci,
                 self.prop_0,
                 self.prop_1,
                 self.delta,
@@ -899,7 +902,7 @@ class SampleSizePropOneSample:
         self.arcsin = arcsin
         self.continuity = continuity
 
-        self.samp_size = calculate_ss_wald_mean(
+        self.samp_size = calculate_ss_wald_mean_one_sample(
             two_sides=self.two_sides,
             epsilon=self.epsilon,
             delta=self.delta,
@@ -919,6 +922,273 @@ class SampleSizePropOneSample:
             self.actual_power = calculate_power(
                 self.two_sides, self.epsilon, self.sigma, self.samp_size, self.alpha
             )
+
+
+class SampleSizeMeanTwoSample:
+    """SampleSizeMeanTwoSample implements sample size calculation for mean under two-sample design"""
+
+    def __init__(
+        self,
+        method: str = "wald",
+        stratification: bool = False,
+        two_sides: bool = True,
+        params_estimated: bool = True,
+    ) -> None:
+
+        self.parameter = "mean"
+        self.method = method.lower()
+        if self.method not in ("wald"):
+            raise AssertionError("The method must be wald.")
+
+        self.stratification = stratification
+        self.two_sides = two_sides
+        self.params_estimated = params_estimated
+
+        self.samp_size: Union[DictStrNum, Array, Number]
+        self.actual_power: Union[DictStrNum, Array, Number]
+
+        self.mean_1: Union[DictStrNum, Array, Number]
+        self.mean_2: Union[DictStrNum, Array, Number]
+        self.epsilon: Union[DictStrNum, Array, Number]
+        self.delta: Union[DictStrNum, Array, Number]
+        self.sigma_1: Union[DictStrNum, Array, Number]
+        self.sigma_2: Union[DictStrNum, Array, Number]
+        self.equal_variance: Union[DictStrNum, Array, Number]
+
+        self.deff_c: Union[DictStrNum, Array, Number]
+        self.deff_w: Union[DictStrNum, Array, Number]
+        self.resp_rate: Union[DictStrNum, Array, Number]
+        self.pop_size: Optional[Union[DictStrNum, Array, Number]] = None
+
+        self.alpha: Union[DictStrNum, Array, Number]
+        self.beta: Union[DictStrNum, Array, Number]
+        self.power: Union[DictStrNum, Array, Number]
+
+    def calculate(
+        self,
+        mean_1: Union[DictStrNum, Array, Number],
+        mean_2: Union[DictStrNum, Array, Number],
+        sigma_1: Union[DictStrNum, Array, Number],
+        sigma_2: Optional[Union[DictStrNum, Array, Number]] = None,
+        equal_variance: Union[DictStrNum, Array, Number] = True,
+        kappa: Optional[Union[DictStrNum, Array, Number]] = 1,
+        delta: Union[DictStrNum, Array, Number] = 0.0,
+        deff: Union[DictStrNum, Array, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Array, Number] = 1.0,
+        number_strata: Optional[int] = None,
+        pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
+        alpha: Union[DictStrNum, Array, Number] = 0.05,
+        power: Union[DictStrNum, Array, Number] = 0.80,
+    ) -> None:
+
+        if self.stratification:
+            (
+                self.mean_1,
+                self.mean_2,
+                self.sigma_1,
+                self.sigma_2,
+                self.equal_variance,
+                self.kappa,
+                self.delta,
+                self.deff_c,
+                self.resp_rate,
+                self.pop_size,
+                self.alpha,
+                self.power,
+            ) = convert_numbers_to_dicts(
+                number_strata,
+                mean_1,
+                mean_2,
+                sigma_1,
+                sigma_2,
+                equal_variance,
+                kappa,
+                delta,
+                deff,
+                resp_rate,
+                pop_size,
+                alpha,
+                power,
+            )
+        else:
+            (
+                self.mean_1,
+                self.mean_2,
+                self.sigma_1,
+                self.sigma_2,
+                self.equal_variance,
+                self.kappa,
+                self.delta,
+                self.deff_c,
+                self.resp_rate,
+                self.pop_size,
+                self.alpha,
+                self.power,
+            ) = (
+                mean_1,
+                mean_2,
+                sigma_1,
+                sigma_2,
+                equal_variance,
+                kappa,
+                delta,
+                deff,
+                resp_rate,
+                pop_size,
+                alpha,
+                power,
+            )
+
+        if self.stratification:
+            epsilon: DictStrNum = {}
+            for s in epsilon:
+                epsilon[s] = mean_2[s] - mean_1[s]
+            self.epsilon = epsilon
+        else:
+            self.epsilon = mean_2 - mean_1
+
+        self.samp_size = calculate_ss_wald_mean_two_sample(
+            two_sides=self.two_sides,
+            epsilon=self.epsilon,
+            delta=self.delta,
+            sigma_1=self.sigma_1,
+            sigma_2=self.sigma_2,
+            equal_variance=self.equal_variance,
+            kappa=kappa,
+            deff_c=self.deff_c,
+            alpha=self.alpha,
+            power=self.power,
+            stratification=self.stratification,
+        )
+
+        # if self.stratification:
+        #     for k in self.samp_size:
+        #         self.actual_power[k] = calculate_power(
+        #             self.two_sides, self.epsilon[k], self.sigma[k], self.samp_size[k], self.alpha
+        #         )
+        # else:
+        #     self.actual_power = calculate_power(
+        #         self.two_sides, self.epsilon, self.sigma, self.samp_size, self.alpha
+        #     )
+
+
+class SampleSizePropTwoSample:
+    """SampleSizeMeanTwoSample implements sample size calculation for mean under two-sample design"""
+
+    def __init__(
+        self,
+        method: str = "wald",
+        stratification: bool = False,
+        two_sides: bool = True,
+        params_estimated: bool = True,
+    ) -> None:
+
+        self.parameter = "proportion"
+        self.method = method.lower()
+        if self.method not in ("wald"):
+            raise AssertionError("The method must be wald.")
+
+        self.stratification = stratification
+        self.two_sides = two_sides
+        self.params_estimated = params_estimated
+
+        self.samp_size: Union[DictStrNum, Array, Number]
+        self.actual_power: Union[DictStrNum, Array, Number]
+
+        self.prop_1: Union[DictStrNum, Array, Number]
+        self.prop_2: Union[DictStrNum, Array, Number]
+        self.epsilon: Union[DictStrNum, Array, Number]
+        self.delta: Union[DictStrNum, Array, Number]
+
+        self.deff_c: Union[DictStrNum, Array, Number]
+        self.deff_w: Union[DictStrNum, Array, Number]
+        self.resp_rate: Union[DictStrNum, Array, Number]
+        self.pop_size: Optional[Union[DictStrNum, Array, Number]] = None
+
+        self.alpha: Union[DictStrNum, Array, Number]
+        self.beta: Union[DictStrNum, Array, Number]
+        self.power: Union[DictStrNum, Array, Number]
+
+    def calculate(
+        self,
+        prop_1: Union[DictStrNum, Array, Number],
+        prop_2: Union[DictStrNum, Array, Number],
+        kappa: Optional[Union[DictStrNum, Array, Number]] = 1,
+        delta: Union[DictStrNum, Array, Number] = 0.0,
+        deff: Union[DictStrNum, Array, Number] = 1.0,
+        resp_rate: Union[DictStrNum, Array, Number] = 1.0,
+        number_strata: Optional[int] = None,
+        pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
+        alpha: Union[DictStrNum, Array, Number] = 0.05,
+        power: Union[DictStrNum, Array, Number] = 0.80,
+    ) -> None:
+
+        if self.stratification:
+            (
+                self.prop_1,
+                self.prop_2,
+                self.kappa,
+                self.delta,
+                self.deff_c,
+                self.resp_rate,
+                self.pop_size,
+                self.alpha,
+                self.power,
+            ) = convert_numbers_to_dicts(
+                number_strata,
+                prop_1,
+                prop_2,
+                kappa,
+                delta,
+                deff,
+                resp_rate,
+                pop_size,
+                alpha,
+                power,
+            )
+        else:
+            (
+                self.prop_1,
+                self.prop_2,
+                self.kappa,
+                self.delta,
+                self.deff_c,
+                self.resp_rate,
+                self.pop_size,
+                self.alpha,
+                self.power,
+            ) = (
+                prop_1,
+                prop_2,
+                kappa,
+                delta,
+                deff,
+                resp_rate,
+                pop_size,
+                alpha,
+                power,
+            )
+
+        if self.stratification:
+            epsilon: DictStrNum = {}
+            for s in epsilon:
+                epsilon[s] = prop_2[s] - prop_1[s]
+            self.epsilon = epsilon
+        else:
+            self.epsilon = prop_2 - prop_1
+
+        self.samp_size = calculate_ss_wald_prop_two_sample(
+            two_sides=self.two_sides,
+            epsilon=self.epsilon,
+            delta=self.delta,
+            prop_1=self.prop_1,
+            prop_2=self.prop_2,
+            kappa=kappa,
+            deff_c=self.deff_c,
+            alpha=self.alpha,
+            power=self.power,
+            stratification=self.stratification,
+        )
 
         # if self.stratification:
         #     for k in self.samp_size:
