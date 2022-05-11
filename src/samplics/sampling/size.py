@@ -783,7 +783,11 @@ class SampleSizeMeanOneSample:
         if self.stratification:
             for k in self.samp_size:
                 self.actual_power[k] = calculate_power(
-                    self.two_sides, self.epsilon[k], self.sigma[k], self.samp_size[k], self.alpha
+                    self.two_sides,
+                    self.epsilon[k],
+                    self.sigma[k],
+                    self.samp_size[k],
+                    self.alpha[k],
                 )
         else:
             self.actual_power = calculate_power(
@@ -915,7 +919,11 @@ class SampleSizePropOneSample:
         if self.stratification:
             for k in self.samp_size:
                 self.actual_power[k] = calculate_power(
-                    self.two_sides, self.epsilon[k], self.sigma[k], self.samp_size[k], self.alpha
+                    self.two_sides,
+                    self.epsilon[k],
+                    self.sigma[k],
+                    self.samp_size[k],
+                    self.alpha[k],
                 )
         else:
             self.actual_power = calculate_power(
@@ -1063,7 +1071,11 @@ class SampleSizeMeanTwoSample:
         # if self.stratification:
         #     for k in self.samp_size:
         #         self.actual_power[k] = calculate_power(
-        #             self.two_sides, self.epsilon[k], self.sigma[k], self.samp_size[k], self.alpha
+        #             self.two_sides,
+        #             self.epsilon[k],
+        #             self.sigma[k],
+        #             self.samp_size[k],
+        #             self.alpha[k],
         #         )
         # else:
         #     self.actual_power = calculate_power(
@@ -1192,7 +1204,11 @@ class SampleSizePropTwoSample:
         # if self.stratification:
         #     for k in self.samp_size:
         #         self.actual_power[k] = calculate_power(
-        #             self.two_sides, self.epsilon[k], self.sigma[k], self.samp_size[k], self.alpha
+        #             self.two_sides,
+        #             self.epsilon[k],
+        #             self.sigma[k],
+        #             self.samp_size[k],
+        #             self.alpha[k],
         #         )
         # else:
         #     self.actual_power = calculate_power(
