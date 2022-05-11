@@ -85,7 +85,6 @@ def calculate_ss_wald_mean_one_sample(
             deff_c=deff_c,
             alpha=alpha,
             power=power,
-            stratification=stratification,
         )
     else:
         return _calculate_ss_wald_mean_one_sample(
@@ -292,7 +291,6 @@ def calculate_ss_wald_prop_two_sample(
             deff_c=deff_c,
             alpha=alpha,
             power=power,
-            stratification=stratification,
         )
     else:
         return _calculate_ss_wald_prop_two_sample(
