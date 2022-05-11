@@ -763,7 +763,7 @@ class SampleSizeMeanOneSample:
 
         if self.stratification:
             epsilon: DictStrNum = {}
-            for s in epsilon:
+            for s in mean_0:
                 epsilon[s] = mean_1[s] - mean_0[s]
             self.epsilon = epsilon
         else:
@@ -889,7 +889,7 @@ class SampleSizePropOneSample:
         if self.stratification:
             epsilon: DictStrNum = {}
             sigma: DictStrNum = {}
-            for s in epsilon:
+            for s in prop_0:
                 epsilon[s] = prop_1[s] - prop_0[s]
                 sigma[s] = math.sqrt(prop_1[s] * (1 - prop_1[s]))
             self.epsilon = epsilon
@@ -1040,7 +1040,7 @@ class SampleSizeMeanTwoSample:
 
         if self.stratification:
             epsilon: DictStrNum = {}
-            for s in epsilon:
+            for s in mean_1:
                 epsilon[s] = mean_2[s] - mean_1[s]
             self.epsilon = epsilon
         else:
@@ -1170,7 +1170,7 @@ class SampleSizePropTwoSample:
 
         if self.stratification:
             epsilon: DictStrNum = {}
-            for s in epsilon:
+            for s in prop_1:
                 epsilon[s] = prop_2[s] - prop_1[s]
             self.epsilon = epsilon
         else:
