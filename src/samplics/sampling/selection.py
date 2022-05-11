@@ -490,12 +490,12 @@ class SampleSelection:
                 "Both samp_size and samp_rate are provided. Only one of the two parameters should be specified."
             )
 
+        if samp_rate is None and samp_size is None:
+            raise AssertionError("samp_size or samp_rate must be provided!")
+
         if samp_rate is not None:
             samp_size = int(samp_rate * samp_unit.size)
-        elif samp_size is not None:
-            samp_interval = int(samp_unit.size / samp_size)  # same as 1 / samp_rate
-        else:
-            raise AssertionError("samp_size or samp_rate must be provided!")
+        samp_interval = int(samp_unit.size / samp_size)  # same as 1 / samp_rate
 
         random_start = np.random.choice(range(0, samp_interval))
         random_picks = random_start + samp_interval * np.linspace(
@@ -515,10 +515,14 @@ class SampleSelection:
     ) -> tuple[np.ndarray, np.ndarray]:
 
         sample = hits = np.zeros(samp_unit.size).astype(int)
-        if self.stratification and isinstance(samp_size, dict) and isinstance(samp_rate, dict):
+        if self.stratification and (isinstance(samp_size, dict) or isinstance(samp_rate, dict)):
             for s in np.unique(stratum):
-                samp_size_s = None if samp_size is None else samp_size[s]
-                samp_rate_s = None if samp_rate is None else samp_rate[s]
+                samp_size_s = None
+                if samp_size is not None:
+                    samp_size_s = samp_size[s]
+                samp_rate_s = None
+                if samp_rate is not None:
+                    samp_rate_s = samp_rate[s]
                 stratum_units = stratum == s
                 (
                     sample[stratum_units],

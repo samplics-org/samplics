@@ -717,7 +717,6 @@ class SampleSizeMeanOneSample:
 
         if self.stratification:
             (
-                self.half_ci,
                 self.mean_0,
                 self.mean_1,
                 self.sigma,

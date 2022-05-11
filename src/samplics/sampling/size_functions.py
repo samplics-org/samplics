@@ -126,7 +126,7 @@ def _calculate_ss_wald_mean_two_sample(
         samp_size_2 = math.ceil(
             deff_c * (1 + 1 / kappa) * ((z_alpha + z_beta) * sigma_1 / (delta - abs(epsilon))) ** 2
         )
-        samp_size_1 = kappa * samp_size_2
+        samp_size_1 = math.ceil(kappa * samp_size_2)
     else:
         pass
 
@@ -235,7 +235,7 @@ def _calculate_ss_wald_prop_two_sample(
         * (prop_1 * (1 - prop_1) / kappa + prop_2 * (1 - prop_2))
         * ((z_alpha + z_beta) / (delta - abs(epsilon))) ** 2
     )
-    samp_size_1 = kappa * samp_size_2
+    samp_size_1 = math.ceil(kappa * samp_size_2)
 
     return (samp_size_1, samp_size_2)
 
