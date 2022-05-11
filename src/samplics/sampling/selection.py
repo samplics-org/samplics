@@ -134,7 +134,8 @@ class SampleSelection:
     ) -> tuple[np.ndarray, np.ndarray]:
 
         samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
-        sample = hits = np.zeros(samp_unit.size).astype(int)
+        sample = np.zeros(samp_unit.size).astype(bool)
+        hits = np.zeros(samp_unit.size).astype(int)
         self._calculate_fpc(samp_unit, samp_size, stratum)
         if isinstance(samp_size, dict):
             all_indices = np.array(range(samp_unit.size))
@@ -528,7 +529,7 @@ class SampleSelection:
                     sample[stratum_units],
                     hits[stratum_units],
                 ) = self._sys_selection_method(samp_unit[stratum_units], samp_size_s, samp_rate_s)
-        elif isinstance(samp_size, int) and isinstance(samp_rate, float):
+        elif isinstance(samp_size, int) or isinstance(samp_rate, float):
             samp_size_n = None if samp_size is None else samp_size
             samp_rate_n = None if samp_rate is None else samp_rate
             sample, hits = self._sys_selection_method(samp_unit, samp_size_n, samp_rate_n)
@@ -685,8 +686,10 @@ class SampleSelection:
         else:
             if isinstance(samp_size, (int, float)):
                 samp_size_temp = int(samp_size)  # {"__dummy__": samp_size}
+                samp_rate_temp = None
             elif isinstance(samp_rate, (int, float)):
                 samp_rate_temp = float(samp_rate)
+                samp_size_temp = None
             else:
                 raise TypeError("samp_size or samp_rate has the wrong type")
 
@@ -733,13 +736,13 @@ class SampleSelection:
             sample, hits = self._pps_select(
                 samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum, mos=mos
             )
-        elif self.method == "sys":
+        elif self.method == "sys" and samp_rate_temp is None:
             # probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum) - Todo
             sample, hits = self._sys_select(
                 samp_unit=samp_unit,
                 samp_size=samp_size_temp,
                 stratum=stratum,
-                samp_rate=samp_rate_temp,
+                samp_rate=None,
             )
         elif self.method == "grs":
             if probs is None:

@@ -149,7 +149,7 @@ def _calculate_ss_wald_mean_two_sample_stratified(
     samp_size_2: DictStrNum = {}
     for s in epsilon:
         sigma_2_s = sigma_2[s] if sigma_2 is not None else None
-        samp_size_1[s], samp_size_2[s] = _calculate_ss_wald_mean_one_sample(
+        samp_size_1[s], samp_size_2[s] = _calculate_ss_wald_mean_two_sample(
             two_sides=two_sides,
             epsilon=epsilon[s],
             delta=delta[s],
@@ -190,7 +190,6 @@ def calculate_ss_wald_mean_two_sample(
             deff_c=deff_c,
             alpha=alpha,
             power=power,
-            stratification=stratification,
         )
     else:
         return _calculate_ss_wald_mean_two_sample(
