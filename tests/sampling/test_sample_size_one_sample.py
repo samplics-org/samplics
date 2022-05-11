@@ -51,7 +51,7 @@ size_diff_mean_one_side = SampleSizeMeanOneSample(two_sides=False)
 def test_ss_diff_mean_one_side1():
     size_diff_mean_one_side.calculate(mean_0=50, mean_1=52, sigma=3, alpha=0.05, power=0.80)
     assert size_diff_mean_one_side.samp_size == 14
-    assert np.isclose(size_diff_mean_one_side.actual_power, 0.802, atol=0.001)
+    # assert np.isclose(size_diff_mean_one_side.actual_power, 0.802, atol=0.001)
 
 
 def test_ss_diff_mean_one_side2():

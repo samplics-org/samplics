@@ -781,14 +781,16 @@ class SampleSizeMeanOneSample:
         )
 
         if self.stratification:
+            actual_power: DictStrNum = {}
             for k in self.samp_size:
-                self.actual_power[k] = calculate_power(
+                actual_power[k] = calculate_power(
                     self.two_sides,
                     self.epsilon[k],
                     self.sigma[k],
                     self.samp_size[k],
                     self.alpha[k],
                 )
+            self.actual_power = actual_power
         else:
             self.actual_power = calculate_power(
                 self.two_sides, self.epsilon, self.sigma, self.samp_size, self.alpha
@@ -917,14 +919,16 @@ class SampleSizePropOneSample:
         )
 
         if self.stratification:
+            actual_power: DictStrNum = {}
             for k in self.samp_size:
-                self.actual_power[k] = calculate_power(
+                actual_power[k] = calculate_power(
                     self.two_sides,
                     self.epsilon[k],
                     self.sigma[k],
                     self.samp_size[k],
                     self.alpha[k],
                 )
+            self.actual_power = actual_power
         else:
             self.actual_power = calculate_power(
                 self.two_sides, self.epsilon, self.sigma, self.samp_size, self.alpha
