@@ -263,6 +263,7 @@ size_str_mean_wald_fpc = SampleSize(parameter="mean", stratification=True)
 half_ci2 = {"stratum1": 0.5, "stratum2": 0.5, "stratum3": 0.5}
 sigma2 = {"stratum1": 2, "stratum2": 2, "stratum3": 2}
 pop_size2 = {"stratum1": 1000, "stratum2": 10000, "stratum3": 10000000}
+resp_rate2 = {"stratum1": 0.4, "stratum2": 1, "stratum3": 0.65}
 
 
 def test_size_mean_str_wald_fpc1():
@@ -272,8 +273,42 @@ def test_size_mean_str_wald_fpc1():
     assert size_str_mean_wald_fpc.samp_size["stratum3"] == 62
 
 
+def test_size_mean_str_wald_fpc1_with_resp_rate1():
+    size_str_mean_wald_fpc.calculate(
+        half_ci=half_ci2, sigma=sigma2, pop_size=pop_size2, resp_rate=0.5
+    )
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 116
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 123
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 123
+
+
+def test_size_mean_str_wald_fpc1_with_resp_rate2():
+    size_str_mean_wald_fpc.calculate(
+        half_ci=half_ci2, sigma=sigma2, pop_size=pop_size2, resp_rate=resp_rate2
+    )
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 145
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 95
+
+
 def test_size_mean_str_wald_fpc2():
     size_str_mean_wald_fpc.calculate(half_ci=half_ci2, sigma=sigma2, pop_size=1000)
     assert size_str_mean_wald_fpc.samp_size["stratum1"] == 62
     assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
     assert size_str_mean_wald_fpc.samp_size["stratum3"] == 62
+
+
+def test_size_mean_str_wald_fpc2_with_resp_rate1():
+    size_str_mean_wald_fpc.calculate(half_ci=half_ci2, sigma=sigma2, pop_size=1000, resp_rate=0.45)
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 138
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 138
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 138
+
+
+def test_size_mean_str_wald_fpc2_with_resp_rate1():
+    size_str_mean_wald_fpc.calculate(
+        half_ci=half_ci2, sigma=sigma2, pop_size=1000, resp_rate=resp_rate2
+    )
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 154
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 95
