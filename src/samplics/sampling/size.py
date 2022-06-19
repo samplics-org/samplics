@@ -166,6 +166,7 @@ def _ss_for_proportion_wald(
     half_ci: Union[Number, Array],
     pop_size: Optional[Union[Number, Array]],
     deff_c: Union[Number, Array],
+    resp_rate: Union[Number, Array],
     alpha: float,
 ) -> Union[Number, Array]:
 
@@ -175,6 +176,8 @@ def _ss_for_proportion_wald(
         half_ci = numpy_array(half_ci)
     if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
         deff_c = numpy_array(deff_c)
+    if isinstance(resp_rate, (np.ndarray, pd.Series, list, tuple)):
+        resp_rate = numpy_array(resp_rate)
     if isinstance(pop_size, (np.ndarray, pd.Series, list, tuple)):
         pop_size = numpy_array(pop_size)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
@@ -184,7 +187,8 @@ def _ss_for_proportion_wald(
 
     if isinstance(pop_size, (np.ndarray, int, float)):
         return math.ceil(
-            deff_c
+            (1 / resp_rate)
+            * deff_c
             * pop_size
             * z_value**2
             * target
@@ -192,7 +196,9 @@ def _ss_for_proportion_wald(
             / ((pop_size - 1) * half_ci**2 + z_value**2 * target * (1 - target))
         )
     else:
-        return math.ceil(deff_c * z_value**2 * target * (1 - target) / half_ci**2)
+        return math.ceil(
+            (1 / resp_rate) * deff_c * z_value**2 * target * (1 - target) / half_ci**2
+        )
 
 
 def _ss_for_proportion_wald_stratified(
@@ -200,6 +206,7 @@ def _ss_for_proportion_wald_stratified(
     half_ci: DictStrNum,
     pop_size: Optional[DictStrNum],
     deff_c: DictStrNum,
+    resp_rate: DictStrNum,
     alpha: DictStrNum,
 ) -> DictStrNum:
 
@@ -211,6 +218,7 @@ def _ss_for_proportion_wald_stratified(
             half_ci=half_ci[s],
             pop_size=pop_size_c,
             deff_c=deff_c[s],
+            resp_rate=resp_rate[s],
             alpha=alpha[s],
         )
 
@@ -222,17 +230,28 @@ def sample_size_for_proportion_wald(
     half_ci: Union[DictStrNum, Number, Array],
     pop_size: Optional[Union[DictStrNum, Number, Array]] = None,
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
+    resp_rate: Union[DictStrNum, Number, Array] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
     stratification: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
     if stratification:
         return _ss_for_proportion_wald_stratified(
-            target=target, half_ci=half_ci, pop_size=pop_size, deff_c=deff_c, alpha=alpha
+            target=target,
+            half_ci=half_ci,
+            pop_size=pop_size,
+            deff_c=deff_c,
+            resp_rate=resp_rate,
+            alpha=alpha,
         )
     else:
         return _ss_for_proportion_wald(
-            target=target, half_ci=half_ci, pop_size=pop_size, deff_c=deff_c, alpha=alpha
+            target=target,
+            half_ci=half_ci,
+            pop_size=pop_size,
+            deff_c=deff_c,
+            resp_rate=resp_rate,
+            alpha=alpha,
         )
 
 
@@ -240,6 +259,7 @@ def _ss_for_proportion_fleiss(
     target: Union[Number, Array],
     half_ci: Union[Number, Array],
     deff_c: Union[Number, Array],
+    resp_rate: Union[Number, Array],
     alpha: Union[Number, Array],
 ) -> Union[Number, Array]:
 
@@ -249,6 +269,8 @@ def _ss_for_proportion_fleiss(
         half_ci = numpy_array(half_ci)
     if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
         deff_c = numpy_array(deff_c)
+    if isinstance(resp_rate, (np.ndarray, pd.Series, list, tuple)):
+        resp_rate = numpy_array(resp_rate)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
         alpha = numpy_array(alpha)
 
@@ -275,7 +297,8 @@ def _ss_for_proportion_fleiss(
         fct = fleiss_factor(target, half_ci)
 
     return math.ceil(
-        deff_c
+        (1 / resp_rate)
+        * deff_c
         * (
             fct * (z_value**2) / (4 * half_ci**2)
             + 1 / half_ci
@@ -289,13 +312,18 @@ def _ss_for_proportion_fleiss_stratified(
     target: DictStrNum,
     half_ci: DictStrNum,
     deff_c: DictStrNum,
+    resp_rate: DictStrNum,
     alpha: DictStrNum,
 ) -> DictStrNum:
 
     samp_size: DictStrNum = {}
     for s in half_ci:
         samp_size[s] = _ss_for_proportion_fleiss(
-            target=target[s], half_ci=half_ci[s], deff_c=deff_c[s], alpha=alpha[s]
+            target=target[s],
+            half_ci=half_ci[s],
+            deff_c=deff_c[s],
+            resp_rate=resp_rate[s],
+            alpha=alpha[s],
         )
 
     return samp_size
@@ -305,17 +333,18 @@ def sample_size_for_proportion_fleiss(
     target: Union[DictStrNum, Number, Array],
     half_ci: Union[DictStrNum, Number, Array],
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
+    resp_rate: Union[DictStrNum, Number, Array] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
     stratification: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
     if stratification:
         return _ss_for_proportion_fleiss_stratified(
-            target=target, half_ci=half_ci, deff_c=deff_c, alpha=alpha
+            target=target, half_ci=half_ci, deff_c=deff_c, resp_rate=resp_rate, alpha=alpha
         )
     else:
         return _ss_for_proportion_fleiss(
-            target=target, half_ci=half_ci, deff_c=deff_c, alpha=alpha
+            target=target, half_ci=half_ci, deff_c=deff_c, resp_rate=resp_rate, alpha=alpha
         )
 
 

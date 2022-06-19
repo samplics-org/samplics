@@ -147,6 +147,9 @@ def test_size_mean_str_wald_size1():
     assert size_str_mean_wald.samp_size["stratum1"] == 16
     assert size_str_mean_wald.samp_size["stratum2"] == 16
     assert size_str_mean_wald.samp_size["stratum3"] == 2
+    assert size_str_mean_wald.resp_rate["stratum1"] == 1
+    assert size_str_mean_wald.resp_rate["stratum2"] == 1
+    assert size_str_mean_wald.resp_rate["stratum3"] == 1
 
 
 def test_size_mean_str_wald_size1_with_resp_rate1():
@@ -154,6 +157,9 @@ def test_size_mean_str_wald_size1_with_resp_rate1():
     assert size_str_mean_wald.samp_size["stratum1"] == 20
     assert size_str_mean_wald.samp_size["stratum2"] == 20
     assert size_str_mean_wald.samp_size["stratum3"] == 3
+    assert size_str_mean_wald.resp_rate["stratum1"] == 0.8
+    assert size_str_mean_wald.resp_rate["stratum2"] == 0.8
+    assert size_str_mean_wald.resp_rate["stratum3"] == 0.8
 
 
 def test_size_mean_str_wald_size1_with_resp_rate2():
@@ -161,6 +167,9 @@ def test_size_mean_str_wald_size1_with_resp_rate2():
     assert size_str_mean_wald.samp_size["stratum1"] == 20
     assert size_str_mean_wald.samp_size["stratum2"] == 52
     assert size_str_mean_wald.samp_size["stratum3"] == 4
+    assert size_str_mean_wald.resp_rate["stratum1"] == 0.8
+    assert size_str_mean_wald.resp_rate["stratum2"] == 0.3
+    assert size_str_mean_wald.resp_rate["stratum3"] == 0.5
 
 
 def test_size_mean_str_wald_size2():
@@ -168,6 +177,9 @@ def test_size_mean_str_wald_size2():
     assert size_str_mean_wald.samp_size["stratum1"] == 16
     assert size_str_mean_wald.samp_size["stratum2"] == 20
     assert size_str_mean_wald.samp_size["stratum3"] == 6
+    assert size_str_mean_wald.resp_rate["stratum1"] == 1.0
+    assert size_str_mean_wald.resp_rate["stratum2"] == 1.0
+    assert size_str_mean_wald.resp_rate["stratum3"] == 1.0
 
 
 def test_size_mean_str_wald_size2_with_resp_rate1():
@@ -175,6 +187,9 @@ def test_size_mean_str_wald_size2_with_resp_rate1():
     assert size_str_mean_wald.samp_size["stratum1"] == 31
     assert size_str_mean_wald.samp_size["stratum2"] == 40
     assert size_str_mean_wald.samp_size["stratum3"] == 11
+    assert size_str_mean_wald.resp_rate["stratum1"] == 0.5
+    assert size_str_mean_wald.resp_rate["stratum2"] == 0.5
+    assert size_str_mean_wald.resp_rate["stratum3"] == 0.5
 
 
 def test_size_mean_str_wald_size2_with_resp_rate2():
@@ -184,6 +199,9 @@ def test_size_mean_str_wald_size2_with_resp_rate2():
     assert size_str_mean_wald.samp_size["stratum1"] == 20
     assert size_str_mean_wald.samp_size["stratum2"] == 67
     assert size_str_mean_wald.samp_size["stratum3"] == 11
+    assert size_str_mean_wald.resp_rate["stratum1"] == 0.8
+    assert size_str_mean_wald.resp_rate["stratum2"] == 0.3
+    assert size_str_mean_wald.resp_rate["stratum3"] == 0.5
 
 
 def test_size_str_mean_wald_size3():
@@ -191,6 +209,9 @@ def test_size_str_mean_wald_size3():
     assert size_str_mean_wald.samp_size["stratum1"] == 16
     assert size_str_mean_wald.samp_size["stratum2"] == 5
     assert size_str_mean_wald.samp_size["stratum3"] == 33
+    assert size_str_mean_wald.resp_rate["stratum1"] == 1
+    assert size_str_mean_wald.resp_rate["stratum2"] == 1
+    assert size_str_mean_wald.resp_rate["stratum3"] == 1
 
 
 def test_size_str_mean_wald_size3_with_resp_rate1():
@@ -198,6 +219,9 @@ def test_size_str_mean_wald_size3_with_resp_rate1():
     assert size_str_mean_wald.samp_size["stratum1"] == 22
     assert size_str_mean_wald.samp_size["stratum2"] == 8
     assert size_str_mean_wald.samp_size["stratum3"] == 46
+    assert size_str_mean_wald.resp_rate["stratum1"] == 0.7
+    assert size_str_mean_wald.resp_rate["stratum2"] == 0.7
+    assert size_str_mean_wald.resp_rate["stratum3"] == 0.7
 
 
 def test_size_str_mean_wald_size3_with_resp_rate2():
@@ -207,6 +231,9 @@ def test_size_str_mean_wald_size3_with_resp_rate2():
     assert size_str_mean_wald.samp_size["stratum1"] == 20
     assert size_str_mean_wald.samp_size["stratum2"] == 17
     assert size_str_mean_wald.samp_size["stratum3"] == 65
+    assert size_str_mean_wald.resp_rate["stratum1"] == 0.8
+    assert size_str_mean_wald.resp_rate["stratum2"] == 0.3
+    assert size_str_mean_wald.resp_rate["stratum3"] == 0.5
 
 
 def test_size_str_mean_wald_size4():

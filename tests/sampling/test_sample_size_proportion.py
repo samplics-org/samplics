@@ -233,7 +233,7 @@ def test_deff_dict():
     assert deff == {"stratum1": 1.29, "stratum2": 1.435, "stratum3": 5.9}
 
 
-## Wald's method
+## Wald's method - NOT-STRATIFIED
 
 size_nat_wald = SampleSize()
 
@@ -250,6 +250,16 @@ def test_size_nat_wald_size():
     assert size_nat_wald.deff_c == 1.0
     assert size_nat_wald.target == 0.80
     assert size_nat_wald.half_ci == 0.1
+    assert size_nat_wald.resp_rate == 1.0
+
+
+def test_size_nat_wald_size_with_resp_rate():
+    size_nat_wald.calculate(target=0.80, half_ci=0.10, resp_rate=0.5)
+    assert size_nat_wald.samp_size == 123
+    assert size_nat_wald.deff_c == 1.0
+    assert size_nat_wald.target == 0.80
+    assert size_nat_wald.half_ci == 0.1
+    assert size_nat_wald.resp_rate == 0.5
 
 
 def test_size_nat_wald_size_with_deff():
@@ -258,10 +268,26 @@ def test_size_nat_wald_size_with_deff():
     assert size_nat_wald.deff_c == 1.5
     assert size_nat_wald.target == 0.80
     assert size_nat_wald.half_ci == 0.1
+    assert size_nat_wald.resp_rate == 1.0
+
+
+def test_size_nat_wald_size_with_deff_and_resp_rate():
+    size_nat_wald.calculate(target=0.80, half_ci=0.10, deff=1.5, resp_rate=0.7)
+    assert size_nat_wald.samp_size == 132
+    assert size_nat_wald.deff_c == 1.5
+    assert size_nat_wald.target == 0.80
+    assert size_nat_wald.half_ci == 0.1
+    assert size_nat_wald.resp_rate == 0.7
 
 
 def test_size_nat_wald_df():
     size_nat_wald.calculate(target=0.80, half_ci=0.10)
+    size_df = size_nat_wald.to_dataframe()
+    assert (size_df.columns == ["_parameter", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
+
+
+def test_size_nat_wald_df_with_resp_rate():
+    size_nat_wald.calculate(target=0.80, half_ci=0.10, resp_rate=0.5)
     size_df = size_nat_wald.to_dataframe()
     assert (size_df.columns == ["_parameter", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
@@ -271,17 +297,28 @@ def test_size_nat_wald_pop_size1():
     assert size_nat_wald.samp_size == 1068
 
 
+def test_size_nat_wald_pop_size1_with_resp_rate():
+    size_nat_wald.calculate(target=0.50, half_ci=0.03, resp_rate=0.9)
+    assert size_nat_wald.samp_size == 1186
+
+
 def test_size_nat_wald_pop_size2():
     size_nat_wald.calculate(half_ci=0.03, target=0.50, pop_size=1251)
     assert size_nat_wald.samp_size == 577
 
 
-## Wald's method - stratified
+def test_size_nat_wald_pop_size2_with_resp_rate():
+    size_nat_wald.calculate(half_ci=0.03, target=0.50, pop_size=1251, resp_rate=0.6)
+    assert size_nat_wald.samp_size == 961
+
+
+##  Wald's method - STRATIFIED
 size_str_wald = SampleSize(parameter="Proportion", method="Wald", stratification=True)
 
 target = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 half_ci = {"stratum1": 0.30, "stratum2": 0.10, "stratum3": 0.15}
 deff = {"stratum1": 1, "stratum2": 1.5, "stratum3": 2.5}
+resp_rate = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 
 
 def test_size_str_wald_basics():
