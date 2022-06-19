@@ -7,6 +7,7 @@ from __future__ import annotations
 import math
 
 from typing import Optional, Union
+from urllib import response
 from xml.sax.handler import all_properties
 
 import numpy as np
@@ -323,6 +324,7 @@ def _ss_for_mean_wald(
     sigma: Union[Number, Array],
     pop_size: Optional[Union[Number, Array]],
     deff_c: Union[Number, Array],
+    resp_rate: Union[Number, Array],
     alpha: Union[Number, Array],
 ) -> Union[Number, Array]:
 
@@ -332,6 +334,8 @@ def _ss_for_mean_wald(
         sigma = numpy_array(sigma)
     if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
         deff_c = numpy_array(deff_c)
+    if isinstance(resp_rate, (np.ndarray, pd.Series, list, tuple)):
+        resp_rate = numpy_array(resp_rate)
     if isinstance(pop_size, (np.ndarray, pd.Series, list, tuple)):
         pop_size = numpy_array(pop_size)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
@@ -340,11 +344,11 @@ def _ss_for_mean_wald(
     z_value = normal().ppf(1 - alpha / 2)
     if isinstance(pop_size, (np.ndarray, int, float)):
         return math.ceil(
-            (deff_c * pop_size * z_value**2 * sigma**2)
+            ((1 / resp_rate) * deff_c * pop_size * z_value**2 * sigma**2)
             / ((pop_size - 1) * half_ci**2 + z_value**2 * sigma**2)
         )
     else:
-        return math.ceil(deff_c * z_value**2 * sigma**2 / half_ci**2)
+        return math.ceil((1 / resp_rate) * deff_c * z_value**2 * sigma**2 / half_ci**2)
 
 
 def _ss_for_mean_wald_stratified(
@@ -352,6 +356,7 @@ def _ss_for_mean_wald_stratified(
     sigma: Union[Number, Array],
     pop_size: Optional[DictStrNum],
     deff_c: DictStrNum,
+    resp_rate: DictStrNum,
     alpha: DictStrNum,
 ) -> DictStrNum:
 
@@ -363,6 +368,7 @@ def _ss_for_mean_wald_stratified(
             sigma=sigma[s],
             pop_size=pop_size_c,
             deff_c=deff_c[s],
+            resp_rate=resp_rate[s],
             alpha=alpha[s],
         )
 
@@ -374,17 +380,28 @@ def sample_size_for_mean_wald(
     sigma: Union[DictStrNum, Number, Array],
     pop_size: Optional[Union[DictStrNum, Number, Array]] = None,
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
+    resp_rate: Union[DictStrNum, Number] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
     stratification: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
     if stratification:
         return _ss_for_mean_wald_stratified(
-            half_ci=half_ci, sigma=sigma, pop_size=pop_size, deff_c=deff_c, alpha=alpha
+            half_ci=half_ci,
+            sigma=sigma,
+            pop_size=pop_size,
+            deff_c=deff_c,
+            resp_rate=resp_rate,
+            alpha=alpha,
         )
     else:
         return _ss_for_mean_wald(
-            half_ci=half_ci, sigma=sigma, pop_size=pop_size, deff_c=deff_c, alpha=alpha
+            half_ci=half_ci,
+            sigma=sigma,
+            pop_size=pop_size,
+            deff_c=deff_c,
+            resp_rate=resp_rate,
+            alpha=alpha,
         )
 
 
@@ -501,6 +518,7 @@ class SampleSize:
                 target=self.target,
                 pop_size=self.pop_size,
                 deff_c=self.deff_c,
+                resp_rate=self.resp_rate,
                 alpha=self.alpha,
                 stratification=self.stratification,
             )
@@ -509,6 +527,7 @@ class SampleSize:
                 half_ci=self.half_ci,
                 target=self.target,
                 deff_c=self.deff_c,
+                resp_rate=self.resp_rate,
                 alpha=self.alpha,
                 stratification=self.stratification,
             )
@@ -518,6 +537,7 @@ class SampleSize:
                 sigma=self.sigma,
                 pop_size=self.pop_size,
                 deff_c=self.deff_c,
+                resp_rate=self.resp_rate,
                 alpha=self.alpha,
                 stratification=self.stratification,
             )
@@ -775,6 +795,7 @@ class SampleSizeMeanOneSample:
             delta=self.delta,
             sigma=self.sigma,
             deff_c=self.deff_c,
+            resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
             stratification=self.stratification,
