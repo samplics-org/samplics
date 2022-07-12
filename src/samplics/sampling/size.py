@@ -7,8 +7,6 @@ from __future__ import annotations
 import math
 
 from typing import Optional, Union
-from urllib import response
-from xml.sax.handler import all_properties
 
 import numpy as np
 import pandas as pd
@@ -963,6 +961,7 @@ class SampleSizePropOneSample:
             delta=self.delta,
             sigma=self.sigma,
             deff_c=self.deff_c,
+            resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
             stratification=self.stratification,
@@ -1117,6 +1116,7 @@ class SampleSizeMeanTwoSample:
             equal_variance=self.equal_variance,
             kappa=kappa,
             deff_c=self.deff_c,
+            resp_rate=resp_rate,
             alpha=self.alpha,
             power=self.power,
             stratification=self.stratification,

@@ -24,6 +24,7 @@ def _calculate_ss_wald_mean_one_sample(
     delta: Union[Array, Number],
     sigma: Union[Array, Number],
     deff_c: Union[Array, Number],
+    resp_rate: Union[Array, Number],
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> Union[Array, Number]:
@@ -38,7 +39,9 @@ def _calculate_ss_wald_mean_one_sample(
         z_alpha = normal().ppf(1 - alpha)
         z_beta = normal().ppf(power)
 
-    return math.ceil(deff_c * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2)
+    return math.ceil(
+        (1 / resp_rate) * deff_c * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
+    )
 
 
 def _calculate_ss_wald_mean_one_sample_stratified(
@@ -47,6 +50,7 @@ def _calculate_ss_wald_mean_one_sample_stratified(
     delta: DictStrNum,
     sigma: DictStrNum,
     deff_c: DictStrNum,
+    resp_rate: DictStrNum,
     alpha: DictStrNum,
     power: DictStrNum,
 ) -> DictStrNum:
@@ -59,6 +63,7 @@ def _calculate_ss_wald_mean_one_sample_stratified(
             delta=delta[s],
             sigma=sigma[s],
             deff_c=deff_c[s],
+            resp_rate=resp_rate[s],
             alpha=alpha[s],
             power=power[s],
         )
@@ -71,6 +76,7 @@ def calculate_ss_wald_mean_one_sample(
     delta: Union[DictStrNum, Number, Array],
     sigma: Union[DictStrNum, Number, Array],
     deff_c: Union[DictStrNum, Number, Array],
+    resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
     stratification: bool = True,
@@ -83,6 +89,7 @@ def calculate_ss_wald_mean_one_sample(
             delta=delta,
             sigma=sigma,
             deff_c=deff_c,
+            resp_rate=resp_rate,
             alpha=alpha,
             power=power,
         )
@@ -93,6 +100,7 @@ def calculate_ss_wald_mean_one_sample(
             delta=delta,
             sigma=sigma,
             deff_c=deff_c,
+            resp_rate=resp_rate,
             alpha=alpha,
             power=power,
         )
@@ -107,6 +115,7 @@ def _calculate_ss_wald_mean_two_sample(
     equal_variance: bool,
     kappa: Union[Array, Number],
     deff_c: Union[Array, Number],
+    resp_rate: Union[Array, Number],
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> tuple[Union[Array, Number], Union[Array, Number]]:
@@ -123,7 +132,10 @@ def _calculate_ss_wald_mean_two_sample(
 
     if equal_variance:
         samp_size_2 = math.ceil(
-            deff_c * (1 + 1 / kappa) * ((z_alpha + z_beta) * sigma_1 / (delta - abs(epsilon))) ** 2
+            (1 / resp_rate)
+            * deff_c
+            * (1 + 1 / kappa)
+            * ((z_alpha + z_beta) * sigma_1 / (delta - abs(epsilon))) ** 2
         )
         samp_size_1 = math.ceil(kappa * samp_size_2)
     else:
@@ -141,6 +153,7 @@ def _calculate_ss_wald_mean_two_sample_stratified(
     equal_variance: bool,
     kappa: Union[Array, Number],
     deff_c: Union[Array, Number],
+    resp_rate: Union[Array, Number],
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> tuple[DictStrNum, DictStrNum]:
@@ -158,6 +171,7 @@ def _calculate_ss_wald_mean_two_sample_stratified(
             equal_variance=equal_variance,
             kappa=kappa,
             deff_c=deff_c[s],
+            resp_rate=resp_rate[s],
             alpha=alpha[s],
             power=power[s],
         )
@@ -173,6 +187,7 @@ def calculate_ss_wald_mean_two_sample(
     equal_variance: Union[DictStrNum, Number, Array],
     kappa: Union[DictStrNum, Number, Array],
     deff_c: Union[DictStrNum, Number, Array],
+    resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
     stratification: bool = True,
@@ -188,6 +203,7 @@ def calculate_ss_wald_mean_two_sample(
             equal_variance=equal_variance,
             kappa=kappa,
             deff_c=deff_c,
+            resp_rate=resp_rate,
             alpha=alpha,
             power=power,
         )
@@ -201,6 +217,7 @@ def calculate_ss_wald_mean_two_sample(
             equal_variance=equal_variance,
             kappa=kappa,
             deff_c=deff_c,
+            resp_rate=resp_rate,
             alpha=alpha,
             power=power,
         )

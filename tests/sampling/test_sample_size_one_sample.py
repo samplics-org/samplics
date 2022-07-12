@@ -54,10 +54,28 @@ def test_ss_diff_mean_one_side1():
     # assert np.isclose(size_diff_mean_one_side.actual_power, 0.802, atol=0.001)
 
 
+def test_ss_diff_mean_one_side1_with_resp_rate():
+    size_diff_mean_one_side.calculate(
+        mean_0=50, mean_1=52, sigma=3, alpha=0.05, power=0.80, resp_rate=0.5
+    )
+    assert size_diff_mean_one_side.samp_size == 28
+    assert size_diff_mean_one_side.resp_rate == 0.5
+    # assert np.isclose(size_diff_mean_one_side.actual_power, 0.802, atol=0.001)
+
+
 def test_ss_diff_mean_one_side2():
     size_diff_mean_one_side.calculate(mean_0=50, mean_1=50.8, sigma=3, alpha=0.05, power=0.80)
     assert size_diff_mean_one_side.samp_size == 87
     assert np.isclose(size_diff_mean_one_side.actual_power, 0.800, atol=0.001)
+
+
+def test_ss_diff_mean_one_side2_with_resp_rate():
+    size_diff_mean_one_side.calculate(
+        mean_0=50, mean_1=50.8, sigma=3, alpha=0.05, power=0.80, resp_rate=0.75
+    )
+    assert size_diff_mean_one_side.samp_size == 116
+    assert size_diff_mean_one_side.resp_rate == 0.75
+    # assert np.isclose(size_diff_mean_one_side.actual_power, 0.800, atol=0.001)
 
 
 def test_ss_diff_mean_one_side3():
