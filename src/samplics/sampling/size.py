@@ -15,8 +15,8 @@ from scipy.stats import norm as normal
 from scipy.stats import t as student
 from samplics.sampling.size_functions import (
     calculate_ss_wald_mean_one_sample,
-    calculate_ss_wald_mean_two_sample,
-    calculate_ss_wald_prop_two_sample,
+    calculate_ss_wald_mean_two_samples,
+    calculate_ss_wald_prop_two_samples,
 )
 
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
@@ -1107,7 +1107,7 @@ class SampleSizeMeanTwoSample:
         else:
             self.epsilon = mean_2 - mean_1
 
-        self.samp_size = calculate_ss_wald_mean_two_sample(
+        self.samp_size = calculate_ss_wald_mean_two_samples(
             two_sides=self.two_sides,
             epsilon=self.epsilon,
             delta=self.delta,
@@ -1116,7 +1116,7 @@ class SampleSizeMeanTwoSample:
             equal_variance=self.equal_variance,
             kappa=kappa,
             deff_c=self.deff_c,
-            resp_rate=resp_rate,
+            resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
             stratification=self.stratification,
@@ -1242,7 +1242,7 @@ class SampleSizePropTwoSample:
         else:
             self.epsilon = prop_2 - prop_1
 
-        self.samp_size = calculate_ss_wald_prop_two_sample(
+        self.samp_size = calculate_ss_wald_prop_two_samples(
             two_sides=self.two_sides,
             epsilon=self.epsilon,
             delta=self.delta,
@@ -1250,6 +1250,7 @@ class SampleSizePropTwoSample:
             prop_2=self.prop_2,
             kappa=kappa,
             deff_c=self.deff_c,
+            resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
             stratification=self.stratification,

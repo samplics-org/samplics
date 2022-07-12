@@ -106,7 +106,7 @@ def calculate_ss_wald_mean_one_sample(
         )
 
 
-def _calculate_ss_wald_mean_two_sample(
+def _calculate_ss_wald_mean_two_samples(
     two_sides: bool,
     epsilon: Union[Array, Number],
     delta: Union[Array, Number],
@@ -144,7 +144,7 @@ def _calculate_ss_wald_mean_two_sample(
     return (samp_size_1, samp_size_2)
 
 
-def _calculate_ss_wald_mean_two_sample_stratified(
+def _calculate_ss_wald_mean_two_samples_stratified(
     two_sides: bool,
     epsilon: Union[Array, Number],
     delta: Union[Array, Number],
@@ -162,7 +162,7 @@ def _calculate_ss_wald_mean_two_sample_stratified(
     samp_size_2: DictStrNum = {}
     for s in epsilon:
         sigma_2_s = sigma_2[s] if sigma_2 is not None else None
-        samp_size_1[s], samp_size_2[s] = _calculate_ss_wald_mean_two_sample(
+        samp_size_1[s], samp_size_2[s] = _calculate_ss_wald_mean_two_samples(
             two_sides=two_sides,
             epsilon=epsilon[s],
             delta=delta[s],
@@ -178,7 +178,7 @@ def _calculate_ss_wald_mean_two_sample_stratified(
     return (samp_size_1, samp_size_2)
 
 
-def calculate_ss_wald_mean_two_sample(
+def calculate_ss_wald_mean_two_samples(
     two_sides: bool,
     epsilon: Union[DictStrNum, Number, Array],
     delta: Union[DictStrNum, Number, Array],
@@ -194,7 +194,7 @@ def calculate_ss_wald_mean_two_sample(
 ) -> DictStrNum:
 
     if stratification:
-        return _calculate_ss_wald_mean_two_sample_stratified(
+        return _calculate_ss_wald_mean_two_samples_stratified(
             two_sides=two_sides,
             epsilon=epsilon,
             delta=delta,
@@ -208,7 +208,7 @@ def calculate_ss_wald_mean_two_sample(
             power=power,
         )
     else:
-        return _calculate_ss_wald_mean_two_sample(
+        return _calculate_ss_wald_mean_two_samples(
             two_sides=two_sides,
             epsilon=epsilon,
             delta=delta,
@@ -223,7 +223,7 @@ def calculate_ss_wald_mean_two_sample(
         )
 
 
-def _calculate_ss_wald_prop_two_sample(
+def _calculate_ss_wald_prop_two_samples(
     two_sides: bool,
     epsilon: Union[Array, Number],
     prop_1: Union[Array, Number],
@@ -231,6 +231,7 @@ def _calculate_ss_wald_prop_two_sample(
     delta: Union[Array, Number],
     kappa: Union[Array, Number],
     deff_c: Union[Array, Number],
+    resp_rate: Union[Array, Number],
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> tuple[Union[Array, Number], Union[Array, Number]]:
@@ -246,7 +247,8 @@ def _calculate_ss_wald_prop_two_sample(
         z_beta = normal().ppf(power)
 
     samp_size_2 = math.ceil(
-        deff_c
+        (1 / resp_rate)
+        * deff_c
         * (prop_1 * (1 - prop_1) / kappa + prop_2 * (1 - prop_2))
         * ((z_alpha + z_beta) / (delta - abs(epsilon))) ** 2
     )
@@ -255,7 +257,7 @@ def _calculate_ss_wald_prop_two_sample(
     return (samp_size_1, samp_size_2)
 
 
-def _calculate_ss_wald_prop_two_sample_stratified(
+def _calculate_ss_wald_prop_two_samples_stratified(
     two_sides: bool,
     epsilon: DictStrNum,
     prop_1: DictStrNum,
@@ -263,13 +265,14 @@ def _calculate_ss_wald_prop_two_sample_stratified(
     delta: DictStrNum,
     kappa: DictStrNum,
     deff_c: DictStrNum,
+    resp_rate: DictStrNum,
     alpha: DictStrNum,
     power: DictStrNum,
 ) -> DictStrNum:
 
     samp_size: DictStrNum = {}
     for s in epsilon:
-        samp_size[s] = _calculate_ss_wald_prop_two_sample(
+        samp_size[s] = _calculate_ss_wald_prop_two_samples(
             two_sides=two_sides[s],
             epsilon=epsilon[s],
             prop_1=prop_1[s],
@@ -277,13 +280,14 @@ def _calculate_ss_wald_prop_two_sample_stratified(
             delta=delta[s],
             kappa=kappa[s],
             deff_c=deff_c[s],
+            resp_rate=resp_rate[s],
             alpha=alpha[s],
             power=power[s],
         )
     return samp_size
 
 
-def calculate_ss_wald_prop_two_sample(
+def calculate_ss_wald_prop_two_samples(
     two_sides: bool,
     epsilon: Union[DictStrNum, Number, Array],
     prop_1: Union[DictStrNum, Number, Array],
@@ -291,13 +295,14 @@ def calculate_ss_wald_prop_two_sample(
     delta: Union[DictStrNum, Number, Array],
     kappa: Union[DictStrNum, Number, Array],
     deff_c: Union[DictStrNum, Number, Array],
+    resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
     stratification: bool = True,
 ) -> DictStrNum:
 
     if stratification:
-        return _calculate_ss_wald_prop_two_sample_stratified(
+        return _calculate_ss_wald_prop_two_samples_stratified(
             two_sides=two_sides,
             epsilon=epsilon,
             prop_1=prop_1,
@@ -305,11 +310,12 @@ def calculate_ss_wald_prop_two_sample(
             delta=delta,
             kappa=kappa,
             deff_c=deff_c,
+            resp_rate=resp_rate,
             alpha=alpha,
             power=power,
         )
     else:
-        return _calculate_ss_wald_prop_two_sample(
+        return _calculate_ss_wald_prop_two_samples(
             two_sides=two_sides,
             epsilon=epsilon,
             prop_1=prop_1,
@@ -317,6 +323,7 @@ def calculate_ss_wald_prop_two_sample(
             delta=delta,
             kappa=kappa,
             deff_c=deff_c,
+            resp_rate=resp_rate,
             alpha=alpha,
             power=power,
         )
