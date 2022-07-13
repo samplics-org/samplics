@@ -16,6 +16,8 @@ from scipy.stats import norm as normal
 from scipy.stats import t as student
 
 from dataclasses import InitVar, field
+
+from pydantic import validate_arguments
 from pydantic.dataclasses import dataclass
 
 from samplics.sampling.size_functions import (
@@ -205,6 +207,7 @@ class SampleSize:
         else:
             raise ValueError("Combination of types not supported.")
 
+    @validate_arguments
     def calculate(
         self,
         half_ci: Union[DictStrNum, Number],
