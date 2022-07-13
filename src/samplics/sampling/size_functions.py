@@ -89,10 +89,10 @@ def calculate_ss_wald_prop(
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
     resp_rate: Union[DictStrNum, Number, Array] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
-    stratification: bool = False,
+    strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    if stratification:
+    if strat:
         return _ss_for_proportion_wald_stratified(
             target=target,
             half_ci=half_ci,
@@ -192,10 +192,10 @@ def calculate_ss_fleiss_prop(
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
     resp_rate: Union[DictStrNum, Number, Array] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
-    stratification: bool = False,
+    strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    if stratification:
+    if strat:
         return _ss_for_proportion_fleiss_stratified(
             target=target, half_ci=half_ci, deff_c=deff_c, resp_rate=resp_rate, alpha=alpha
         )
@@ -268,10 +268,10 @@ def calculate_ss_wald_mean(
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
     resp_rate: Union[DictStrNum, Number] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
-    stratification: bool = False,
+    strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    if stratification:
+    if strat:
         return _ss_for_mean_wald_stratified(
             half_ci=half_ci,
             sigma=sigma,
@@ -352,10 +352,10 @@ def calculate_ss_wald_mean_one_sample(
     resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
-    stratification: bool = True,
+    strat: bool = True,
 ) -> DictStrNum:
 
-    if stratification:
+    if strat:
         return _calculate_ss_wald_mean_one_sample_stratified(
             two_sides=two_sides,
             epsilon=epsilon,
@@ -463,10 +463,10 @@ def calculate_ss_wald_mean_two_samples(
     resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
-    stratification: bool = True,
+    strat: bool = True,
 ) -> DictStrNum:
 
-    if stratification:
+    if strat:
         return _calculate_ss_wald_mean_two_samples_stratified(
             two_sides=two_sides,
             epsilon=epsilon,
@@ -571,10 +571,10 @@ def calculate_ss_wald_prop_two_samples(
     resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
-    stratification: bool = True,
+    strat: bool = True,
 ) -> DictStrNum:
 
-    if stratification:
+    if strat:
         return _calculate_ss_wald_prop_two_samples_stratified(
             two_sides=two_sides,
             epsilon=epsilon,
