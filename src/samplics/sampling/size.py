@@ -8,7 +8,6 @@ import math
 
 from typing import Optional, Union
 
-from enum import Enum
 
 import numpy as np
 import pandas as pd
@@ -30,7 +29,7 @@ from samplics.sampling.size_functions import (
 from samplics.sampling.power_functions import calculate_power, calculate_power_prop
 
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number, StringNumber
+from samplics.utils.types import Array, DictStrNum, Number, StringNumber, PopParam
 
 
 def allocate(
@@ -129,12 +128,6 @@ def calculate_clusters() -> None:
     pass
 
 
-class PopParam(Enum):
-    mean: "mean"
-    total: "total"
-    proportion: "proportion"
-
-
 @dataclass
 class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
@@ -164,7 +157,7 @@ class SampleSize:
     pop_size: Optional[Union[DictStrNum, Number]] = None
 
     def __post_init__(
-        self, parameter: str, method: str = "wald", stratification: bool = False
+        self, parameter: str = "proportion", method: str = "wald", stratification: bool = False
     ) -> None:
 
         self.parameter = parameter.lower()
@@ -176,8 +169,12 @@ class SampleSize:
         if self.parameter == "mean" and self.method not in ("wald"):
             raise AssertionError("For mean and total, the method must be wald.")
 
-        # if self.parameter == "mean":
-        #     self.param = PopParam.mean
+        if self.parameter == "mean":
+            self.param = PopParam.mean
+        if self.parameter == "total":
+            self.param = PopParam.total
+        if self.parameter == "proportion":
+            self.param = PopParam.prop
 
         self.stratification = stratification
         # self.target: Union[DictStrNum, Number]

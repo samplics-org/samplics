@@ -16,6 +16,7 @@ from samplics.sampling import SampleSize
 size_mean_nat = SampleSize(parameter="total")
 
 assert size_mean_nat.parameter == "total"
+# assert size_mean_nat.param
 # size_mean_nat.calculate(half_ci=1, target=1, sigma=2)
 
 # print(size_mean_nat.__pydantic_model__.schema())

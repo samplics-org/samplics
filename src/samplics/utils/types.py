@@ -3,6 +3,8 @@
 
 from typing import Dict, Union
 
+from enum import Enum
+
 import numpy as np
 import pandas as pd
 
@@ -17,3 +19,9 @@ DictStrNum = Dict[StringNumber, Number]
 DictStrInt = Dict[StringNumber, int]
 DictStrFloat = Dict[StringNumber, float]
 DictStrBool = Dict[StringNumber, bool]
+
+
+class PopParam(Enum):
+    mean = "mean"
+    total = "total"
+    prop = "proportion"
