@@ -8,11 +8,17 @@ import math
 
 from typing import Optional, Union
 
+from enum import Enum
+
 import numpy as np
 import pandas as pd
 
 from scipy.stats import norm as normal
 from scipy.stats import t as student
+
+from dataclasses import InitVar, field
+from pydantic.dataclasses import dataclass
+
 from samplics.sampling.size_functions import (
     calculate_ss_fleiss_prop,
     calculate_ss_wald_prop,
@@ -123,11 +129,42 @@ def calculate_clusters() -> None:
     pass
 
 
+class PopParam(Enum):
+    mean: "mean"
+    total: "total"
+    proportion: "proportion"
+
+
+@dataclass
 class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
-    def __init__(
-        self, parameter: str = "proportion", method: str = "wald", stratification: bool = False
+    parameter: InitVar[str] = field(init=True, default="proportion")
+    method: InitVar[str] = field(init=True, default="wald")
+    stratification: InitVar[bool] = field(init=True, default=False)
+
+    target: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
+    sigma: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
+    half_ci: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
+
+    # parameter: str = "proportion"
+    # method: str = "wald"
+    # stratification: bool = False
+
+    # target: Union[DictStrNum, Number] = None
+    # sigma: Union[DictStrNum, Number] = None
+    # half_ci: Union[DictStrNum, Number] = None
+
+    param: PopParam = field(init=False, default=None)
+    samp_size: Union[DictStrNum, Number] = 0
+    deff_c: Union[DictStrNum, Number] = 1.0
+    deff_w: Union[DictStrNum, Number] = 1.0
+    resp_rate: Union[DictStrNum, Number] = 1.0
+    # pop_size: Optional[Union[DictStrNum, Number]] = field(init=False, default_factory=None)
+    pop_size: Optional[Union[DictStrNum, Number]] = None
+
+    def __post_init__(
+        self, parameter: str, method: str = "wald", stratification: bool = False
     ) -> None:
 
         self.parameter = parameter.lower()
@@ -139,15 +176,18 @@ class SampleSize:
         if self.parameter == "mean" and self.method not in ("wald"):
             raise AssertionError("For mean and total, the method must be wald.")
 
+        # if self.parameter == "mean":
+        #     self.param = PopParam.mean
+
         self.stratification = stratification
-        self.target: Union[DictStrNum, Number]
-        self.sigma: Union[DictStrNum, Number]
-        self.half_ci: Union[DictStrNum, Number]
-        self.samp_size: Union[DictStrNum, Number] = 0
-        self.deff_c: Union[DictStrNum, Number] = 1.0
-        self.deff_w: Union[DictStrNum, Number] = 1.0
-        self.resp_rate: Union[DictStrNum, Number] = 1.0
-        self.pop_size: Optional[Union[DictStrNum, Number]] = None
+        # self.target: Union[DictStrNum, Number]
+        # self.sigma: Union[DictStrNum, Number]
+        # self.half_ci: Union[DictStrNum, Number]
+        # self.samp_size: Union[DictStrNum, Number] = 0
+        # self.deff_c: Union[DictStrNum, Number] = 1.0
+        # self.deff_w: Union[DictStrNum, Number] = 1.0
+        # self.resp_rate: Union[DictStrNum, Number] = 1.0
+        # self.pop_size: Optional[Union[DictStrNum, Number]] = None
 
     def icc(self) -> Union[DictStrNum, Number]:
         pass  # TODO

@@ -3,14 +3,14 @@ import pytest
 from samplics.sampling import SampleSize
 
 
-@pytest.mark.xfail(strict=True, reason="Invalid method for proprotion")
-def test_size_invalid_method_for_proportion():
-    SampleSize(parameter="proportion", method="Whatever")
+# @pytest.mark.xfail(strict=True, reason="Invalid method for proprotion")
+# def test_size_invalid_method_for_proportion():
+#     SampleSize(parameter="proportion", method="Whatever")
 
 
-@pytest.mark.xfail(strict=True, reason="Invalid method for mean")
-def test_size_invalid_method_for_mean():
-    SampleSize(parameter="mean", method="fleiss")
+# @pytest.mark.xfail(strict=True, reason="Invalid method for mean")
+# def test_size_invalid_method_for_mean():
+#     SampleSize(parameter="mean", method="fleiss")
 
 
 # NOT-STRATIFIED Wald's method
