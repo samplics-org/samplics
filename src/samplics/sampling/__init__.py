@@ -6,19 +6,27 @@ from samplics.sampling.size import (
     SampleSizePropOneSample,
     SampleSizePropTwoSample,
     allocate,
-    calculate_power,
-    power_for_proportion,
-    sample_size_for_mean_wald,
-    sample_size_for_proportion_fleiss,
-    sample_size_for_proportion_wald,
 )
-from samplics.sampling.size_and_power import power_for_one_mean, power_for_one_proportion
+from samplics.sampling.size import (
+    calculate_ss_fleiss_prop,
+    calculate_ss_wald_prop,
+    calculate_ss_wald_mean,
+)
+from samplics.sampling.power_functions import (
+    calculate_power,
+    calculate_power_prop,
+    power_for_one_mean,
+    power_for_one_proportion,
+)
 
 
 __all__ = [
     "allocate",
     "calculate_power",
-    "power_for_proportion",
+    "calculate_power_prop",
+    "calculate_ss_fleiss_prop",
+    "calculate_ss_wald_prop",
+    "calculate_ss_wald_mean",
     "power_for_one_proportion",
     "power_for_one_mean",
     "SampleSelection",
@@ -27,7 +35,4 @@ __all__ = [
     "SampleSizeMeanTwoSample",
     "SampleSizePropOneSample",
     "SampleSizePropTwoSample",
-    "sample_size_for_mean_wald",
-    "sample_size_for_proportion_fleiss",
-    "sample_size_for_proportion_wald",
 ]
