@@ -140,21 +140,11 @@ class SampleSize:
     sigma: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
     half_ci: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
 
-    # param: str = "prop"
-    # method: str = "wald"
-    # strat: bool = False
-
-    # target: Union[DictStrNum, Number] = None
-    # sigma: Union[DictStrNum, Number] = None
-    # half_ci: Union[DictStrNum, Number] = None
-
-    # param: PopParam = field(init=False, default=None)
-    samp_size: Union[DictStrNum, Number] = 0
-    deff_c: Union[DictStrNum, Number] = 1.0
-    deff_w: Union[DictStrNum, Number] = 1.0
-    resp_rate: Union[DictStrNum, Number] = 1.0
-    # pop_size: Optional[Union[DictStrNum, Number]] = field(init=False, default_factory=None)
-    pop_size: Optional[Union[DictStrNum, Number]] = None
+    samp_size: Union[DictStrNum, Number] = field(init=False, default=0)
+    deff_c: Union[DictStrNum, Number] = field(init=False, default=1.0)
+    deff_w: Union[DictStrNum, Number] = field(init=False, default=1.0)
+    resp_rate: Union[DictStrNum, Number] = field(init=False, default=1.0)
+    pop_size: Optional[Union[DictStrNum, Number]] = field(init=False, default=None)
 
     def __post_init__(
         self, param: str = "prop", method: str = "wald", strat: bool = False

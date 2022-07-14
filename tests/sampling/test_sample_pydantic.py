@@ -17,7 +17,7 @@ size_mean_nat = SampleSize(param="total")
 
 assert size_mean_nat.param == "total"
 # assert size_mean_nat.param
-# size_mean_nat.calculate(half_ci=1, target=1, sigma=2)
+size_mean_nat.calculate(half_ci=1, target=1, sigma=2)
 
 # print(size_mean_nat.__pydantic_model__.schema())
 
