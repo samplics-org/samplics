@@ -228,7 +228,7 @@ def _ss_for_mean_wald(
         alpha = numpy_array(alpha)
 
     z_value = normal().ppf(1 - alpha / 2)
-    if isinstance(pop_size, (np.ndarray, int, float)):
+    if pop_size is not None:
         return math.ceil(
             ((1 / resp_rate) * deff_c * pop_size * z_value**2 * sigma**2)
             / ((pop_size - 1) * half_ci**2 + z_value**2 * sigma**2)

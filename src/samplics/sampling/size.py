@@ -15,10 +15,7 @@ import pandas as pd
 from scipy.stats import norm as normal
 from scipy.stats import t as student
 
-from dataclasses import InitVar, field
-
-from pydantic import validate_arguments
-from pydantic.dataclasses import dataclass
+from dataclasses import InitVar, field, dataclass
 
 from samplics.sampling.size_functions import (
     calculate_ss_fleiss_prop,
@@ -146,6 +143,8 @@ class SampleSize:
     resp_rate: Union[DictStrNum, Number] = field(init=False, default=1.0)
     pop_size: Optional[Union[DictStrNum, Number]] = field(init=False, default=None)
 
+    alpha: Union[DictStrNum, Number] = field(init=False, default=0.05)
+
     def __post_init__(
         self,
         param: PopParam = PopParam.prop,
@@ -161,15 +160,6 @@ class SampleSize:
             raise AssertionError("For prop, the method must be wald or Fleiss.")
         if self.param == PopParam.mean and self.method != SizeMethod.wald:
             raise AssertionError("For mean and total, the method must be wald.")
-
-        # self.target: Union[DictStrNum, Number]
-        # self.sigma: Union[DictStrNum, Number]
-        # self.half_ci: Union[DictStrNum, Number]
-        # self.samp_size: Union[DictStrNum, Number] = 0
-        # self.deff_c: Union[DictStrNum, Number] = 1.0
-        # self.deff_w: Union[DictStrNum, Number] = 1.0
-        # self.resp_rate: Union[DictStrNum, Number] = 1.0
-        # self.pop_size: Optional[Union[DictStrNum, Number]] = None
 
     def icc(self) -> Union[DictStrNum, Number]:
         pass  # TODO
@@ -192,7 +182,6 @@ class SampleSize:
         else:
             raise ValueError("Combination of types not supported.")
 
-    @validate_arguments
     def calculate(
         self,
         half_ci: Union[DictStrNum, Number],
@@ -326,20 +315,44 @@ class SampleSize:
         return est_df
 
 
+@dataclass
 class SampleSizeMeanOneSample:
     """SampleSizeMeanOneSample implements sample size calculation for mean under one-sample design"""
 
+    method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
+    strat: InitVar[bool] = field(init=True, default=False)
+    two_sides: InitVar[bool] = field(init=True, default=True)
+    params_estimated: InitVar[bool] = field(init=True, default=True)
+
+    param: InitVar[PopParam] = field(init=False, default=PopParam.mean)
+    mean_0: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    mean_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    epsilon: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    delta: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    sigma: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+
+    samp_size: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    actual_power: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    deff_c: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    deff_w: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    resp_rate: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    pop_size: Optional[Union[DictStrNum, Array, Number]] = field(init=False, default=None)
+
+    alpha: Union[DictStrNum, Array, Number] = field(init=False, default=0.05)
+    beta: Union[DictStrNum, Array, Number] = field(init=False, default=0.20)
+    power: Union[DictStrNum, Array, Number] = field(init=False, default=0.80)
+
     def __init__(
         self,
-        method: str = "wald",
+        method: SizeMethod = SizeMethod.wald,
         strat: bool = False,
         two_sides: bool = True,
         params_estimated: bool = True,
     ) -> None:
 
-        self.param = PopParam.mean
-        self.method = method.lower()
-        if self.method not in ("wald"):
+        # self.param = PopParam.mean
+        self.method = method
+        if self.method != SizeMethod.wald:
             raise AssertionError("The method must be wald.")
 
         self.strat = strat

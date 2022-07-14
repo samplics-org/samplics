@@ -3,7 +3,8 @@
 
 from typing import Dict, Union
 
-from enum import Enum
+from enum import Enum, unique
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
