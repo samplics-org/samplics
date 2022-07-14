@@ -2,7 +2,7 @@ import pytest
 
 from samplics.sampling import SampleSize
 
-from samplics.utils import PopParam
+from samplics.utils import PopParam, SizeMethod
 
 
 @pytest.mark.xfail(strict=True, reason="Invalid method for proprotion")
@@ -12,7 +12,7 @@ def test_size_invalid_method_for_prop():
 
 @pytest.mark.xfail(strict=True, reason="Invalid method for mean")
 def test_size_invalid_method_for_mean():
-    SampleSize(param=PopParam.mean, method="fleiss")
+    SampleSize(param=PopParam.mean, method=SizeMethod.fleiss)
 
 
 # NOT-STRATIFIED Wald's method
@@ -21,7 +21,7 @@ size_mean_nat = SampleSize(param=PopParam.mean)
 
 def test_size_nat_wald_basics():
     assert size_mean_nat.param == PopParam.mean
-    assert size_mean_nat.method == "wald"
+    assert size_mean_nat.method == SizeMethod.wald
     assert not size_mean_nat.strat
 
 
@@ -140,7 +140,7 @@ resp_rate = {"stratum1": 0.8, "stratum2": 0.3, "stratum3": 0.5}
 
 def test_size_mean_str_wald_basics():
     assert size_str_mean_wald.param == PopParam.mean
-    assert size_str_mean_wald.method == "wald"
+    assert size_str_mean_wald.method == SizeMethod.wald
     assert size_str_mean_wald.strat
 
 

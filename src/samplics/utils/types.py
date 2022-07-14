@@ -20,8 +20,14 @@ DictStrInt = Dict[StringNumber, int]
 DictStrFloat = Dict[StringNumber, float]
 DictStrBool = Dict[StringNumber, bool]
 
-
+# Population parameters
 class PopParam(Enum):
     mean = "mean"
     total = "total"
     prop = "proportion"
+
+
+# Methods for sample size
+class SizeMethod(Enum):
+    wald = "wald"
+    fleiss = "fleiss"

@@ -31,7 +31,7 @@ from samplics.sampling.size_functions import (
 from samplics.sampling.power_functions import calculate_power, calculate_power_prop
 
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number, StringNumber, PopParam
+from samplics.utils.types import Array, DictStrNum, Number, StringNumber, PopParam, SizeMethod
 
 
 def allocate(
@@ -133,7 +133,7 @@ class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
     param: InitVar[PopParam] = field(init=True, default=PopParam.prop)
-    method: InitVar[str] = field(init=True, default="wald")
+    method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
     strat: InitVar[bool] = field(init=True, default=False)
 
     target: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
@@ -147,16 +147,19 @@ class SampleSize:
     pop_size: Optional[Union[DictStrNum, Number]] = field(init=False, default=None)
 
     def __post_init__(
-        self, param: PopParam = PopParam.prop, method: str = "wald", strat: bool = False
+        self,
+        param: PopParam = PopParam.prop,
+        method: SizeMethod = SizeMethod.wald,
+        strat: bool = False,
     ) -> None:
 
         self.param = param
-        self.method = method.lower()
+        self.method = method
         self.strat = strat
 
-        if self.param == PopParam.prop and self.method not in ("wald", "fleiss"):
+        if self.param == PopParam.prop and self.method not in (SizeMethod.wald, SizeMethod.fleiss):
             raise AssertionError("For prop, the method must be wald or Fleiss.")
-        if self.param == PopParam.mean and self.method not in ("wald"):
+        if self.param == PopParam.mean and self.method != SizeMethod.wald:
             raise AssertionError("For mean and total, the method must be wald.")
 
         # self.target: Union[DictStrNum, Number]
@@ -248,7 +251,7 @@ class SampleSize:
             ) = (half_ci, target, sigma, deff, resp_rate, pop_size, alpha)
 
         samp_size: Union[DictStrNum, Number]
-        if self.param == PopParam.prop and self.method == "wald":
+        if self.param == PopParam.prop and self.method == SizeMethod.wald:
             self.samp_size = calculate_ss_wald_prop(
                 half_ci=self.half_ci,
                 target=self.target,
@@ -258,7 +261,7 @@ class SampleSize:
                 alpha=self.alpha,
                 strat=self.strat,
             )
-        elif self.param == PopParam.prop and self.method == "fleiss":
+        elif self.param == PopParam.prop and self.method == SizeMethod.fleiss:
             self.samp_size = calculate_ss_fleiss_prop(
                 half_ci=self.half_ci,
                 target=self.target,
@@ -267,7 +270,7 @@ class SampleSize:
                 alpha=self.alpha,
                 strat=self.strat,
             )
-        elif self.param in (PopParam.mean, PopParam.total) and self.method == "wald":
+        elif self.param in (PopParam.mean, PopParam.total) and self.method == SizeMethod.wald:
             self.samp_size = calculate_ss_wald_mean(
                 half_ci=self.half_ci,
                 sigma=self.sigma,

@@ -1,6 +1,6 @@
 import pytest
 
-from samplics.utils import PopParam
+from samplics.utils import PopParam, SizeMethod
 from samplics.sampling import SampleSize, allocate
 
 region = ["Dakar", "Kaolack", "Ziguinchor"]
@@ -239,7 +239,7 @@ size_nat_wald = SampleSize()
 
 def test_size_nat_wald_basics():
     assert size_nat_wald.param == PopParam.prop
-    assert size_nat_wald.method == "wald"
+    assert size_nat_wald.method==SizeMethod.wald
     assert not size_nat_wald.strat
 
 
@@ -312,7 +312,7 @@ def test_size_nat_wald_pop_size2_with_resp_rate():
 
 
 ##  Wald's method - STRATIFIED
-size_str_wald = SampleSize(param=PopParam.prop, method="Wald", strat=True)
+size_str_wald = SampleSize(param=PopParam.prop, method=SizeMethod.wald, strat=True)
 
 target = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 half_ci = {"stratum1": 0.30, "stratum2": 0.10, "stratum3": 0.15}
@@ -322,7 +322,7 @@ resp_rate = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 
 def test_size_str_wald_basics():
     assert size_str_wald.param == PopParam.prop
-    assert size_str_wald.method == "wald"
+    assert size_str_wald.method==SizeMethod.wald
     assert size_str_wald.strat
 
 
@@ -477,12 +477,12 @@ def test_size_str_wald_df_with_resp_rate():
 
 ## Fleiss' method
 
-size_nat_fleiss = SampleSize(method="fleiss")
+size_nat_fleiss = SampleSize(method=SizeMethod.fleiss)
 
 
 def test_size_nat_fleiss_basics():
     assert size_nat_fleiss.param == PopParam.prop
-    assert size_nat_fleiss.method == "fleiss"
+    assert size_nat_fleiss.method==SizeMethod.fleiss
     assert size_nat_fleiss.strat == False
 
 
@@ -646,7 +646,7 @@ def test_size_nat_fleiss_df2_with_resp_rate():
 
 
 ## Fleiss' method - stratified
-size_str_fleiss = SampleSize(param=PopParam.prop, method="Fleiss", strat=True)
+size_str_fleiss = SampleSize(param=PopParam.prop, method=SizeMethod.fleiss, strat=True)
 
 target2 = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 half_ci2 = {"stratum1": 0.03, "stratum2": 0.10, "stratum3": 0.05}
@@ -656,7 +656,7 @@ resp_rate2 = {"stratum1": 1, "stratum2": 0.5, "stratum3": 0.75}
 
 def test_size_str_fleiss_basics():
     assert size_str_fleiss.param == PopParam.prop
-    assert size_str_fleiss.method == "fleiss"
+    assert size_str_fleiss.method==SizeMethod.fleiss
     assert size_str_fleiss.strat == True
 
 

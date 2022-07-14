@@ -32,7 +32,7 @@ from samplics.sampling import (
     power_for_one_mean,
     power_for_one_proportion,
 )
-from samplics.utils import array_to_dict, PopParam, transform
+from samplics.utils import array_to_dict, PopParam, SizeMethod, transform
 
 from samplics.weighting import ReplicateWeight, SampleWeight
 
@@ -74,6 +74,7 @@ __all__ = [
     "SampleSizePropOneSample",
     "SampleSizePropTwoSample",
     "SampleWeight",
+    "SizeMethod",
     "SurveyGLM",
     "ReplicateWeight",
     "ReplicateEstimator",
