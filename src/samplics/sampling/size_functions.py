@@ -385,7 +385,7 @@ def _calculate_ss_wald_mean_two_samples(
     delta: Union[Array, Number],
     sigma_1: Union[Array, Number],
     sigma_2: Optional[Union[Array, Number]],
-    equal_variance: bool,
+    equal_var: bool,
     kappa: Union[Array, Number],
     deff_c: Union[Array, Number],
     resp_rate: Union[Array, Number],
@@ -403,7 +403,7 @@ def _calculate_ss_wald_mean_two_samples(
         z_alpha = normal().ppf(1 - alpha)
         z_beta = normal().ppf(power)
 
-    if equal_variance:
+    if equal_var:
         samp_size_2 = math.ceil(
             (1 / resp_rate)
             * deff_c
@@ -423,7 +423,7 @@ def _calculate_ss_wald_mean_two_samples_stratified(
     delta: Union[Array, Number],
     sigma_1: Union[Array, Number],
     sigma_2: Optional[Union[Array, Number]],
-    equal_variance: bool,
+    equal_var: bool,
     kappa: Union[Array, Number],
     deff_c: Union[Array, Number],
     resp_rate: Union[Array, Number],
@@ -441,7 +441,7 @@ def _calculate_ss_wald_mean_two_samples_stratified(
             delta=delta[s],
             sigma_1=sigma_1[s],
             sigma_2=sigma_2_s,
-            equal_variance=equal_variance,
+            equal_var=equal_var,
             kappa=kappa,
             deff_c=deff_c[s],
             resp_rate=resp_rate[s],
@@ -457,7 +457,7 @@ def calculate_ss_wald_mean_two_samples(
     delta: Union[DictStrNum, Number, Array],
     sigma_1: Union[DictStrNum, Number, Array],
     sigma_2: Union[DictStrNum, Number, Array],
-    equal_variance: Union[DictStrNum, Number, Array],
+    equal_var: Union[DictStrNum, Number, Array],
     kappa: Union[DictStrNum, Number, Array],
     deff_c: Union[DictStrNum, Number, Array],
     resp_rate: Union[DictStrNum, Number, Array],
@@ -473,7 +473,7 @@ def calculate_ss_wald_mean_two_samples(
             delta=delta,
             sigma_1=sigma_1,
             sigma_2=sigma_2,
-            equal_variance=equal_variance,
+            equal_var=equal_var,
             kappa=kappa,
             deff_c=deff_c,
             resp_rate=resp_rate,
@@ -487,7 +487,7 @@ def calculate_ss_wald_mean_two_samples(
             delta=delta,
             sigma_1=sigma_1,
             sigma_2=sigma_2,
-            equal_variance=equal_variance,
+            equal_var=equal_var,
             kappa=kappa,
             deff_c=deff_c,
             resp_rate=resp_rate,
