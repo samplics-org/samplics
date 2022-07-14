@@ -324,7 +324,7 @@ class SampleSizeMeanOneSample:
     two_sides: InitVar[bool] = field(init=True, default=True)
     params_estimated: InitVar[bool] = field(init=True, default=True)
 
-    param: InitVar[PopParam] = field(init=False, default=PopParam.mean)
+    param: PopParam = field(init=False, default=PopParam.mean)
     mean_0: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     mean_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     epsilon: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
@@ -342,7 +342,7 @@ class SampleSizeMeanOneSample:
     beta: Union[DictStrNum, Array, Number] = field(init=False, default=0.20)
     power: Union[DictStrNum, Array, Number] = field(init=False, default=0.80)
 
-    def __init__(
+    def __post_init__(
         self,
         method: SizeMethod = SizeMethod.wald,
         strat: bool = False,
@@ -350,7 +350,6 @@ class SampleSizeMeanOneSample:
         params_estimated: bool = True,
     ) -> None:
 
-        # self.param = PopParam.mean
         self.method = method
         if self.method != SizeMethod.wald:
             raise AssertionError("The method must be wald.")
@@ -464,7 +463,7 @@ class SampleSizePropOneSample:
     two_sides: InitVar[bool] = field(init=True, default=True)
     params_estimated: InitVar[bool] = field(init=True, default=True)
 
-    param: InitVar[PopParam] = field(init=False, default=PopParam.mean)
+    param: PopParam = field(init=False, default=PopParam.mean)
     prop_0: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     prop_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     delta: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
@@ -607,7 +606,7 @@ class SampleSizeMeanTwoSample:
     two_sides: InitVar[bool] = field(init=True, default=True)
     params_estimated: InitVar[bool] = field(init=True, default=True)
 
-    param: InitVar[PopParam] = field(init=False, default=PopParam.mean)
+    param: PopParam = field(init=False, default=PopParam.mean)
     mean_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     mean_2: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     epsilon: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
@@ -766,7 +765,7 @@ class SampleSizePropTwoSample:
     two_sides: InitVar[bool] = field(init=True, default=True)
     params_estimated: InitVar[bool] = field(init=True, default=True)
 
-    param: InitVar[PopParam] = field(init=False, default=PopParam.mean)
+    param: PopParam = field(init=False, default=PopParam.mean)
     prop_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     prop_2: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
     epsilon: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
