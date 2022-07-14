@@ -2,23 +2,25 @@ import pytest
 
 from samplics.sampling import SampleSize
 
+from samplics.utils import PopParam
+
 
 @pytest.mark.xfail(strict=True, reason="Invalid method for proprotion")
 def test_size_invalid_method_for_prop():
-    SampleSize(param="prop", method="Whatever")
+    SampleSize(param=PopParam.prop, method="Whatever")
 
 
 @pytest.mark.xfail(strict=True, reason="Invalid method for mean")
 def test_size_invalid_method_for_mean():
-    SampleSize(param="mean", method="fleiss")
+    SampleSize(param=PopParam.mean, method="fleiss")
 
 
 # NOT-STRATIFIED Wald's method
-size_mean_nat = SampleSize(param="mean")
+size_mean_nat = SampleSize(param=PopParam.mean)
 
 
 def test_size_nat_wald_basics():
-    assert size_mean_nat.param == "mean"
+    assert size_mean_nat.param == PopParam.mean
     assert size_mean_nat.method == "wald"
     assert not size_mean_nat.strat
 
@@ -128,7 +130,7 @@ def test_size_nat_wald_df4():
 
 
 # STRATIFIED Wald's method
-size_str_mean_wald = SampleSize(param="mean", strat=True)
+size_str_mean_wald = SampleSize(param=PopParam.mean, strat=True)
 
 half_ci = {"stratum1": 1, "stratum2": 1, "stratum3": 3}
 deff = {"stratum1": 1, "stratum2": 1.3, "stratum3": 3}
@@ -137,7 +139,7 @@ resp_rate = {"stratum1": 0.8, "stratum2": 0.3, "stratum3": 0.5}
 
 
 def test_size_mean_str_wald_basics():
-    assert size_str_mean_wald.param == "mean"
+    assert size_str_mean_wald.param == PopParam.mean
     assert size_str_mean_wald.method == "wald"
     assert size_str_mean_wald.strat
 
@@ -282,7 +284,7 @@ def test_size_mean_str_wald_df2_with_resp_rate():
     assert (size_df.columns == ["param", "str", "mean", "sigma", "E", "size"]).all()
 
 
-size_str_mean_wald_fpc = SampleSize(param="mean", strat=True)
+size_str_mean_wald_fpc = SampleSize(param=PopParam.mean, strat=True)
 
 
 half_ci2 = {"stratum1": 0.5, "stratum2": 0.5, "stratum3": 0.5}

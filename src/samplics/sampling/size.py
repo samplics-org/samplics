@@ -132,7 +132,7 @@ def calculate_clusters() -> None:
 class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
-    param: InitVar[str] = field(init=True, default="prop")
+    param: InitVar[PopParam] = field(init=True, default=PopParam.prop)
     method: InitVar[str] = field(init=True, default="wald")
     strat: InitVar[bool] = field(init=True, default=False)
 
@@ -147,26 +147,18 @@ class SampleSize:
     pop_size: Optional[Union[DictStrNum, Number]] = field(init=False, default=None)
 
     def __post_init__(
-        self, param: str = "prop", method: str = "wald", strat: bool = False
+        self, param: PopParam = PopParam.prop, method: str = "wald", strat: bool = False
     ) -> None:
 
-        self.param = param.lower()
+        self.param = param
         self.method = method.lower()
-        if self.param not in ("prop", "mean", "total"):
-            raise AssertionError("param must be prop, mean, or total.")
-        if self.param == "prop" and self.method not in ("wald", "fleiss"):
+        self.strat = strat
+
+        if self.param == PopParam.prop and self.method not in ("wald", "fleiss"):
             raise AssertionError("For prop, the method must be wald or Fleiss.")
-        if self.param == "mean" and self.method not in ("wald"):
+        if self.param == PopParam.mean and self.method not in ("wald"):
             raise AssertionError("For mean and total, the method must be wald.")
 
-        # if self.param == "mean":
-        #     self.param = PopParam.mean
-        # if self.param == "total":
-        #     self.param = PopParam.total
-        # if self.param == "prop":
-        #     self.param = PopParam.prop
-
-        self.strat = strat
         # self.target: Union[DictStrNum, Number]
         # self.sigma: Union[DictStrNum, Number]
         # self.half_ci: Union[DictStrNum, Number]
@@ -210,13 +202,13 @@ class SampleSize:
         alpha: float = 0.05,
     ) -> None:
 
-        if self.param == "prop" and target is None:
+        if self.param == PopParam.prop and target is None:
             raise AssertionError("target must be provided to calculate sample size for prop.")
 
-        if self.param == "mean" and sigma is None:
+        if self.param == PopParam.mean and sigma is None:
             raise AssertionError("sigma must be provided to calculate sample size for mean.")
 
-        if self.param == "prop":
+        if self.param == PopParam.prop:
             if isinstance(target, (int, float)) and not 0 <= target <= 1:
                 raise ValueError("Target for props must be between 0 and 1.")
             if isinstance(target, dict):
@@ -224,7 +216,7 @@ class SampleSize:
                     if not 0 <= target[s] <= 1:
                         raise ValueError("Target for props must be between 0 and 1.")
 
-        if self.param == "prop" and sigma is None:
+        if self.param == PopParam.prop and sigma is None:
             if isinstance(target, (int, float)):
                 sigma = target * (1 - target)
             if isinstance(target, dict):
@@ -256,7 +248,7 @@ class SampleSize:
             ) = (half_ci, target, sigma, deff, resp_rate, pop_size, alpha)
 
         samp_size: Union[DictStrNum, Number]
-        if self.param == "prop" and self.method == "wald":
+        if self.param == PopParam.prop and self.method == "wald":
             self.samp_size = calculate_ss_wald_prop(
                 half_ci=self.half_ci,
                 target=self.target,
@@ -266,7 +258,7 @@ class SampleSize:
                 alpha=self.alpha,
                 strat=self.strat,
             )
-        elif self.param == "prop" and self.method == "fleiss":
+        elif self.param == PopParam.prop and self.method == "fleiss":
             self.samp_size = calculate_ss_fleiss_prop(
                 half_ci=self.half_ci,
                 target=self.target,
@@ -275,7 +267,7 @@ class SampleSize:
                 alpha=self.alpha,
                 strat=self.strat,
             )
-        elif self.param in ("mean", "total") and self.method == "wald":
+        elif self.param in (PopParam.mean, PopParam.total) and self.method == "wald":
             self.samp_size = calculate_ss_wald_mean(
                 half_ci=self.half_ci,
                 sigma=self.sigma,
@@ -342,7 +334,7 @@ class SampleSizeMeanOneSample:
         params_estimated: bool = True,
     ) -> None:
 
-        self.param = "mean"
+        self.param = PopParam.mean
         self.method = method.lower()
         if self.method not in ("wald"):
             raise AssertionError("The method must be wald.")
@@ -477,7 +469,7 @@ class SampleSizePropOneSample:
         params_estimated: bool = True,
     ) -> None:
 
-        self.param = "prop"
+        self.param = PopParam.prop
         self.method = method.lower()
         if self.method not in ("wald"):
             raise AssertionError("The method must be wald.")
@@ -616,7 +608,7 @@ class SampleSizeMeanTwoSample:
         params_estimated: bool = True,
     ) -> None:
 
-        self.param = "mean"
+        self.param = PopParam.mean
         self.method = method.lower()
         if self.method not in ("wald"):
             raise AssertionError("The method must be wald.")
@@ -769,7 +761,7 @@ class SampleSizePropTwoSample:
         params_estimated: bool = True,
     ) -> None:
 
-        self.param = "prop"
+        self.param = PopParam.prop
         self.method = method.lower()
         if self.method not in ("wald"):
             raise AssertionError("The method must be wald.")
