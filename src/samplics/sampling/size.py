@@ -6,8 +6,8 @@ from __future__ import annotations
 
 import math
 
+from dataclasses import InitVar, dataclass, field
 from typing import Optional, Union
-
 
 import numpy as np
 import pandas as pd
@@ -15,20 +15,17 @@ import pandas as pd
 from scipy.stats import norm as normal
 from scipy.stats import t as student
 
-from dataclasses import InitVar, field, dataclass
-
+from samplics.sampling.power_functions import calculate_power, calculate_power_prop
 from samplics.sampling.size_functions import (
     calculate_ss_fleiss_prop,
-    calculate_ss_wald_prop,
     calculate_ss_wald_mean,
     calculate_ss_wald_mean_one_sample,
     calculate_ss_wald_mean_two_samples,
+    calculate_ss_wald_prop,
     calculate_ss_wald_prop_two_samples,
 )
-from samplics.sampling.power_functions import calculate_power, calculate_power_prop
-
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number, StringNumber, PopParam, SizeMethod
+from samplics.utils.types import Array, DictStrNum, Number, PopParam, SizeMethod, StringNumber
 
 
 def allocate(

@@ -1,10 +1,9 @@
 """Provides the custom types used throughout the modules.
 """
 
-from typing import Dict, Union
-
-from enum import Enum, unique
 from dataclasses import dataclass
+from enum import Enum, unique
+from typing import Dict, Union
 
 import numpy as np
 import pandas as pd
@@ -23,12 +22,23 @@ DictStrBool = Dict[StringNumber, bool]
 
 # Population parameters
 class PopParam(Enum):
-    mean = "mean"
-    total = "total"
-    prop = "proportion"
+    mean = "Mean"
+    total = "Total"
+    prop = "Proportion"
 
 
 # Methods for sample size
 class SizeMethod(Enum):
-    wald = "wald"
-    fleiss = "fleiss"
+    wald = "Wald"
+    fleiss = "Fleiss"
+
+
+class SelectMethod(Enum):
+    srs = "SRS"
+    sys = "Systematic"
+    pps_brewer = "PPS-Brewer"
+    pps_hv = "PPS-HanuravVijayan"  # Hanurav-Vijayan
+    pps_murphy = "PPS-Murphy"
+    pps_rs = "PPS-RaoSampford"  # Rao-Sampford
+    pps_sys = "PPS-Systematic"
+    grs = "General"

@@ -27,13 +27,12 @@ from samplics.sampling import (
     calculate_power,
     calculate_power_prop,
     calculate_ss_fleiss_prop,
-    calculate_ss_wald_prop,
     calculate_ss_wald_mean,
+    calculate_ss_wald_prop,
     power_for_one_mean,
     power_for_one_proportion,
 )
-from samplics.utils import array_to_dict, PopParam, SizeMethod, transform
-
+from samplics.utils import PopParam, SizeMethod, array_to_dict, transform
 from samplics.weighting import ReplicateWeight, SampleWeight
 
 

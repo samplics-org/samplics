@@ -1,7 +1,6 @@
 import pytest
 
 from samplics.sampling import SampleSize
-
 from samplics.utils import PopParam, SizeMethod
 
 

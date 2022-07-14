@@ -1,7 +1,8 @@
 import pytest
 
-from samplics.utils import PopParam, SizeMethod
 from samplics.sampling import SampleSize, allocate
+from samplics.utils import PopParam, SizeMethod
+
 
 region = ["Dakar", "Kaolack", "Ziguinchor"]
 pop_size = {"Dakar": 500, "Kaolack": 300, "Ziguinchor": 200}
