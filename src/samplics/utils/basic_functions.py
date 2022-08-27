@@ -280,3 +280,15 @@ def plot_kurtosis(
         measure="kurtosis",
         block=block,
     )
+
+
+def single_psu(strata: Array, psu: Array) -> Optional(Array):
+    strata = numpy_array(strata)
+    psu = numpy_array(psu)
+
+    strata_ids, psu_counts = np.unique(strata, return_counts=True)
+    single_psus = psu_counts == 1
+    if single_psus.sum() == 0:
+        return None
+    else:
+        return strata_ids[single_psus]

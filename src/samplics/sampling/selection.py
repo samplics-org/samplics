@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import math
 
+from dataclasses import dataclass
 from typing import Optional, Union
 
 import numpy as np
@@ -35,6 +36,7 @@ from samplics.utils.types import (
 )
 
 
+@dataclass
 class SampleSelection:
     """*SampleSelection* implements a number of sampling selection algorithms.
 
@@ -387,7 +389,7 @@ class SampleSelection:
 
     @staticmethod
     def _pps_rs_select(
-        samp_unit: np.ndarray,
+        samp_unit: np.ndarray, 
         samp_size: int,
         mos: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
