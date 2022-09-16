@@ -379,19 +379,25 @@ class TaylorEstimator(_SurveyEstimator):
         psu: Optional[np.ndarray],
         ssu: Optional[np.ndarray] = None,
         fpc: Union[dict[StringNumber, Number], Number] = 1,
-        single_psu_strata: Optional[np.ndarray] = None,
+        skipped_strata: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """Computes the variance across stratum"""
 
         if stratum is None and isinstance(fpc, (int, float)):
             number_psus = np.unique(psu).size
             return np.asarray(
-                fpc * self._variance_stratum_between(y_score, samp_weight, number_psus, psu)
+                fpc
+                * self._variance_stratum_between(
+                    y_score_s=y_score,
+                    samp_weight_s=samp_weight,
+                    number_psus_in_s=number_psus,
+                    psu_s=psu,
+                )
             )
         elif isinstance(fpc, dict):
             covariance = np.zeros((y_score.shape[1], y_score.shape[1]))
             strata = np.unique(stratum)
-            singletons = np.isin(strata, single_psu_strata)
+            singletons = np.isin(strata, skipped_strata)
             for s in strata[~singletons]:
                 y_score_s = y_score[stratum == s]
                 samp_weight_s = samp_weight[stratum == s]
@@ -399,7 +405,10 @@ class TaylorEstimator(_SurveyEstimator):
                 number_psus_in_s = np.size(np.unique(psu_s))
                 ssu_s = ssu[stratum == s] if ssu is not None else None
                 covariance += fpc[s] * self._variance_stratum_between(
-                    y_score_s, samp_weight_s, number_psus_in_s, psu_s
+                    y_score_s=y_score_s,
+                    samp_weight_s=samp_weight_s,
+                    number_psus_in_s=number_psus_in_s,
+                    psu_s=psu_s,
                 )
             return np.asarray(covariance)
         else:
@@ -415,7 +424,7 @@ class TaylorEstimator(_SurveyEstimator):
         ssu: Optional[np.ndarray] = None,
         domain: Optional[np.ndarray] = None,
         fpc: Union[dict[StringNumber, Number], Number] = 1,
-        single_psu_strata: Optional[np.ndarray] = None,
+        skipped_strata: Optional[np.ndarray] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> tuple[
@@ -449,7 +458,7 @@ class TaylorEstimator(_SurveyEstimator):
                 psu=psu,
                 ssu=ssu,
                 fpc=fpc,
-                single_psu_strata=single_psu_strata,
+                skipped_strata=skipped_strata,
             )  # new
             if (self.parameter == "proportion" or as_factor) and isinstance(cov_score, np.ndarray):
                 variance1: dict[StringNumber, dict] = {}
@@ -482,7 +491,7 @@ class TaylorEstimator(_SurveyEstimator):
                         psu=psu,
                         ssu=ssu,
                         fpc=fpc,
-                        single_psu_strata=single_psu_strata,
+                        skipped_strata=skipped_strata,
                     )
                     variance2[d] = dict(zip(categories, np.diag(cov_score_d)))
                     cov_d = {}
@@ -508,7 +517,7 @@ class TaylorEstimator(_SurveyEstimator):
                         psu=psu,
                         ssu=ssu,
                         fpc=fpc,
-                        single_psu_strata=single_psu_strata,
+                        skipped_strata=skipped_strata,
                     )
                     variance3[d] = float(cov_score_d)
                 return variance3, variance3
@@ -525,7 +534,7 @@ class TaylorEstimator(_SurveyEstimator):
         fpc: Union[dict[StringNumber, Number], Number],
         deff: bool,
         coef_variation: bool,
-        single_psu_strata: np.ndarray,
+        skipped_strata: np.ndarray,
         as_factor: bool,
         remove_nan: bool,
     ) -> None:
@@ -547,7 +556,7 @@ class TaylorEstimator(_SurveyEstimator):
             ssu=ssu,
             domain=domain,
             fpc=fpc,
-            single_psu_strata=single_psu_strata,
+            skipped_strata=skipped_strata,
             as_factor=as_factor,
             remove_nan=remove_nan,
         )
@@ -691,7 +700,7 @@ class TaylorEstimator(_SurveyEstimator):
         deff: bool = False,
         coef_variation: bool = False,
         single_psu: SinglePSUEst = SinglePSUEst.error,
-        strata_merging: Optional[dict[Array, Array]] = None,
+        strata_comb: Optional[dict[Array, Array]] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> None:
@@ -727,22 +736,21 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units, y_temp, weight_temp, x, stratum, psu, ssu, domain, by
             )
 
-        single_psu_strata = None
         if stratum is not None:
             stratum = numpy_array(stratum)
             self.strata = np.unique(stratum).tolist()
             # TODO: we could improve efficiency by creating the pair [stratum,psu, ssu] ounce and
             # use it in get_single_psu_strata and in the uncertainty calculation functions
-            single_psu_strata = get_single_psu_strata(stratum, psu)
+            self.single_psu_strata = get_single_psu_strata(stratum, psu).tolist()
 
-        if single_psu_strata is not None:
+        skipped_strata = None
+        if self.single_psu_strata is not None:
             if single_psu == SinglePSUEst.error:
-                self.single_psu_strata = single_psu_strata.to_list()
                 raise SamplicsError.SinglePSU(f"Only one PSU in strata{self.single_psu_strata}")
             elif single_psu == SinglePSUEst.skip:
-                self.single_psu_strata = single_psu_strata.tolist()
-            elif single_psu == SinglePSUEst.subunit:
-                self.single_psu_strata
+                skipped_strata = self.single_psu_strata
+            elif single_psu == SinglePSUEst.certainty:
+                skipped_strata = None
                 raise NotImplementedError("TODO: use case to be implemented")
             elif single_psu == SinglePSUEst.combine:
                 raise NotImplementedError("TODO: use case to be implemented")
@@ -780,7 +788,7 @@ class TaylorEstimator(_SurveyEstimator):
                 fpc=self.fpc,
                 deff=deff,
                 coef_variation=coef_variation,
-                single_psu_strata=single_psu_strata,
+                skipped_strata=skipped_strata,
                 as_factor=as_factor,
                 remove_nan=remove_nan,
             )
@@ -812,7 +820,7 @@ class TaylorEstimator(_SurveyEstimator):
                     fpc=self.fpc,
                     deff=deff,
                     coef_variation=coef_variation,
-                    single_psu_strata=single_psu_strata,
+                    skipped_strata=skipped_strata,
                     as_factor=as_factor,
                     remove_nan=remove_nan,
                 )

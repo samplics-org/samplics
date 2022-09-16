@@ -53,7 +53,7 @@ class SinglePSUEst(Enum):
 
     error = "Raise Error when one PSU in a stratum"
     skip = "Set variance to zero and skip stratum with one PSU"
-    subunit = "Use SSU or lowest unit to estimate the variance"
+    certainty = "Use SSUs or lowest units to estimate the variance"
     combine = "Combine the strata with the singleton psu to another stratum"
 
 

@@ -282,10 +282,9 @@ def plot_kurtosis(
     )
 
 
-def get_single_psu_strata(stratum: Array, psu: Array) -> Optional(Array):
+def get_single_psu_strata(stratum: Array, psu: Array) -> Optional(np.ndarray):
     stratum = numpy_array(stratum)
     psu = numpy_array(psu)
-
 
     if psu.shape == ():  # psu is None will not work because psu is an np.ndarray
         strata_ids, psu_counts = np.unique(stratum, return_counts=True)

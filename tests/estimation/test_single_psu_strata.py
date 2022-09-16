@@ -19,7 +19,7 @@ sample_data = pd.DataFrame.from_dict(
 svy_mean_single_psu1 = TaylorEstimator(parameter="mean")
 
 
-def test_single_psu_total():
+def test_single_psu_mean_skip():
     svy_mean_single_psu1.estimate(
         y=sample_data["age"],
         samp_weight=sample_data["wgt"],
@@ -62,3 +62,18 @@ def test_single_psu_mean_domain_skip():
     assert np.isclose(svy_mean_single_psu2.lower_ci[2], svy_mean_single_psu2.upper_ci[2])
     assert np.isclose(svy_mean_single_psu2.coef_var[1], 3.299168975 / 22.8947368)
     assert np.isclose(svy_mean_single_psu2.coef_var[2], 0.0)
+
+
+svy_mean_single_psu3 = TaylorEstimator(parameter="mean")
+
+
+def test_single_psu_mean_domain_certainty():
+    svy_mean_single_psu3.estimate(
+        y=sample_data["age"],
+        samp_weight=sample_data["wgt"],
+        stratum=sample_data["region"],
+        psu=sample_data["district"],
+        domain=sample_data["domain"],
+        single_psu=SinglePSUEst.certainty,
+        remove_nan=True,
+    )
