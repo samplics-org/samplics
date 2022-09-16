@@ -172,8 +172,8 @@ class EblupUnitModel:
         A_inv: np.ndarray,
     ) -> np.ndarray:
 
-        sigma2e = self.error_std ** 2
-        sigma2u = self.re_std ** 2
+        sigma2e = self.error_std**2
+        sigma2u = self.re_std**2
 
         g1 = gamma * sigma2e / afactor
 
@@ -183,14 +183,14 @@ class EblupUnitModel:
 
         alpha = sigma2e + afactor * sigma2u
         i_vv = 0.5 * sum((afactor / alpha) ** 2)
-        i_ee = 0.5 * sum((samp_size - 1) / (sigma2e ** 2) + 1 / (alpha ** 2))
-        i_ve = 0.5 * sum(afactor / (alpha ** 2))
+        i_ee = 0.5 * sum((samp_size - 1) / (sigma2e**2) + 1 / (alpha**2))
+        i_ve = 0.5 * sum(afactor / (alpha**2))
         i_determinant = i_vv * i_ee - i_ve * i_ve
 
-        g3_afactor = (1 / afactor ** 2) * (1 / (sigma2u + sigma2e / afactor) ** 3)
+        g3_afactor = (1 / afactor**2) * (1 / (sigma2u + sigma2e / afactor) ** 3)
         g3 = (
             g3_afactor
-            * ((sigma2e ** 2) * i_ee + (sigma2u ** 2) * i_vv - 2 * (sigma2e * sigma2u) * (-i_ve))
+            * ((sigma2e**2) * i_ee + (sigma2u**2) * i_vv - 2 * (sigma2e * sigma2u) * (-i_ve))
             / i_determinant
         )
 
@@ -263,7 +263,7 @@ class EblupUnitModel:
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         basic_fit = basic_model.fit(reml=reml, full_output=True, **fit_kwargs)
 
-        self.error_std = basic_fit.scale ** 0.5
+        self.error_std = basic_fit.scale**0.5
         self.fixed_effects = basic_fit.fe_params
 
         self.fe_std = basic_fit.bse_fe
@@ -389,7 +389,7 @@ class EblupUnitModel:
             n_ps_d = np.sum(areadps)
             X_ps_d = Xs[areadps]
             scale_ps_d = self.scales[areadps]
-            V_ps_d = (self.error_std ** 2) * np.diag(scale_ps_d) + (self.re_std ** 2) * np.ones(
+            V_ps_d = (self.error_std**2) * np.diag(scale_ps_d) + (self.re_std**2) * np.ones(
                 [n_ps_d, n_ps_d]
             )
             A_ps = A_ps + np.transpose(X_ps_d) @ np.linalg.inv(V_ps_d) @ X_ps_d
@@ -499,7 +499,7 @@ class EblupUnitModel:
                 boot_model = sm.MixedLM(y_ps_boot[b, :], X_ps, area_ps)
                 boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
-            boot_error_std = boot_fit.scale ** 0.5
+            boot_error_std = boot_fit.scale**0.5
             boot_re_std = float(boot_fit.cov_re) ** 0.5
             boot_ys_mean, boot_Xs_mean, boot_gamma, _ = area_stats(
                 y_ps_boot[b, :],

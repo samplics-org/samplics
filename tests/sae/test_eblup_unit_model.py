@@ -100,11 +100,11 @@ def test_random_effects_bhf_reml():
 
 
 def test_re_std_bhf_reml():
-    assert np.isclose(eblup_bhf_reml.re_std ** 2, 63.3149, atol=1e-6)
+    assert np.isclose(eblup_bhf_reml.re_std**2, 63.3149, atol=1e-6)
 
 
 def test_error_var_bhf_reml():
-    assert np.isclose(eblup_bhf_reml.error_std ** 2, 297.7128, atol=1e-6)
+    assert np.isclose(eblup_bhf_reml.error_std**2, 297.7128, atol=1e-6)
 
 
 def test_goodness_of_fit_bhf_reml():
@@ -363,11 +363,11 @@ def test_random_effects_bhf_ml():
 
 
 def test_re_std_bhf_ml():
-    assert np.isclose(eblup_bhf_ml.re_std ** 2, 47.79559, atol=1e-4)
+    assert np.isclose(eblup_bhf_ml.re_std**2, 47.79559, atol=1e-4)
 
 
 def test_error_var_bhf_ml():
-    assert np.isclose(eblup_bhf_ml.error_std ** 2, 280.2311, atol=1e-4)
+    assert np.isclose(eblup_bhf_ml.error_std**2, 280.2311, atol=1e-4)
 
 
 def test_goodness_of_fit_bhf_ml():

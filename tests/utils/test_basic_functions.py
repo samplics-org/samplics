@@ -9,6 +9,7 @@ from samplics.utils.basic_functions import (
     plot_kurtosis,
     plot_skewness,
     set_variables_names,
+    single_psu,
     skewness,
     sumby,
     transform,
@@ -166,3 +167,12 @@ def test_plot_skewness(y):
 @pytest.mark.parametrize("y", [y1, y2])
 def test_plot_kurtosis(y):
     plot_kurtosis(y, block=False)
+
+
+strat = np.array([1, 2, 2, 1, 2, 3, 3, 41, 1, 2, 1, 2, 3, 55])
+psu = np.array([1, 2, 1, 1, 2, 3, 1, 4, 2, 1, np.nan, 2, 3, np.nan])
+
+
+def test_single_psu():
+    single_psu_strata = single_psu(strata=strat, psu=psu)
+    assert np.any(single_psu_strata == np.array([41, 55]))

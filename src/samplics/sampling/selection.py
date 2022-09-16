@@ -389,7 +389,7 @@ class SampleSelection:
 
     @staticmethod
     def _pps_rs_select(
-        samp_unit: np.ndarray, 
+        samp_unit: np.ndarray,
         samp_size: int,
         mos: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:

@@ -35,7 +35,9 @@ sample["response_status"] = np.random.choice(
 # print(pd.crosstab(sample["region_id"], sample["response_status"]))
 
 sample["educ_level"] = np.random.choice(
-    ("0. Primary", "1. High-School", "2. University"), number_units, p=(0.10, 0.60, 0.30),
+    ("0. Primary", "1. High-School", "2. University"),
+    number_units,
+    p=(0.10, 0.60, 0.30),
 )
 # print(pd.crosstab(sample["region_id"], sample["educ_level"]))
 

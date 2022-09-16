@@ -178,8 +178,8 @@ class Ttest:
         t_equal_variance = (mean_group1 - mean_group2) / (
             math.sqrt(
                 (
-                    (nb_obs_group1 - 1) * stddev_group1 ** 2
-                    + (nb_obs_group2 - 1) * stddev_group2 ** 2
+                    (nb_obs_group1 - 1) * stddev_group1**2
+                    + (nb_obs_group2 - 1) * stddev_group2**2
                 )
                 / (nb_obs_group1 + nb_obs_group2 - 2)
             )
@@ -189,14 +189,14 @@ class Ttest:
         t_df_equal_variance = nb_obs_group1 + nb_obs_group2 - 2
 
         t_unequal_variance = (mean_group1 - mean_group2) / math.sqrt(
-            stddev_group1 ** 2 / nb_obs_group1 + stddev_group2 ** 2 / nb_obs_group2
+            stddev_group1**2 / nb_obs_group1 + stddev_group2**2 / nb_obs_group2
         )
 
         t_df_unequal_variance = math.pow(
-            stddev_group1 ** 2 / nb_obs_group1 + stddev_group2 ** 2 / nb_obs_group2, 2
+            stddev_group1**2 / nb_obs_group1 + stddev_group2**2 / nb_obs_group2, 2
         ) / (
-            math.pow(stddev_group1 ** 2 / nb_obs_group1, 2) / (nb_obs_group1 - 1)
-            + math.pow(stddev_group2 ** 2 / nb_obs_group2, 2) / (nb_obs_group2 - 1)
+            math.pow(stddev_group1**2 / nb_obs_group1, 2) / (nb_obs_group1 - 1)
+            + math.pow(stddev_group2**2 / nb_obs_group2, 2) / (nb_obs_group2 - 1)
         )
 
         left_p_value_equal_variance = t.cdf(t_equal_variance, t_df_equal_variance)

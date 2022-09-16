@@ -44,7 +44,9 @@ admin2_share = np.concatenate(
 admin2_share = admin2_share / sum(admin2_share)
 
 admin2 = np.random.choice(
-    a=np.linspace(1, admin2_nb, admin2_nb, dtype="int8"), size=population_size, p=admin2_share,
+    a=np.linspace(1, admin2_nb, admin2_nb, dtype="int8"),
+    size=population_size,
+    p=admin2_share,
 )
 
 _, size2 = np.unique(admin2, return_counts=True)

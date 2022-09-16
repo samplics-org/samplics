@@ -30,7 +30,11 @@ def pov_gap(y, pov_line):
 
 """REML Method"""
 
-ell_bhf_reml = EllUnitModel(method="REML", boxcox=0, constant=3600.5,)
+ell_bhf_reml = EllUnitModel(
+    method="REML",
+    boxcox=0,
+    constant=3600.5,
+)
 ell_bhf_reml.fit(ys, Xs, areas, intercept=True)
 ell_bhf_reml.predict(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
@@ -61,16 +65,20 @@ def test_fixed_effects_ell_bhf_reml():
 
 
 def test_re_std_ell_bhf_reml():
-    assert np.isclose(ell_bhf_reml.re_std ** 2, 0.009116, atol=1e-1)
+    assert np.isclose(ell_bhf_reml.re_std**2, 0.009116, atol=1e-1)
 
 
 def test_error_var_ell_bhf_reml():
-    assert np.isclose(ell_bhf_reml.error_std ** 2, 0.170677, atol=1e-1)
+    assert np.isclose(ell_bhf_reml.error_std**2, 0.170677, atol=1e-1)
 
 
 """ML Method"""
 
-ell_bhf_ml = EllUnitModel(method="ML", boxcox=0, constant=3600.5,)
+ell_bhf_ml = EllUnitModel(
+    method="ML",
+    boxcox=0,
+    constant=3600.5,
+)
 ell_bhf_ml.fit(ys, Xs, areas, intercept=True)
 ell_bhf_ml.predict(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
@@ -101,16 +109,20 @@ def test_fixed_effects_ell_bhf_ml():
 
 
 def test_re_std_ell_bhf_ml():
-    assert np.isclose(ell_bhf_ml.re_std ** 2, 0.009116, atol=1e-1)
+    assert np.isclose(ell_bhf_ml.re_std**2, 0.009116, atol=1e-1)
 
 
 def test_error_var_ell_bhf_ml():
-    assert np.isclose(ell_bhf_ml.error_std ** 2, 0.170677, atol=1e-1)
+    assert np.isclose(ell_bhf_ml.error_std**2, 0.170677, atol=1e-1)
 
 
 """MOM Method"""
 
-ell_bhf_mom = EllUnitModel(method="MOM", boxcox=0, constant=3600.5,)
+ell_bhf_mom = EllUnitModel(
+    method="MOM",
+    boxcox=0,
+    constant=3600.5,
+)
 ell_bhf_mom.fit(ys, Xs, areas, intercept=True)
 ell_bhf_mom.predict(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
@@ -138,4 +150,3 @@ def test_fixed_effects_ell_bhf_mom():
         ),
         atol=1e-4,
     ).all()
-

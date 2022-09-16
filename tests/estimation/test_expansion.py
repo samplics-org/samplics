@@ -61,7 +61,7 @@ def test_total_estimator_without_str():
     svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
 
     assert np.isclose(svy_total_without_str.point_est, 7938.333)
-    assert np.isclose(svy_total_without_str.variance, 560.0856 ** 2)
+    assert np.isclose(svy_total_without_str.variance, 560.0856**2)
     assert np.isclose(svy_total_without_str.stderror, 560.0856)
     assert np.isclose(svy_total_without_str.lower_ci, 6813.915)
     assert np.isclose(svy_total_without_str.upper_ci, 9062.752)
@@ -72,7 +72,7 @@ def test_total_estimator_without_str_nor_psu():
     svy_total_without_str.estimate(y, weight, remove_nan=True)
 
     assert np.isclose(svy_total_without_str.point_est, 7938.333)
-    assert np.isclose(svy_total_without_str.variance, 105.3852 ** 2)
+    assert np.isclose(svy_total_without_str.variance, 105.3852**2)
     assert np.isclose(svy_total_without_str.stderror, 105.3852)
     assert np.isclose(svy_total_without_str.lower_ci, 7731.754)
     assert np.isclose(svy_total_without_str.upper_ci, 8144.913)
@@ -124,7 +124,7 @@ def test_total_estimator_with_str():
     svy_total_with_str.estimate(y, weight, stratum=stratum, psu=psu, remove_nan=True)
 
     assert np.isclose(svy_total_with_str.point_est, 7938.333)
-    assert np.isclose(svy_total_with_str.variance, 555.5157 ** 2)
+    assert np.isclose(svy_total_with_str.variance, 555.5157**2)
     assert np.isclose(svy_total_with_str.stderror, 555.5157)
     assert np.isclose(svy_total_with_str.lower_ci, 6814.697)
     assert np.isclose(svy_total_with_str.upper_ci, 9061.970)
@@ -135,7 +135,7 @@ def test_total_estimator_with_str_without_psu():
     svy_total_with_str.estimate(y, weight, stratum=stratum, remove_nan=True)
 
     assert np.isclose(svy_total_with_str.point_est, 7938.333)
-    assert np.isclose(svy_total_with_str.variance, 97.75523 ** 2)
+    assert np.isclose(svy_total_with_str.variance, 97.75523**2)
     assert np.isclose(svy_total_with_str.stderror, 97.75523)
     assert np.isclose(svy_total_with_str.lower_ci, 7746.71)
     assert np.isclose(svy_total_with_str.upper_ci, 8129.957)
@@ -189,7 +189,7 @@ def test_mean_estimator_without_str():
     svy_mean_without_str.estimate(y, weight, psu=psu, remove_nan=True)
 
     assert np.isclose(svy_mean_without_str.point_est, 0.813_622_5)
-    assert np.isclose(svy_mean_without_str.variance, 0.020_285_6 ** 2)
+    assert np.isclose(svy_mean_without_str.variance, 0.020_285_6**2)
     assert np.isclose(svy_mean_without_str.stderror, 0.020_285_6)
     assert np.isclose(svy_mean_without_str.lower_ci, 0.772_897_5)
     assert np.isclose(svy_mean_without_str.upper_ci, 0.854_347_5)
@@ -200,7 +200,7 @@ def test_mean_estimator_without_str_nor_psu():
     svy_mean_without_str.estimate(y, weight, remove_nan=True)
 
     assert np.isclose(svy_mean_without_str.point_est, 0.8136225)
-    assert np.isclose(svy_mean_without_str.variance, 0.0066567 ** 2)
+    assert np.isclose(svy_mean_without_str.variance, 0.0066567**2)
     assert np.isclose(svy_mean_without_str.stderror, 0.0066567)
     assert np.isclose(svy_mean_without_str.lower_ci, 0.8005738)
     assert np.isclose(svy_mean_without_str.upper_ci, 0.8266712)
@@ -252,7 +252,7 @@ def test_mean_estimator_with_str():
     svy_mean_with_str.estimate(y, weight, stratum=stratum, psu=psu, remove_nan=True)
 
     assert np.isclose(svy_mean_with_str.point_est, 0.813_622_5)
-    assert np.isclose(svy_mean_with_str.variance, 0.019_862_1 ** 2)
+    assert np.isclose(svy_mean_with_str.variance, 0.019_862_1**2)
     assert np.isclose(svy_mean_with_str.stderror, 0.019_862_1)
     assert np.isclose(svy_mean_with_str.lower_ci, 0.773_447_6)
     assert np.isclose(svy_mean_with_str.upper_ci, 0.853_797_4)
@@ -263,7 +263,7 @@ def test_mean_estimator_with_str_without_psu():
     svy_mean_with_str.estimate(y, weight, stratum=stratum, remove_nan=True)
 
     assert np.isclose(svy_mean_with_str.point_est, 0.8136225)
-    assert np.isclose(svy_mean_with_str.variance, 0.0066091 ** 2)
+    assert np.isclose(svy_mean_with_str.variance, 0.0066091**2)
     assert np.isclose(svy_mean_with_str.stderror, 0.0066091)
     assert np.isclose(svy_mean_with_str.lower_ci, 0.8006671)
     assert np.isclose(svy_mean_with_str.upper_ci, 0.8265779)
@@ -317,7 +317,7 @@ def test_ratio_estimator_without_str():
     svy_ratio_without_str.estimate(y, weight, x, psu=psu, remove_nan=True)
 
     assert np.isclose(svy_ratio_without_str.point_est, 0.706_945_8)
-    assert np.isclose(svy_ratio_without_str.variance, 0.007_657_5 ** 2)
+    assert np.isclose(svy_ratio_without_str.variance, 0.007_657_5**2)
     assert np.isclose(svy_ratio_without_str.stderror, 0.007_657_5)
     assert np.isclose(svy_ratio_without_str.lower_ci, 0.691_572_8)
     assert np.isclose(svy_ratio_without_str.upper_ci, 0.722_318_8)
@@ -328,7 +328,7 @@ def test_ratio_estimator_without_str_nor_psu():
     svy_ratio_without_str.estimate(y, weight, x, remove_nan=True)
 
     assert np.isclose(svy_ratio_without_str.point_est, 0.7069458)
-    assert np.isclose(svy_ratio_without_str.variance, 0.0025128 ** 2)
+    assert np.isclose(svy_ratio_without_str.variance, 0.0025128**2)
     assert np.isclose(svy_ratio_without_str.stderror, 0.0025128)
     assert np.isclose(svy_ratio_without_str.lower_ci, 0.7020202)
     assert np.isclose(svy_ratio_without_str.upper_ci, 0.7118715)
@@ -380,7 +380,7 @@ def test_ratio_estimator_with_str():
     svy_ratio_with_str.estimate(y, weight, x, stratum=stratum, psu=psu, remove_nan=True)
 
     assert np.isclose(svy_ratio_with_str.point_est, 0.706_945_8)
-    assert np.isclose(svy_ratio_with_str.variance, 0.007_497_6 ** 2)
+    assert np.isclose(svy_ratio_with_str.variance, 0.007_497_6**2)
     assert np.isclose(svy_ratio_with_str.stderror, 0.007_497_6)
     assert np.isclose(svy_ratio_with_str.lower_ci, 0.691_780_5)
     assert np.isclose(svy_ratio_with_str.upper_ci, 0.722_111_1)
@@ -391,7 +391,7 @@ def test_ratio_estimator_with_str_without_psu():
     svy_ratio_with_str.estimate(y, weight, x, stratum=stratum, remove_nan=True)
 
     assert np.isclose(svy_ratio_with_str.point_est, 0.7069458)
-    assert np.isclose(svy_ratio_with_str.variance, 0.0024948 ** 2)
+    assert np.isclose(svy_ratio_with_str.variance, 0.0024948**2)
     assert np.isclose(svy_ratio_with_str.stderror, 0.0024948)
     assert np.isclose(svy_ratio_with_str.lower_ci, 0.7020554)
     assert np.isclose(svy_ratio_with_str.upper_ci, 0.7118362)
@@ -450,8 +450,8 @@ def test_prop_estimator_without_str():
 
     assert np.isclose(svy_prop_without_str.point_est[0.0], 0.186_377_5)
     assert np.isclose(svy_prop_without_str.point_est[1.0], 0.813_622_5)
-    assert np.isclose(svy_prop_without_str.variance[0.0], 0.020_285_6 ** 2)
-    assert np.isclose(svy_prop_without_str.variance[1.0], 0.020_285_6 ** 2)
+    assert np.isclose(svy_prop_without_str.variance[0.0], 0.020_285_6**2)
+    assert np.isclose(svy_prop_without_str.variance[1.0], 0.020_285_6**2)
     assert np.isclose(svy_prop_without_str.stderror[0.0], 0.020_285_6)
     assert np.isclose(svy_prop_without_str.stderror[1.0], 0.020_285_6)
     assert np.isclose(svy_prop_without_str.lower_ci[0.0], 0.149_023)
@@ -467,8 +467,8 @@ def test_prop_estimator_without_str_nor_psu():
 
     assert np.isclose(svy_prop_without_str.point_est[0.0], 0.1863775)
     assert np.isclose(svy_prop_without_str.point_est[1.0], 0.8136225)
-    assert np.isclose(svy_prop_without_str.variance[0.0], 0.0066567 ** 2)
-    assert np.isclose(svy_prop_without_str.variance[1.0], 0.0066567 ** 2)
+    assert np.isclose(svy_prop_without_str.variance[0.0], 0.0066567**2)
+    assert np.isclose(svy_prop_without_str.variance[1.0], 0.0066567**2)
     assert np.isclose(svy_prop_without_str.stderror[0.0], 0.0066567)
     assert np.isclose(svy_prop_without_str.stderror[1.0], 0.0066567)
     assert np.isclose(svy_prop_without_str.lower_ci[0.0], 0.1736793)
@@ -549,8 +549,8 @@ def test_prop_estimator_with_str():
 
     assert np.isclose(svy_prop_with_str.point_est[0.0], 0.186_377_5)
     assert np.isclose(svy_prop_with_str.point_est[1.0], 0.813_622_5)
-    assert np.isclose(svy_prop_with_str.variance[0.0], 0.019_862_1 ** 2)
-    assert np.isclose(svy_prop_with_str.variance[1.0], 0.019_862_1 ** 2)
+    assert np.isclose(svy_prop_with_str.variance[0.0], 0.019_862_1**2)
+    assert np.isclose(svy_prop_with_str.variance[1.0], 0.019_862_1**2)
     assert np.isclose(svy_prop_with_str.stderror[0.0], 0.019_862_1)
     assert np.isclose(svy_prop_with_str.stderror[1.0], 0.019_862_1)
     assert np.isclose(svy_prop_with_str.lower_ci[0.0], 0.149_483_7)
@@ -566,8 +566,8 @@ def test_prop_estimator_with_str_without_psu():
 
     assert np.isclose(svy_prop_with_str.point_est[0.0], 0.1863775)
     assert np.isclose(svy_prop_with_str.point_est[1.0], 0.8136225)
-    assert np.isclose(svy_prop_with_str.variance[0.0], 0.0066091 ** 2)
-    assert np.isclose(svy_prop_with_str.variance[1.0], 0.0066091 ** 2)
+    assert np.isclose(svy_prop_with_str.variance[0.0], 0.0066091**2)
+    assert np.isclose(svy_prop_with_str.variance[1.0], 0.0066091**2)
     assert np.isclose(svy_prop_with_str.stderror[0.0], 0.0066091)
     assert np.isclose(svy_prop_with_str.stderror[1.0], 0.0066091)
     assert np.isclose(svy_prop_with_str.lower_ci[0.0], 0.1737677)

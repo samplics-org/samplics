@@ -21,6 +21,7 @@ DictStrFloat = Dict[StringNumber, float]
 DictStrBool = Dict[StringNumber, bool]
 
 # Population parameters
+@unique
 class PopParam(Enum):
     mean = "Mean"
     total = "Total"
@@ -28,11 +29,13 @@ class PopParam(Enum):
 
 
 # Methods for sample size
+@unique
 class SizeMethod(Enum):
     wald = "Wald"
     fleiss = "Fleiss"
 
 
+@unique
 class SelectMethod(Enum):
     srs = "SRS"
     sys = "Systematic"
@@ -42,3 +45,15 @@ class SelectMethod(Enum):
     pps_rs = "PPS-RaoSampford"  # Rao-Sampford
     pps_sys = "PPS-Systematic"
     grs = "General"
+
+
+@unique
+class SinglePSUEst(Enum):
+    error = "Raise Error when one PSU in a stratum"
+    skip = "Set variance to zero and skip stratum with one PSU"
+    subunit = "Use SSU or lowest unit to estimate the variance"
+
+
+@unique
+class SamplicsError(Enum):
+    SinglePSU = "Only one PSU in the stratum"

@@ -76,7 +76,7 @@ class SampleWeight:
         Page 71 of Valliant and Dever (2018)"""
 
         mean_w = np.mean(samp_weight)
-        relvar_w = np.power(samp_weight - mean_w, 2) / mean_w ** 2
+        relvar_w = np.power(samp_weight - mean_w, 2) / mean_w**2
 
         return float(1 + np.mean(relvar_w))
 

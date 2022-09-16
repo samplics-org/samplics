@@ -231,7 +231,7 @@ class ReplicateWeight:
     # Jackknife
     @staticmethod
     def _jkn_psus_replicates(number_psus: int) -> np.ndarray:
-        """Creates the jackknife delete-1 replicate structure """
+        """Creates the jackknife delete-1 replicate structure"""
 
         jk_coefs = (number_psus / (number_psus - 1)) * (
             np.ones((number_psus, number_psus)) - np.identity(number_psus)

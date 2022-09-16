@@ -110,7 +110,10 @@ aux_dict_d["D2"]["A4_&_B3"] = 62.5
 # print(sample_cat.groupby(["Domain", "A", "B"]).sum())
 
 sample_cat_d["_calib_wgt"] = SampleWeight().calibrate(
-    sample_cat_d["wgt"], aux_array_d, control=aux_dict_d, domain=sample_cat_d["Domain"],
+    sample_cat_d["wgt"],
+    aux_array_d,
+    control=aux_dict_d,
+    domain=sample_cat_d["Domain"],
 )
 sample_cat_d["_calib_adjust_fct"] = sample_cat_d["_calib_wgt"] / sample_cat_d["wgt"]
 sample_cat_d.sort_values(by=["Domain", "A", "B"], inplace=True)
@@ -233,7 +236,10 @@ aux_array_num = sample_num[["A", "B"]]
 # print(aux_array_num.shape)
 
 sample_num_d["_calib_wgt"] = SampleWeight().calibrate(
-    sample_num_d["wgt"], aux_array_num, control=aux_dict_d, domain=sample_num_d["Domain"],
+    sample_num_d["wgt"],
+    aux_array_num,
+    control=aux_dict_d,
+    domain=sample_num_d["Domain"],
 )
 sample_num_d["_calib_adjust_fct"] = sample_num_d["_calib_wgt"] / sample_num_d["wgt"]
 # print(sample_num_d.drop_duplicates(["Domain", "A", "B"]))
@@ -342,4 +348,3 @@ def test_calibration_mix():
             ]
         ),
     ).all()
-

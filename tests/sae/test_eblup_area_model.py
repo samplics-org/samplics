@@ -15,7 +15,12 @@ sigma_e = milk["SD"]
 # REML method
 fh_model_reml = EblupAreaModel(method="REML")
 fh_model_reml.fit(
-    yhat=yhat, X=X, area=area, intercept=False, error_std=sigma_e, tol=1e-4,
+    yhat=yhat,
+    X=X,
+    area=area,
+    intercept=False,
+    error_std=sigma_e,
+    tol=1e-4,
 )
 fh_model_reml.predict(X=X, area=area, intercept=False)
 
@@ -40,7 +45,14 @@ def test_fay_herriot_REML_fixed_effect():
     ).all()
     assert np.isclose(
         fh_model_reml.fe_std,
-        np.array([0.06936208, 0.10300072, 0.09232981, 0.08161707,]),
+        np.array(
+            [
+                0.06936208,
+                0.10300072,
+                0.09232981,
+                0.08161707,
+            ]
+        ),
         atol=1e-4,
     ).all()
 
@@ -160,10 +172,15 @@ X = pd.get_dummies(milk["MajorArea"], drop_first=False)
 X = np.delete(X.to_numpy(), 0, axis=1)
 fh_model_ml = EblupAreaModel(method="ML")
 fh_model_ml.fit(
-    yhat=yhat, X=X, area=area, error_std=sigma_e, tol=1e-4,
+    yhat=yhat,
+    X=X,
+    area=area,
+    error_std=sigma_e,
+    tol=1e-4,
 )
 fh_model_ml.predict(
-    X=X, area=area,
+    X=X,
+    area=area,
 )
 
 
@@ -186,7 +203,16 @@ def test_fay_herriot_ML_fixed_effect():
         atol=1e-4,
     ).all()
     assert np.isclose(
-        fh_model_ml.fe_std, np.array([0.06590747, 0.09840939, 0.08813973, 0.07753875,]), atol=1e-4,
+        fh_model_ml.fe_std,
+        np.array(
+            [
+                0.06590747,
+                0.09840939,
+                0.08813973,
+                0.07753875,
+            ]
+        ),
+        atol=1e-4,
     ).all()
 
 
@@ -305,7 +331,12 @@ X = pd.get_dummies(milk["MajorArea"], drop_first=True)
 # X = np.delete(X.to_numpy(), 0, axis=1)
 fh_model_fh = EblupAreaModel(method="FH")
 fh_model_fh.fit(
-    yhat=yhat, X=X, area=area, intercept=True, error_std=sigma_e, tol=1e-4,
+    yhat=yhat,
+    X=X,
+    area=area,
+    intercept=True,
+    error_std=sigma_e,
+    tol=1e-4,
 )
 fh_model_fh.predict(X=X, area=area, intercept=True)
 

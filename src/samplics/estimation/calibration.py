@@ -9,7 +9,6 @@ from samplics.utils.types import Array, Number, Series, StringNumber
 # import pandas as pd
 
 
-
 class CalibrateEstimator:
     """Provides calibration based estimation"""
 

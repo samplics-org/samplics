@@ -240,7 +240,7 @@ size_nat_wald = SampleSize()
 
 def test_size_nat_wald_basics():
     assert size_nat_wald.param == PopParam.prop
-    assert size_nat_wald.method==SizeMethod.wald
+    assert size_nat_wald.method == SizeMethod.wald
     assert not size_nat_wald.strat
 
 
@@ -323,7 +323,7 @@ resp_rate = {"stratum1": 0.95, "stratum2": 0.70, "stratum3": 0.30}
 
 def test_size_str_wald_basics():
     assert size_str_wald.param == PopParam.prop
-    assert size_str_wald.method==SizeMethod.wald
+    assert size_str_wald.method == SizeMethod.wald
     assert size_str_wald.strat
 
 
@@ -483,7 +483,7 @@ size_nat_fleiss = SampleSize(method=SizeMethod.fleiss)
 
 def test_size_nat_fleiss_basics():
     assert size_nat_fleiss.param == PopParam.prop
-    assert size_nat_fleiss.method==SizeMethod.fleiss
+    assert size_nat_fleiss.method == SizeMethod.fleiss
     assert size_nat_fleiss.strat == False
 
 
@@ -657,7 +657,7 @@ resp_rate2 = {"stratum1": 1, "stratum2": 0.5, "stratum3": 0.75}
 
 def test_size_str_fleiss_basics():
     assert size_str_fleiss.param == PopParam.prop
-    assert size_str_fleiss.method==SizeMethod.fleiss
+    assert size_str_fleiss.method == SizeMethod.fleiss
     assert size_str_fleiss.strat == True
 
 

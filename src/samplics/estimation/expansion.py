@@ -22,15 +22,16 @@ import pandas as pd
 
 from scipy.stats import t as student
 
+from samplics.utils.basic_functions import single_psu
 from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, Series, StringNumber
+from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst, SamplicsError
 
 
 class _SurveyEstimator:
     """General approach for sample estimation of linear parameters."""
 
     def __init__(self, parameter: str, alpha: float = 0.05, random_seed: Optional[int] = None):
-        """Initializes the instance """
+        """Initializes the instance"""
 
         self.random_seed: Optional[int]
         if random_seed is not None:
@@ -55,6 +56,7 @@ class _SurveyEstimator:
         self.upper_ci: Any = {}
         self.fpc: Any = {}
         self.strata: Any = []
+        self.single_psu_strata: Any = []
         self.domains: Any = None
         self.method: Any = "taylor"
         self.number_strata: Any = None
@@ -276,7 +278,7 @@ class TaylorEstimator(_SurveyEstimator):
         random_seed: Optional[int] = None,
         ciprop_method: Optional[str] = "logit",
     ) -> None:
-        """Initializes the instance """
+        """Initializes the instance"""
         _SurveyEstimator.__init__(self, parameter)
         if self.parameter == "proportion":
             self.ciprop_method = ciprop_method
@@ -317,7 +319,7 @@ class TaylorEstimator(_SurveyEstimator):
         number_psus_in_s: int,
         psu_s: Optional[np.ndarray],
     ) -> np.ndarray:
-        """Computes the variance for one stratum """
+        """Computes the variance for one stratum"""
 
         covariance = np.asarray([])
         if number_psus_in_s > 1:
@@ -345,7 +347,10 @@ class TaylorEstimator(_SurveyEstimator):
 
     @staticmethod
     def _variance_stratum_within(
-        y_score_s: np.ndarray, number_psus_in_s: np.ndarray, psu_s: np.ndarray, ssu_s: np.ndarray,
+        y_score_s: np.ndarray,
+        number_psus_in_s: np.ndarray,
+        psu_s: np.ndarray,
+        ssu_s: np.ndarray,
     ) -> float:
 
         variance = 0.0
@@ -375,7 +380,7 @@ class TaylorEstimator(_SurveyEstimator):
         ssu: Optional[np.ndarray] = None,
         fpc: Union[dict[StringNumber, Number], Number] = 1,
     ) -> np.ndarray:
-        """Computes the variance across stratum """
+        """Computes the variance across stratum"""
 
         if stratum is None and isinstance(fpc, (int, float)):
             number_psus = np.unique(psu).size
@@ -410,7 +415,8 @@ class TaylorEstimator(_SurveyEstimator):
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> tuple[
-        Union[dict[StringNumber, Any], np.ndarray], Union[dict[StringNumber, Any], np.ndarray],
+        Union[dict[StringNumber, Any], np.ndarray],
+        Union[dict[StringNumber, Any], np.ndarray],
     ]:
 
         if self.parameter == "ratio" and x is None:
@@ -692,9 +698,25 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units, y_temp, weight_temp, x, stratum, psu, ssu, domain, by
             )
 
+        single_psu_strata = None
         if stratum is not None:
             stratum = numpy_array(stratum)
             self.strata = np.unique(stratum).tolist()
+            single_psu_strata = single_psu(stratum, psu)
+
+        if single_psu_strata is not None:
+            if single_psu == SinglePSUEst.error:
+                self.single_psu_strata = single_psu_strata.to_list()
+                raise SamplicsError.SinglePSU(f"Only one PSU in strata{self.single_psu_strata}")
+            elif single_psu == SinglePSUEst.skip:
+                self.single_psu_strata = single_psu_strata.to_list()
+                # Case to be handle by _estimate()
+            elif single_psu == SinglePSUEst.subunit:
+                self.single_psu_strata
+                raise NotImplementedError("TODO: use case to be implemented")
+            else:
+                self.single_psu_strata = None
+                raise NotImplementedError("Use case not implemented")
 
         if domain is not None:
             domain = numpy_array(domain)
@@ -766,7 +788,10 @@ class TaylorEstimator(_SurveyEstimator):
                 self.lower_ci[b] = by_est.lower_ci
                 self.upper_ci[b] = by_est.upper_ci
 
-    def to_dataframe(self, col_names: Optional(list) = None,) -> pd.DataFrame:
+    def to_dataframe(
+        self,
+        col_names: Optional(list) = None,
+    ) -> pd.DataFrame:
 
         if self.point_est is None:
             raise AssertionError("No estimates yet. Must first run estimate().")
