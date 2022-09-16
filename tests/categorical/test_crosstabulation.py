@@ -21,7 +21,7 @@ nhanes = pd.read_csv("./tests/estimation/nhanes.csv")
 @pytest.mark.xfail(strict=True, reason="Parameter not valid")
 @pytest.mark.parametrize("param", ["total", "mean", "ratio", "other"])
 def test_not_valid_parameter(param):
-    tbl = CrossTabulation(param)
+    _ = CrossTabulation(param)
 
 
 @pytest.mark.xfail(strict=True, reason="2way tables needs two variables")
@@ -41,7 +41,7 @@ tbl_count.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remo
 
 
 def test_twoway_count_to_dataframe():
-    tbl_df = tbl_count.to_dataframe()
+    _ = tbl_count.to_dataframe()
 
 
 def test_twoway_count_point_est():

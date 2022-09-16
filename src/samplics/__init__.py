@@ -27,13 +27,12 @@ from samplics.sampling import (
     calculate_power,
     calculate_power_prop,
     calculate_ss_fleiss_prop,
-    calculate_ss_wald_prop,
     calculate_ss_wald_mean,
+    calculate_ss_wald_prop,
     power_for_one_mean,
     power_for_one_proportion,
 )
-from samplics.utils.basic_functions import transform
-from samplics.utils.formats import array_to_dict
+from samplics.utils import PopParam, SizeMethod, array_to_dict, transform
 from samplics.weighting import ReplicateWeight, SampleWeight
 
 
@@ -64,6 +63,7 @@ __all__ = [
     "load_psu_frame",
     "load_psu_sample",
     "load_ssu_sample",
+    "PopParam",
     "power_for_one_mean",
     "power_for_one_proportion",
     "SampleSelection",
@@ -73,6 +73,7 @@ __all__ = [
     "SampleSizePropOneSample",
     "SampleSizePropTwoSample",
     "SampleWeight",
+    "SizeMethod",
     "SurveyGLM",
     "ReplicateWeight",
     "ReplicateEstimator",

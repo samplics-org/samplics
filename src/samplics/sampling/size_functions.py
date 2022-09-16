@@ -89,10 +89,10 @@ def calculate_ss_wald_prop(
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
     resp_rate: Union[DictStrNum, Number, Array] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
-    stratification: bool = False,
+    strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    if stratification:
+    if strat:
         return _ss_for_proportion_wald_stratified(
             target=target,
             half_ci=half_ci,
@@ -192,10 +192,10 @@ def calculate_ss_fleiss_prop(
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
     resp_rate: Union[DictStrNum, Number, Array] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
-    stratification: bool = False,
+    strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    if stratification:
+    if strat:
         return _ss_for_proportion_fleiss_stratified(
             target=target, half_ci=half_ci, deff_c=deff_c, resp_rate=resp_rate, alpha=alpha
         )
@@ -228,7 +228,7 @@ def _ss_for_mean_wald(
         alpha = numpy_array(alpha)
 
     z_value = normal().ppf(1 - alpha / 2)
-    if isinstance(pop_size, (np.ndarray, int, float)):
+    if pop_size is not None:
         return math.ceil(
             ((1 / resp_rate) * deff_c * pop_size * z_value**2 * sigma**2)
             / ((pop_size - 1) * half_ci**2 + z_value**2 * sigma**2)
@@ -268,10 +268,10 @@ def calculate_ss_wald_mean(
     deff_c: Union[DictStrNum, Number, Array] = 1.0,
     resp_rate: Union[DictStrNum, Number] = 1.0,
     alpha: Union[DictStrNum, Number, Array] = 0.05,
-    stratification: bool = False,
+    strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
 
-    if stratification:
+    if strat:
         return _ss_for_mean_wald_stratified(
             half_ci=half_ci,
             sigma=sigma,
@@ -352,10 +352,10 @@ def calculate_ss_wald_mean_one_sample(
     resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
-    stratification: bool = True,
+    strat: bool = True,
 ) -> DictStrNum:
 
-    if stratification:
+    if strat:
         return _calculate_ss_wald_mean_one_sample_stratified(
             two_sides=two_sides,
             epsilon=epsilon,
@@ -385,7 +385,7 @@ def _calculate_ss_wald_mean_two_samples(
     delta: Union[Array, Number],
     sigma_1: Union[Array, Number],
     sigma_2: Optional[Union[Array, Number]],
-    equal_variance: bool,
+    equal_var: bool,
     kappa: Union[Array, Number],
     deff_c: Union[Array, Number],
     resp_rate: Union[Array, Number],
@@ -403,7 +403,7 @@ def _calculate_ss_wald_mean_two_samples(
         z_alpha = normal().ppf(1 - alpha)
         z_beta = normal().ppf(power)
 
-    if equal_variance:
+    if equal_var:
         samp_size_2 = math.ceil(
             (1 / resp_rate)
             * deff_c
@@ -423,7 +423,7 @@ def _calculate_ss_wald_mean_two_samples_stratified(
     delta: Union[Array, Number],
     sigma_1: Union[Array, Number],
     sigma_2: Optional[Union[Array, Number]],
-    equal_variance: bool,
+    equal_var: bool,
     kappa: Union[Array, Number],
     deff_c: Union[Array, Number],
     resp_rate: Union[Array, Number],
@@ -441,7 +441,7 @@ def _calculate_ss_wald_mean_two_samples_stratified(
             delta=delta[s],
             sigma_1=sigma_1[s],
             sigma_2=sigma_2_s,
-            equal_variance=equal_variance,
+            equal_var=equal_var,
             kappa=kappa,
             deff_c=deff_c[s],
             resp_rate=resp_rate[s],
@@ -457,23 +457,23 @@ def calculate_ss_wald_mean_two_samples(
     delta: Union[DictStrNum, Number, Array],
     sigma_1: Union[DictStrNum, Number, Array],
     sigma_2: Union[DictStrNum, Number, Array],
-    equal_variance: Union[DictStrNum, Number, Array],
+    equal_var: Union[DictStrNum, Number, Array],
     kappa: Union[DictStrNum, Number, Array],
     deff_c: Union[DictStrNum, Number, Array],
     resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
-    stratification: bool = True,
+    strat: bool = True,
 ) -> DictStrNum:
 
-    if stratification:
+    if strat:
         return _calculate_ss_wald_mean_two_samples_stratified(
             two_sides=two_sides,
             epsilon=epsilon,
             delta=delta,
             sigma_1=sigma_1,
             sigma_2=sigma_2,
-            equal_variance=equal_variance,
+            equal_var=equal_var,
             kappa=kappa,
             deff_c=deff_c,
             resp_rate=resp_rate,
@@ -487,7 +487,7 @@ def calculate_ss_wald_mean_two_samples(
             delta=delta,
             sigma_1=sigma_1,
             sigma_2=sigma_2,
-            equal_variance=equal_variance,
+            equal_var=equal_var,
             kappa=kappa,
             deff_c=deff_c,
             resp_rate=resp_rate,
@@ -571,10 +571,10 @@ def calculate_ss_wald_prop_two_samples(
     resp_rate: Union[DictStrNum, Number, Array],
     alpha: Union[DictStrNum, Number, Array],
     power: Union[DictStrNum, Number, Array],
-    stratification: bool = True,
+    strat: bool = True,
 ) -> DictStrNum:
 
-    if stratification:
+    if strat:
         return _calculate_ss_wald_prop_two_samples_stratified(
             two_sides=two_sides,
             epsilon=epsilon,

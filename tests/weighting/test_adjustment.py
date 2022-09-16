@@ -31,7 +31,11 @@ design_wgt = income_sample["design_wgt"]
 sample_wgt_nr_without = SampleWeight()
 
 nr_wgt_without_adj_class = sample_wgt_nr_without.adjust(
-    design_wgt, None, resp_status=response_code, resp_dict=response_map, unknown_to_inelig=False,
+    design_wgt,
+    None,
+    resp_status=response_code,
+    resp_dict=response_map,
+    unknown_to_inelig=False,
 )
 
 
@@ -60,7 +64,7 @@ def test_uk_adjustment_without_adj_class():
 
 def test_deff_wgt_without_domain():
     mean_wgt = np.mean(nr_wgt_without_adj_class)
-    deff_wgt = 1 + np.mean(np.power(nr_wgt_without_adj_class - mean_wgt, 2) / mean_wgt ** 2)
+    deff_wgt = 1 + np.mean(np.power(nr_wgt_without_adj_class - mean_wgt, 2) / mean_wgt**2)
     assert sample_wgt_nr_without.deff_weight(nr_wgt_without_adj_class) == deff_wgt
     assert sample_wgt_nr_without.deff_wgt == deff_wgt
 
@@ -97,7 +101,7 @@ def test_deff_wgt_with_domain():
     for region in np.unique(region_id):
         nr_wgt_r = nr_wgt_with_adj_class[region_id == region]
         mean_wgt_r = np.mean(nr_wgt_r)
-        deff_wgt_r = 1 + np.mean(np.power(nr_wgt_r - mean_wgt_r, 2) / mean_wgt_r ** 2)
+        deff_wgt_r = 1 + np.mean(np.power(nr_wgt_r - mean_wgt_r, 2) / mean_wgt_r**2)
         assert (deff_wgt_region[region] == deff_wgt_r).all()
         assert (sample_wgt_nr_with.deff_wgt[region] == deff_wgt_r).all()
 

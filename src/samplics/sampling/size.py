@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import math
 
+from dataclasses import InitVar, dataclass, field
 from typing import Optional, Union
 
 import numpy as np
@@ -13,18 +14,18 @@ import pandas as pd
 
 from scipy.stats import norm as normal
 from scipy.stats import t as student
+
+from samplics.sampling.power_functions import calculate_power, calculate_power_prop
 from samplics.sampling.size_functions import (
     calculate_ss_fleiss_prop,
-    calculate_ss_wald_prop,
     calculate_ss_wald_mean,
     calculate_ss_wald_mean_one_sample,
     calculate_ss_wald_mean_two_samples,
+    calculate_ss_wald_prop,
     calculate_ss_wald_prop_two_samples,
 )
-from samplics.sampling.power_functions import calculate_power, calculate_power_prop
-
 from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number, StringNumber
+from samplics.utils.types import Array, DictStrNum, Number, PopParam, SizeMethod, StringNumber
 
 
 def allocate(
@@ -44,8 +45,8 @@ def allocate(
         if isinstance(constant, (int, float)):
             sample_sizes = dict(zip(stratum, np.repeat(constant, len(stratum))))
         else:
-            raise ValueError("Parameter 'target_size' must be a valid integer!")
-    elif method.lower() == "proportional":
+            raise ValueError("param 'target_size' must be a valid integer!")
+    elif method.lower() == "propal":
         if isinstance(pop_size, dict) and stddev is None and samp_size is not None:
             total_pop = sum(list(pop_size.values()))
             samp_size_h = [math.ceil((samp_size / total_pop) * pop_size[k]) for k in stratum]
@@ -57,29 +58,27 @@ def allocate(
             ]
             sample_sizes = dict(zip(stratum, samp_size_h))
         else:
-            raise ValueError(
-                "Parameter 'pop_size' must be a dictionary and 'samp_size' an integer!"
-            )
+            raise ValueError("param 'pop_size' must be a dictionary and 'samp_size' an integer!")
     elif method.lower() == "fixed_rate":
         if isinstance(rate, (int, float)) and pop_size is not None:
             samp_size_h = [math.ceil(rate * pop_size[k]) for k in stratum]
         else:
             raise ValueError(
-                "Parameter 'pop_size' and 'rate' must be a dictionary and number respectively!"
+                "param 'pop_size' and 'rate' must be a dictionary and number respectively!"
             )
         sample_sizes = dict(zip(stratum, samp_size_h))
-    elif method.lower() == "proportional_rate":
+    elif method.lower() == "propal_rate":
         if isinstance(rate, (int, float)) and pop_size is not None:
             samp_size_h = [math.ceil(rate * pop_size[k] * pop_size[k]) for k in stratum]
         else:
-            raise ValueError("Parameter 'pop_size' must be a dictionary!")
+            raise ValueError("param 'pop_size' must be a dictionary!")
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "equal_errors":
         if isinstance(constant, (int, float)) and stddev is not None:
             samp_size_h = [math.ceil(constant * stddev[k] * stddev[k]) for k in stratum]
         else:
             raise ValueError(
-                "Parameter 'stddev' and 'constant' must be a dictionary and number, respectively!"
+                "param 'stddev' and 'constant' must be a dictionary and number, respectively!"
             )
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "optimum_mean":
@@ -87,7 +86,7 @@ def allocate(
             samp_size_h = [math.ceil(rate * pop_size[k] * stddev[k]) for k in stratum]
         else:
             raise ValueError(
-                "Parameter 'pop_size' and 'rate' must be a dictionary and number respectively!"
+                "param 'pop_size' and 'rate' must be a dictionary and number respectively!"
             )
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "optimum_comparison":
@@ -95,7 +94,7 @@ def allocate(
             samp_size_h = [math.ceil(rate * stddev[k]) for k in stratum]
         else:
             raise ValueError(
-                "Parameter 'stddev' and 'rate' must be a dictionary and number respectively!"
+                "param 'stddev' and 'rate' must be a dictionary and number respectively!"
             )
         sample_sizes = dict(zip(stratum, samp_size_h))
     elif method.lower() == "variable_rate" and isinstance(rate, dict) and pop_size is not None:
@@ -103,7 +102,7 @@ def allocate(
         sample_sizes = dict(zip(stratum, samp_size_h))
     else:
         raise ValueError(
-            "Parameter 'method' is not valid. Options are 'equal', 'proportional', 'fixed_rate', 'proportional_rate', 'equal_errors', 'optimun_mean', and 'optimun_comparison'!"
+            "param 'method' is not valid. Options are 'equal', 'propal', 'fixed_rate', 'propal_rate', 'equal_errors', 'optimun_mean', and 'optimun_comparison'!"
         )
 
     if (list(sample_sizes.values()) > np.asarray(list(pop_size.values()))).any():
@@ -123,31 +122,41 @@ def calculate_clusters() -> None:
     pass
 
 
+@dataclass
 class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
-    def __init__(
-        self, parameter: str = "proportion", method: str = "wald", stratification: bool = False
+    param: InitVar[PopParam] = field(init=True, default=PopParam.prop)
+    method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
+    strat: InitVar[bool] = field(init=True, default=False)
+
+    target: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
+    sigma: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
+    half_ci: Union[DictStrNum, Number] = field(init=False, default_factory=dict)
+
+    samp_size: Union[DictStrNum, Number] = field(init=False, default=0)
+    deff_c: Union[DictStrNum, Number] = field(init=False, default=1.0)
+    deff_w: Union[DictStrNum, Number] = field(init=False, default=1.0)
+    resp_rate: Union[DictStrNum, Number] = field(init=False, default=1.0)
+    pop_size: Optional[Union[DictStrNum, Number]] = field(init=False, default=None)
+
+    alpha: Union[DictStrNum, Number] = field(init=False, default=0.05)
+
+    def __post_init__(
+        self,
+        param: PopParam = PopParam.prop,
+        method: SizeMethod = SizeMethod.wald,
+        strat: bool = False,
     ) -> None:
 
-        self.parameter = parameter.lower()
-        self.method = method.lower()
-        if self.parameter not in ("proportion", "mean", "total"):
-            raise AssertionError("Parameter must be proportion, mean, or total.")
-        if self.parameter == "proportion" and self.method not in ("wald", "fleiss"):
-            raise AssertionError("For proportion, the method must be wald or Fleiss.")
-        if self.parameter == "mean" and self.method not in ("wald"):
-            raise AssertionError("For mean and total, the method must be wald.")
+        self.param = param
+        self.method = method
+        self.strat = strat
 
-        self.stratification = stratification
-        self.target: Union[DictStrNum, Number]
-        self.sigma: Union[DictStrNum, Number]
-        self.half_ci: Union[DictStrNum, Number]
-        self.samp_size: Union[DictStrNum, Number] = 0
-        self.deff_c: Union[DictStrNum, Number] = 1.0
-        self.deff_w: Union[DictStrNum, Number] = 1.0
-        self.resp_rate: Union[DictStrNum, Number] = 1.0
-        self.pop_size: Optional[Union[DictStrNum, Number]] = None
+        if self.param == PopParam.prop and self.method not in (SizeMethod.wald, SizeMethod.fleiss):
+            raise AssertionError("For prop, the method must be wald or Fleiss.")
+        if self.param == PopParam.mean and self.method != SizeMethod.wald:
+            raise AssertionError("For mean and total, the method must be wald.")
 
     def icc(self) -> Union[DictStrNum, Number]:
         pass  # TODO
@@ -162,7 +171,7 @@ class SampleSize:
             return max(1 + (cluster_size - 1) * icc, 0)
         elif isinstance(cluster_size, dict) and isinstance(icc, dict):
             if cluster_size.keys() != icc.keys():
-                raise AssertionError("Parameters do not have the same dictionary keys.")
+                raise AssertionError("params do not have the same dictionary keys.")
             deff_c: DictStrNum = {}
             for s in cluster_size:
                 deff_c[s] = max(1 + (cluster_size[s] - 1) * icc[s], 0)
@@ -182,23 +191,21 @@ class SampleSize:
         alpha: float = 0.05,
     ) -> None:
 
-        if self.parameter == "proportion" and target is None:
-            raise AssertionError(
-                "target must be provided to calculate sample size for proportion."
-            )
+        if self.param == PopParam.prop and target is None:
+            raise AssertionError("target must be provided to calculate sample size for prop.")
 
-        if self.parameter == "mean" and sigma is None:
+        if self.param == PopParam.mean and sigma is None:
             raise AssertionError("sigma must be provided to calculate sample size for mean.")
 
-        if self.parameter == "proportion":
+        if self.param == PopParam.prop:
             if isinstance(target, (int, float)) and not 0 <= target <= 1:
-                raise ValueError("Target for proportions must be between 0 and 1.")
+                raise ValueError("Target for props must be between 0 and 1.")
             if isinstance(target, dict):
                 for s in target:
                     if not 0 <= target[s] <= 1:
-                        raise ValueError("Target for proportions must be between 0 and 1.")
+                        raise ValueError("Target for props must be between 0 and 1.")
 
-        if self.parameter == "proportion" and sigma is None:
+        if self.param == PopParam.prop and sigma is None:
             if isinstance(target, (int, float)):
                 sigma = target * (1 - target)
             if isinstance(target, dict):
@@ -206,7 +213,7 @@ class SampleSize:
                 for s in target:
                     sigma[s] = target[s] * (1 - target[s])
 
-        if self.stratification:
+        if self.strat:
             (
                 self.half_ci,
                 self.target,
@@ -230,7 +237,7 @@ class SampleSize:
             ) = (half_ci, target, sigma, deff, resp_rate, pop_size, alpha)
 
         samp_size: Union[DictStrNum, Number]
-        if self.parameter == "proportion" and self.method == "wald":
+        if self.param == PopParam.prop and self.method == SizeMethod.wald:
             self.samp_size = calculate_ss_wald_prop(
                 half_ci=self.half_ci,
                 target=self.target,
@@ -238,18 +245,18 @@ class SampleSize:
                 deff_c=self.deff_c,
                 resp_rate=self.resp_rate,
                 alpha=self.alpha,
-                stratification=self.stratification,
+                strat=self.strat,
             )
-        elif self.parameter == "proportion" and self.method == "fleiss":
+        elif self.param == PopParam.prop and self.method == SizeMethod.fleiss:
             self.samp_size = calculate_ss_fleiss_prop(
                 half_ci=self.half_ci,
                 target=self.target,
                 deff_c=self.deff_c,
                 resp_rate=self.resp_rate,
                 alpha=self.alpha,
-                stratification=self.stratification,
+                strat=self.strat,
             )
-        elif self.parameter in ("mean", "total") and self.method == "wald":
+        elif self.param in (PopParam.mean, PopParam.total) and self.method == SizeMethod.wald:
             self.samp_size = calculate_ss_wald_mean(
                 half_ci=self.half_ci,
                 sigma=self.sigma,
@@ -257,7 +264,7 @@ class SampleSize:
                 deff_c=self.deff_c,
                 resp_rate=self.resp_rate,
                 alpha=self.alpha,
-                stratification=self.stratification,
+                strat=self.strat,
             )
 
     def to_dataframe(self, col_names: Optional[list[str]] = None) -> pd.DataFrame:
@@ -278,18 +285,18 @@ class SampleSize:
             raise AssertionError("No sample size calculated.")
         elif col_names is None:
             col_names = [
-                "_parameter",
+                "_param",
                 "_stratum",
                 "_target",
                 "_sigma",
                 "_half_ci",
                 "_samp_size",
             ]
-            if not self.stratification:
+            if not self.strat:
                 col_names.pop(1)
         else:
             ncols = len(col_names)
-            if (ncols != 6 and self.stratification) or (ncols != 5 and not self.stratification):
+            if (ncols != 6 and self.strat) or (ncols != 5 and not self.strat):
                 raise AssertionError(
                     "col_names must have 6 values for stratified design and 5 for not stratified design."
                 )
@@ -300,48 +307,52 @@ class SampleSize:
             self.half_ci,
             self.samp_size,
         )
-        est_df.iloc[:, 0] = self.parameter
+        est_df.iloc[:, 0] = self.param
 
         return est_df
 
 
+@dataclass
 class SampleSizeMeanOneSample:
     """SampleSizeMeanOneSample implements sample size calculation for mean under one-sample design"""
 
-    def __init__(
+    method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
+    strat: InitVar[bool] = field(init=True, default=False)
+    two_sides: InitVar[bool] = field(init=True, default=True)
+    params_estimated: InitVar[bool] = field(init=True, default=True)
+
+    param: PopParam = field(init=False, default=PopParam.mean)
+    mean_0: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    mean_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    epsilon: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    delta: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    sigma: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+
+    samp_size: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    actual_power: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    deff_c: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    deff_w: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    resp_rate: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    pop_size: Optional[Union[DictStrNum, Array, Number]] = field(init=False, default=None)
+
+    alpha: Union[DictStrNum, Array, Number] = field(init=False, default=0.05)
+    beta: Union[DictStrNum, Array, Number] = field(init=False, default=0.20)
+    power: Union[DictStrNum, Array, Number] = field(init=False, default=0.80)
+
+    def __post_init__(
         self,
-        method: str = "wald",
-        stratification: bool = False,
+        method: SizeMethod = SizeMethod.wald,
+        strat: bool = False,
         two_sides: bool = True,
         params_estimated: bool = True,
     ) -> None:
 
-        self.parameter = "mean"
-        self.method = method.lower()
-        if self.method not in ("wald"):
+        self.method = method
+        if self.method != SizeMethod.wald:
             raise AssertionError("The method must be wald.")
-
-        self.stratification = stratification
+        self.strat = strat
         self.two_sides = two_sides
         self.params_estimated = params_estimated
-
-        self.samp_size: Union[DictStrNum, Array, Number]
-        self.actual_power: Union[DictStrNum, Array, Number]
-
-        self.mean_0: Union[DictStrNum, Array, Number]
-        self.mean_1: Union[DictStrNum, Array, Number]
-        self.epsilon: Union[DictStrNum, Array, Number]
-        self.delta: Union[DictStrNum, Array, Number]
-        self.sigma: Union[DictStrNum, Array, Number]
-
-        self.deff_c: Union[DictStrNum, Array, Number]
-        self.deff_w: Union[DictStrNum, Array, Number]
-        self.resp_rate: Union[DictStrNum, Array, Number]
-        self.pop_size: Optional[Union[DictStrNum, Array, Number]] = None
-
-        self.alpha: Union[DictStrNum, Array, Number]
-        self.beta: Union[DictStrNum, Array, Number]
-        self.power: Union[DictStrNum, Array, Number]
 
     def calculate(
         self,
@@ -357,7 +368,7 @@ class SampleSizeMeanOneSample:
         power: Union[DictStrNum, Array, Number] = 0.80,
     ) -> None:
 
-        if self.stratification:
+        if self.strat:
             (
                 self.mean_0,
                 self.mean_1,
@@ -403,7 +414,7 @@ class SampleSizeMeanOneSample:
                 power,
             )
 
-        if self.stratification:
+        if self.strat:
             epsilon: DictStrNum = {}
             for s in mean_0:
                 epsilon[s] = mean_1[s] - mean_0[s]
@@ -420,10 +431,10 @@ class SampleSizeMeanOneSample:
             resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
-            stratification=self.stratification,
+            strat=self.strat,
         )
 
-        if self.stratification:
+        if self.strat:
             actual_power: DictStrNum = {}
             for k in self.samp_size:
                 actual_power[k] = calculate_power(
@@ -440,43 +451,47 @@ class SampleSizeMeanOneSample:
             )
 
 
+@dataclass
 class SampleSizePropOneSample:
     """SampleSizePropOneSample implements sample size calculation for propoertion under one-sample design"""
 
+    method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
+    strat: InitVar[bool] = field(init=True, default=False)
+    two_sides: InitVar[bool] = field(init=True, default=True)
+    params_estimated: InitVar[bool] = field(init=True, default=True)
+
+    param: PopParam = field(init=False, default=PopParam.mean)
+    prop_0: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    prop_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    delta: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    sigma: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+
+    samp_size: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    actual_power: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    deff_c: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    deff_w: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    resp_rate: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    pop_size: Optional[Union[DictStrNum, Array, Number]] = field(init=False, default=None)
+
+    alpha: Union[DictStrNum, Array, Number] = field(init=False, default=0.05)
+    beta: Union[DictStrNum, Array, Number] = field(init=False, default=0.20)
+    power: Union[DictStrNum, Array, Number] = field(init=False, default=0.80)
+
     def __init__(
         self,
-        method: str = "wald",
-        stratification: bool = False,
+        method: SizeMethod = SizeMethod.wald,
+        strat: bool = False,
         two_sides: bool = True,
         params_estimated: bool = True,
     ) -> None:
 
-        self.parameter = "proportion"
-        self.method = method.lower()
-        if self.method not in ("wald"):
+        self.param = PopParam.prop
+        self.method = method
+        if self.method != SizeMethod.wald:
             raise AssertionError("The method must be wald.")
-
-        self.stratification = stratification
+        self.strat = strat
         self.two_sides = two_sides
         self.params_estimated = params_estimated
-
-        self.samp_size: Union[DictStrNum, Number]
-        self.actual_power: Union[DictStrNum, Number]
-
-        self.prop_0: Union[DictStrNum, Number]
-        self.prop_1: Union[DictStrNum, Number]
-        self.epsilon: Union[DictStrNum, Number]
-        self.delta: Union[DictStrNum, Number]
-        self.sigma: Union[DictStrNum, Number]
-
-        self.deff_c: Union[DictStrNum, Number]
-        self.deff_w: Union[DictStrNum, Number]
-        self.resp_rate: Union[DictStrNum, Number]
-        self.pop_size: Optional[Union[DictStrNum, Number]] = None
-
-        self.alpha: Union[DictStrNum, Number]
-        self.beta: Union[DictStrNum, Number]
-        self.power: Union[DictStrNum, Number]
 
     def calculate(
         self,
@@ -493,7 +508,7 @@ class SampleSizePropOneSample:
         power: Union[DictStrNum, Array, Number] = 0.80,
     ) -> None:
 
-        if self.stratification:
+        if self.strat:
             (
                 self.prop_0,
                 self.prop_1,
@@ -535,7 +550,7 @@ class SampleSizePropOneSample:
                 power,
             )
 
-        if self.stratification:
+        if self.strat:
             epsilon: DictStrNum = {}
             sigma: DictStrNum = {}
             for s in prop_0:
@@ -559,10 +574,10 @@ class SampleSizePropOneSample:
             resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
-            stratification=self.stratification,
+            strat=self.strat,
         )
 
-        if self.stratification:
+        if self.strat:
             actual_power: DictStrNum = {}
             for k in self.samp_size:
                 actual_power[k] = calculate_power(
@@ -579,45 +594,51 @@ class SampleSizePropOneSample:
             )
 
 
+@dataclass
 class SampleSizeMeanTwoSample:
     """SampleSizeMeanTwoSample implements sample size calculation for mean under two-sample design"""
 
+    method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
+    strat: InitVar[bool] = field(init=True, default=False)
+    two_sides: InitVar[bool] = field(init=True, default=True)
+    params_estimated: InitVar[bool] = field(init=True, default=True)
+
+    param: PopParam = field(init=False, default=PopParam.mean)
+    mean_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    mean_2: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    epsilon: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    delta: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    sigma_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    sigma_2: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    equal_var: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+
+    samp_size: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    actual_power: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    deff_c: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    deff_w: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    resp_rate: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    pop_size: Optional[Union[DictStrNum, Array, Number]] = field(init=False, default=None)
+
+    alpha: Union[DictStrNum, Array, Number] = field(init=False, default=0.05)
+    beta: Union[DictStrNum, Array, Number] = field(init=False, default=0.20)
+    power: Union[DictStrNum, Array, Number] = field(init=False, default=0.80)
+
     def __init__(
         self,
-        method: str = "wald",
-        stratification: bool = False,
+        method: SizeMethod = SizeMethod.wald,
+        strat: bool = False,
         two_sides: bool = True,
         params_estimated: bool = True,
     ) -> None:
 
-        self.parameter = "mean"
-        self.method = method.lower()
-        if self.method not in ("wald"):
+        self.param = PopParam.mean
+        self.method = method
+        if self.method != SizeMethod.wald:
             raise AssertionError("The method must be wald.")
 
-        self.stratification = stratification
+        self.strat = strat
         self.two_sides = two_sides
         self.params_estimated = params_estimated
-
-        self.samp_size: Union[DictStrNum, Array, Number]
-        self.actual_power: Union[DictStrNum, Array, Number]
-
-        self.mean_1: Union[DictStrNum, Array, Number]
-        self.mean_2: Union[DictStrNum, Array, Number]
-        self.epsilon: Union[DictStrNum, Array, Number]
-        self.delta: Union[DictStrNum, Array, Number]
-        self.sigma_1: Union[DictStrNum, Array, Number]
-        self.sigma_2: Union[DictStrNum, Array, Number]
-        self.equal_variance: Union[DictStrNum, Array, Number]
-
-        self.deff_c: Union[DictStrNum, Array, Number]
-        self.deff_w: Union[DictStrNum, Array, Number]
-        self.resp_rate: Union[DictStrNum, Array, Number]
-        self.pop_size: Optional[Union[DictStrNum, Array, Number]] = None
-
-        self.alpha: Union[DictStrNum, Array, Number]
-        self.beta: Union[DictStrNum, Array, Number]
-        self.power: Union[DictStrNum, Array, Number]
 
     def calculate(
         self,
@@ -625,7 +646,7 @@ class SampleSizeMeanTwoSample:
         mean_2: Union[DictStrNum, Array, Number],
         sigma_1: Union[DictStrNum, Array, Number],
         sigma_2: Optional[Union[DictStrNum, Array, Number]] = None,
-        equal_variance: Union[DictStrNum, Array, Number] = True,
+        equal_var: Union[DictStrNum, Array, Number] = True,
         kappa: Optional[Union[DictStrNum, Array, Number]] = 1,
         delta: Union[DictStrNum, Array, Number] = 0.0,
         deff: Union[DictStrNum, Array, Number] = 1.0,
@@ -636,13 +657,13 @@ class SampleSizeMeanTwoSample:
         power: Union[DictStrNum, Array, Number] = 0.80,
     ) -> None:
 
-        if self.stratification:
+        if self.strat:
             (
                 self.mean_1,
                 self.mean_2,
                 self.sigma_1,
                 self.sigma_2,
-                self.equal_variance,
+                self.equal_var,
                 self.kappa,
                 self.delta,
                 self.deff_c,
@@ -656,7 +677,7 @@ class SampleSizeMeanTwoSample:
                 mean_2,
                 sigma_1,
                 sigma_2,
-                equal_variance,
+                equal_var,
                 kappa,
                 delta,
                 deff,
@@ -671,7 +692,7 @@ class SampleSizeMeanTwoSample:
                 self.mean_2,
                 self.sigma_1,
                 self.sigma_2,
-                self.equal_variance,
+                self.equal_var,
                 self.kappa,
                 self.delta,
                 self.deff_c,
@@ -684,7 +705,7 @@ class SampleSizeMeanTwoSample:
                 mean_2,
                 sigma_1,
                 sigma_2,
-                equal_variance,
+                equal_var,
                 kappa,
                 delta,
                 deff,
@@ -694,7 +715,7 @@ class SampleSizeMeanTwoSample:
                 power,
             )
 
-        if self.stratification:
+        if self.strat:
             epsilon: DictStrNum = {}
             for s in mean_1:
                 epsilon[s] = mean_2[s] - mean_1[s]
@@ -708,16 +729,16 @@ class SampleSizeMeanTwoSample:
             delta=self.delta,
             sigma_1=self.sigma_1,
             sigma_2=self.sigma_2,
-            equal_variance=self.equal_variance,
+            equal_var=self.equal_var,
             kappa=kappa,
             deff_c=self.deff_c,
             resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
-            stratification=self.stratification,
+            strat=self.strat,
         )
 
-        # if self.stratification:
+        # if self.strat:
         #     for k in self.samp_size:
         #         self.actual_power[k] = calculate_power(
         #             self.two_sides,
@@ -732,42 +753,48 @@ class SampleSizeMeanTwoSample:
         #     )
 
 
+@dataclass
 class SampleSizePropTwoSample:
     """SampleSizeMeanTwoSample implements sample size calculation for mean under two-sample design"""
 
+    method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
+    strat: InitVar[bool] = field(init=True, default=False)
+    two_sides: InitVar[bool] = field(init=True, default=True)
+    params_estimated: InitVar[bool] = field(init=True, default=True)
+
+    param: PopParam = field(init=False, default=PopParam.mean)
+    prop_1: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    prop_2: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    epsilon: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+    delta: Union[DictStrNum, Array, Number] = field(init=False, default_factory=dict)
+
+    samp_size: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    actual_power: Union[DictStrNum, Array, Number] = field(init=False, default=0)
+    deff_c: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    deff_w: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    resp_rate: Union[DictStrNum, Array, Number] = field(init=False, default=1.0)
+    pop_size: Optional[Union[DictStrNum, Array, Number]] = field(init=False, default=None)
+
+    alpha: Union[DictStrNum, Array, Number] = field(init=False, default=0.05)
+    beta: Union[DictStrNum, Array, Number] = field(init=False, default=0.20)
+    power: Union[DictStrNum, Array, Number] = field(init=False, default=0.80)
+
     def __init__(
         self,
-        method: str = "wald",
-        stratification: bool = False,
+        method: SizeMethod = SizeMethod.wald,
+        strat: bool = False,
         two_sides: bool = True,
         params_estimated: bool = True,
     ) -> None:
 
-        self.parameter = "proportion"
-        self.method = method.lower()
-        if self.method not in ("wald"):
+        self.param = PopParam.prop
+        self.method = method
+        if self.method != SizeMethod.wald:
             raise AssertionError("The method must be wald.")
 
-        self.stratification = stratification
+        self.strat = strat
         self.two_sides = two_sides
         self.params_estimated = params_estimated
-
-        self.samp_size: Union[DictStrNum, Array, Number]
-        self.actual_power: Union[DictStrNum, Array, Number]
-
-        self.prop_1: Union[DictStrNum, Array, Number]
-        self.prop_2: Union[DictStrNum, Array, Number]
-        self.epsilon: Union[DictStrNum, Array, Number]
-        self.delta: Union[DictStrNum, Array, Number]
-
-        self.deff_c: Union[DictStrNum, Array, Number]
-        self.deff_w: Union[DictStrNum, Array, Number]
-        self.resp_rate: Union[DictStrNum, Array, Number]
-        self.pop_size: Optional[Union[DictStrNum, Array, Number]] = None
-
-        self.alpha: Union[DictStrNum, Array, Number]
-        self.beta: Union[DictStrNum, Array, Number]
-        self.power: Union[DictStrNum, Array, Number]
 
     def calculate(
         self,
@@ -783,7 +810,7 @@ class SampleSizePropTwoSample:
         power: Union[DictStrNum, Array, Number] = 0.80,
     ) -> None:
 
-        if self.stratification:
+        if self.strat:
             (
                 self.prop_1,
                 self.prop_2,
@@ -829,7 +856,7 @@ class SampleSizePropTwoSample:
                 power,
             )
 
-        if self.stratification:
+        if self.strat:
             epsilon: DictStrNum = {}
             for s in prop_1:
                 epsilon[s] = prop_2[s] - prop_1[s]
@@ -848,10 +875,10 @@ class SampleSizePropTwoSample:
             resp_rate=self.resp_rate,
             alpha=self.alpha,
             power=self.power,
-            stratification=self.stratification,
+            strat=self.strat,
         )
 
-        # if self.stratification:
+        # if self.strat:
         #     for k in self.samp_size:
         #         self.actual_power[k] = calculate_power(
         #             self.two_sides,

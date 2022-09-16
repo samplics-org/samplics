@@ -30,7 +30,12 @@ def test_jkn_mean():
 def test_jkn_mean_d():
     jkn_mean_d = ReplicateEstimator("jackknife", "mean")
     jkn_mean_d.estimate(
-        y_jkn, sample_wgt_jkn, rep_wgt_jkn, domain=domain_jkn, conservative=False, remove_nan=True,
+        y_jkn,
+        sample_wgt_jkn,
+        rep_wgt_jkn,
+        domain=domain_jkn,
+        conservative=False,
+        remove_nan=True,
     )
     jkn_var_d = jkn_mean_d.variance
     jkn_stderr_d1 = pow(jkn_var_d.get(1), 0.5)
@@ -49,7 +54,11 @@ jkn_total = jkn_mean = ReplicateEstimator("jackknife", "total")
 def test_jkn_total():
     jkn_total = ReplicateEstimator("jackknife", "total")
     jkn_total.estimate(
-        female_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True,
+        female_jkn,
+        sample_wgt_jkn,
+        rep_wgt_jkn,
+        conservative=False,
+        remove_nan=True,
     )
     jkn_var = jkn_total.variance
     jkn_stderr = pow(jkn_var, 0.5)
@@ -92,7 +101,12 @@ def test_jkn_prop():
 def test_jkn_prop_d():
     jkn_prop_d = ReplicateEstimator("jackknife", "proportion")
     jkn_prop_d.estimate(
-        z_jkn, sample_wgt_jkn, rep_wgt_jkn, domain=domain_jkn, conservative=False, remove_nan=True,
+        z_jkn,
+        sample_wgt_jkn,
+        rep_wgt_jkn,
+        domain=domain_jkn,
+        conservative=False,
+        remove_nan=True,
     )
     jkn_var_d = jkn_prop_d.variance
     jkn_stderr_d1_1 = pow(jkn_var_d.get(1)[1], 0.5)
@@ -124,7 +138,12 @@ def test_jkn_prop_d():
 def test_jkn_ratio():
     jkn_ratio = ReplicateEstimator("jackknife", "ratio")
     jkn_ratio.estimate(
-        y_jkn, sample_wgt_jkn, rep_wgt_jkn, x=x_jkn, conservative=False, remove_nan=True,
+        y_jkn,
+        sample_wgt_jkn,
+        rep_wgt_jkn,
+        x=x_jkn,
+        conservative=False,
+        remove_nan=True,
     )
     jkn_var = jkn_ratio.variance
     jkn_stderr = pow(jkn_var, 0.5)
@@ -202,7 +221,11 @@ def test_brr_mean_d():
 def test_brr_total():
     brr_total = ReplicateEstimator("brr", "total")
     brr_total.estimate(
-        female_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True,
+        female_brr,
+        sample_wgt_brr,
+        rep_wgt_brr,
+        conservative=False,
+        remove_nan=True,
     )
     brr_var = brr_total.variance
     brr_stderr = pow(brr_var, 0.5)
@@ -244,7 +267,12 @@ def test_brr_prop():
 def test_brr_prop_d():
     brr_prop_d = ReplicateEstimator("brr", "proportion")
     brr_prop_d.estimate(
-        z_brr, sample_wgt_brr, rep_wgt_brr, domain=domain_brr, conservative=False, remove_nan=True,
+        z_brr,
+        sample_wgt_brr,
+        rep_wgt_brr,
+        domain=domain_brr,
+        conservative=False,
+        remove_nan=True,
     )
     brr_var_d = brr_prop_d.variance
     brr_stderr_d1_0 = pow(brr_var_d.get(1)[0.0], 0.5)
@@ -268,7 +296,12 @@ def test_brr_prop_d():
 def test_brr_ratio():
     brr_ratio = ReplicateEstimator("brr", "ratio")
     brr_ratio.estimate(
-        y_brr, sample_wgt_brr, rep_wgt_brr, x=x_brr, conservative=False, remove_nan=True,
+        y_brr,
+        sample_wgt_brr,
+        rep_wgt_brr,
+        x=x_brr,
+        conservative=False,
+        remove_nan=True,
     )
     brr_var = brr_ratio.variance
     brr_stderr = pow(brr_var, 0.5)
@@ -325,7 +358,12 @@ def test_fay_mean():
 def test_fay_mean_d():
     fay_mean_d = ReplicateEstimator("brr", "mean", fay_coef=fay_coef)
     fay_mean_d.estimate(
-        y_fay, sample_wgt_fay, rep_wgt_fay, domain=domain_fay, conservative=False, remove_nan=True,
+        y_fay,
+        sample_wgt_fay,
+        rep_wgt_fay,
+        domain=domain_fay,
+        conservative=False,
+        remove_nan=True,
     )
     fay_var_d = fay_mean_d.variance
     fay_stderr_d1 = pow(fay_var_d.get(1), 0.5)
@@ -341,7 +379,11 @@ def test_fay_mean_d():
 def test_fay_total():
     fay_total = ReplicateEstimator("brr", "total", fay_coef=fay_coef)
     fay_total.estimate(
-        female_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True,
+        female_fay,
+        sample_wgt_fay,
+        rep_wgt_fay,
+        conservative=False,
+        remove_nan=True,
     )
     fay_var = fay_total.variance
     fay_stderr = pow(fay_var, 0.5)
@@ -382,7 +424,12 @@ def test_fay_prop():
 def test_fay_prop_d():
     fay_prop_d = ReplicateEstimator("brr", "proportion", fay_coef=fay_coef)
     fay_prop_d.estimate(
-        z_fay, sample_wgt_fay, rep_wgt_fay, domain=domain_fay, conservative=False, remove_nan=True,
+        z_fay,
+        sample_wgt_fay,
+        rep_wgt_fay,
+        domain=domain_fay,
+        conservative=False,
+        remove_nan=True,
     )
     fay_var_d = fay_prop_d.variance
     fay_stderr_d1_0 = pow(fay_var_d.get(1)[0.0], 0.5)
@@ -406,7 +453,12 @@ def test_fay_prop_d():
 def test_fay_ratio():
     fay_ratio = ReplicateEstimator("brr", "ratio", fay_coef=fay_coef)
     fay_ratio.estimate(
-        y_fay, sample_wgt_fay, rep_wgt_fay, x=x_fay, conservative=False, remove_nan=True,
+        y_fay,
+        sample_wgt_fay,
+        rep_wgt_fay,
+        x=x_fay,
+        conservative=False,
+        remove_nan=True,
     )
     fay_var = fay_ratio.variance
     fay_stderr = pow(fay_var, 0.5)
@@ -453,7 +505,11 @@ rep_wgt_boot = rep_wgt_boot.values
 def test_boot_mean():
     boot_mean = ReplicateEstimator("bootstrap", "mean")
     boot_mean.estimate(
-        y_boot, sample_wgt_boot, rep_wgt_boot, conservative=False, remove_nan=True,
+        y_boot,
+        sample_wgt_boot,
+        rep_wgt_boot,
+        conservative=False,
+        remove_nan=True,
     )
     boot_var = boot_mean.variance
     boot_stderr = pow(boot_var, 0.5)
@@ -486,7 +542,11 @@ def test_boot_mean_d():
 def test_boot_total():
     boot_total = ReplicateEstimator("bootstrap", "total")
     boot_total.estimate(
-        married_boot, sample_wgt_boot, rep_wgt_boot, conservative=False, remove_nan=True,
+        married_boot,
+        sample_wgt_boot,
+        rep_wgt_boot,
+        conservative=False,
+        remove_nan=True,
     )
     boot_var = boot_total.variance
     boot_stderr = pow(boot_var, 0.5)
@@ -519,7 +579,11 @@ def test_boot_total_d():
 def test_boot_prop():
     boot_prop = ReplicateEstimator("bootstrap", "proportion")
     boot_prop.estimate(
-        z_boot, sample_wgt_boot, rep_wgt_boot, conservative=False, remove_nan=True,
+        z_boot,
+        sample_wgt_boot,
+        rep_wgt_boot,
+        conservative=False,
+        remove_nan=True,
     )
     boot_var = boot_prop.variance
     boot_stderr_0 = pow(boot_var[0.0], 0.5)
@@ -564,7 +628,12 @@ def test_boot_prop_d():
 def test_boot_ratio():
     boot_ratio = ReplicateEstimator("bootstrap", "ratio")
     boot_ratio.estimate(
-        y_boot, sample_wgt_boot, rep_wgt_boot, x=x_boot, conservative=False, remove_nan=True,
+        y_boot,
+        sample_wgt_boot,
+        rep_wgt_boot,
+        x=x_boot,
+        conservative=False,
+        remove_nan=True,
     )
     boot_var = boot_ratio.variance
     boot_stderr = pow(boot_var, 0.5)

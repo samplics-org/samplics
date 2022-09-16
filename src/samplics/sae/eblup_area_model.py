@@ -128,7 +128,7 @@ class EblupAreaModel:
         b_const: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
 
-        V = np.diag(sigma2_v * (b_const ** 2) + sigma2_e)
+        V = np.diag(sigma2_v * (b_const**2) + sigma2_e)
         V_inv = np.linalg.inv(V)
         x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
         x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
@@ -188,14 +188,14 @@ class EblupAreaModel:
                 yhat_d = yhat[area == d]
                 mu_d = np.matmul(X_d, beta)
                 resid_d = yhat_d - mu_d
-                sigma2_d = sigma2_v * (b_d ** 2) + phi_d
-                term1 = float(b_d ** 2 / sigma2_d)
-                term2 = float(((b_d ** 2) * (resid_d ** 2)) / (sigma2_d ** 2))
+                sigma2_d = sigma2_v * (b_d**2) + phi_d
+                term1 = float(b_d**2 / sigma2_d)
+                term2 = float(((b_d**2) * (resid_d**2)) / (sigma2_d**2))
                 deriv_sigma += -0.5 * (term1 - term2)
-                info_sigma += 0.5 * (term1 ** 2)
+                info_sigma += 0.5 * (term1**2)
         elif self.method == "REML":
-            B = np.diag(b_const ** 2)
-            v_i = sigma2_e + sigma2_v * (b_const ** 2)
+            B = np.diag(b_const**2)
+            v_i = sigma2_e + sigma2_v * (b_const**2)
             V = np.diag(v_i)
             v_inv = np.linalg.inv(V)
             x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
@@ -223,9 +223,9 @@ class EblupAreaModel:
                 yhat_d = yhat[area == d]
                 mu_d = np.dot(X_d, beta)
                 resid_d = yhat_d - mu_d
-                sigma2_d = sigma2_v * (b_d ** 2) + phi_d
-                deriv_sigma += float((resid_d ** 2) / sigma2_d)
-                info_sigma += -float(((b_d ** 2) * (resid_d ** 2)) / (sigma2_d ** 2))
+                sigma2_d = sigma2_v * (b_d**2) + phi_d
+                deriv_sigma += float((resid_d**2) / sigma2_d)
+                info_sigma += -float(((b_d**2) * (resid_d**2)) / (sigma2_d**2))
             m = yhat.size
             p = X.shape[1]
             deriv_sigma = m - p - deriv_sigma
@@ -287,7 +287,7 @@ class EblupAreaModel:
     ]:
 
         m = self.yhat.size
-        v_i = sigma2_e + sigma2_v * (b_const ** 2)
+        v_i = sigma2_e + sigma2_v * (b_const**2)
         V_inv = np.diag(1 / v_i)
         G = np.diag(np.ones(m) * sigma2_v)
 
@@ -299,7 +299,7 @@ class EblupAreaModel:
         g2_term = np.linalg.inv(x_vinv_x)
 
         b_term_ml1 = np.linalg.inv(x_vinv_x)
-        b_term_ml2_diag = (b_const ** 2) / (v_i ** 2)
+        b_term_ml2_diag = (b_const**2) / (v_i**2)
         b_term_ml2 = np.matmul(np.matmul(np.transpose(X), np.diag(b_term_ml2_diag)), X)
         b_term_ml = float(np.trace(np.matmul(b_term_ml1, b_term_ml2)))
 
@@ -311,7 +311,7 @@ class EblupAreaModel:
 
         g1_partial = np.array(self.yhat) * np.nan
 
-        sum_inv_vi2 = np.sum(1 / (v_i ** 2))
+        sum_inv_vi2 = np.sum(1 / (v_i**2))
         b_sigma2_v = 0.0
         if self.method == "REML":
             g3_scale = 2.0 / sum_inv_vi2
@@ -320,8 +320,8 @@ class EblupAreaModel:
             g3_scale = 2.0 / sum_inv_vi2
         elif self.method == "FH":
             sum_vi = np.sum((1 / v_i))
-            b_sigma2_v = 2.0 * (m * sum_inv_vi2 - sum_vi ** 2) / (sum_vi ** 3)
-            g3_scale = 2.0 * m / sum_vi ** 2
+            b_sigma2_v = 2.0 * (m * sum_inv_vi2 - sum_vi**2) / (sum_vi**3)
+            g3_scale = 2.0 * m / sum_vi**2
         else:
             g3_scale = 0.0
 
@@ -332,15 +332,15 @@ class EblupAreaModel:
             yhat_d = self.yhat[area == d]
             mu_d = np.matmul(X_d, beta)
             resid_d = yhat_d - mu_d
-            variance_d = sigma2_v * (b_d ** 2) + phi_d
-            gamma_d = sigma2_v * (b_d ** 2) / variance_d
+            variance_d = sigma2_v * (b_d**2) + phi_d
+            gamma_d = sigma2_v * (b_d**2) / variance_d
             estimates[area == d] = gamma_d * yhat_d + (1 - gamma_d) * mu_d
             g1[area == d] = gamma_d * phi_d
             g2_term_d = np.matmul(np.matmul(X_d, g2_term), np.transpose(X_d))
             g2[area == d] = ((1 - gamma_d) ** 2) * float(g2_term_d)
             g3[area == d] = ((1 - gamma_d) ** 2) * g3_scale / variance_d
-            g3_star[area == d] = (g3[area == d] / variance_d) * (resid_d ** 2)
-            g1_partial[area == d] = (b_d ** 2) * ((1 - gamma_d) ** 2) * b_sigma2_v
+            g3_star[area == d] = (g3[area == d] / variance_d) * (resid_d**2)
+            g1_partial[area == d] = (b_d**2) * ((1 - gamma_d) ** 2) * b_sigma2_v
 
         mse = 0
         mse1_area_specific = 0
@@ -419,9 +419,9 @@ class EblupAreaModel:
             area=area,
             yhat=yhat,
             X=X,
-            sigma2_e=error_std ** 2,
+            sigma2_e=error_std**2,
             b_const=b_const,
-            sigma2_v_start=re_std_start ** 2,
+            sigma2_v_start=re_std_start**2,
             tol=tol,
             maxiter=maxiter,
         )
@@ -430,7 +430,7 @@ class EblupAreaModel:
             area=area,
             yhat=yhat,
             X=X,
-            sigma2_e=error_std ** 2,
+            sigma2_e=error_std**2,
             sigma2_v=sigma2_v,
             b_const=b_const,
         )
@@ -451,7 +451,7 @@ class EblupAreaModel:
         m = yhat.size
         p = X.shape[1] + 1
         Z_b2_Z = np.ones(shape=(m, m))
-        V = np.diag(error_std ** 2) + sigma2_v * Z_b2_Z
+        V = np.diag(error_std**2) + sigma2_v * Z_b2_Z
         logllike = self._log_likelihood(yhat, X=X, beta=self.fixed_effects, V=V)
         self.goodness["loglike"] = logllike
         self.goodness["AIC"] = -2 * logllike + 2 * (p + 1)
@@ -498,8 +498,8 @@ class EblupAreaModel:
             X=X,
             area=area,
             beta=self.fixed_effects,
-            sigma2_e=self.error_std ** 2,
-            sigma2_v=self.re_std ** 2,
+            sigma2_e=self.error_std**2,
+            sigma2_v=self.re_std**2,
             sigma2_v_cov=self.re_std_cov,
             b_const=b_const,
         )

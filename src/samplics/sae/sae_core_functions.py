@@ -59,7 +59,7 @@ def area_stats(
         y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
         Xw_d = X[sample_d, :] * aw_factor_d[:, None]
         X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
-        gamma[k] = (re_std ** 2) / (re_std ** 2 + (error_std ** 2) * delta_d)
+        gamma[k] = (re_std**2) / (re_std**2 + (error_std**2) * delta_d)
         samp_size[k] = np.sum(sample_d)
 
     return y_mean, X_mean, gamma, samp_size.astype(int)
@@ -120,11 +120,11 @@ def covariance(
     V = np.zeros((n, n))
     for i, d in enumerate(areas):
         nd, scale_d = areas_size[i], scale[area == d]
-        Rd = (error_std ** 2) * np.diag(scale_d)
+        Rd = (error_std**2) * np.diag(scale_d)
         Zd = np.ones((nd, nd))
         start = 0 if i == 0 else sum(areas_size[:i])
         end = n if i == areas.size - 1 else sum(areas_size[: (i + 1)])
-        V[start:end, start:end] = Rd + (re_std ** 2) * Zd
+        V[start:end, start:end] = Rd + (re_std**2) * Zd
 
     return V
 
@@ -147,14 +147,14 @@ def inverse_covariance(
         np.ndarray: inverse of the covariance matrix
     """
 
-    sigma2e = error_std ** 2
-    sigma2u = re_std ** 2
+    sigma2e = error_std**2
+    sigma2u = re_std**2
     n = area.shape[0]
     areas, areas_size = np.unique(area, return_counts=True)
     V_inv = np.zeros((n, n))
     for i, d in enumerate(areas):
         _, scale_d = areas_size[i], scale[area == d]
-        a_d = 1 / (scale_d ** 2)
+        a_d = 1 / (scale_d**2)
         sum_scale_d = np.sum(a_d)
         start = 0 if i == 0 else sum(areas_size[:i])
         end = n if i == areas.size - 1 else sum(areas_size[: (i + 1)])
@@ -182,8 +182,8 @@ def log_det_covariance(
         float: logarithm of the determinant of the covariance matrix.
     """
 
-    sigma2e = error_std ** 2
-    sigma2u = re_std ** 2
+    sigma2e = error_std**2
+    sigma2u = re_std**2
     det = 0
     for d in np.unique(area):
         nd = np.sum(area == d)
@@ -276,7 +276,7 @@ def partial_derivatives(
             scale_d = scale[aread]
             nd = np.sum(aread)
             V_inv = inverse_covariance(area_d, error_std, re_std, scale_d)
-            V_e = np.diag((scale_d ** 2))
+            V_e = np.diag((scale_d**2))
             V_u = np.ones((nd, nd))
             V_inv_e = -np.matmul(V_inv @ V_e, V_inv)
             V_inv_u = -np.matmul(V_inv @ V_u, V_inv)
@@ -308,7 +308,7 @@ def partial_derivatives(
     elif method == "REML":
         n = y.shape[0]
         V_inv = inverse_covariance(area, error_std, re_std, scale)
-        V_e = np.diag((scale ** 2))
+        V_e = np.diag((scale**2))
         V_u = np.ones((n, n))
         x_vinv_x = np.transpose(X) @ V_inv @ X
         x_xvinvx_x = X @ np.linalg.inv(x_vinv_x) @ np.transpose(X)

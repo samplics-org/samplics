@@ -1,3 +1,9 @@
+from samplics.sampling.power_functions import (
+    calculate_power,
+    calculate_power_prop,
+    power_for_one_mean,
+    power_for_one_proportion,
+)
 from samplics.sampling.selection import SampleSelection
 from samplics.sampling.size import (
     SampleSize,
@@ -6,17 +12,9 @@ from samplics.sampling.size import (
     SampleSizePropOneSample,
     SampleSizePropTwoSample,
     allocate,
-)
-from samplics.sampling.size import (
     calculate_ss_fleiss_prop,
-    calculate_ss_wald_prop,
     calculate_ss_wald_mean,
-)
-from samplics.sampling.power_functions import (
-    calculate_power,
-    calculate_power_prop,
-    power_for_one_mean,
-    power_for_one_proportion,
+    calculate_ss_wald_prop,
 )
 
 

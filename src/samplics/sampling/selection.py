@@ -18,15 +18,25 @@ from __future__ import annotations
 
 import math
 
+from dataclasses import dataclass
 from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 
 from samplics.utils import formats
-from samplics.utils.types import Array, DictStrFloat, DictStrInt, DictStrNum, Number, StringNumber
+from samplics.utils.types import (
+    Array,
+    DictStrFloat,
+    DictStrInt,
+    DictStrNum,
+    Number,
+    SelectMethod,
+    StringNumber,
+)
 
 
+@dataclass
 class SampleSelection:
     """*SampleSelection* implements a number of sampling selection algorithms.
 

@@ -293,7 +293,7 @@ class EbUnitModel:
                     size=cycle_size,
                 )
                 errors = np.random.normal(
-                    scale=scale_dr * (sigma2e ** 0.5), size=(cycle_size, N_dr)
+                    scale=scale_dr * (sigma2e**0.5), size=(cycle_size, N_dr)
                 )
                 y_dr_j = mu_dr[None, :] + mu_bias_dr + re_effects[:, None] + errors
                 if j == 0:
@@ -396,8 +396,8 @@ class EbUnitModel:
             self.arear_list,
             self.fixed_effects,
             np.asarray(list(self.gamma.values())),
-            self.error_std ** 2,
-            self.re_std ** 2,
+            self.error_std**2,
+            self.re_std**2,
             scaler,
             intercept,
             max_array_length,

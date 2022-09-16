@@ -269,8 +269,8 @@ class EllUnitModel:
             for j in range(number_cycles + 1):
                 if j == number_cycles:
                     cycle_size = last_cycle_size
-                re_effects = np.random.normal(scale=sigma2u ** 0.5, size=cycle_size)
-                errors = np.random.normal(scale=scale_d * (sigma2e ** 0.5), size=(cycle_size, N_d))
+                re_effects = np.random.normal(scale=sigma2u**0.5, size=cycle_size)
+                errors = np.random.normal(scale=scale_d * (sigma2e**0.5), size=(cycle_size, N_d))
                 y_d_j = mu_d[None, :] + re_effects[:, None] + errors
                 if j == 0:
                     y_d = y_d_j
@@ -433,8 +433,8 @@ class EllUnitModel:
                 indicator,
                 mu,
                 area,
-                self.re_std ** 2,
-                self.error_std ** 2,
+                self.re_std**2,
+                self.error_std**2,
                 scale,
                 max_array_length,
                 show_progress,

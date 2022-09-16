@@ -23,10 +23,10 @@ def test_survey_glm_not_stratified_srs():
     assert np.isclose(svyglm.beta[2], -3.141535)
     assert np.isclose(svyglm.beta[3], 0.2257132)
 
-    assert np.isclose(svyglm.cov_beta[0, 0], 10.97091 ** 2)
-    assert np.isclose(svyglm.cov_beta[1, 1], 0.3971755 ** 2)
-    assert np.isclose(svyglm.cov_beta[2, 2], 0.2917333 ** 2)
-    assert np.isclose(svyglm.cov_beta[3, 3], 0.4012498 ** 2)
+    assert np.isclose(svyglm.cov_beta[0, 0], 10.97091**2)
+    assert np.isclose(svyglm.cov_beta[1, 1], 0.3971755**2)
+    assert np.isclose(svyglm.cov_beta[2, 2], 0.2917333**2)
+    assert np.isclose(svyglm.cov_beta[3, 3], 0.4012498**2)
 
 
 def test_survey_glm_stratified_srs():
@@ -38,7 +38,7 @@ def test_survey_glm_stratified_srs():
     assert np.isclose(svyglm.beta[2], -3.141535)
     assert np.isclose(svyglm.beta[3], 0.2257132)
 
-    assert np.isclose(svyglm.cov_beta[0, 0], 10.25649 ** 2)
-    assert np.isclose(svyglm.cov_beta[1, 1], 0.3977075 ** 2)
-    assert np.isclose(svyglm.cov_beta[2, 2], 0.2883001 ** 2)
-    assert np.isclose(svyglm.cov_beta[3, 3], 0.4026908 ** 2)
+    assert np.isclose(svyglm.cov_beta[0, 0], 10.25649**2)
+    assert np.isclose(svyglm.cov_beta[1, 1], 0.3977075**2)
+    assert np.isclose(svyglm.cov_beta[2, 2], 0.2883001**2)
+    assert np.isclose(svyglm.cov_beta[3, 3], 0.4026908**2)

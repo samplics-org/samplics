@@ -1,29 +1,30 @@
 import pytest
 
 from samplics.sampling import SampleSize
+from samplics.utils import PopParam, SizeMethod
 
 
 @pytest.mark.xfail(strict=True, reason="Invalid method for proprotion")
-def test_size_invalid_method_for_proportion():
-    SampleSize(parameter="proportion", method="Whatever")
+def test_size_invalid_method_for_prop():
+    SampleSize(param=PopParam.prop, method="Whatever")
 
 
 @pytest.mark.xfail(strict=True, reason="Invalid method for mean")
 def test_size_invalid_method_for_mean():
-    SampleSize(parameter="mean", method="fleiss")
+    SampleSize(param=PopParam.mean, method=SizeMethod.fleiss)
 
 
 # NOT-STRATIFIED Wald's method
-size_mean_nat = SampleSize(parameter="mean")
+size_mean_nat = SampleSize(param=PopParam.mean)
 
 
 def test_size_nat_wald_basics():
-    assert size_mean_nat.parameter == "mean"
-    assert size_mean_nat.method == "wald"
-    assert not size_mean_nat.stratification
+    assert size_mean_nat.param == PopParam.mean
+    assert size_mean_nat.method == SizeMethod.wald
+    assert not size_mean_nat.strat
 
 
-@pytest.mark.xfail(strict=True, reason="Parameter target provided instead of sigma")
+@pytest.mark.xfail(strict=True, reason="param target provided instead of sigma")
 def test_size_nat_wald_should_fail():
     size_mean_nat.calculate(2, 1)
 
@@ -112,13 +113,13 @@ def test_size_nat_wald_df3():
         sigma=2,
     )
     size_df = size_mean_nat.to_dataframe()
-    assert (size_df.columns == ["_parameter", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_wald_df3_with_resp_rate():
     size_mean_nat.calculate(half_ci=1, target=1, sigma=2, resp_rate=0.3)
     size_df = size_mean_nat.to_dataframe()
-    assert (size_df.columns == ["_parameter", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_wald_df4():
@@ -128,7 +129,7 @@ def test_size_nat_wald_df4():
 
 
 # STRATIFIED Wald's method
-size_str_mean_wald = SampleSize(parameter="mean", stratification=True)
+size_str_mean_wald = SampleSize(param=PopParam.mean, strat=True)
 
 half_ci = {"stratum1": 1, "stratum2": 1, "stratum3": 3}
 deff = {"stratum1": 1, "stratum2": 1.3, "stratum3": 3}
@@ -137,9 +138,9 @@ resp_rate = {"stratum1": 0.8, "stratum2": 0.3, "stratum3": 0.5}
 
 
 def test_size_mean_str_wald_basics():
-    assert size_str_mean_wald.parameter == "mean"
-    assert size_str_mean_wald.method == "wald"
-    assert size_str_mean_wald.stratification
+    assert size_str_mean_wald.param == PopParam.mean
+    assert size_str_mean_wald.method == SizeMethod.wald
+    assert size_str_mean_wald.strat
 
 
 def test_size_mean_str_wald_size1():
@@ -255,8 +256,7 @@ def test_size_mean_str_wald_df1():
     size_df = size_str_mean_wald.to_dataframe()
     assert size_df.shape[0] == 3
     assert (
-        size_df.columns
-        == ["_parameter", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
@@ -265,8 +265,7 @@ def test_size_mean_str_wald_df1_with_resp_rate():
     size_df = size_str_mean_wald.to_dataframe()
     assert size_df.shape[0] == 3
     assert (
-        size_df.columns
-        == ["_parameter", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
@@ -284,7 +283,7 @@ def test_size_mean_str_wald_df2_with_resp_rate():
     assert (size_df.columns == ["param", "str", "mean", "sigma", "E", "size"]).all()
 
 
-size_str_mean_wald_fpc = SampleSize(parameter="mean", stratification=True)
+size_str_mean_wald_fpc = SampleSize(param=PopParam.mean, strat=True)
 
 
 half_ci2 = {"stratum1": 0.5, "stratum2": 0.5, "stratum3": 0.5}
@@ -320,9 +319,9 @@ def test_size_mean_str_wald_fpc1_with_resp_rate2():
 
 def test_size_mean_str_wald_fpc2():
     size_str_mean_wald_fpc.calculate(half_ci=half_ci2, sigma=sigma2, pop_size=1000)
-    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 62
-    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
-    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 62
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 58
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 58
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 58
 
 
 def test_size_mean_str_wald_fpc2_with_resp_rate1():
@@ -336,6 +335,6 @@ def test_size_mean_str_wald_fpc2_with_resp_rate1():
     size_str_mean_wald_fpc.calculate(
         half_ci=half_ci2, sigma=sigma2, pop_size=1000, resp_rate=resp_rate2
     )
-    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 154
-    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 62
-    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 95
+    assert size_str_mean_wald_fpc.samp_size["stratum1"] == 145
+    assert size_str_mean_wald_fpc.samp_size["stratum2"] == 58
+    assert size_str_mean_wald_fpc.samp_size["stratum3"] == 90

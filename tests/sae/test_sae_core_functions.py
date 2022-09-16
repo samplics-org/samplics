@@ -5,14 +5,14 @@ np.random.seed(12345)
 
 # model parameters
 scale = 1
-sigma2e = 1 ** 2
-sigma2u = 0.25 ** 2
+sigma2e = 1**2
+sigma2u = 0.25**2
 
 # Population sizes
 N = 1000
 nb_areas = 10
 
-error = np.random.normal(loc=0, scale=(scale ** 2) * (sigma2e ** 0.5), size=N)
+error = np.random.normal(loc=0, scale=(scale**2) * (sigma2e**0.5), size=N)
 area = np.sort(np.random.choice(range(1, nb_areas + 1), N))
 areas, Nd = np.unique(area, return_counts=True)
 
