@@ -322,7 +322,6 @@ class TaylorEstimator(_SurveyEstimator):
         """Computes the variance for one stratum"""
 
         covariance = np.asarray([])
-        # if number_psus_in_s > 1:
         if psu_s is not None:
             scores_s_mean = np.asarray(y_score_s.sum(axis=0) / number_psus_in_s)  # new
             psus = np.unique(psu_s)
@@ -333,7 +332,6 @@ class TaylorEstimator(_SurveyEstimator):
                 scores_psus_sums - scores_s_mean
             )
             covariance = (number_psus_in_s / (number_psus_in_s - 1)) * covariance
-        # elif number_psus_in_s in (0, 1):
         else:
             number_obs = y_score_s.shape[0]
             y_score_s_mean = y_score_s.sum(axis=0) / number_obs
@@ -342,9 +340,6 @@ class TaylorEstimator(_SurveyEstimator):
                 * np.transpose(y_score_s - y_score_s_mean)
                 @ (y_score_s - y_score_s_mean)
             )
-            # breakpoint()
-        # else:
-        #     raise ValueError("Number of psus cannot be negative.")
 
         return covariance
 
@@ -689,6 +684,43 @@ class TaylorEstimator(_SurveyEstimator):
                     self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
                     self.coef_var[key] = math.sqrt(self.variance[key]) / self.point_est[key]
 
+    def _raise_singleton_error(self):
+        raise ValueError(f"Only one PSU in strata{self.single_psu_strata}")
+
+    def _skip_singleton(self, skipped_strata: Array) -> Array:
+        skipped_str = np.isin(self.single_psu_strata, skipped_strata)
+        if skipped_str.sum() > 0:
+            return self.single_psu_strata[skipped_str]
+        else:
+            raise ValueError("{skipped_strata} does not contain singleton PSUs")
+
+    @staticmethod
+    def _certainty_singleton(
+        singletons: Array,
+        _stratum: Array,
+        _psu: Array,
+        _ssu: Array,
+    ) -> Array:
+        if _ssu is not None:
+            certainties = np.isin(_stratum, singletons)
+            _psu[certainties] = _ssu[certainties]
+        else:
+            for s in singletons:
+                cert_s = np.isin(_stratum, s)
+                nb_records = _psu[cert_s].shape[0]
+                _psu[cert_s] = np.linspace(1, nb_records, num=nb_records, dtype="int")
+
+        return _psu
+
+    @staticmethod
+    def _combine_strata(comb_strata: Array, _stratum: Array) -> Array:
+        if comb_strata is None:
+            raise ValueError("The parameter 'strata_comb' must be provided to combine strata")
+        else:
+            for s in comb_strata:
+                _stratum[_stratum == s] = comb_strata[s]
+            return _stratum
+
     def estimate(
         self,
         y: Array,
@@ -702,7 +734,7 @@ class TaylorEstimator(_SurveyEstimator):
         fpc: Union[dict[StringNumber, Number], Series, Number] = 1.0,
         deff: bool = False,
         coef_variation: bool = False,
-        single_psu: SinglePSUEst = SinglePSUEst.error,
+        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
@@ -745,36 +777,38 @@ class TaylorEstimator(_SurveyEstimator):
             self.strata = np.unique(_stratum).tolist()
             # TODO: we could improve efficiency by creating the pair [stratum,psu, ssu] ounce and
             # use it in get_single_psu_strata and in the uncertainty calculation functions
-
             self.single_psu_strata = get_single_psu_strata(_stratum, _psu)
 
         skipped_strata = None
         if self.single_psu_strata is not None:
             if single_psu == SinglePSUEst.error:
-                raise ValueError(f"Only one PSU in strata{self.single_psu_strata}")
+                self._raise_singleton_error()
             if single_psu == SinglePSUEst.skip:
-                skipped_strata = self.single_psu_strata
+                skipped_strata = self._skip_singleton(skipped_strata=self.single_psu_strata)
             if single_psu == SinglePSUEst.certainty:
-                if _ssu is not None:
-                    certainties = np.isin(_stratum, self.single_psu_strata)
-                    _psu[certainties] = _ssu[certainties]
-                else:
-                    for s in self.single_psu_strata:
-                        cert_s = np.isin(stratum, s)
-                        nb_records = _psu[cert_s].shape[0]
-                        _psu[cert_s] = np.linspace(1, nb_records, num=nb_records, dtype="int")
+                _psu = self._certainty_singleton(
+                    singletons=self.single_psu_strata, _stratum=_stratum, _psu=_psu, _ssu=_ssu
+                )
                 # skipped_strata = get_single_psu_strata(_stratum, _psu)
             if single_psu == SinglePSUEst.combine:
-                if strata_comb is None:
-                    raise ValueError(
-                        "The parameter 'strata_comb' must be provided to combine strata"
-                    )
-                else:
-                    for s in strata_comb:
-                        _stratum[_stratum == s] = strata_comb[s]
+                _stratum = self._combine_strata(strata_comb, _stratum)
+
                 # skipped_strata = get_single_psu_strata(_stratum, _psu)
             # breakpoint()
             # TODO: more method for singleton psus to be implemented
+            if isinstance(single_psu, dict):
+                for s in single_psu:
+                    if single_psu[s] == SinglePSUEst.error:
+                        self._raise_singleton_error()
+                    if single_psu == SinglePSUEst.skip:
+                        skipped_strata = self._skip_singleton(skipped_strata=s)
+                    if single_psu == SinglePSUEst.certainty:
+                        _psu = self._certainty_singleton(
+                            singletons=s, _stratum=_stratum, _psu=_psu, _ssu=_ssu
+                        )
+                        # skipped_strata = get_single_psu_strata(_stratum, _psu)
+                    if single_psu == SinglePSUEst.combine:
+                        _stratum = self._combine_strata(strata_comb, _stratum)
 
         if domain is not None:
             domain = numpy_array(domain)
