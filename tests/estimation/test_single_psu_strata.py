@@ -1,3 +1,5 @@
+import pytest
+
 import numpy as np
 import pandas as pd
 
@@ -7,43 +9,136 @@ from samplics.utils.types import SinglePSUEst
 
 np.random.seed(12345)
 
-yrbs = pd.read_csv("./tests/estimation/yrbs.csv")
 
-yrbs["y"] = yrbs["qn8"].replace({2: 0})
-yrbs["x"] = 0.8 * yrbs["y"] + 0.5
-yrbs["domain"] = np.random.choice(["d1", "d2", "d3"], size=yrbs.shape[0], p=[0.1, 0.3, 0.6])
-yrbs["by"] = np.random.choice(["b1", "b2"], size=yrbs.shape[0], p=[0.4, 0.6])
-
-# print(pd.DataFrame((y,x)))
-stratum = yrbs["stratum"]
-psu = yrbs["psu"]
-weight = yrbs["weight"]
-domain = yrbs["domain"]
-by = yrbs["by"]
-x = yrbs["x"]
-y = yrbs["y"]
-# fpc_array = yrbs["fpc"]
-# fpc_dict = dict(zip(stratum, fpc_array))
-
-"""Taylor Approximation WITH Stratification for TOTAL"""
-svy_total_with_str = TaylorEstimator("total")
+sample_data1 = pd.DataFrame.from_dict(
+    data={
+        "region": [1, 1, 1, 2, 2, 3, 3, 4],
+        "district": [1, 2, 2, 1, 2, 1, 2, 1],
+        "area": [1, 1, 2, 1, 2, 1, 1, 1],
+        "domain": [1, 1, 1, 1, 1, 2, 2, 2],
+        "wgt": [1.5, 1.5, 1.5, 2.5, 2.5, 3.5, 3.5, 4.5],
+        "age": [12, 34, 24, 12, 33, 46, 78, 98],
+    }
+)
 
 
-def test_total_estimator_with_str():
-    svy_total_with_str.estimate(y, weight, stratum=stratum, psu=psu, remove_nan=True)
+def test_single_psu_mean_skip():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=sample_data1["region"],
+        psu=sample_data1["district"],
+        single_psu=SinglePSUEst.skip,
+        remove_nan=True,
+    )
+    assert np.isclose(svy_mean_single_psu.point_est, 52.0238095)
+    assert np.isclose(svy_mean_single_psu.variance, 34.879578532)
+    assert np.isclose(svy_mean_single_psu.stderror, 5.905893542)
+    assert np.isclose(svy_mean_single_psu.lower_ci, 33.22862044)
+    assert np.isclose(svy_mean_single_psu.upper_ci, 70.8189986066)
+    assert np.isclose(svy_mean_single_psu.coef_var, 5.905893542 / 52.0238095)
 
-    # assert np.isclose(svy_total_with_str.point_est, 7938.333)
-    # assert np.isclose(svy_total_with_str.variance, 555.5157**2)
-    # assert np.isclose(svy_total_with_str.stderror, 555.5157)
-    # assert np.isclose(svy_total_with_str.lower_ci, 6814.697)
-    # assert np.isclose(svy_total_with_str.upper_ci, 9061.970)
-    # assert np.isclose(svy_total_with_str.coef_var, 555.5157 / 7938.333)
+
+def test_single_psu_mean_domain_skip():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=sample_data1["region"],
+        psu=sample_data1["district"],
+        domain=sample_data1["domain"],
+        single_psu=SinglePSUEst.skip,
+        remove_nan=True,
+    )
+
+    assert np.isclose(svy_mean_single_psu.point_est[1], 22.8947368)
+    assert np.isclose(svy_mean_single_psu.point_est[2], 76.0869565)
+    assert np.isclose(svy_mean_single_psu.variance[1], 43.84952540265)
+    assert np.isclose(svy_mean_single_psu.variance[2], 94.85066162570)
+    assert np.isclose(svy_mean_single_psu.stderror[1], 6.62189741710)
+    assert np.isclose(svy_mean_single_psu.stderror[2], 9.7391304347)
+    assert np.isclose(svy_mean_single_psu.lower_ci[1], 1.8209038730)
+    assert np.isclose(svy_mean_single_psu.lower_ci[2], 45.092696852)
+    assert np.isclose(svy_mean_single_psu.upper_ci[1], 43.968569811)
+    assert np.isclose(svy_mean_single_psu.upper_ci[2], 107.081216190)
+    assert np.isclose(svy_mean_single_psu.coef_var[1], 6.62189741710 / 22.8947368)
+    assert np.isclose(svy_mean_single_psu.coef_var[2], 9.7391304347 / 76.0869565)
 
 
-# sample_data = pd.DataFrame.from_dict(
+@pytest.mark.xfail
+def test_single_psu_mean_certainty11():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=sample_data1["region"],
+        psu=sample_data1["district"],
+        single_psu=SinglePSUEst.certainty,
+        remove_nan=True,
+    )
+
+
+def test_single_psu_mean_certainty12():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=[1, 1, 1, 2, 2, 3, 3, 3],
+        psu=[1, 2, 2, 1, 2, 1, 1, 1],
+        single_psu=SinglePSUEst.certainty,
+        remove_nan=True,
+    )
+
+
+@pytest.mark.xfail
+def test_single_psu_mean_domain_certainty1():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=sample_data1["region"],
+        psu=sample_data1["district"],
+        domain=sample_data1["domain"],
+        single_psu=SinglePSUEst.certainty,
+        remove_nan=True,
+    )
+
+
+@pytest.mark.xfail
+def test_single_psu_mean_domain_certainty2():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=sample_data1["region"],
+        psu=sample_data1["district"],
+        ssu=sample_data1["area"],
+        domain=sample_data1["domain"],
+        single_psu=SinglePSUEst.certainty,
+        remove_nan=True,
+    )
+
+
+def test_single_psu_mean_combine():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=sample_data1["region"],
+        psu=sample_data1["district"],
+        single_psu=SinglePSUEst.combine,
+        strata_comb={4: 3},
+        remove_nan=True,
+    )
+
+    # breakpoint()
+
+
+# sample_data2 = pd.DataFrame.from_dict(
 #     data={
-#         "region": [1, 1, 1, 2, 2, 3, 3, 3],
-#         "district": [1, 1, 1, 1, 1, 1, 1, 1],
+#         "region": [1, 1, 1, 2, 2, 3, 3, 4],
+#         "district": [1, 2, 1, 1, 1, 1, 1, 1],
 #         "area": [1, 1, 2, 1, 2, 1, 1, 1],
 #         "domain": [1, 1, 1, 1, 1, 2, 2, 2],
 #         "wgt": [1.5, 1.5, 1.5, 2.5, 2.5, 3.5, 3.5, 4.5],
@@ -55,10 +150,10 @@ def test_total_estimator_with_str():
 # def test_single_psu_mean_skip():
 #     svy_mean_single_psu = TaylorEstimator(parameter="mean")
 #     svy_mean_single_psu.estimate(
-#         y=sample_data["age"],
-#         samp_weight=sample_data["wgt"],
-#         stratum=sample_data["region"],
-#         psu=sample_data["district"],
+#         y=sample_data1["age"],
+#         samp_weight=sample_data1["wgt"],
+#         stratum=sample_data1["region"],
+#         psu=sample_data1["district"],
 #         single_psu=SinglePSUEst.skip,
 #         remove_nan=True,
 #     )
@@ -73,11 +168,11 @@ def test_total_estimator_with_str():
 # def test_single_psu_mean_domain_skip():
 #     svy_mean_single_psu = TaylorEstimator(parameter="mean")
 #     svy_mean_single_psu.estimate(
-#         y=sample_data["age"],
-#         samp_weight=sample_data["wgt"],
-#         stratum=sample_data["region"],
-#         psu=sample_data["district"],
-#         domain=sample_data["domain"],
+#         y=sample_data1["age"],
+#         samp_weight=sample_data1["wgt"],
+#         stratum=sample_data1["region"],
+#         psu=sample_data1["district"],
+#         domain=sample_data1["domain"],
 #         single_psu=SinglePSUEst.skip,
 #         remove_nan=True,
 #     )
@@ -99,10 +194,10 @@ def test_total_estimator_with_str():
 # def test_single_psu_mean_certainty():
 #     svy_mean_single_psu = TaylorEstimator(parameter="mean")
 #     svy_mean_single_psu.estimate(
-#         y=sample_data["age"],
-#         samp_weight=sample_data["wgt"],
-#         stratum=sample_data["region"],
-#         psu=sample_data["district"],
+#         y=sample_data1["age"],
+#         samp_weight=sample_data1["wgt"],
+#         stratum=sample_data1["region"],
+#         psu=sample_data1["district"],
 #         single_psu=SinglePSUEst.certainty,
 #         remove_nan=True,
 #     )
@@ -111,11 +206,11 @@ def test_total_estimator_with_str():
 # def test_single_psu_mean_domain_certainty1():
 #     svy_mean_single_psu = TaylorEstimator(parameter="mean")
 #     svy_mean_single_psu.estimate(
-#         y=sample_data["age"],
-#         samp_weight=sample_data["wgt"],
-#         stratum=sample_data["region"],
-#         psu=sample_data["district"],
-#         domain=sample_data["domain"],
+#         y=sample_data1["age"],
+#         samp_weight=sample_data1["wgt"],
+#         stratum=sample_data1["region"],
+#         psu=sample_data1["district"],
+#         domain=sample_data1["domain"],
 #         single_psu=SinglePSUEst.certainty,
 #         remove_nan=True,
 #     )
@@ -124,12 +219,12 @@ def test_total_estimator_with_str():
 # def test_single_psu_mean_domain_certainty2():
 #     svy_mean_single_psu = TaylorEstimator(parameter="mean")
 #     svy_mean_single_psu.estimate(
-#         y=sample_data["age"],
-#         samp_weight=sample_data["wgt"],
-#         stratum=sample_data["region"],
-#         psu=sample_data["district"],
-#         ssu=sample_data["area"],
-#         domain=sample_data["domain"],
+#         y=sample_data1["age"],
+#         samp_weight=sample_data1["wgt"],
+#         stratum=sample_data1["region"],
+#         psu=sample_data1["district"],
+#         ssu=sample_data1["area"],
+#         domain=sample_data1["domain"],
 #         single_psu=SinglePSUEst.certainty,
 #         remove_nan=True,
 #     )
@@ -138,14 +233,11 @@ def test_total_estimator_with_str():
 # def test_single_psu_mean_combine():
 #     svy_mean_single_psu = TaylorEstimator(parameter="mean")
 #     svy_mean_single_psu.estimate(
-#         y=sample_data["age"],
-#         samp_weight=sample_data["wgt"],
-#         stratum=sample_data["region"],
-#         psu=sample_data["district"],
-#         # single_psu=SinglePSUEst.combine,
-#         # strata_comb={4: 3},
+#         y=sample_data1["age"],
+#         samp_weight=sample_data1["wgt"],
+#         stratum=sample_data1["region"],
+#         psu=sample_data1["district"],
+#         single_psu=SinglePSUEst.combine,
+#         strata_comb={4: 3},
 #         remove_nan=True,
 #     )
-
-
-#     breakpoint()

@@ -42,7 +42,7 @@ y = yrbs["y"]
 svy_total_without_str = TaylorEstimator("total")
 
 
-def test_total_estimator_without_str_to_datafrane():
+def test_total_estimator_without_str_to_dataframe():
     svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
     est_df = svy_total_without_str.to_dataframe()
 

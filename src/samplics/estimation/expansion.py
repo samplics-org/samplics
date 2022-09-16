@@ -55,8 +55,8 @@ class _SurveyEstimator:
         self.lower_ci: Any = {}
         self.upper_ci: Any = {}
         self.fpc: Any = {}
-        self.strata: Any = []
-        self.single_psu_strata: Any = []
+        self.strata: Any = None
+        self.single_psu_strata: Any = None
         self.domains: Any = None
         self.method: Any = "taylor"
         self.number_strata: Any = None
@@ -718,6 +718,7 @@ class TaylorEstimator(_SurveyEstimator):
         y_temp = y.copy()
 
         x = numpy_array(x) if x is not None else None
+        _stratum = numpy_array(stratum).copy() if stratum is not None else None
         _psu = numpy_array(psu).copy() if psu is not None else None
         _ssu = numpy_array(ssu).copy() if ssu is not None else None
 
@@ -735,13 +736,12 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y_temp) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y_temp)
-            y_temp, weight_temp, x, stratum, _psu, _ssu, domain, by = remove_nans(
-                excluded_units, y_temp, weight_temp, x, stratum, _psu, _ssu, domain, by
+            y_temp, weight_temp, x, _stratum, _psu, _ssu, domain, by = remove_nans(
+                excluded_units, y_temp, weight_temp, x, _stratum, _psu, _ssu, domain, by
             )
 
-        _stratum = None
-        if stratum is not None:
-            _stratum = numpy_array(stratum).copy()
+        if _stratum is not None:
+            # _stratum = numpy_array(stratum).copy()
             self.strata = np.unique(_stratum).tolist()
             # TODO: we could improve efficiency by creating the pair [stratum,psu, ssu] ounce and
             # use it in get_single_psu_strata and in the uncertainty calculation functions
@@ -751,7 +751,7 @@ class TaylorEstimator(_SurveyEstimator):
         skipped_strata = None
         if self.single_psu_strata is not None:
             if single_psu == SinglePSUEst.error:
-                pass  # raise ValueError(f"Only one PSU in strata{self.single_psu_strata}")
+                raise ValueError(f"Only one PSU in strata{self.single_psu_strata}")
             if single_psu == SinglePSUEst.skip:
                 skipped_strata = self.single_psu_strata
             if single_psu == SinglePSUEst.certainty:
@@ -763,7 +763,7 @@ class TaylorEstimator(_SurveyEstimator):
                         cert_s = np.isin(stratum, s)
                         nb_records = _psu[cert_s].shape[0]
                         _psu[cert_s] = np.linspace(1, nb_records, num=nb_records, dtype="int")
-                skipped_strata = get_single_psu_strata(_stratum, _psu)
+                # skipped_strata = get_single_psu_strata(_stratum, _psu)
             if single_psu == SinglePSUEst.combine:
                 if strata_comb is None:
                     raise ValueError(
@@ -772,7 +772,7 @@ class TaylorEstimator(_SurveyEstimator):
                 else:
                     for s in strata_comb:
                         _stratum[_stratum == s] = strata_comb[s]
-                skipped_strata = get_single_psu_strata(_stratum, _psu)
+                # skipped_strata = get_single_psu_strata(_stratum, _psu)
             # breakpoint()
             # TODO: more method for singleton psus to be implemented
 
