@@ -459,7 +459,8 @@ class TaylorEstimator(_SurveyEstimator):
                     covariance1[level] = dict(zip(categories, cov_score[k, :]))
                 return variance1, covariance1
             else:
-                return cov_score, cov_score  # Todo: generalize for multiple Y variables
+                # Todo: generalize for multiple Y variables
+                return float(cov_score), float(cov_score)
         else:
             domain = np.asarray(domain)
             if self.parameter == "proportion" or as_factor:
@@ -739,7 +740,7 @@ class TaylorEstimator(_SurveyEstimator):
                 self.single_psu_strata = single_psu_strata.to_list()
                 raise SamplicsError.SinglePSU(f"Only one PSU in strata{self.single_psu_strata}")
             elif single_psu == SinglePSUEst.skip:
-                self.single_psu_strata = single_psu_strata.to_list()
+                self.single_psu_strata = single_psu_strata.tolist()
             elif single_psu == SinglePSUEst.subunit:
                 self.single_psu_strata
                 raise NotImplementedError("TODO: use case to be implemented")
