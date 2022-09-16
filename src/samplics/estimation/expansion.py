@@ -691,6 +691,7 @@ class TaylorEstimator(_SurveyEstimator):
         skipped_str = np.isin(self.single_psu_strata, skipped_strata)
         if skipped_str.sum() > 0:
             return self.single_psu_strata[skipped_str]
+            breakpoint()
         else:
             raise ValueError("{skipped_strata} does not contain singleton PSUs")
 
@@ -800,14 +801,14 @@ class TaylorEstimator(_SurveyEstimator):
                 for s in single_psu:
                     if single_psu[s] == SinglePSUEst.error:
                         self._raise_singleton_error()
-                    if single_psu == SinglePSUEst.skip:
-                        skipped_strata = self._skip_singleton(skipped_strata=s)
-                    if single_psu == SinglePSUEst.certainty:
+                    if single_psu[s] == SinglePSUEst.skip:
+                        skipped_strata = self._skip_singleton(skipped_strata=numpy_array(s))
+                    if single_psu[s] == SinglePSUEst.certainty:
                         _psu = self._certainty_singleton(
-                            singletons=s, _stratum=_stratum, _psu=_psu, _ssu=_ssu
+                            singletons=numpy_array(s), _stratum=_stratum, _psu=_psu, _ssu=_ssu
                         )
                         # skipped_strata = get_single_psu_strata(_stratum, _psu)
-                    if single_psu == SinglePSUEst.combine:
+                    if single_psu[s] == SinglePSUEst.combine:
                         _stratum = self._combine_strata(strata_comb, _stratum)
 
         if domain is not None:
