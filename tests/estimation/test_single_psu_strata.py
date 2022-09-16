@@ -92,7 +92,7 @@ def test_single_psu_mean_certainty12():
 
 
 @pytest.mark.xfail
-def test_single_psu_mean_domain_certainty1():
+def test_single_psu_mean_domain_certainty11():
     svy_mean_single_psu = TaylorEstimator(parameter="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
@@ -105,8 +105,21 @@ def test_single_psu_mean_domain_certainty1():
     )
 
 
+def test_single_psu_mean_domain_certainty12():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=[1, 1, 1, 2, 2, 3, 3, 3],
+        psu=[1, 2, 2, 1, 2, 1, 1, 1],
+        domain=sample_data1["domain"],
+        single_psu=SinglePSUEst.certainty,
+        remove_nan=True,
+    )
+
+
 @pytest.mark.xfail
-def test_single_psu_mean_domain_certainty2():
+def test_single_psu_mean_domain_certainty21():
     svy_mean_single_psu = TaylorEstimator(parameter="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
@@ -120,7 +133,21 @@ def test_single_psu_mean_domain_certainty2():
     )
 
 
-def test_single_psu_mean_combine():
+def test_single_psu_mean_domain_certainty22():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=[1, 1, 1, 2, 2, 3, 3, 3],
+        psu=[1, 2, 2, 1, 2, 1, 1, 1],
+        ssu=[1, 1, 2, 1, 2, 1, 1, 2],
+        domain=sample_data1["domain"],
+        single_psu=SinglePSUEst.certainty,
+        remove_nan=True,
+    )
+
+
+def test_single_psu_mean_combine11():
     svy_mean_single_psu = TaylorEstimator(parameter="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
@@ -129,6 +156,19 @@ def test_single_psu_mean_combine():
         psu=sample_data1["district"],
         single_psu=SinglePSUEst.combine,
         strata_comb={4: 3},
+        remove_nan=True,
+    )
+
+
+def test_single_psu_mean_combine12():
+    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu.estimate(
+        y=sample_data1["age"],
+        samp_weight=sample_data1["wgt"],
+        stratum=sample_data1["region"],
+        psu=sample_data1["district"],
+        single_psu=SinglePSUEst.combine,
+        strata_comb={4: 2, 3: 2},
         remove_nan=True,
     )
 
