@@ -49,11 +49,16 @@ class SelectMethod(Enum):
 
 @unique
 class SinglePSUEst(Enum):
+    """Estimation options for strata with singleton PSU"""
+
     error = "Raise Error when one PSU in a stratum"
     skip = "Set variance to zero and skip stratum with one PSU"
     subunit = "Use SSU or lowest unit to estimate the variance"
+    combine = "Combine the strata with the singleton psu to another stratum"
 
 
 @unique
 class SamplicsError(Enum):
+    """Type of errors"""
+
     SinglePSU = "Only one PSU in the stratum"

@@ -282,11 +282,19 @@ def plot_kurtosis(
     )
 
 
-def single_psu(strata: Array, psu: Array) -> Optional(Array):
-    strata = numpy_array(strata)
+def get_single_psu_strata(stratum: Array, psu: Array) -> Optional(Array):
+    stratum = numpy_array(stratum)
     psu = numpy_array(psu)
 
-    strata_ids, psu_counts = np.unique(strata, return_counts=True)
+
+    if psu.shape == ():  # psu is None will not work because psu is an np.ndarray
+        strata_ids, psu_counts = np.unique(stratum, return_counts=True)
+    else:
+        strata_ids, psu_counts = np.unique(
+            np.unique((stratum, psu), axis=1)[0, :], return_counts=True
+        )
+    # breakpoint()
+
     single_psus = psu_counts == 1
     if single_psus.sum() == 0:
         return None

@@ -22,7 +22,7 @@ import pandas as pd
 
 from scipy.stats import t as student
 
-from samplics.utils.basic_functions import single_psu
+from samplics.utils.basic_functions import get_single_psu_strata
 from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst, SamplicsError
 
@@ -379,6 +379,7 @@ class TaylorEstimator(_SurveyEstimator):
         psu: Optional[np.ndarray],
         ssu: Optional[np.ndarray] = None,
         fpc: Union[dict[StringNumber, Number], Number] = 1,
+        single_psu_strata: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """Computes the variance across stratum"""
 
@@ -389,7 +390,9 @@ class TaylorEstimator(_SurveyEstimator):
             )
         elif isinstance(fpc, dict):
             covariance = np.zeros((y_score.shape[1], y_score.shape[1]))
-            for s in np.unique(stratum):
+            strata = np.unique(stratum)
+            singletons = np.isin(strata, single_psu_strata)
+            for s in strata[~singletons]:
                 y_score_s = y_score[stratum == s]
                 samp_weight_s = samp_weight[stratum == s]
                 psu_s = psu[stratum == s] if psu is not None else None  # np.array([])
@@ -412,6 +415,7 @@ class TaylorEstimator(_SurveyEstimator):
         ssu: Optional[np.ndarray] = None,
         domain: Optional[np.ndarray] = None,
         fpc: Union[dict[StringNumber, Number], Number] = 1,
+        single_psu_strata: Optional[np.ndarray] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> tuple[
@@ -438,7 +442,15 @@ class TaylorEstimator(_SurveyEstimator):
 
         if domain is None:
             y_score = self._score_variable(y, samp_weight, x)  # new
-            cov_score = self._taylor_variance(y_score, samp_weight, stratum, psu, ssu, fpc)  # new
+            cov_score = self._taylor_variance(
+                y_score=y_score,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+                single_psu_strata=single_psu_strata,
+            )  # new
             if (self.parameter == "proportion" or as_factor) and isinstance(cov_score, np.ndarray):
                 variance1: dict[StringNumber, dict] = {}
                 covariance1: dict[StringNumber, dict] = {}
@@ -463,7 +475,13 @@ class TaylorEstimator(_SurveyEstimator):
                     y_d = y * domain_d if len(y.shape) == 1 else y * domain_d[:, None]
                     y_score_d = self._score_variable(y_d, weight_d, x_d)
                     cov_score_d = self._taylor_variance(
-                        y_score_d, weight_d, stratum, psu, ssu, fpc
+                        y_score=y_score_d,
+                        samp_weight=weight_d,
+                        stratum=stratum,
+                        psu=psu,
+                        ssu=ssu,
+                        fpc=fpc,
+                        single_psu_strata=single_psu_strata,
                     )
                     variance2[d] = dict(zip(categories, np.diag(cov_score_d)))
                     cov_d = {}
@@ -483,7 +501,13 @@ class TaylorEstimator(_SurveyEstimator):
                     y_d = y * domain_d if len(y.shape) == 1 else y * domain_d[:, None]
                     y_score_d = self._score_variable(y_d, weight_d, x_d)
                     cov_score_d = self._taylor_variance(
-                        y_score_d, weight_d, stratum, psu, ssu, fpc
+                        y_score=y_score_d,
+                        samp_weight=weight_d,
+                        stratum=stratum,
+                        psu=psu,
+                        ssu=ssu,
+                        fpc=fpc,
+                        single_psu_strata=single_psu_strata,
                     )
                     variance3[d] = float(cov_score_d)
                 return variance3, variance3
@@ -500,6 +524,7 @@ class TaylorEstimator(_SurveyEstimator):
         fpc: Union[dict[StringNumber, Number], Number],
         deff: bool,
         coef_variation: bool,
+        single_psu_strata: np.ndarray,
         as_factor: bool,
         remove_nan: bool,
     ) -> None:
@@ -521,6 +546,7 @@ class TaylorEstimator(_SurveyEstimator):
             ssu=ssu,
             domain=domain,
             fpc=fpc,
+            single_psu_strata=single_psu_strata,
             as_factor=as_factor,
             remove_nan=remove_nan,
         )
@@ -663,6 +689,8 @@ class TaylorEstimator(_SurveyEstimator):
         fpc: Union[dict[StringNumber, Number], Series, Number] = 1.0,
         deff: bool = False,
         coef_variation: bool = False,
+        single_psu: SinglePSUEst = SinglePSUEst.error,
+        strata_merging: Optional[dict[Array, Array]] = None,
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> None:
@@ -702,7 +730,9 @@ class TaylorEstimator(_SurveyEstimator):
         if stratum is not None:
             stratum = numpy_array(stratum)
             self.strata = np.unique(stratum).tolist()
-            single_psu_strata = single_psu(stratum, psu)
+            # TODO: we could improve efficiency by creating the pair [stratum,psu, ssu] ounce and
+            # use it in get_single_psu_strata and in the uncertainty calculation functions
+            single_psu_strata = get_single_psu_strata(stratum, psu)
 
         if single_psu_strata is not None:
             if single_psu == SinglePSUEst.error:
@@ -710,12 +740,13 @@ class TaylorEstimator(_SurveyEstimator):
                 raise SamplicsError.SinglePSU(f"Only one PSU in strata{self.single_psu_strata}")
             elif single_psu == SinglePSUEst.skip:
                 self.single_psu_strata = single_psu_strata.to_list()
-                # Case to be handle by _estimate()
             elif single_psu == SinglePSUEst.subunit:
                 self.single_psu_strata
                 raise NotImplementedError("TODO: use case to be implemented")
+            elif single_psu == SinglePSUEst.combine:
+                raise NotImplementedError("TODO: use case to be implemented")
             else:
-                self.single_psu_strata = None
+                # TODO: add more method later
                 raise NotImplementedError("Use case not implemented")
 
         if domain is not None:
@@ -748,6 +779,7 @@ class TaylorEstimator(_SurveyEstimator):
                 fpc=self.fpc,
                 deff=deff,
                 coef_variation=coef_variation,
+                single_psu_strata=single_psu_strata,
                 as_factor=as_factor,
                 remove_nan=remove_nan,
             )
@@ -779,6 +811,7 @@ class TaylorEstimator(_SurveyEstimator):
                     fpc=self.fpc,
                     deff=deff,
                     coef_variation=coef_variation,
+                    single_psu_strata=single_psu_strata,
                     as_factor=as_factor,
                     remove_nan=remove_nan,
                 )
