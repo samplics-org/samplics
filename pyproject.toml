@@ -3,7 +3,7 @@ authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
 description = "Select, weight and analyze complex sample data"
 license = "MIT"
 name = "samplics"
-version = "0.3.38"
+version = "0.3.39"
 
 readme = "README.md"
 

@@ -20,7 +20,7 @@ from scipy.stats import chi2, f
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, Series, StringNumber
+from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst
 
 
 class Tabulation:
@@ -75,6 +75,8 @@ class Tabulation:
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
+        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> tuple[TaylorEstimator, list, int]:
 
@@ -102,6 +104,8 @@ class Tabulation:
                 fpc=fpc,
                 deff=deff,
                 coef_variation=coef_variation,
+                single_psu=single_psu,
+                strata_comb=strata_comb,
                 remove_nan=False,
             )
         elif self.parameter == "proportion":
@@ -115,6 +119,8 @@ class Tabulation:
                 fpc=fpc,
                 deff=deff,
                 coef_variation=coef_variation,
+                single_psu=single_psu,
+                strata_comb=strata_comb,
                 remove_nan=False,
             )
         else:
@@ -134,6 +140,8 @@ class Tabulation:
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
+        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> None:
         """
@@ -180,6 +188,8 @@ class Tabulation:
                 fpc=fpc,
                 deff=deff,
                 coef_variation=coef_variation,
+                single_psu=single_psu,
+                strata_comb=strata_comb,
                 remove_nan=remove_nan,
             )
             self.vars_levels[vars_names[0]] = var_levels
@@ -209,6 +219,8 @@ class Tabulation:
                     fpc=fpc,
                     deff=deff,
                     coef_variation=coef_variation,
+                    single_psu=single_psu,
+                    strata_comb=strata_comb,
                     remove_nan=remove_nan,
                 )
                 self.vars_levels[vars_names[k]] = var_levels
@@ -360,6 +372,8 @@ class CrossTabulation:
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
+        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> None:
 
@@ -445,6 +459,9 @@ class CrossTabulation:
             psu=psu,
             ssu=ssu,
             fpc=fpc,
+            coef_variation=coef_variation,
+            single_psu=single_psu,
+            strata_comb=strata_comb,
             as_factor=True,
         )
 
@@ -469,6 +486,9 @@ class CrossTabulation:
                 psu=psu,
                 ssu=ssu,
                 fpc=fpc,
+                coef_variation=coef_variation,
+                single_psu=single_psu,
+                strata_comb=strata_comb,
                 as_factor=True,
             )
             tbl_est = tbl_est_count
