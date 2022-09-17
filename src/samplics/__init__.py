@@ -32,7 +32,7 @@ from samplics.sampling import (
     power_for_one_mean,
     power_for_one_proportion,
 )
-from samplics.utils import PopParam, SizeMethod, array_to_dict, transform
+from samplics.utils import PopParam, SizeMethod, array_to_dict, transform, SinglePSUEst
 from samplics.weighting import ReplicateWeight, SampleWeight
 
 
@@ -73,6 +73,7 @@ __all__ = [
     "SampleSizePropOneSample",
     "SampleSizePropTwoSample",
     "SampleWeight",
+    "SinglePSUEst",
     "SizeMethod",
     "SurveyGLM",
     "ReplicateWeight",
@@ -81,4 +82,4 @@ __all__ = [
     "transform",
 ]
 
-__version__ = "0.3.39"
+__version__ = "0.3.40"
