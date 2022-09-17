@@ -11,10 +11,12 @@ on:
 
 jobs:
   Testing-supported-py-versions:
-    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
+        poetry-version: ["1.1.0"]
+        os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
@@ -22,9 +24,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Python Poetry
-        uses: abatilo/actions-poetry@v2.1.0
+        uses: abatilo/actions-poetry@v2
         with:
-          poetry-version: 1.1.0
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: View poetry --help
+        run: poetry --help
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
