@@ -7,6 +7,25 @@ from samplics.categorical import CrossTabulation
 from samplics.estimation import TaylorEstimator
 
 
+def test_empty_cells():
+    df = pd.DataFrame(
+        data=[["Woman", "European"]] * 100
+        + [["Woman", "American"]] * 35
+        + [["Woman", "Other"]] * 93
+        + [["Man", "European"]] * 150
+        + [["Man", "American"]] * 77,
+        columns=["Gender", "Nationality"],
+    )
+    df["weights"] = [1, 0.3, 8, 3, 0.7] * 91
+
+    crosstab_samplics = CrossTabulation("count")
+    crosstab_samplics.tabulate(
+        vars=df[["Gender", "Nationality"]],
+        samp_weight=df["weights"],
+        remove_nan=True,
+    )
+
+
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
 
@@ -126,7 +145,7 @@ tbl_prop.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remov
 
 
 def test_twoway_prop_to_dataframe():
-    tbl_df = tbl_prop.to_dataframe()
+    _ = tbl_prop.to_dataframe()
 
 
 def test_twoway_prop_point_est():

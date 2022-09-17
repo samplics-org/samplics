@@ -130,7 +130,7 @@ class Tabulation:
         stratum: Optional[Array] = None,
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
-        # Todo: by: Optional[Array] = None,
+        # TODO: by: Optional[Array] = None,
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_variation: bool = False,
@@ -324,6 +324,30 @@ class CrossTabulation:
 
             return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n\n{pearson_test}\n\n {lr_test}\n"
 
+    def _extract_estimates(self, tbl_est, vars_levels) -> tuple[np.ndarray, np.ndarray]:
+
+        levels = list(tbl_est.point_est.keys())
+        missing_levels = vars_levels[~np.isin(vars_levels, levels)]
+
+        if missing_levels.shape[0] > 0:
+            for level in vars_levels:
+                if level in missing_levels:
+                    tbl_est.point_est[level] = 0.0
+                    tbl_est.covariance[level] = {}
+                    for ll in vars_levels:
+                        tbl_est.covariance[level][ll] = 0.0
+                else:
+                    for ll in missing_levels:
+                        tbl_est.covariance[level][ll] = 0.0
+                        tbl_est.covariance[level] = dict(sorted(tbl_est.covariance[level].items()))
+
+        _tbl_est_point_est = dict(sorted(tbl_est.point_est.items()))
+        _tbl_est_covariance = dict(sorted(tbl_est.covariance.items()))
+        return (
+            np.array(list(_tbl_est_point_est.values())),
+            pd.DataFrame.from_dict(_tbl_est_covariance, orient="index").to_numpy(),
+        )
+
     def tabulate(
         self,
         vars: Array,
@@ -423,14 +447,18 @@ class CrossTabulation:
             fpc=fpc,
             as_factor=True,
         )
+
         tbl_est = tbl_est_prop
-        cell_est = np.array(list(tbl_est_prop.point_est.values()))
+        cell_est, cov_prop = self._extract_estimates(
+            tbl_est=tbl_est_prop, vars_levels=vars_levels_concat
+        )
         cov_prop_srs = (
             np.diag(cell_est)
-            - cell_est.reshape(vars_levels.shape[0], 1)
-            @ np.transpose(cell_est.reshape(vars_levels.shape[0], 1))
+            # - cell_est.reshape(vars_levels.shape[0], 1)
+            - cell_est.reshape(cell_est.shape[0], 1)
+            # @ np.transpose(cell_est.reshape(vars_levels.shape[0], 1))
+            @ np.transpose(cell_est.reshape(cell_est.shape[0], 1))
         ) / vars.shape[0]
-        cov_prop = pd.DataFrame.from_dict(tbl_est_prop.covariance, orient="index").to_numpy()
 
         if self.parameter == "count":
             tbl_est_count = TaylorEstimator(parameter="total", alpha=self.alpha)
@@ -450,6 +478,7 @@ class CrossTabulation:
         x1 = vars_dummies[:, 1 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
         x1_t = np.transpose(x1)
+        # breakpoint()
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_prop_srs @ x1) @ (x1_t @ cov_prop_srs @ x2)
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_prop_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov_prop @ x2_tilde
