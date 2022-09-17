@@ -685,13 +685,12 @@ class TaylorEstimator(_SurveyEstimator):
                     self.coef_var[key] = math.sqrt(self.variance[key]) / self.point_est[key]
 
     def _raise_singleton_error(self):
-        raise ValueError(f"Only one PSU in strata{self.single_psu_strata}")
+        raise ValueError(f"Only one PSU in the following strata: {self.single_psu_strata}")
 
     def _skip_singleton(self, skipped_strata: Array) -> Array:
         skipped_str = np.isin(self.single_psu_strata, skipped_strata)
         if skipped_str.sum() > 0:
             return self.single_psu_strata[skipped_str]
-            breakpoint()
         else:
             raise ValueError("{skipped_strata} does not contain singleton PSUs")
 
@@ -790,12 +789,8 @@ class TaylorEstimator(_SurveyEstimator):
                 _psu = self._certainty_singleton(
                     singletons=self.single_psu_strata, _stratum=_stratum, _psu=_psu, _ssu=_ssu
                 )
-                # skipped_strata = get_single_psu_strata(_stratum, _psu)
             if single_psu == SinglePSUEst.combine:
                 _stratum = self._combine_strata(strata_comb, _stratum)
-
-                # skipped_strata = get_single_psu_strata(_stratum, _psu)
-            # breakpoint()
             # TODO: more method for singleton psus to be implemented
             if isinstance(single_psu, dict):
                 for s in single_psu:
@@ -807,9 +802,15 @@ class TaylorEstimator(_SurveyEstimator):
                         _psu = self._certainty_singleton(
                             singletons=numpy_array(s), _stratum=_stratum, _psu=_psu, _ssu=_ssu
                         )
-                        # skipped_strata = get_single_psu_strata(_stratum, _psu)
                     if single_psu[s] == SinglePSUEst.combine:
                         _stratum = self._combine_strata(strata_comb, _stratum)
+
+            skipped_strata = get_single_psu_strata(_stratum, _psu)
+            if skipped_strata is not None and single_psu in [
+                SinglePSUEst.certainty,
+                SinglePSUEst.combine,
+            ]:  # TODO: add the left our singletons when using the dict instead of SinglePSUEst
+                self._raise_singleton_error()
 
         if domain is not None:
             domain = numpy_array(domain)
