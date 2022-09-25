@@ -3,12 +3,12 @@ authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
 description = "Select, weight and analyze complex sample data"
 license = "MIT"
 name = "samplics"
-version = "0.3.40"
+version = "0.3.41"
 
 readme = "README.md"
 
-documentation = "https://samplics.org/docs"
-homepage = "https://samplics.org/"
+documentation = "https://samplics-org.github.io/samplics/"
+homepage = "https://samplics-org.github.io/samplics//"
 repository = "https://github.com/survey-methods/samplics"
 
 keywords = ["sampling", "sample", "weighting", "estimation", "survey"]
@@ -47,15 +47,10 @@ isort = "^5.10"
 # jupyterlab = "^3.4" 
 mypy = "^0.960" 
 nb-black-only = "^1.0" 
-nbsphinx = "0.7.1" #version 0.8.x has trouble rendering .ipynb files
 nox = "^2022.1.7" 
 pylint = "^2.9" 
 pytest = "^7.1" 
 pytest-cov = "^3.0" 
-recommonmark = "^0.7" 
-sphinx = "^4.5" 
-sphinx-autobuild = "^2021.3" 
-sphinx_bootstrap_theme = "^0.8" 
 
 [tool.black]
 exclude = '''

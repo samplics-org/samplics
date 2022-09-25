@@ -71,6 +71,7 @@ docs/_build/
 docs/_static/
 docs/.quarto/
 _docs/
+._readthedocs.yaml
 
 # PyBuilder
 target/
