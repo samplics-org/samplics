@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Docs
 
 on:
   # Runs on pushes targeting the default branch
@@ -37,6 +37,6 @@ jobs:
         with:
           # Upload entire repository
           path: "./docs/docs_site"
-      - name: Docs
+      - name: Statics Docs from Quarto
         id: deployment
         uses: actions/deploy-pages@v1
