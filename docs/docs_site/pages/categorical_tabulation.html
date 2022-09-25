@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.245">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Samplics Documentation - Tabulation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../pages/categorical_ttest.html" rel="next">
+<link href="../pages/categorical.html" rel="prev">
+<link href="../public/img/samplics_logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../public/styles.css">
+<meta property="og:title" content="Samplics Documentation - Tabulation">
+<meta property="og:description" content="In this tutorial, we will explore samplics’ APIs for creating design-based tabulations. There are two main python classes for tabulation i.e.">
+<meta property="og:site-name" content="Samplics Documentation">
+<meta name="twitter:title" content="Samplics Documentation - Tabulation">
+<meta name="twitter:description" content="In this tutorial, we will explore samplics’ APIs for creating design-based tabulations. There are two main python classes for tabulation i.e.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Samplics Documentation</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page">Overview</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/tutorial.html">Tutorial</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/examples.html">Examples</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo"><i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics"><i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Tabulation</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Overview</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Introduction</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/getting_started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Tutorial</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/tutorial.html" class="sidebar-item-text sidebar-link">Outline</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/datasets.html" class="sidebar-item-text sidebar-link">Datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">Size Calculation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size_stagedesign.html" class="sidebar-item-text sidebar-link">Sample Size for Stage Design</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">Selection</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection.html" class="sidebar-item-text sidebar-link">Overviews</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_psus.html" class="sidebar-item-text sidebar-link">Selection of PSUs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_ssus.html" class="sidebar-item-text sidebar-link">Selection of SSUs</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">Weighting</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_adj.html" class="sidebar-item-text sidebar-link">Sample Weight Adjustments</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_replicates.html" class="sidebar-item-text sidebar-link">Replicate Weights</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">Population Parameters Estimation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_taylor.html" class="sidebar-item-text sidebar-link">Taylor-based Estimation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_rep.html" class="sidebar-item-text sidebar-link">Replicated-based Estimation</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">Categorical Data Analysis</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_tabulation.html" class="sidebar-item-text sidebar-link active">Tabulation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_ttest.html" class="sidebar-item-text sidebar-link">T-test</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">Small Area Estimation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_area.html" class="sidebar-item-text sidebar-link">Area Level Modeling</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_unit.html" class="sidebar-item-text sidebar-link">Unit Level Modeling</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">Examples</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">References</span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#one-way-tabulation" id="toc-one-way-tabulation" class="nav-link active" data-scroll-target="#one-way-tabulation">One-way tabulation</a></li>
+  <li><a href="#two-way-tabulation-cross-tabulation" id="toc-two-way-tabulation-cross-tabulation" class="nav-link" data-scroll-target="#two-way-tabulation-cross-tabulation">Two-way tabulation (cross-tabulation)</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Tabulation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>In this tutorial, we will explore samplics’ APIs for creating design-based tabulations. There are two main python classes for tabulation i.e.&nbsp;<code>Tabulation()</code> for one-way tables and <code>CrossTabulation()</code> for two-way tables.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_birth, load_nhanes2</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.categorical <span class="im">import</span> Tabulation, CrossTabulation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="one-way-tabulation" class="level1">
+<h1>One-way tabulation</h1>
+<p>The birth dataset has four variables: region, agecat, birthcat, and pop. The variables agecat and birthcat are categirical. By default, pandas read them as numerical, because they are coded with numerical values. We use <code>dtype="string"</code> or <code>dtype="category"</code> to ensure that pandas codes the variables as categorical responses.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Birth sample data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>birth_dict <span class="op">=</span> load_birth()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>birth <span class="op">=</span> birth_dict[<span class="st">"data"</span>].astype(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"region"</span>: <span class="bu">str</span>, <span class="st">"agecat"</span>: <span class="bu">str</span>, <span class="st">"birthcat"</span>: <span class="bu">str</span>}</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>region <span class="op">=</span> birth[<span class="st">"region"</span>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>agecat <span class="op">=</span> birth[<span class="st">"agecat"</span>]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>birthcat <span class="op">=</span> birth[<span class="st">"birthcat"</span>]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>birth.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>region</th>
+      <th>agecat</th>
+      <th>birthcat</th>
+      <th>pop</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>28152</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>103101</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>113299</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>112028</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>99588</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>22356</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>102926</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>12627</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>112885</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>150297</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>52785</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>1</td>
+      <td>1</td>
+      <td>2.0</td>
+      <td>109108</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>1</td>
+      <td>1</td>
+      <td>2.0</td>
+      <td>87768</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>1</td>
+      <td>1</td>
+      <td>2.0</td>
+      <td>175886</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>1</td>
+      <td>1</td>
+      <td>2.0</td>
+      <td>107847</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>When requesting a table, the user can set <code>parameter="count"</code> which results in a tabulation with counts in the cells while <code>parameter="proportion</code> leads to cells with proportions. The expression <code>Tabulation("count")</code> instantiates the class <code>Tabulation()</code> which has a method <code>tabulate()</code> to produce the table.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(parameter<span class="op">=</span><span class="st">"count"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(birth_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tabulation of birthcat
+ Number of strata: 1
+ Number of PSUs: 956
+ Number of observations: 956
+ Degrees of freedom: 955.00
+
+ variable category  count  stderror   lower_ci   upper_ci
+birthcat      1.0  240.0 13.414066 213.675550 266.324450
+birthcat      2.0  450.0 15.441157 419.697485 480.302515
+birthcat      3.0  233.0 13.281448 206.935807 259.064193
+birthcat      nan   33.0  5.647499  21.917060  44.082940
+</code></pre>
+</div>
+</div>
+<p>When <code>remove_nan=False</code>, the numpy and pandas special values NaNs, respectively np.nan and NaN, are treated as valid categories and added to the tables as shown below</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(parameter<span class="op">=</span><span class="st">"count"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(birth_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tabulation of birthcat
+ Number of strata: 1
+ Number of PSUs: 956
+ Number of observations: 956
+ Degrees of freedom: 955.00
+
+ variable category  count  stderror   lower_ci   upper_ci
+birthcat      1.0  240.0 13.414066 213.675550 266.324450
+birthcat      2.0  450.0 15.441157 419.697485 480.302515
+birthcat      3.0  233.0 13.281448 206.935807 259.064193
+birthcat      nan   33.0  5.647499  21.917060  44.082940
+</code></pre>
+</div>
+</div>
+<p>The data associated with the tabulation are stored in nested python dictionaries. The higher level key is the variable name and the inner keys are the response categories. Each of the last four columns shown above are stored in separated dictionaries. Two of those dictionaries for the counts and standard errors shown below.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count.point_est)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based standard errors are:"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>pprint(birth_count.stderror)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+The designed-based estimated counts are:
+{'birthcat': {'1.0': 240.0, '2.0': 450.0, '3.0': 233.0, 'nan': 33.0}}
+
+The designed-based standard errors are:
+{'birthcat': {'1.0': 13.414066228212418,
+              '2.0': 15.441156672080245,
+              '3.0': 13.281447911984001,
+              'nan': 5.647498635475369}}</code></pre>
+</div>
+</div>
+<p>Sometimes, the user may want to run multiple one-way tables of several variables. In this case, the user can provide the data as a two-dimensional dataframe where each column represents one categorical variable. In this situation, each categorical variable is tabulated individually then combined into Python dictionaries.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>birth_count2 <span class="op">=</span> Tabulation(parameter<span class="op">=</span><span class="st">"count"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>birth_count2.tabulate(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    birth[[<span class="st">"region"</span>, <span class="st">"agecat"</span>, <span class="st">"birthcat"</span>]], </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(birth_count2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tabulation of region
+ Number of strata: 1
+ Number of PSUs: 956
+ Number of observations: 956
+ Degrees of freedom: 955.00
+
+ variable category  count  stderror   lower_ci   upper_ci
+  region        1  166.0 11.718335 143.003340 188.996660
+  region        2  284.0 14.136507 256.257795 311.742205
+  region        3  250.0 13.594733 223.321002 276.678998
+  region        4  256.0 13.698320 229.117716 282.882284
+  agecat        1  507.0 15.439224 476.701278 537.298722
+  agecat        2  316.0 14.552307 287.441809 344.558191
+  agecat        3  133.0 10.705921 111.990152 154.009848
+birthcat      1.0  240.0 13.414066 213.675550 266.324450
+birthcat      2.0  450.0 15.441157 419.697485 480.302515
+birthcat      3.0  233.0 13.281448 206.935807 259.064193
+birthcat      nan   33.0  5.647499  21.917060  44.082940
+</code></pre>
+</div>
+</div>
+<p>Two of the associated Python dictionaries are shown below. The structure of the inner dictionaries remain the same but additional key-value pairs are added to represent the several categorical variables.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count2.point_est)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based standard errors are:"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>pprint(birth_count2.stderror)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+The designed-based estimated counts are:
+{'agecat': {'1': 507.0, '2': 316.0, '3': 133.0},
+ 'birthcat': {'1.0': 240.0, '2.0': 450.0, '3.0': 233.0, 'nan': 33.0},
+ 'region': {'1': 166.0, '2': 284.0, '3': 250.0, '4': 256.0}}
+
+The designed-based standard errors are:
+{'agecat': {'1': 15.439223863518952,
+            '2': 14.55230681053191,
+            '3': 10.705921442206721},
+ 'birthcat': {'1.0': 13.414066228212418,
+              '2.0': 15.441156672080245,
+              '3.0': 13.281447911984001,
+              'nan': 5.647498635475369},
+ 'region': {'1': 11.718334853030537,
+            '2': 14.13650726651876,
+            '3': 13.594732580183488,
+            '4': 13.698320300591277}}</code></pre>
+</div>
+</div>
+<p>In the example above, we used pandas series and dataframes with labelled variables. In some situations, the user may want to tabulate numpy arrays, lists or tuples without variable names atrribute from the data. For these situations, the <code>varnames</code> parameter provides a way to assign names for the categorical variables. Even when the variables have labels, users can leverage <code>varnames</code> to rename the categorical variables.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>region_no_name <span class="op">=</span> birth[<span class="st">"region"</span>].to_numpy()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>agecat_no_name <span class="op">=</span> birth[<span class="st">"agecat"</span>].to_numpy()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>birthcat_no_name <span class="op">=</span> birth[<span class="st">"birthcat"</span>].to_numpy()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name <span class="op">=</span> Tabulation(parameter<span class="op">=</span><span class="st">"proportion"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name.tabulate(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>[region_no_name, agecat_no_name, birthcat_no_name],</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    varnames<span class="op">=</span>[<span class="st">"Region"</span>, <span class="st">"AgeGroup"</span>, <span class="st">"BirthType"</span>],</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(birth_prop_new_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tabulation of Region
+ Number of strata: 1
+ Number of PSUs: 956
+ Number of observations: 956
+ Degrees of freedom: 955.00
+
+  variable category  proportion  stderror  lower_ci  upper_ci
+   Region        1    0.173640  0.012258  0.150883  0.199025
+   Region        2    0.297071  0.014787  0.268892  0.326883
+   Region        3    0.261506  0.014220  0.234574  0.290357
+   Region        4    0.267782  0.014329  0.240614  0.296819
+ AgeGroup        1    0.530335  0.016150  0.498562  0.561864
+ AgeGroup        2    0.330544  0.015222  0.301383  0.361068
+ AgeGroup        3    0.139121  0.011199  0.118564  0.162586
+BirthType      1.0    0.251046  0.014031  0.224524  0.279571
+BirthType      2.0    0.470711  0.016152  0.439174  0.502484
+BirthType      3.0    0.243724  0.013893  0.217502  0.272008
+BirthType      nan    0.034519  0.005907  0.024627  0.048188
+</code></pre>
+</div>
+</div>
+<p>If the user does not specify <code>varnames</code>, the <code>tabulate()</code> creates generic variables names <code>var_1</code>, <code>var_2</code>, etc.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2 <span class="op">=</span> Tabulation(parameter<span class="op">=</span><span class="st">"proportion"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2.tabulate(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>[region_no_name, agecat_no_name, birthcat_no_name], </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(birth_prop_new_name2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tabulation of var_1
+ Number of strata: 1
+ Number of PSUs: 956
+ Number of observations: 956
+ Degrees of freedom: 955.00
+
+ variable category  proportion  stderror  lower_ci  upper_ci
+   var_1        1    0.173640  0.012258  0.150883  0.199025
+   var_1        2    0.297071  0.014787  0.268892  0.326883
+   var_1        3    0.261506  0.014220  0.234574  0.290357
+   var_1        4    0.267782  0.014329  0.240614  0.296819
+   var_2        1    0.530335  0.016150  0.498562  0.561864
+   var_2        2    0.330544  0.015222  0.301383  0.361068
+   var_2        3    0.139121  0.011199  0.118564  0.162586
+   var_3      1.0    0.251046  0.014031  0.224524  0.279571
+   var_3      2.0    0.470711  0.016152  0.439174  0.502484
+   var_3      3.0    0.243724  0.013893  0.217502  0.272008
+   var_3      nan    0.034519  0.005907  0.024627  0.048188
+</code></pre>
+</div>
+</div>
+<p>If the data was collected from a complex survey sample, the user may provide the sample design information to derive design-based statistics for the tabulation.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Nhanes sample data</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>nhanes2_dict <span class="op">=</span> load_nhanes2()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>nhanes2 <span class="op">=</span> nhanes2_dict[<span class="st">"data"</span>]</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>stratum <span class="op">=</span> nhanes2[<span class="st">"stratid"</span>]</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>psu <span class="op">=</span> nhanes2[<span class="st">"psuid"</span>]</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>weight <span class="op">=</span> nhanes2[<span class="st">"finalwgt"</span>]</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>diabetes_nhanes <span class="op">=</span> Tabulation(<span class="st">"proportion"</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>diabetes_nhanes.tabulate(</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>nhanes2[[<span class="st">"race"</span>, <span class="st">"diabetes"</span>]],</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>weight,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    stratum<span class="op">=</span>stratum,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    psu<span class="op">=</span>psu,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(diabetes_nhanes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Tabulation of race
+ Number of strata: 31
+ Number of PSUs: 62
+ Number of observations: 10335
+ Degrees of freedom: 31.00
+
+ variable category  proportion  stderror  lower_ci  upper_ci
+    race      1.0    0.879016  0.016722  0.840568  0.909194
+    race      2.0    0.095615  0.012778  0.072541  0.125039
+    race      3.0    0.025369  0.010554  0.010781  0.058528
+diabetes      0.0    0.965715  0.001820  0.961803  0.969238
+diabetes      1.0    0.034285  0.001820  0.030762  0.038197
+</code></pre>
+</div>
+</div>
+</section>
+<section id="two-way-tabulation-cross-tabulation" class="level1">
+<h1>Two-way tabulation (cross-tabulation)</h1>
+<p>Cross-tabulation of two categorical variables is achieved by using the class <code>CrossTabulation()</code>. As above, cross-tabulation is possible for counts and proportions using <code>CrossTabulation(parameter="count")</code> and <code>CrossTabulation(parameter="proportion")</code>, respectively. The Python script below creates a design-based cross-tabulation of race by diabetes status. The sample design information is optional; when not provided, a simple random sample (srs) is assumed.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(<span class="st">"proportion"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>nhanes2[[<span class="st">"race"</span>, <span class="st">"diabetes"</span>]],</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>weight,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    stratum<span class="op">=</span>stratum,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    psu<span class="op">=</span>psu,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(crosstab_nhanes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Cross-tabulation of race and diabetes
+ Number of strata: 31
+ Number of PSUs: 62
+ Number of observations: 10335
+ Degrees of freedom: 31.00
+
+ race diabetes  proportion  stderror  lower_ci  upper_ci
+   1      0.0    0.850866  0.015850  0.815577  0.880392
+   1      1.0    0.028123  0.001938  0.024430  0.032357
+   2      0.0    0.089991  0.012171  0.068062  0.118090
+   2      1.0    0.005646  0.000847  0.004157  0.007663
+   3      0.0    0.024858  0.010188  0.010702  0.056669
+   3      1.0    0.000516  0.000387  0.000112  0.002383
+
+Pearson (with Rao-Scott adjustment):
+    Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
+    Adjusted - F(1.52, 47.26): 14.9435  with p-value of 0.0000
+
+  Likelihood ratio (with Rao-Scott adjustment):
+     Unadjusted - chi2(2): 18.3925 with p-value of 0.0001
+     Adjusted - F(1.52, 47.26): 12.9242  with p-value of 0.0001
+</code></pre>
+</div>
+</div>
+<p>In addition to pandas dataframe, the categorical variables may be provided as an numpy array, list or tuple. In the examples below, the categorical variables are provided as a tuple <code>vars=(rage, diabetes)</code>. In this case, <code>race</code> and <code>diabetes</code> are numpy arrays and do not have a name attribute. The parameter <code>varnames</code> allows the user to name the categorical variables. If varnames is not specified then `<code>var_1</code> and <code>var_2</code> are used as variables names.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>race <span class="op">=</span> nhanes2[<span class="st">"race"</span>].to_numpy()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>diabetes <span class="op">=</span> nhanes2[<span class="st">"diabetes"</span>].to_numpy()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(<span class="st">"proportion"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>(race, diabetes),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>weight,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    stratum<span class="op">=</span>stratum,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    psu<span class="op">=</span>psu,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(crosstab_nhanes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Cross-tabulation of var_1 and var_2
+ Number of strata: 31
+ Number of PSUs: 62
+ Number of observations: 10335
+ Degrees of freedom: 31.00
+
+ var_1 var_2  proportion  stderror  lower_ci  upper_ci
+  1.0   0.0    0.850866  0.015850  0.815577  0.880392
+  1.0   1.0    0.028123  0.001938  0.024430  0.032357
+  2.0   0.0    0.089991  0.012171  0.068062  0.118090
+  2.0   1.0    0.005646  0.000847  0.004157  0.007663
+  3.0   0.0    0.024858  0.010188  0.010702  0.056669
+  3.0   1.0    0.000516  0.000387  0.000112  0.002383
+
+Pearson (with Rao-Scott adjustment):
+    Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
+    Adjusted - F(1.52, 47.26): 14.9435  with p-value of 0.0000
+
+  Likelihood ratio (with Rao-Scott adjustment):
+     Unadjusted - chi2(2): 18.3925 with p-value of 0.0001
+     Adjusted - F(1.52, 47.26): 12.9242  with p-value of 0.0001
+</code></pre>
+</div>
+</div>
+<p>Same as the above example with variables names specified by <code>varnames=["Race", DiabetesStatus"]</code></p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(<span class="st">"proportion"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>(race, diabetes),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    varnames<span class="op">=</span>[<span class="st">"Race"</span>, <span class="st">"DiabetesStatus"</span>],</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>weight,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    stratum<span class="op">=</span>stratum,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    psu<span class="op">=</span>psu,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(crosstab_nhanes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Cross-tabulation of Race and DiabetesStatus
+ Number of strata: 31
+ Number of PSUs: 62
+ Number of observations: 10335
+ Degrees of freedom: 31.00
+
+ Race DiabetesStatus  proportion  stderror  lower_ci  upper_ci
+ 1.0            0.0    0.850866  0.015850  0.815577  0.880392
+ 1.0            1.0    0.028123  0.001938  0.024430  0.032357
+ 2.0            0.0    0.089991  0.012171  0.068062  0.118090
+ 2.0            1.0    0.005646  0.000847  0.004157  0.007663
+ 3.0            0.0    0.024858  0.010188  0.010702  0.056669
+ 3.0            1.0    0.000516  0.000387  0.000112  0.002383
+
+Pearson (with Rao-Scott adjustment):
+    Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
+    Adjusted - F(1.52, 47.26): 14.9435  with p-value of 0.0000
+
+  Likelihood ratio (with Rao-Scott adjustment):
+     Unadjusted - chi2(2): 18.3925 with p-value of 0.0001
+     Adjusted - F(1.52, 47.26): 12.9242  with p-value of 0.0001</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code></code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../pages/categorical.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../pages/categorical_ttest.html" class="pagination-link">
+        <span class="nav-page-text">T-test</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ © Copyright 2019-2020, samplics.
+  </li>  
+</ul>
+    </div>   
+      <div class="nav-footer-center">Samplics for Design and Analysis of Complex Survey Data</div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../index.html">Back to Home</a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo">
+      <i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics">
+      <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

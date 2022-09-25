@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.245">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Samplics Documentation - Selection of SSUs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../pages/weight.html" rel="next">
+<link href="../pages/selection_psus.html" rel="prev">
+<link href="../public/img/samplics_logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../public/styles.css">
+<meta property="og:title" content="Samplics Documentation - Selection of SSUs">
+<meta property="og:description" content="To select the second stage sample, we need the second stage frame which is the list of all the households in the 10 selected clusters (psus).">
+<meta property="og:site-name" content="Samplics Documentation">
+<meta name="twitter:title" content="Samplics Documentation - Selection of SSUs">
+<meta name="twitter:description" content="To select the second stage sample, we need the second stage frame which is the list of all the households in the 10 selected clusters (psus).">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Samplics Documentation</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page">Overview</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/tutorial.html">Tutorial</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/examples.html">Examples</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo"><i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics"><i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Selection of SSUs</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Overview</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Introduction</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/getting_started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Tutorial</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/tutorial.html" class="sidebar-item-text sidebar-link">Outline</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/datasets.html" class="sidebar-item-text sidebar-link">Datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">Size Calculation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size_stagedesign.html" class="sidebar-item-text sidebar-link">Sample Size for Stage Design</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Selection</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection.html" class="sidebar-item-text sidebar-link">Overviews</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_psus.html" class="sidebar-item-text sidebar-link">Selection of PSUs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_ssus.html" class="sidebar-item-text sidebar-link active">Selection of SSUs</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">Weighting</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_adj.html" class="sidebar-item-text sidebar-link">Sample Weight Adjustments</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_replicates.html" class="sidebar-item-text sidebar-link">Replicate Weights</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">Population Parameters Estimation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_taylor.html" class="sidebar-item-text sidebar-link">Taylor-based Estimation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_rep.html" class="sidebar-item-text sidebar-link">Replicated-based Estimation</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">Categorical Data Analysis</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_tabulation.html" class="sidebar-item-text sidebar-link">Tabulation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_ttest.html" class="sidebar-item-text sidebar-link">T-test</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">Small Area Estimation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_area.html" class="sidebar-item-text sidebar-link">Area Level Modeling</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_unit.html" class="sidebar-item-text sidebar-link">Unit Level Modeling</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">Examples</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">References</span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#ssu-household-probability-of-selection" id="toc-ssu-household-probability-of-selection" class="nav-link active" data-scroll-target="#ssu-household-probability-of-selection">SSU (household) Probability of Selection</a>
+  <ul class="collapse">
+  <li><a href="#ssu-household-selection" id="toc-ssu-household-selection" class="nav-link" data-scroll-target="#ssu-household-selection">SSU (household) Selection</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Selection of SSUs</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>To select the second stage sample, we need the second stage frame which is the list of all the households in the 10 selected clusters (psus). DHS, PHIA, MICS and other large scale surveys visit the selected clusters and construct the list of all households in the selected clusters.</p>
+<p>Before starting the second stage selection, let us import the data from the first stage sampling information that is the first stage sample (psu_sample). For clarity, we explicitly import the packages and modules needed for this notebook.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSelection</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the selected PSUs </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="op">=</span> pd.read_csv(<span class="st">"./psu_frame.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this tutorial, we will simulate the second stage frame. For the simulation, assume that the psu frame was obtained from a previous census conducted several years before. We also assume that, the change in the number of households since the previous census follows a normal distribution with a mean equal to 5% higher than the census value and a variance of 0.15 times the number of households from the census. Under these assumptions, we generate the following second stage frame of households. Note that the frame is created only for the selected PSUs.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a synthetic second stage frame</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>census_size <span class="op">=</span> psu_frame.loc[</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"number_households_census"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>].values</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>stratum_names <span class="op">=</span> psu_frame.loc[</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"region"</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ].values</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>cluster <span class="op">=</span> psu_frame.loc[psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>, <span class="st">"cluster"</span>].values</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">15</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>listing_size <span class="op">=</span> np.zeros(census_size.size)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(census_size.size):</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    listing_size[k] <span class="op">=</span> np.random.normal(</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="fl">1.05</span> <span class="op">*</span> census_size[k], <span class="fl">0.15</span> <span class="op">*</span> census_size[k]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>listing_size <span class="op">=</span> listing_size.astype(<span class="bu">int</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>hh_id <span class="op">=</span> rr_id <span class="op">=</span> cl_id <span class="op">=</span> []</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, s <span class="kw">in</span> <span class="bu">enumerate</span>(listing_size):</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    hh_k1 <span class="op">=</span> np.char.array(np.repeat(stratum_names[k], s)).astype(<span class="bu">str</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    hh_k2 <span class="op">=</span> np.char.array(np.arange(<span class="dv">1</span>, s <span class="op">+</span> <span class="dv">1</span>)).astype(<span class="bu">str</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    cl_k <span class="op">=</span> np.repeat(cluster[k], s)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    hh_k <span class="op">=</span> np.char.add(np.char.array(cl_k).astype(<span class="bu">str</span>), hh_k2)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    hh_id <span class="op">=</span> np.append(hh_id, hh_k)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    rr_id <span class="op">=</span> np.append(rr_id, hh_k1)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    cl_id <span class="op">=</span> np.append(cl_id, cl_k)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>ssu_frame <span class="op">=</span> pd.DataFrame(cl_id.astype(<span class="bu">int</span>))</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>ssu_frame.rename(columns<span class="op">=</span>{<span class="dv">0</span>: <span class="st">"cluster"</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"region"</span>] <span class="op">=</span> rr_id</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"household"</span>] <span class="op">=</span> hh_id</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>nb_obs <span class="op">=</span> <span class="dv">15</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">First </span><span class="sc">{</span>nb_obs<span class="sc">}</span><span class="ss"> observations of the SSU frame</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>ssu_frame.head(nb_obs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+First 15 observations of the SSU frame
+</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>cluster</th>
+      <th>region</th>
+      <th>household</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7</td>
+      <td>North</td>
+      <td>71</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7</td>
+      <td>North</td>
+      <td>72</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>7</td>
+      <td>North</td>
+      <td>73</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7</td>
+      <td>North</td>
+      <td>74</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>7</td>
+      <td>North</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>7</td>
+      <td>North</td>
+      <td>76</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>7</td>
+      <td>North</td>
+      <td>77</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>7</td>
+      <td>North</td>
+      <td>78</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>7</td>
+      <td>North</td>
+      <td>79</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>7</td>
+      <td>North</td>
+      <td>710</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>7</td>
+      <td>North</td>
+      <td>711</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>7</td>
+      <td>North</td>
+      <td>712</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>7</td>
+      <td>North</td>
+      <td>713</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>7</td>
+      <td>North</td>
+      <td>714</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>7</td>
+      <td>North</td>
+      <td>715</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_frame.loc[psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ssu_counts <span class="op">=</span> ssu_frame.groupby(<span class="st">"cluster"</span>).count()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ssu_counts.drop(columns<span class="op">=</span><span class="st">"region"</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>ssu_counts.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ssu_counts.rename(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>{<span class="st">"household"</span>: <span class="st">"number_households_listed"</span>}, </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    inplace<span class="op">=</span><span class="va">True</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>pd.merge(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    psu_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"number_households_census"</span>]],</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    ssu_counts[[<span class="st">"cluster"</span>, <span class="st">"number_households_listed"</span>]],</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span>[<span class="st">"cluster"</span>],</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>cluster</th>
+      <th>region</th>
+      <th>number_households_census</th>
+      <th>number_households_listed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7</td>
+      <td>North</td>
+      <td>130</td>
+      <td>130</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10</td>
+      <td>North</td>
+      <td>600</td>
+      <td>660</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>16</td>
+      <td>South</td>
+      <td>190</td>
+      <td>195</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>24</td>
+      <td>South</td>
+      <td>75</td>
+      <td>73</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>29</td>
+      <td>South</td>
+      <td>200</td>
+      <td>217</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>34</td>
+      <td>East</td>
+      <td>305</td>
+      <td>239</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>45</td>
+      <td>East</td>
+      <td>450</td>
+      <td>398</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>52</td>
+      <td>East</td>
+      <td>700</td>
+      <td>620</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>64</td>
+      <td>West</td>
+      <td>300</td>
+      <td>301</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>86</td>
+      <td>West</td>
+      <td>280</td>
+      <td>274</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>According to the simulated second stage frame, we get the same number of households in cluster 7 as the census. However, in strata 10, 16, 29, and 64, we listed more households than during than the census. And finally, we found less households in the remaining clusters than the census.</p>
+<p>Now that we have a second stage frame, let’s use <em>samplics</em> to calculate the probabilities of selection and to select a sample. The second stage sample size is 150 households and the strategy is to select 15 households per cluster.</p>
+<section id="ssu-household-probability-of-selection" class="level1">
+<h1>SSU (household) Probability of Selection</h1>
+<p>The second stage probabilities of selection are conditional on the first stage realization. For this stage, simple random selection (srs) and systematic selection(sys) are common methods used to select households. For this example, we use srs to select 15 households from each cluster. Conditionally to teh first stage, the second stage selection is a stratified srs where the clusters are the strata. More generally, we have that <span class="math display">\[\begin{equation} p_{hij} = \frac{m_{hi}}{M_{hi}^{'}} \end{equation}\]</span> where <span class="math inline">\(p_{hij}\)</span> is the conditional probability of selection for unit <span class="math inline">\(j\)</span> from stratum <span class="math inline">\(h\)</span> and cluster <span class="math inline">\(j\)</span>, <span class="math inline">\(m_{hi}\)</span> and <span class="math inline">\(M_{hi}^{'}\)</span> are the sample size and the number of secondary sampling units listed for stratum <span class="math inline">\(h\)</span> and cluster <span class="math inline">\(j\)</span>, respectively.</p>
+<p>In this scenario, sample size is the same in each stratum. Hence, the parameter <em>sample_size</em> does not need to be a Python dictionary; we will only provide 15 in the function call.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>stage2_design <span class="op">=</span> SampleSelection(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">"srs"</span>, stratification<span class="op">=</span><span class="va">True</span>, with_replacement<span class="op">=</span><span class="va">False</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"ssu_prob"</span>] <span class="op">=</span> stage2_design.inclusion_probs(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    ssu_frame[<span class="st">"household"</span>], <span class="dv">15</span>, ssu_frame[<span class="st">"cluster"</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ssu_frame.sample(<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>cluster</th>
+      <th>region</th>
+      <th>household</th>
+      <th>ssu_prob</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1438</th>
+      <td>34</td>
+      <td>East</td>
+      <td>34164</td>
+      <td>0.062762</td>
+    </tr>
+    <tr>
+      <th>2517</th>
+      <td>52</td>
+      <td>East</td>
+      <td>52606</td>
+      <td>0.024194</td>
+    </tr>
+    <tr>
+      <th>2943</th>
+      <td>86</td>
+      <td>West</td>
+      <td>86111</td>
+      <td>0.054745</td>
+    </tr>
+    <tr>
+      <th>3002</th>
+      <td>86</td>
+      <td>West</td>
+      <td>86170</td>
+      <td>0.054745</td>
+    </tr>
+    <tr>
+      <th>559</th>
+      <td>10</td>
+      <td>North</td>
+      <td>10430</td>
+      <td>0.022727</td>
+    </tr>
+    <tr>
+      <th>1216</th>
+      <td>29</td>
+      <td>South</td>
+      <td>29159</td>
+      <td>0.069124</td>
+    </tr>
+    <tr>
+      <th>2751</th>
+      <td>64</td>
+      <td>West</td>
+      <td>64220</td>
+      <td>0.049834</td>
+    </tr>
+    <tr>
+      <th>412</th>
+      <td>10</td>
+      <td>North</td>
+      <td>10283</td>
+      <td>0.022727</td>
+    </tr>
+    <tr>
+      <th>2549</th>
+      <td>64</td>
+      <td>West</td>
+      <td>6418</td>
+      <td>0.049834</td>
+    </tr>
+    <tr>
+      <th>1508</th>
+      <td>34</td>
+      <td>East</td>
+      <td>34234</td>
+      <td>0.062762</td>
+    </tr>
+    <tr>
+      <th>1517</th>
+      <td>45</td>
+      <td>East</td>
+      <td>454</td>
+      <td>0.037688</td>
+    </tr>
+    <tr>
+      <th>2658</th>
+      <td>64</td>
+      <td>West</td>
+      <td>64127</td>
+      <td>0.049834</td>
+    </tr>
+    <tr>
+      <th>1072</th>
+      <td>29</td>
+      <td>South</td>
+      <td>2915</td>
+      <td>0.069124</td>
+    </tr>
+    <tr>
+      <th>1074</th>
+      <td>29</td>
+      <td>South</td>
+      <td>2917</td>
+      <td>0.069124</td>
+    </tr>
+    <tr>
+      <th>1669</th>
+      <td>45</td>
+      <td>East</td>
+      <td>45156</td>
+      <td>0.037688</td>
+    </tr>
+    <tr>
+      <th>1286</th>
+      <td>34</td>
+      <td>East</td>
+      <td>3412</td>
+      <td>0.062762</td>
+    </tr>
+    <tr>
+      <th>1162</th>
+      <td>29</td>
+      <td>South</td>
+      <td>29105</td>
+      <td>0.069124</td>
+    </tr>
+    <tr>
+      <th>1051</th>
+      <td>24</td>
+      <td>South</td>
+      <td>2467</td>
+      <td>0.205479</td>
+    </tr>
+    <tr>
+      <th>3085</th>
+      <td>86</td>
+      <td>West</td>
+      <td>86253</td>
+      <td>0.054745</td>
+    </tr>
+    <tr>
+      <th>2148</th>
+      <td>52</td>
+      <td>East</td>
+      <td>52237</td>
+      <td>0.024194</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="ssu-household-selection" class="level3">
+<h3 class="anchored" data-anchor-id="ssu-household-selection">SSU (household) Selection</h3>
+<p>The second stage sample is selected from the SSU frame (<em>ssu_frame</em>) using the variable <em>cluster</em> as the stratification variable. The sample is selected without replacement according to the specification of the second stage design. Hence, both <em>ssu_sample</em> and <em>ssu_hits</em> sum to 150 and each selected household was hit only ounce (i.e.&nbsp;<em>ssu_hits</em> = 1).</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">11</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ssu_sample, ssu_hits, ssu_probs <span class="op">=</span> stage2_design.select(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    ssu_frame[<span class="st">"household"</span>], <span class="dv">15</span>, ssu_frame[<span class="st">"cluster"</span>]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"ssu_sample"</span>] <span class="op">=</span> ssu_sample</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"ssu_hits"</span>] <span class="op">=</span> ssu_hits</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"ssu_probs"</span>] <span class="op">=</span> ssu_probs</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ssu_frame[ssu_frame[<span class="st">"ssu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>].sample(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>cluster</th>
+      <th>region</th>
+      <th>household</th>
+      <th>ssu_prob</th>
+      <th>ssu_sample</th>
+      <th>ssu_hits</th>
+      <th>ssu_probs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2319</th>
+      <td>52</td>
+      <td>East</td>
+      <td>52408</td>
+      <td>0.024194</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.024194</td>
+    </tr>
+    <tr>
+      <th>2931</th>
+      <td>86</td>
+      <td>West</td>
+      <td>8699</td>
+      <td>0.054745</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.054745</td>
+    </tr>
+    <tr>
+      <th>2642</th>
+      <td>64</td>
+      <td>West</td>
+      <td>64111</td>
+      <td>0.049834</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.049834</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>7</td>
+      <td>North</td>
+      <td>7123</td>
+      <td>0.115385</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.115385</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>7</td>
+      <td>North</td>
+      <td>761</td>
+      <td>0.115385</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.115385</td>
+    </tr>
+    <tr>
+      <th>945</th>
+      <td>16</td>
+      <td>South</td>
+      <td>16156</td>
+      <td>0.076923</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.076923</td>
+    </tr>
+    <tr>
+      <th>338</th>
+      <td>10</td>
+      <td>North</td>
+      <td>10209</td>
+      <td>0.022727</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.022727</td>
+    </tr>
+    <tr>
+      <th>2218</th>
+      <td>52</td>
+      <td>East</td>
+      <td>52307</td>
+      <td>0.024194</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.024194</td>
+    </tr>
+    <tr>
+      <th>2870</th>
+      <td>86</td>
+      <td>West</td>
+      <td>8638</td>
+      <td>0.054745</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.054745</td>
+    </tr>
+    <tr>
+      <th>1764</th>
+      <td>45</td>
+      <td>East</td>
+      <td>45251</td>
+      <td>0.037688</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.037688</td>
+    </tr>
+    <tr>
+      <th>630</th>
+      <td>10</td>
+      <td>North</td>
+      <td>10501</td>
+      <td>0.022727</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.022727</td>
+    </tr>
+    <tr>
+      <th>1441</th>
+      <td>34</td>
+      <td>East</td>
+      <td>34167</td>
+      <td>0.062762</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.062762</td>
+    </tr>
+    <tr>
+      <th>986</th>
+      <td>24</td>
+      <td>South</td>
+      <td>242</td>
+      <td>0.205479</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.205479</td>
+    </tr>
+    <tr>
+      <th>1796</th>
+      <td>45</td>
+      <td>East</td>
+      <td>45283</td>
+      <td>0.037688</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.037688</td>
+    </tr>
+    <tr>
+      <th>1264</th>
+      <td>29</td>
+      <td>South</td>
+      <td>29207</td>
+      <td>0.069124</td>
+      <td>True</td>
+      <td>1</td>
+      <td>0.069124</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Let’s check that both <em>ssu_sample</em> and <em>ssu_hits</em> sum to 150 and each selected household was hit only ounce (i.e.&nbsp;<em>ssu_hits</em> = 1).</p>
+<div style="font-size:0.9rem">
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_sample` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_sample'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The sum of `ssu_sample` is equal to: 150
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_hits` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_hits'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The sum of `ssu_hits` is equal to: 150
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The values of `ssu_hits` are: </span><span class="sc">{</span>np<span class="sc">.</span>unique(ssu_frame[<span class="st">'ssu_hits'</span>])<span class="sc">.</span>tolist()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The values of `ssu_hits` are: [0, 1]
+</code></pre>
+</div>
+</div>
+</div>
+<p>To use systematic selection, we just need to replace <code>method="srs"</code> by <code>method="sys"</code>.</p>
+<p>Another common approach is to use a rate for selecting the sample. Instead of selecting 15 households from 130 in the first cluster, we may want to select with a rate of 15/130, and similarly for the other clusters.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>rates <span class="op">=</span> np.repeat(<span class="dv">15</span>, <span class="dv">10</span>) <span class="op">/</span> ssu_counts[<span class="st">"number_households_listed"</span>].values</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ssu_rates <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(np.unique(ssu_frame[<span class="st">"cluster"</span>]), rates))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ssu_rates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>{7: 0.11538461538461539,
+ 10: 0.022727272727272728,
+ 16: 0.07692307692307693,
+ 24: 0.2054794520547945,
+ 29: 0.06912442396313365,
+ 34: 0.06276150627615062,
+ 45: 0.03768844221105527,
+ 52: 0.024193548387096774,
+ 64: 0.04983388704318937,
+ 86: 0.05474452554744526}</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">22</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>stage2_design2 <span class="op">=</span> SampleSelection(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">"sys"</span>, stratification<span class="op">=</span><span class="va">True</span>, with_replacement<span class="op">=</span><span class="va">False</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>ssu_sample_r, ssu_hits_r, _ <span class="op">=</span> stage2_design2.select(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    ssu_frame[<span class="st">"household"</span>], </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    stratum<span class="op">=</span>ssu_frame[<span class="st">"cluster"</span>], </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    samp_rate<span class="op">=</span>ssu_rates</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>ssu_sample2 <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>{</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"household"</span>: ssu_frame[<span class="st">"household"</span>],</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ssu_sample_r"</span>: ssu_sample_r,</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ssu_hits_r"</span>: ssu_hits_r,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>ssu_sample2.head(<span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>household</th>
+      <th>ssu_sample_r</th>
+      <th>ssu_hits_r</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>71</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>72</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>73</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>74</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>75</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>76</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>77</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>78</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>79</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>710</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>711</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>712</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>713</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>714</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>715</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>716</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>717</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>718</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>719</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>720</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>721</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>722</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>723</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>724</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>725</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Let’s store the first and second stages samples.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage sample</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>psu_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"psu_prob"</span>]].to_csv(<span class="st">"psu_sample.csv"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Second stage sample</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>ssu_sample <span class="op">=</span> ssu_frame.loc[ssu_frame[<span class="st">"ssu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>ssu_sample[[<span class="st">"cluster"</span>, <span class="st">"household"</span>, <span class="st">"ssu_prob"</span>]].to_csv(<span class="st">"ssu_sample.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../pages/selection_psus.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Selection of PSUs</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../pages/weight.html" class="pagination-link">
+        <span class="nav-page-text">Overview</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ © Copyright 2019-2020, samplics.
+  </li>  
+</ul>
+    </div>   
+      <div class="nav-footer-center">Samplics for Design and Analysis of Complex Survey Data</div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../index.html">Back to Home</a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo">
+      <i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics">
+      <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

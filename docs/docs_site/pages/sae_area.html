@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.245">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Samplics Documentation - Area Level Modeling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../pages/sae_unit.html" rel="next">
+<link href="../pages/sae.html" rel="prev">
+<link href="../public/img/samplics_logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../public/styles.css">
+<meta property="og:title" content="Samplics Documentation - Area Level Modeling">
+<meta property="og:description" content="Small area estimation (SAE) are useful techniques when the sample sizes are not sufficient to provide reliable direct domain estimates given the sampling design.">
+<meta property="og:site-name" content="Samplics Documentation">
+<meta name="twitter:title" content="Samplics Documentation - Area Level Modeling">
+<meta name="twitter:description" content="Small area estimation (SAE) are useful techniques when the sample sizes are not sufficient to provide reliable direct domain estimates given the sampling design.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Samplics Documentation</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page">Overview</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/tutorial.html">Tutorial</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/examples.html">Examples</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo"><i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics"><i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Area Level Modeling</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Overview</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Introduction</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/getting_started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Tutorial</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/tutorial.html" class="sidebar-item-text sidebar-link">Outline</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/datasets.html" class="sidebar-item-text sidebar-link">Datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">Size Calculation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size_stagedesign.html" class="sidebar-item-text sidebar-link">Sample Size for Stage Design</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">Selection</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection.html" class="sidebar-item-text sidebar-link">Overviews</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_psus.html" class="sidebar-item-text sidebar-link">Selection of PSUs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_ssus.html" class="sidebar-item-text sidebar-link">Selection of SSUs</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">Weighting</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_adj.html" class="sidebar-item-text sidebar-link">Sample Weight Adjustments</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_replicates.html" class="sidebar-item-text sidebar-link">Replicate Weights</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">Population Parameters Estimation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_taylor.html" class="sidebar-item-text sidebar-link">Taylor-based Estimation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_rep.html" class="sidebar-item-text sidebar-link">Replicated-based Estimation</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">Categorical Data Analysis</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_tabulation.html" class="sidebar-item-text sidebar-link">Tabulation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_ttest.html" class="sidebar-item-text sidebar-link">T-test</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">Small Area Estimation</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_area.html" class="sidebar-item-text sidebar-link active">Area Level Modeling</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_unit.html" class="sidebar-item-text sidebar-link">Unit Level Modeling</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">Examples</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">References</span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#empirical-best-linear-unbiased-predictor-eblup" id="toc-empirical-best-linear-unbiased-predictor-eblup" class="nav-link active" data-scroll-target="#empirical-best-linear-unbiased-predictor-eblup">Empirical best linear unbiased predictor (EBLUP)</a>
+  <ul class="collapse">
+  <li><a href="#milk-expenditure-data" id="toc-milk-expenditure-data" class="nav-link" data-scroll-target="#milk-expenditure-data">Milk Expenditure data</a></li>
+  <li><a href="#eblup-predictor" id="toc-eblup-predictor" class="nav-link" data-scroll-target="#eblup-predictor">EBLUP Predictor</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Area Level Modeling</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="empirical-best-linear-unbiased-predictor-eblup" class="level1">
+<h1>Empirical best linear unbiased predictor (EBLUP)</h1>
+<p>Small area estimation (SAE) are useful techniques when the sample sizes are not sufficient to provide reliable direct domain estimates given the sampling design. In this tutorial, the direct estimates refer to estimates obtained from the design-based approach. It usually consists of applying adjusted design weights to the variable of interest to compute sample parameters as estimates of equivalent population parameters. When auxiliary information is available, we can use model assisted survey methods can be used to estimate population parameters.</p>
+<p>In this tutorial, we will go futher and use modeling techniques to produce domains estimates. For the area level model, the modeling is done at the area level using generalized linear mixed models. The sections below shows how to use the <em>EblupAreaModel</em> class from the <em>samplics</em> package to produce area level estimates.</p>
+<section id="milk-expenditure-data" class="level2">
+<h2 class="anchored" data-anchor-id="milk-expenditure-data">Milk Expenditure data</h2>
+<p>To illustrate the EblupAreaModel class, we will use the Milk Expenditure dataset used in Rao and Molina (2015). As mentioned in the book, this dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006). For the R users, this dataset is also used by the R package sae (https://cran.r-project.org/web/packages/sae/index.html).</p>
+<p>The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. The datasets has the following values: major area representing (major_area), small area (small_area), sample size (samp_size), direct survey estimates of average expenditure (direct_est), standard error of the direct estimate (std_error), and coefficient of variation of the direct estimates (coef_variance).</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_expenditure_milk</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sae <span class="im">import</span> EblupAreaModel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Expenditure on Milk sample data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>milk_exp_dict <span class="op">=</span> load_expenditure_milk()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>milk_exp <span class="op">=</span> milk_exp_dict[<span class="st">"data"</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>nb_obs <span class="op">=</span> <span class="dv">15</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"First </span><span class="sc">{</span>nb_obs<span class="sc">}</span><span class="ss"> observations of the Milk Expendure dataset</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>milk_exp.tail(nb_obs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>First 15 observations of the Milk Expendure dataset
+</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>major_area</th>
+      <th>small_area</th>
+      <th>samp_size</th>
+      <th>direct_est</th>
+      <th>std_error</th>
+      <th>coef_var</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>28</th>
+      <td>4</td>
+      <td>29</td>
+      <td>238</td>
+      <td>0.796</td>
+      <td>0.106</td>
+      <td>0.133</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>4</td>
+      <td>30</td>
+      <td>207</td>
+      <td>0.565</td>
+      <td>0.089</td>
+      <td>0.158</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>4</td>
+      <td>31</td>
+      <td>165</td>
+      <td>0.886</td>
+      <td>0.225</td>
+      <td>0.254</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>4</td>
+      <td>32</td>
+      <td>153</td>
+      <td>0.952</td>
+      <td>0.205</td>
+      <td>0.215</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>4</td>
+      <td>33</td>
+      <td>210</td>
+      <td>0.807</td>
+      <td>0.119</td>
+      <td>0.147</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>4</td>
+      <td>34</td>
+      <td>383</td>
+      <td>0.582</td>
+      <td>0.067</td>
+      <td>0.115</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>4</td>
+      <td>35</td>
+      <td>255</td>
+      <td>0.684</td>
+      <td>0.106</td>
+      <td>0.155</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>4</td>
+      <td>36</td>
+      <td>226</td>
+      <td>0.787</td>
+      <td>0.126</td>
+      <td>0.160</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>4</td>
+      <td>37</td>
+      <td>224</td>
+      <td>0.440</td>
+      <td>0.092</td>
+      <td>0.209</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>4</td>
+      <td>38</td>
+      <td>212</td>
+      <td>0.759</td>
+      <td>0.132</td>
+      <td>0.174</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>4</td>
+      <td>39</td>
+      <td>211</td>
+      <td>0.770</td>
+      <td>0.100</td>
+      <td>0.130</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>4</td>
+      <td>40</td>
+      <td>179</td>
+      <td>0.800</td>
+      <td>0.113</td>
+      <td>0.141</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>4</td>
+      <td>41</td>
+      <td>312</td>
+      <td>0.756</td>
+      <td>0.083</td>
+      <td>0.110</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>4</td>
+      <td>42</td>
+      <td>241</td>
+      <td>0.865</td>
+      <td>0.121</td>
+      <td>0.140</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>4</td>
+      <td>43</td>
+      <td>205</td>
+      <td>0.640</td>
+      <td>0.129</td>
+      <td>0.202</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="eblup-predictor" class="level2">
+<h2 class="anchored" data-anchor-id="eblup-predictor">EBLUP Predictor</h2>
+<p>As shown in the milk expenditure datasets, some of the coefficients of variation are not small which indicates unstability of the direct survey estimates. Hence, we can try to reduce the variability of the estimates by smoothing them through modeling. For illustration purpose, we will model the average expenditure on milk using the major areas as auxiliary variables.</p>
+<p>First, we use the method <code>fit()</code> to estimate the model parameters. The pandas’s method <code>get_dummies()</code> create a matrix with dummy values (0 and 1) from the categorical variable <em>major_area</em>.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>area <span class="op">=</span> milk_exp[<span class="st">"small_area"</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>yhat <span class="op">=</span> milk_exp[<span class="st">"direct_est"</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pd.get_dummies(milk_exp[<span class="st">"major_area"</span>],drop_first<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>sigma_e <span class="op">=</span> milk_exp[<span class="st">"std_error"</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">## REML method</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>fh_model_reml <span class="op">=</span> EblupAreaModel(method<span class="op">=</span><span class="st">"REML"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>fh_model_reml.fit(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    yhat<span class="op">=</span>yhat, X<span class="op">=</span>X, area<span class="op">=</span>area, error_std<span class="op">=</span>sigma_e, intercept<span class="op">=</span><span class="va">True</span>, tol<span class="op">=</span><span class="fl">1e-8</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The estimated fixed effects are:"</span>) </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.fixed_effects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The estimated fixed effects are:
+array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The estimated standard error of the area random effects is:"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.re_std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The estimated standard error of the area random effects is:
+0.13619961509121215</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The convergence statistics are:"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.convergence)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The convergence statistics are:
+{'achieved': True, 'iterations': 7, 'precision': 4.849039732246485e-09}</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The goodness of fit statistics are:"</span>) </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.goodness)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The goodness of fit statistics are:
+{'AIC': 30.80694883102754,
+ 'BIC': 41.37414952518891,
+ 'loglike': -9.40347441551377}</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fh_model_reml.predict(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    X<span class="op">=</span>X, area<span class="op">=</span>area, intercept<span class="op">=</span><span class="va">True</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.area_est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{1: 1.0219705448470267,
+ 2: 1.047601951883294,
+ 3: 1.0679514268850938,
+ 4: 0.7608165634164004,
+ 5: 0.8461570426977273,
+ 6: 0.9743727062092651,
+ 7: 1.058452673285536,
+ 8: 1.097776256442316,
+ 9: 1.2215454913423587,
+ 10: 1.1951460164712606,
+ 11: 0.7852149170863967,
+ 12: 1.2139462074222362,
+ 13: 1.2096597223605197,
+ 14: 0.9834964402356496,
+ 15: 1.1864247095350087,
+ 16: 1.155698113523358,
+ 17: 1.2263412510186897,
+ 18: 1.2856489898727415,
+ 19: 1.2363248413266223,
+ 20: 1.2349601399238859,
+ 21: 1.0903016265233836,
+ 22: 1.1923057228469682,
+ 23: 1.1216467660137077,
+ 24: 1.2230297222963111,
+ 25: 1.1938054444127773,
+ 26: 0.7627195900552476,
+ 27: 0.7649551536523858,
+ 28: 0.7338443883489099,
+ 29: 0.7699295545743624,
+ 30: 0.6134416227081898,
+ 31: 0.7695560730689726,
+ 32: 0.7958253128224173,
+ 33: 0.7723188482183632,
+ 34: 0.6102300678743073,
+ 35: 0.7001781895145354,
+ 36: 0.7592788108093529,
+ 37: 0.5298863352267296,
+ 38: 0.7434466782997071,
+ 39: 0.75489963338527,
+ 40: 0.7701919661644314,
+ 41: 0.7481164240189863,
+ 42: 0.8040775166023048,
+ 43: 0.6810868846993623}</code></pre>
+</div>
+</div>
+<p>We can use the utility method <code>to_dataframe()</code> to output the estimates as a pandas dataframe. The function provides the area, the estimate and its MSE estimates. We can use <em>col_names</em> to customize the name of the columns. For example, using <code>col_names = ["small_area", "eblup_estimate", "eblup_mse"]</code>. Otherwise, if col_names is not provided, “_area”, “_estimates” and “_mse” are used as defaults.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>milk_est_reml <span class="op">=</span> fh_model_reml.to_dataframe(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    col_names <span class="op">=</span> [<span class="st">"parameter"</span>, <span class="st">"small_area"</span>, <span class="st">"eblup_estimate"</span>, <span class="st">"eblup_mse"</span>]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The dataframe version of the area level estimates:"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(milk_est_reml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The dataframe version of the area level estimates:
+   parameter  small_area  eblup_estimate  eblup_mse
+0       mean           1        1.021971   0.013460
+1       mean           2        1.047602   0.005373
+2       mean           3        1.067951   0.005702
+3       mean           4        0.760817   0.008542
+4       mean           5        0.846157   0.009580
+5       mean           6        0.974373   0.011671
+6       mean           7        1.058453   0.015926
+7       mean           8        1.097776   0.010587
+8       mean           9        1.221545   0.014184
+9       mean          10        1.195146   0.014902
+10      mean          11        0.785215   0.007694
+11      mean          12        1.213946   0.016337
+12      mean          13        1.209660   0.012563
+13      mean          14        0.983496   0.012117
+14      mean          15        1.186425   0.012031
+15      mean          16        1.155698   0.011709
+16      mean          17        1.226341   0.010860
+17      mean          18        1.285649   0.013691
+18      mean          19        1.236325   0.011035
+19      mean          20        1.234960   0.013080
+20      mean          21        1.090302   0.009949
+21      mean          22        1.192306   0.017244
+22      mean          23        1.121647   0.011292
+23      mean          24        1.223030   0.013625
+24      mean          25        1.193805   0.008066
+25      mean          26        0.762720   0.009205
+26      mean          27        0.764955   0.009205
+27      mean          28        0.733844   0.016477
+28      mean          29        0.769930   0.007801
+29      mean          30        0.613442   0.006099
+30      mean          31        0.769556   0.015442
+31      mean          32        0.795825   0.014658
+32      mean          33        0.772319   0.009025
+33      mean          34        0.610230   0.003871
+34      mean          35        0.700178   0.007801
+35      mean          36        0.759279   0.009646
+36      mean          37        0.529886   0.006404
+37      mean          38        0.743447   0.010156
+38      mean          39        0.754900   0.007210
+39      mean          40        0.770192   0.008470
+40      mean          41        0.748116   0.005485
+41      mean          42        0.804078   0.009205
+42      mean          43        0.681087   0.009904</code></pre>
+</div>
+</div>
+<p>We could also fit the model parameters using the maximum likelihood (ML) method which will impact the MSE estimation as well. To estimate the area means using the ML methdo, we only need to set <em>method=“ML”</em> then run the prediction as follows.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">## ML method</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fh_model_ml <span class="op">=</span> EblupAreaModel(method<span class="op">=</span><span class="st">"ML"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>fh_model_ml.fit(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    yhat<span class="op">=</span>yhat, X<span class="op">=</span>X, area<span class="op">=</span>area, error_std<span class="op">=</span>sigma_e, intercept<span class="op">=</span><span class="va">True</span>, tol<span class="op">=</span><span class="fl">1e-8</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>milk_est_ml <span class="op">=</span> fh_model_ml.predict(</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    X<span class="op">=</span>X, area<span class="op">=</span>area, intercept<span class="op">=</span><span class="va">True</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>milk_est_ml <span class="op">=</span> fh_model_ml.to_dataframe(</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    col_names <span class="op">=</span> [<span class="st">"parameter"</span>, <span class="st">"small_area"</span>, <span class="st">"eblup_estimate"</span>, <span class="st">"eblup_mse"</span>]</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The dataframe version of the ML area level estimates:"</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(milk_est_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The dataframe version of the ML area level estimates:
+   parameter  small_area  eblup_estimate  eblup_mse
+0       mean           1        1.016173   0.013580
+1       mean           2        1.043697   0.005513
+2       mean           3        1.062817   0.005851
+3       mean           4        0.775349   0.008735
+4       mean           5        0.855490   0.009775
+5       mean           6        0.973586   0.011841
+6       mean           7        1.047478   0.015934
+7       mean           8        1.095344   0.010822
+8       mean           9        1.205409   0.014346
+9       mean          10        1.181256   0.015036
+10      mean          11        0.803370   0.007911
+11      mean          12        1.196775   0.016405
+12      mean          13        1.196159   0.012771
+13      mean          14        0.991405   0.012335
+14      mean          15        1.186883   0.012192
+15      mean          16        1.159036   0.011877
+16      mean          17        1.223237   0.011041
+17      mean          18        1.275519   0.013805
+18      mean          19        1.232285   0.011214
+19      mean          20        1.230442   0.013214
+20      mean          21        1.098577   0.010138
+21      mean          22        1.192160   0.017194
+22      mean          23        1.127992   0.011468
+23      mean          24        1.219628   0.013742
+24      mean          25        1.193626   0.008251
+25      mean          26        0.759065   0.009345
+26      mean          27        0.761123   0.009345
+27      mean          28        0.731565   0.016390
+28      mean          29        0.766273   0.007942
+29      mean          30        0.619145   0.006222
+30      mean          31        0.762939   0.015404
+31      mean          32        0.786375   0.014656
+32      mean          33        0.767978   0.009165
+33      mean          34        0.614135   0.003947
+34      mean          35        0.701311   0.007942
+35      mean          36        0.755756   0.009782
+36      mean          37        0.540665   0.006532
+37      mean          38        0.741132   0.010286
+38      mean          39        0.752451   0.007347
+39      mean          40        0.766242   0.008613
+40      mean          41        0.746536   0.005598
+41      mean          42        0.797140   0.009345
+42      mean          43        0.684098   0.010037</code></pre>
+</div>
+</div>
+<p>Similar, we can use the Fay-Herriot method as follows</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">## FH method</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fh_model_fh <span class="op">=</span> EblupAreaModel(method<span class="op">=</span><span class="st">"FH"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>fh_model_fh.fit(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    yhat<span class="op">=</span>yhat, X<span class="op">=</span>X, area<span class="op">=</span>area, error_std<span class="op">=</span>sigma_e, intercept<span class="op">=</span><span class="va">True</span>, tol<span class="op">=</span><span class="fl">1e-8</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>milk_est_fh <span class="op">=</span> fh_model_fh.predict(</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    X<span class="op">=</span>X, area<span class="op">=</span>area, intercept<span class="op">=</span><span class="va">True</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>milk_est_fh <span class="op">=</span> fh_model_fh.to_dataframe(col_names <span class="op">=</span> [<span class="st">"parameter"</span>, <span class="st">"small_area"</span>, <span class="st">"eblup_estimate"</span>, <span class="st">"eblup_mse"</span>])</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The dataframe version of the ML area level estimates:"</span>)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(milk_est_fh)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The dataframe version of the ML area level estimates:
+   parameter  small_area  eblup_estimate  eblup_mse
+0       mean           1        1.017976   0.012757
+1       mean           2        1.044964   0.005314
+2       mean           3        1.064481   0.005632
+3       mean           4        0.770692   0.008323
+4       mean           5        0.852512   0.009284
+5       mean           6        0.973826   0.011178
+6       mean           7        1.050857   0.014868
+7       mean           8        1.096165   0.010253
+8       mean           9        1.210505   0.013471
+9       mean          10        1.185640   0.014095
+10      mean          11        0.797569   0.007558
+11      mean          12        1.202150   0.015325
+12      mean          13        1.200459   0.012039
+13      mean          14        0.988971   0.011640
+14      mean          15        1.186745   0.011467
+15      mean          16        1.157992   0.011182
+16      mean          17        1.224223   0.010424
+17      mean          18        1.278680   0.012914
+18      mean          19        1.233566   0.010581
+19      mean          20        1.231860   0.012386
+20      mean          21        1.095955   0.009600
+21      mean          22        1.192213   0.015890
+22      mean          23        1.125997   0.010811
+23      mean          24        1.220695   0.012858
+24      mean          25        1.193687   0.007865
+25      mean          26        0.760244   0.008855
+26      mean          27        0.762358   0.008855
+27      mean          28        0.732288   0.015042
+28      mean          29        0.767459   0.007569
+29      mean          30        0.617310   0.005975
+30      mean          31        0.764997   0.014212
+31      mean          32        0.789315   0.013572
+32      mean          33        0.769376   0.008692
+33      mean          34        0.612861   0.003833
+34      mean          35        0.700962   0.007569
+35      mean          36        0.756891   0.009253
+36      mean          37        0.537193   0.006264
+37      mean          38        0.741882   0.009709
+38      mean          39        0.753251   0.007020
+39      mean          40        0.767519   0.008186
+40      mean          41        0.747059   0.005391
+41      mean          42        0.799363   0.008855
+42      mean          43        0.683161   0.009484</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../pages/sae.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../pages/sae_unit.html" class="pagination-link">
+        <span class="nav-page-text">Unit Level Modeling</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ © Copyright 2019-2020, samplics.
+  </li>  
+</ul>
+    </div>   
+      <div class="nav-footer-center">Samplics for Design and Analysis of Complex Survey Data</div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../index.html">Back to Home</a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo">
+      <i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics">
+      <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

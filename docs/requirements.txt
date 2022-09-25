@@ -1,6 +1,0 @@
-docutils>=0.14,<0.18
-recommonmark==0.7.1
-sphinx==4.0.2
-sphinx-bootstrap-theme==0.8.0
-nbsphinx==0.7.1 #version 0.8.x has trouble rendering .ipynb files
-samplics

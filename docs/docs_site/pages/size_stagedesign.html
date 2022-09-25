@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.245">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Samplics Documentation - Sample Size for Stage Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../pages/selection.html" rel="next">
+<link href="../pages/size.html" rel="prev">
+<link href="../public/img/samplics_logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../public/styles.css">
+<meta property="og:title" content="Samplics Documentation - Sample Size for Stage Design">
+<meta property="og:description" content="In the cells below, we illustrate a simple example of sample size calculation in the context of household surveys using stage sampling designs.">
+<meta property="og:site-name" content="Samplics Documentation">
+<meta name="twitter:title" content="Samplics Documentation - Sample Size for Stage Design">
+<meta name="twitter:description" content="In the cells below, we illustrate a simple example of sample size calculation in the context of household surveys using stage sampling designs.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Samplics Documentation</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page">Overview</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/tutorial.html">Tutorial</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../pages/examples.html">Examples</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo"><i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics"><i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Sample Size for Stage Design</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Overview</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Introduction</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/getting_started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Tutorial</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/tutorial.html" class="sidebar-item-text sidebar-link">Outline</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/datasets.html" class="sidebar-item-text sidebar-link">Datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Size Calculation</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/size_stagedesign.html" class="sidebar-item-text sidebar-link active">Sample Size for Stage Design</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">Selection</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection.html" class="sidebar-item-text sidebar-link">Overviews</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_psus.html" class="sidebar-item-text sidebar-link">Selection of PSUs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/selection_ssus.html" class="sidebar-item-text sidebar-link">Selection of SSUs</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">Weighting</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_adj.html" class="sidebar-item-text sidebar-link">Sample Weight Adjustments</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/weight_replicates.html" class="sidebar-item-text sidebar-link">Replicate Weights</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">Population Parameters Estimation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_taylor.html" class="sidebar-item-text sidebar-link">Taylor-based Estimation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/estimation_rep.html" class="sidebar-item-text sidebar-link">Replicated-based Estimation</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">Categorical Data Analysis</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_tabulation.html" class="sidebar-item-text sidebar-link">Tabulation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/categorical_ttest.html" class="sidebar-item-text sidebar-link">T-test</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">Small Area Estimation</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae.html" class="sidebar-item-text sidebar-link">Overview</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_area.html" class="sidebar-item-text sidebar-link">Area Level Modeling</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pages/sae_unit.html" class="sidebar-item-text sidebar-link">Unit Level Modeling</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">Examples</span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">References</span>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#number-of-children" id="toc-number-of-children" class="nav-link active" data-scroll-target="#number-of-children">Number of children</a>
+  <ul class="collapse">
+  <li><a href="#wald-method" id="toc-wald-method" class="nav-link" data-scroll-target="#wald-method"><code>Wald</code> method</a></li>
+  <li><a href="#fleiss-method" id="toc-fleiss-method" class="nav-link" data-scroll-target="#fleiss-method"><code>Fleiss</code> method</a></li>
+  </ul></li>
+  <li><a href="#number-of-households" id="toc-number-of-households" class="nav-link" data-scroll-target="#number-of-households">Number of households</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Sample Size for Stage Design</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>In the cells below, we illustrate a simple example of sample size calculation in the context of household surveys using stage sampling designs. Let’s assume that we want to calculate sample size for a vaccination survey in Senegal. We want to stratify the sample by administrative region. We will use the <a href="https://www.dhsprogram.com/publications/publication-FR345-DHS-Final-Reports.cfm">2017 Senegal Demographic and Health Survey (DHS)</a> to get an idea of the vaccination coverage rates for some main vaccine-doses. Below, we show coverage rates of hepatitis B birth dose (hepB0) vaccine, first and third dose of diphtheria, tetanus and pertussis (DTP), first dose of measles containing vaccine (MCV1) and coverage of basic vaccination. Basic vaccination refers to the 12-23 months old children that received BCG vaccine, three doses of DTP containing vaccine, three doses of polio vaccine, and the first dose of measles containing vaccine.The table below shows the 2017 Senegal DHS vaccination coverage of a few vaccine-doses for children aged 12 to 23 months old.</p>
+<table class="table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Region</th>
+<th style="text-align: center;">HepB0</th>
+<th style="text-align: center;">DTP1</th>
+<th style="text-align: center;">DTP3</th>
+<th style="text-align: center;">MCV1</th>
+<th style="text-align: center;">Basic vaccination</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Dakar</td>
+<td style="text-align: center;">53.6</td>
+<td style="text-align: center;">99.1</td>
+<td style="text-align: center;">98.5</td>
+<td style="text-align: center;">97.0</td>
+<td style="text-align: center;">84.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ziguinchor</td>
+<td style="text-align: center;">47.1</td>
+<td style="text-align: center;">98.6</td>
+<td style="text-align: center;">94.1</td>
+<td style="text-align: center;">93.6</td>
+<td style="text-align: center;">80.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diourbel</td>
+<td style="text-align: center;">62.8</td>
+<td style="text-align: center;">94.6</td>
+<td style="text-align: center;">88.2</td>
+<td style="text-align: center;">86.1</td>
+<td style="text-align: center;">68.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Saint-Louis</td>
+<td style="text-align: center;">40.1</td>
+<td style="text-align: center;">99.1</td>
+<td style="text-align: center;">97.2</td>
+<td style="text-align: center;">94.7</td>
+<td style="text-align: center;">80.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tambacounda</td>
+<td style="text-align: center;">45.0</td>
+<td style="text-align: center;">83.3</td>
+<td style="text-align: center;">72.7</td>
+<td style="text-align: center;">65.3</td>
+<td style="text-align: center;">47.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kaolack</td>
+<td style="text-align: center;">63.9</td>
+<td style="text-align: center;">99.6</td>
+<td style="text-align: center;">92.2</td>
+<td style="text-align: center;">89.3</td>
+<td style="text-align: center;">79.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Thies</td>
+<td style="text-align: center;">62.3</td>
+<td style="text-align: center;">100.0</td>
+<td style="text-align: center;">98.8</td>
+<td style="text-align: center;">91.6</td>
+<td style="text-align: center;">83.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Louga</td>
+<td style="text-align: center;">49.8</td>
+<td style="text-align: center;">96.2</td>
+<td style="text-align: center;">87.8</td>
+<td style="text-align: center;">81.5</td>
+<td style="text-align: center;">67.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fatick</td>
+<td style="text-align: center;">62.7</td>
+<td style="text-align: center;">98.5</td>
+<td style="text-align: center;">93.8</td>
+<td style="text-align: center;">90.3</td>
+<td style="text-align: center;">76.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kolda</td>
+<td style="text-align: center;">32.8</td>
+<td style="text-align: center;">94.4</td>
+<td style="text-align: center;">87.3</td>
+<td style="text-align: center;">85.6</td>
+<td style="text-align: center;">63.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Matam</td>
+<td style="text-align: center;">43.1</td>
+<td style="text-align: center;">94.3</td>
+<td style="text-align: center;">88.1</td>
+<td style="text-align: center;">79.4</td>
+<td style="text-align: center;">68.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kaffrine</td>
+<td style="text-align: center;">56.9</td>
+<td style="text-align: center;">98.0</td>
+<td style="text-align: center;">93.6</td>
+<td style="text-align: center;">88.7</td>
+<td style="text-align: center;">76.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kedougou</td>
+<td style="text-align: center;">44.4</td>
+<td style="text-align: center;">70.7</td>
+<td style="text-align: center;">60.2</td>
+<td style="text-align: center;">46.5</td>
+<td style="text-align: center;">33.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sedhiou</td>
+<td style="text-align: center;">46.6</td>
+<td style="text-align: center;">96.8</td>
+<td style="text-align: center;">90.4</td>
+<td style="text-align: center;">89.9</td>
+<td style="text-align: center;">74.2</td>
+</tr>
+</tbody>
+</table>
+<p>The 2017 Senegal DHS data collection happened from April to December 2018. Therefore, the data shown in the table represent children born from October 2016 to December 2017. For the purpose of this tutorial, we will assume that these vaccine coverage rates still hold. Furthermore, we will use the basic vaccination coverage rates to calculate sample size.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSize</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="number-of-children" class="level1">
+<h1>Number of children</h1>
+<section id="wald-method" class="level2">
+<h2 class="anchored" data-anchor-id="wald-method"><code>Wald</code> method</h2>
+<p>The first step is to create and object using the <em>SampleSize</em> class with the parameter of interest, the sample size calculation method, and the stratification status. In this example, we want to calculate sample size for proportions, using wald method for a stratified design. This is achived with the following snippet of code.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>SampleSize(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    param<span class="op">=</span><span class="st">"proportion"</span>, method<span class="op">=</span><span class="st">"wald"</span>, strat<span class="op">=</span><span class="va">True</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Because, we are using a stratified sample design, it is best to specify the expected coverage levels by stratum. If the information is not available then aggregated values can be used across the strata. The 2017 Senegal DHS published the coverage rates by region hence we have the information available by stratum. To provide the informmation to <em>Samplics</em> we use the python dictionaries as follows</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>expected_coverage <span class="op">=</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Dakar"</span>: <span class="fl">0.849</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ziguinchor"</span>: <span class="fl">0.809</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Diourbel"</span>: <span class="fl">0.682</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Saint-Louis"</span>: <span class="fl">0.806</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Tambacounda"</span>: <span class="fl">0.470</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kaolack"</span>: <span class="fl">0.797</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Thies"</span>: <span class="fl">0.834</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Louga"</span>: <span class="fl">0.678</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Fatick"</span>: <span class="fl">0.766</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kolda"</span>: <span class="fl">0.637</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Matam"</span>: <span class="fl">0.687</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kaffrine"</span>: <span class="fl">0.766</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kedougou"</span>: <span class="fl">0.336</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sedhiou"</span>: <span class="fl">0.742</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we want to calculate the sample size with desired precision of 0.07 which means that we want the expected vaccination coverage rates to have 7% half confidence intervals e.g.&nbsp;expected rate of 90% will have a confidence interval of [83%, 97%]. Note that the desired precision can be specified by stratum in a similar way as the target coverage using a python dictionary.</p>
+<p>Given that information, we can calculate the sample size using <em>SampleSize</em> class as follows.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.utils.types <span class="im">import</span> SizeMethod, PopParam</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare the sample size calculation parameters</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald <span class="op">=</span> SampleSize(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    param<span class="op">=</span>PopParam.prop, method<span class="op">=</span>SizeMethod.wald, strat<span class="op">=</span><span class="va">True</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the sample size</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.calculate(target<span class="op">=</span>expected_coverage, half_ci<span class="op">=</span><span class="fl">0.07</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># show the calculated sample size</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Calculated sample sizes by stratum: "</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.samp_size</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Calculated sample sizes by stratum: </code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>{'Dakar': 101,
+ 'Ziguinchor': 122,
+ 'Diourbel': 171,
+ 'Saint-Louis': 123,
+ 'Tambacounda': 196,
+ 'Kaolack': 127,
+ 'Thies': 109,
+ 'Louga': 172,
+ 'Fatick': 141,
+ 'Kolda': 182,
+ 'Matam': 169,
+ 'Kaffrine': 141,
+ 'Kedougou': 175,
+ 'Sedhiou': 151}</code></pre>
+</div>
+</div>
+<p><em>SampleSize</em> calculates the sample sizes and store the in teh <em>samp_size</em> attributes which is a python dictinary object. If a dataframe is better suited for the use case, the method <em>to_dataframe()</em> can be used to return a pandas dataframe.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.to_dataframe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>_param</th>
+      <th>_stratum</th>
+      <th>_target</th>
+      <th>_sigma</th>
+      <th>_half_ci</th>
+      <th>_samp_size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PopParam.prop</td>
+      <td>Dakar</td>
+      <td>0.849</td>
+      <td>0.128199</td>
+      <td>0.07</td>
+      <td>101</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PopParam.prop</td>
+      <td>Ziguinchor</td>
+      <td>0.809</td>
+      <td>0.154519</td>
+      <td>0.07</td>
+      <td>122</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PopParam.prop</td>
+      <td>Diourbel</td>
+      <td>0.682</td>
+      <td>0.216876</td>
+      <td>0.07</td>
+      <td>171</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PopParam.prop</td>
+      <td>Saint-Louis</td>
+      <td>0.806</td>
+      <td>0.156364</td>
+      <td>0.07</td>
+      <td>123</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PopParam.prop</td>
+      <td>Tambacounda</td>
+      <td>0.470</td>
+      <td>0.249100</td>
+      <td>0.07</td>
+      <td>196</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>PopParam.prop</td>
+      <td>Kaolack</td>
+      <td>0.797</td>
+      <td>0.161791</td>
+      <td>0.07</td>
+      <td>127</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>PopParam.prop</td>
+      <td>Thies</td>
+      <td>0.834</td>
+      <td>0.138444</td>
+      <td>0.07</td>
+      <td>109</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PopParam.prop</td>
+      <td>Louga</td>
+      <td>0.678</td>
+      <td>0.218316</td>
+      <td>0.07</td>
+      <td>172</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PopParam.prop</td>
+      <td>Fatick</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>141</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PopParam.prop</td>
+      <td>Kolda</td>
+      <td>0.637</td>
+      <td>0.231231</td>
+      <td>0.07</td>
+      <td>182</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>PopParam.prop</td>
+      <td>Matam</td>
+      <td>0.687</td>
+      <td>0.215031</td>
+      <td>0.07</td>
+      <td>169</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>PopParam.prop</td>
+      <td>Kaffrine</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>141</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>PopParam.prop</td>
+      <td>Kedougou</td>
+      <td>0.336</td>
+      <td>0.223104</td>
+      <td>0.07</td>
+      <td>175</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>PopParam.prop</td>
+      <td>Sedhiou</td>
+      <td>0.742</td>
+      <td>0.191436</td>
+      <td>0.07</td>
+      <td>151</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>The sample size calculation above assumes that the design effect (DEFF) was equal to 1. A design effect of 1 correspond to sampling design with a variance equivalent to a simple random selection of same sample size. In the context of complex sampling designs, DEFF is often different from 1. Stage sampling and unequal weights usually increase the design effect above 1. The 2017 Senegal DHS indicated a design effect equal to 1.963 (1.401^2) for basic vaccination. Hence, to calculate the sample size, we will use the design effect provided by DHS.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.calculate(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>expected_coverage, half_ci<span class="op">=</span><span class="fl">0.07</span>, deff<span class="op">=</span><span class="fl">1.401</span> <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.to_dataframe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>_param</th>
+      <th>_stratum</th>
+      <th>_target</th>
+      <th>_sigma</th>
+      <th>_half_ci</th>
+      <th>_samp_size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PopParam.prop</td>
+      <td>Dakar</td>
+      <td>0.849</td>
+      <td>0.128199</td>
+      <td>0.07</td>
+      <td>198</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PopParam.prop</td>
+      <td>Ziguinchor</td>
+      <td>0.809</td>
+      <td>0.154519</td>
+      <td>0.07</td>
+      <td>238</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PopParam.prop</td>
+      <td>Diourbel</td>
+      <td>0.682</td>
+      <td>0.216876</td>
+      <td>0.07</td>
+      <td>334</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PopParam.prop</td>
+      <td>Saint-Louis</td>
+      <td>0.806</td>
+      <td>0.156364</td>
+      <td>0.07</td>
+      <td>241</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PopParam.prop</td>
+      <td>Tambacounda</td>
+      <td>0.470</td>
+      <td>0.249100</td>
+      <td>0.07</td>
+      <td>384</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>PopParam.prop</td>
+      <td>Kaolack</td>
+      <td>0.797</td>
+      <td>0.161791</td>
+      <td>0.07</td>
+      <td>249</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>PopParam.prop</td>
+      <td>Thies</td>
+      <td>0.834</td>
+      <td>0.138444</td>
+      <td>0.07</td>
+      <td>214</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PopParam.prop</td>
+      <td>Louga</td>
+      <td>0.678</td>
+      <td>0.218316</td>
+      <td>0.07</td>
+      <td>336</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PopParam.prop</td>
+      <td>Fatick</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>276</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PopParam.prop</td>
+      <td>Kolda</td>
+      <td>0.637</td>
+      <td>0.231231</td>
+      <td>0.07</td>
+      <td>356</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>PopParam.prop</td>
+      <td>Matam</td>
+      <td>0.687</td>
+      <td>0.215031</td>
+      <td>0.07</td>
+      <td>331</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>PopParam.prop</td>
+      <td>Kaffrine</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>276</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>PopParam.prop</td>
+      <td>Kedougou</td>
+      <td>0.336</td>
+      <td>0.223104</td>
+      <td>0.07</td>
+      <td>344</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>PopParam.prop</td>
+      <td>Sedhiou</td>
+      <td>0.742</td>
+      <td>0.191436</td>
+      <td>0.07</td>
+      <td>295</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Since the sample design is stratified, the sample size calculation will be more precised if DEFF is specified at the stratum level which is available from the 2017 Senegal DHS provided report. Some regions have a design effect below 1. To be conservative with our sample size calculation, we will use 1.21 as the minimum design effect to use in the sample size calculation.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Target coverage rates</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>expected_deff <span class="op">=</span> {</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Dakar"</span>: <span class="fl">1.100</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ziguinchor"</span>: <span class="fl">1.100</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Diourbel"</span>: <span class="fl">1.346</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Saint-Louis"</span>: <span class="fl">1.484</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Tambacounda"</span>: <span class="fl">1.366</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kaolack"</span>: <span class="fl">1.360</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Thies"</span>: <span class="fl">1.109</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Louga"</span>: <span class="fl">1.902</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Fatick"</span>: <span class="fl">1.100</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kolda"</span>: <span class="fl">1.217</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Matam"</span>: <span class="fl">1.403</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kaffrine"</span>: <span class="fl">1.256</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Kedougou"</span>: <span class="fl">2.280</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Sedhiou"</span>: <span class="fl">1.335</span> <span class="op">**</span> <span class="dv">2</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate sample sizes using deff at the stratum level</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.calculate(</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>expected_coverage, half_ci<span class="op">=</span><span class="fl">0.07</span>, deff<span class="op">=</span>expected_deff</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert sample sizes to a dataframe</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.to_dataframe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>_param</th>
+      <th>_stratum</th>
+      <th>_target</th>
+      <th>_sigma</th>
+      <th>_half_ci</th>
+      <th>_samp_size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PopParam.prop</td>
+      <td>Dakar</td>
+      <td>0.849</td>
+      <td>0.128199</td>
+      <td>0.07</td>
+      <td>122</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PopParam.prop</td>
+      <td>Ziguinchor</td>
+      <td>0.809</td>
+      <td>0.154519</td>
+      <td>0.07</td>
+      <td>147</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PopParam.prop</td>
+      <td>Diourbel</td>
+      <td>0.682</td>
+      <td>0.216876</td>
+      <td>0.07</td>
+      <td>309</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PopParam.prop</td>
+      <td>Saint-Louis</td>
+      <td>0.806</td>
+      <td>0.156364</td>
+      <td>0.07</td>
+      <td>270</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PopParam.prop</td>
+      <td>Tambacounda</td>
+      <td>0.470</td>
+      <td>0.249100</td>
+      <td>0.07</td>
+      <td>365</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>PopParam.prop</td>
+      <td>Kaolack</td>
+      <td>0.797</td>
+      <td>0.161791</td>
+      <td>0.07</td>
+      <td>235</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>PopParam.prop</td>
+      <td>Thies</td>
+      <td>0.834</td>
+      <td>0.138444</td>
+      <td>0.07</td>
+      <td>134</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PopParam.prop</td>
+      <td>Louga</td>
+      <td>0.678</td>
+      <td>0.218316</td>
+      <td>0.07</td>
+      <td>620</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PopParam.prop</td>
+      <td>Fatick</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>171</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PopParam.prop</td>
+      <td>Kolda</td>
+      <td>0.637</td>
+      <td>0.231231</td>
+      <td>0.07</td>
+      <td>269</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>PopParam.prop</td>
+      <td>Matam</td>
+      <td>0.687</td>
+      <td>0.215031</td>
+      <td>0.07</td>
+      <td>332</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>PopParam.prop</td>
+      <td>Kaffrine</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>222</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>PopParam.prop</td>
+      <td>Kedougou</td>
+      <td>0.336</td>
+      <td>0.223104</td>
+      <td>0.07</td>
+      <td>910</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>PopParam.prop</td>
+      <td>Sedhiou</td>
+      <td>0.742</td>
+      <td>0.191436</td>
+      <td>0.07</td>
+      <td>268</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>The sample size calculation above does not account for attrition of sample sizes due to non-response. In the 2017 Semegal DHS, the overal household and women reponse rate was abou 94.2%.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate sample sizes with a resp_rate of 94.2%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.calculate(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>expected_coverage, </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    half_ci<span class="op">=</span><span class="fl">0.07</span>, </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    deff<span class="op">=</span>expected_deff, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    resp_rate<span class="op">=</span><span class="fl">0.942</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert sample sizes to a dataframe</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.to_dataframe(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    col_names<span class="op">=</span>[</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Parameter"</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"region"</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"vaccine_cov"</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"stderr"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"half_ci"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"count_12_23"</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Parameter</th>
+      <th>region</th>
+      <th>vaccine_cov</th>
+      <th>stderr</th>
+      <th>half_ci</th>
+      <th>count_12_23</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PopParam.prop</td>
+      <td>Dakar</td>
+      <td>0.849</td>
+      <td>0.128199</td>
+      <td>0.07</td>
+      <td>130</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PopParam.prop</td>
+      <td>Ziguinchor</td>
+      <td>0.809</td>
+      <td>0.154519</td>
+      <td>0.07</td>
+      <td>156</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PopParam.prop</td>
+      <td>Diourbel</td>
+      <td>0.682</td>
+      <td>0.216876</td>
+      <td>0.07</td>
+      <td>328</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PopParam.prop</td>
+      <td>Saint-Louis</td>
+      <td>0.806</td>
+      <td>0.156364</td>
+      <td>0.07</td>
+      <td>287</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PopParam.prop</td>
+      <td>Tambacounda</td>
+      <td>0.470</td>
+      <td>0.249100</td>
+      <td>0.07</td>
+      <td>387</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>PopParam.prop</td>
+      <td>Kaolack</td>
+      <td>0.797</td>
+      <td>0.161791</td>
+      <td>0.07</td>
+      <td>250</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>PopParam.prop</td>
+      <td>Thies</td>
+      <td>0.834</td>
+      <td>0.138444</td>
+      <td>0.07</td>
+      <td>142</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PopParam.prop</td>
+      <td>Louga</td>
+      <td>0.678</td>
+      <td>0.218316</td>
+      <td>0.07</td>
+      <td>658</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PopParam.prop</td>
+      <td>Fatick</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>181</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PopParam.prop</td>
+      <td>Kolda</td>
+      <td>0.637</td>
+      <td>0.231231</td>
+      <td>0.07</td>
+      <td>286</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>PopParam.prop</td>
+      <td>Matam</td>
+      <td>0.687</td>
+      <td>0.215031</td>
+      <td>0.07</td>
+      <td>353</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>PopParam.prop</td>
+      <td>Kaffrine</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>236</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>PopParam.prop</td>
+      <td>Kedougou</td>
+      <td>0.336</td>
+      <td>0.223104</td>
+      <td>0.07</td>
+      <td>966</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>PopParam.prop</td>
+      <td>Sedhiou</td>
+      <td>0.742</td>
+      <td>0.191436</td>
+      <td>0.07</td>
+      <td>284</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="fleiss-method" class="level2">
+<h2 class="anchored" data-anchor-id="fleiss-method"><code>Fleiss</code> method</h2>
+<p>The World Health Organization (WHO) recommends using the Fleiss method for calculating sample size for vaccination coverage survey, as specified in the following guideline document: <a href="https://www.who.int/immunization/documents/who_ivb_18.09/en/" class="uri">https://www.who.int/immunization/documents/who_ivb_18.09/en/</a>. To use the Fleiss method, the examples shown above are the same with <code>method="fleiss"</code>.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_fleiss <span class="op">=</span> SampleSize(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    param<span class="op">=</span>PopParam.prop, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>SizeMethod.fleiss, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    strat<span class="op">=</span><span class="va">True</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>sen_vaccine_fleiss.calculate(</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>expected_coverage, </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    half_ci<span class="op">=</span><span class="fl">0.07</span>, </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    deff<span class="op">=</span>expected_deff, </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    resp_rate<span class="op">=</span><span class="fl">0.942</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>sen_vaccine_sample <span class="op">=</span> sen_vaccine_fleiss.to_dataframe(</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    col_names<span class="op">=</span>[</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Parameter"</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"region"</span>,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"vaccine_cov"</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"stderr"</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"half_ci"</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"count_12_23"</span>,</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>sen_vaccine_sample.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Parameter</th>
+      <th>region</th>
+      <th>vaccine_cov</th>
+      <th>stderr</th>
+      <th>half_ci</th>
+      <th>count_12_23</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PopParam.prop</td>
+      <td>Dakar</td>
+      <td>0.849</td>
+      <td>0.128199</td>
+      <td>0.07</td>
+      <td>190</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PopParam.prop</td>
+      <td>Ziguinchor</td>
+      <td>0.809</td>
+      <td>0.154519</td>
+      <td>0.07</td>
+      <td>210</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PopParam.prop</td>
+      <td>Diourbel</td>
+      <td>0.682</td>
+      <td>0.216876</td>
+      <td>0.07</td>
+      <td>398</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PopParam.prop</td>
+      <td>Saint-Louis</td>
+      <td>0.806</td>
+      <td>0.156364</td>
+      <td>0.07</td>
+      <td>384</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PopParam.prop</td>
+      <td>Tambacounda</td>
+      <td>0.470</td>
+      <td>0.249100</td>
+      <td>0.07</td>
+      <td>410</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>PopParam.prop</td>
+      <td>Kaolack</td>
+      <td>0.797</td>
+      <td>0.161791</td>
+      <td>0.07</td>
+      <td>329</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>PopParam.prop</td>
+      <td>Thies</td>
+      <td>0.834</td>
+      <td>0.138444</td>
+      <td>0.07</td>
+      <td>201</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PopParam.prop</td>
+      <td>Louga</td>
+      <td>0.678</td>
+      <td>0.218316</td>
+      <td>0.07</td>
+      <td>794</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PopParam.prop</td>
+      <td>Fatick</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>228</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PopParam.prop</td>
+      <td>Kolda</td>
+      <td>0.637</td>
+      <td>0.231231</td>
+      <td>0.07</td>
+      <td>325</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>PopParam.prop</td>
+      <td>Matam</td>
+      <td>0.687</td>
+      <td>0.215031</td>
+      <td>0.07</td>
+      <td>432</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>PopParam.prop</td>
+      <td>Kaffrine</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>297</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>PopParam.prop</td>
+      <td>Kedougou</td>
+      <td>0.336</td>
+      <td>0.223104</td>
+      <td>0.07</td>
+      <td>1140</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>PopParam.prop</td>
+      <td>Sedhiou</td>
+      <td>0.742</td>
+      <td>0.191436</td>
+      <td>0.07</td>
+      <td>348</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>At this point, we have the number of 12-23 months needed to achieve the desired precision given the expected proportions using wald or fleiss calculation methods.</p>
+</section>
+</section>
+<section id="number-of-households" class="level1">
+<h1>Number of households</h1>
+<p>To obtain the number of households, we need to know the expected average number of children aged 12-23 months per household. This information can be obtained from census data or from surveys’ rosters. Since, the design is stratified, it is best to obtain the information per stratum. In this example, we wil assume that 5.2% of the population is between 12 and 23 months of age and apply that to all strata and household. Hence, the minimum number of households to select is:</p>
+<!-- :::{style="font-size: 1rem"} -->
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_sample[<span class="st">"number_hhs"</span>] <span class="op">=</span> <span class="bu">round</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    sen_vaccine_sample[<span class="st">"count_12_23"</span>] <span class="op">/</span> <span class="fl">0.052</span>, <span class="dv">0</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>sen_vaccine_sample.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Parameter</th>
+      <th>region</th>
+      <th>vaccine_cov</th>
+      <th>stderr</th>
+      <th>half_ci</th>
+      <th>count_12_23</th>
+      <th>number_hhs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PopParam.prop</td>
+      <td>Dakar</td>
+      <td>0.849</td>
+      <td>0.128199</td>
+      <td>0.07</td>
+      <td>190</td>
+      <td>3654.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PopParam.prop</td>
+      <td>Ziguinchor</td>
+      <td>0.809</td>
+      <td>0.154519</td>
+      <td>0.07</td>
+      <td>210</td>
+      <td>4038.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PopParam.prop</td>
+      <td>Diourbel</td>
+      <td>0.682</td>
+      <td>0.216876</td>
+      <td>0.07</td>
+      <td>398</td>
+      <td>7654.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PopParam.prop</td>
+      <td>Saint-Louis</td>
+      <td>0.806</td>
+      <td>0.156364</td>
+      <td>0.07</td>
+      <td>384</td>
+      <td>7385.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PopParam.prop</td>
+      <td>Tambacounda</td>
+      <td>0.470</td>
+      <td>0.249100</td>
+      <td>0.07</td>
+      <td>410</td>
+      <td>7885.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>PopParam.prop</td>
+      <td>Kaolack</td>
+      <td>0.797</td>
+      <td>0.161791</td>
+      <td>0.07</td>
+      <td>329</td>
+      <td>6327.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>PopParam.prop</td>
+      <td>Thies</td>
+      <td>0.834</td>
+      <td>0.138444</td>
+      <td>0.07</td>
+      <td>201</td>
+      <td>3865.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>PopParam.prop</td>
+      <td>Louga</td>
+      <td>0.678</td>
+      <td>0.218316</td>
+      <td>0.07</td>
+      <td>794</td>
+      <td>15269.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>PopParam.prop</td>
+      <td>Fatick</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>228</td>
+      <td>4385.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PopParam.prop</td>
+      <td>Kolda</td>
+      <td>0.637</td>
+      <td>0.231231</td>
+      <td>0.07</td>
+      <td>325</td>
+      <td>6250.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>PopParam.prop</td>
+      <td>Matam</td>
+      <td>0.687</td>
+      <td>0.215031</td>
+      <td>0.07</td>
+      <td>432</td>
+      <td>8308.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>PopParam.prop</td>
+      <td>Kaffrine</td>
+      <td>0.766</td>
+      <td>0.179244</td>
+      <td>0.07</td>
+      <td>297</td>
+      <td>5712.0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>PopParam.prop</td>
+      <td>Kedougou</td>
+      <td>0.336</td>
+      <td>0.223104</td>
+      <td>0.07</td>
+      <td>1140</td>
+      <td>21923.0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>PopParam.prop</td>
+      <td>Sedhiou</td>
+      <td>0.742</td>
+      <td>0.191436</td>
+      <td>0.07</td>
+      <td>348</td>
+      <td>6692.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ::: -->
+<p>Similarly, the number of clusters to select can be obtained by dividing the number of households by the number of households per cluster to be selected.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../pages/size.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../pages/selection.html" class="pagination-link">
+        <span class="nav-page-text">Overviews</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ © Copyright 2019-2020, samplics.
+  </li>  
+</ul>
+    </div>   
+      <div class="nav-footer-center">Samplics for Design and Analysis of Complex Survey Data</div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../index.html">Back to Home</a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo">
+      <i class="bi bi-twitter" role="img" aria-label="Twitter">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics">
+      <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
