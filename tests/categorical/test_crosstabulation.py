@@ -7,47 +7,6 @@ from samplics.categorical import CrossTabulation
 from samplics.estimation import TaylorEstimator
 
 
-# Example 1, returns error "KeyError: '1__by__two'"
-dummy = {'q1': [1, 2, 2, 1, 2, 1, 2, 1, 2], 
-         'group': ['one', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two'],
-         'nr_weight': [200, 123, 0, 0, 234, 123, 234, 0, 0], 
-         'respondent': ['respondent', 'respondent', 
-                        'non-respondent', 'non-respondent', 
-                        'respondent', 'respondent',
-                        'respondent', 'non-respondent',
-                        'non-respondent']}
-
-df_dummy = pd.DataFrame.from_dict(dummy)
-
-print(pd.crosstab(df_dummy['q1'], df_dummy['group']))
-
-crosstab_temp = CrossTabulation("count")
-crosstab_temp.tabulate(
-vars=df_dummy[['q1', 'group']],
-samp_weight=1,
-remove_nan=True,
-single_psu = 'skip')
-
-
-def test_empty_cells():
-    df = pd.DataFrame(
-        data=[["Woman", "European"]] * 100
-        + [["Woman", "American"]] * 35
-        + [["Woman", "Other"]] * 93
-        + [["Man", "European"]] * 150
-        + [["Man", "American"]] * 77,
-        columns=["Gender", "Nationality"],
-    )
-    df["weights"] = [1, 0.3, 8, 3, 0.7] * 91
-
-    crosstab_samplics = CrossTabulation("count")
-    crosstab_samplics.tabulate(
-        vars=df[["Gender", "Nationality"]],
-        samp_weight=df["weights"],
-        remove_nan=True,
-    )
-
-
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
 
@@ -411,3 +370,63 @@ def test_nhanes_twoway_count_design_info():
     assert tbl2_nhanes.design_info["number_psus"] == 31
     assert tbl2_nhanes.design_info["number_obs"] == 7846
     assert tbl2_nhanes.design_info["degrees_of_freedom"] == 16
+
+
+# Category '1__by__two' has zero count
+dummy = {
+    "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
+    "group": ["one", "one", "two", "one", "two", "one", "two", "one", "two"],
+    "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 0],
+    "respondent": [
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "non-respondent",
+        "respondent",
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "non-respondent",
+    ],
+}
+
+df_dummy = pd.DataFrame.from_dict(dummy)
+
+
+def test_empty_cells_1():
+    crosstab_temp = CrossTabulation("count")
+    crosstab_temp.tabulate(
+        vars=df_dummy[["q1", "group"]], samp_weight=1, remove_nan=True, single_psu="skip"
+    )
+    assert crosstab_temp.point_est["1"]["one"] == 4
+    assert crosstab_temp.point_est["1"]["two"] == 0
+    assert crosstab_temp.point_est["2"]["one"] == 1
+    assert crosstab_temp.point_est["2"]["two"] == 4
+
+
+df = pd.DataFrame(
+    data=[["Woman", "European"]] * 100
+    + [["Woman", "American"]] * 35
+    + [["Woman", "Other"]] * 93
+    + [["Man", "European"]] * 150
+    + [["Man", "American"]] * 77,
+    columns=["Gender", "Nationality"],
+)
+
+df["weights"] = [1, 0.3, 8, 3, 0.7] * 91
+
+
+def test_empty_cells_2():
+
+    crosstab_temp2 = CrossTabulation("count")
+    crosstab_temp2.tabulate(
+        vars=df[["Gender", "Nationality"]],
+        samp_weight=df["weights"],
+        remove_nan=True,
+    )
+    assert crosstab_temp2.point_est["Man"]["American"] == 198.7
+    assert crosstab_temp2.point_est["Man"]["European"] == 390
+    assert crosstab_temp2.point_est["Man"]["Other"] == 0
+    assert crosstab_temp2.point_est["Woman"]["American"] == 91
+    assert crosstab_temp2.point_est["Woman"]["European"] == 260
+    assert crosstab_temp2.point_est["Woman"]["Other"] == 243.3
