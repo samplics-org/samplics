@@ -444,6 +444,9 @@ class CrossTabulation:
 
         vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels, NA_action="raise"))
 
+        # vars_dummies = np.delete(vars_dummies, obj=1, axis=0)
+        # vars_dummies = np.delete(vars_dummies, obj=2, axis=1)
+
         if len(vars.shape) == 2:
             vars_for_oneway = np.apply_along_axis(
                 func1d=concatenate_series_to_str, axis=1, arr=vars
@@ -474,14 +477,14 @@ class CrossTabulation:
         cell_est, cov_prop, missing_levels = self._extract_estimates(
             tbl_est=tbl_est_prop, vars_levels=vars_levels_concat
         )
-
         cov_prop_srs = (
             np.diag(cell_est)
             # - cell_est.reshape(vars_levels.shape[0], 1)
-            - cell_est.reshape(cell_est.shape[0], 1)
+            # - cell_est.reshape(cell_est.shape[0], 1)
             # @ np.transpose(cell_est.reshape(vars_levels.shape[0], 1))
-            @ np.transpose(cell_est.reshape(cell_est.shape[0], 1))
+            # @ cell_est.reshape(1, cell_est.shape[0])
         ) / vars.shape[0]
+        # breakpoint()
 
         if self.parameter == "count":
             tbl_est_count = TaylorEstimator(parameter="total", alpha=self.alpha)
@@ -498,10 +501,10 @@ class CrossTabulation:
                 as_factor=True,
             )
             tbl_est = tbl_est_count
-
+        # breakpoint()
         nrows = row_levels.__len__()
         ncols = col_levels.__len__()
-        x1 = vars_dummies[:, 1 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
+        x1 = vars_dummies[:, 0 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
         x1_t = np.transpose(x1)
         # breakpoint()
@@ -509,12 +512,13 @@ class CrossTabulation:
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_prop_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov_prop @ x2_tilde
         )
+        # breakpoint()
         tbl_keys = list(tbl_est.point_est.keys())
         cell_est = np.zeros(vars_levels.shape[0])
         cell_stderror = np.zeros(vars_levels.shape[0])
         cell_lower_ci = np.zeros(vars_levels.shape[0])
         cell_upper_ci = np.zeros(vars_levels.shape[0])
-        #breakpoint()
+        # breakpoint()
         for k in range(vars_levels.shape[0]):
             if vars_levels_concat[k] in tbl_keys:
                 cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
@@ -557,18 +561,24 @@ class CrossTabulation:
 
         if self.parameter == "count":
             point_est_df = point_est_df / np.sum(point_est_df)
-        point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ np.transpose(
-            point_est_df.sum(axis=0).reshape(ncols, 1)
-        )
+
+        point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ point_est_df.sum(
+            axis=0
+        ).reshape(1, ncols)
 
         chisq_p = float(
             vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null)
         )
         f_p = float(chisq_p / np.trace(delta_est))
+        # breakpoint()
 
-        chisq_lr = float(
-            2 * vars.shape[0] * np.sum(point_est_df * np.log(point_est_df / point_est_null))
-        )
+        # valid indexes (i,j) correspond to n_ij > 0
+        valid_indx = (point_est_df != 0) & (point_est_null != 0)
+
+        log_mat = np.zeros(point_est_null.shape)
+        log_mat[valid_indx] = np.log(point_est_df[valid_indx] / point_est_null[valid_indx])
+
+        chisq_lr = float(2 * vars.shape[0] * np.sum(point_est_df * log_mat))
         f_lr = float(chisq_lr / np.trace(delta_est))
 
         df_num = float((np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est))
@@ -609,6 +619,8 @@ class CrossTabulation:
             "design_effect": 0,
             "degrees_of_freedom": tbl_est.number_psus - tbl_est.number_strata,
         }
+
+        # breakpoint()
 
     def to_dataframe(
         self,

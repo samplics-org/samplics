@@ -6,6 +6,39 @@ import pandas as pd
 from samplics.categorical import CrossTabulation
 from samplics.estimation import TaylorEstimator
 
+# dummy2 = {
+#     "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
+#     "group": ["one", "one", "two", "one", "two", "one", "two", "one", "one"],
+#     "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 123],
+#     "respondent": [
+#         "respondent",
+#         "respondent",
+#         "non-respondent",
+#         "non-respondent",
+#         "respondent",
+#         "respondent",
+#         "respondent",
+#         "non-respondent",
+#         "respondent",
+#     ],
+# }
+
+# df_dummy2 = pd.DataFrame.from_dict(dummy2)
+
+
+# crosstab_temp = CrossTabulation("proportion")
+# crosstab_temp.tabulate(
+#     vars=df_dummy2[["q1", "group"]],
+#     samp_weight=df_dummy2["nr_weight"],
+#     remove_nan=True,
+#     single_psu="skip",
+# )
+# print(crosstab_temp)
+# breakpoint()
+
+def test_singular_matrix_due_to_missing_category():
+    assert crosstab_temp.point["1"]["one"] == 0.31147541
+
 
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
