@@ -336,28 +336,32 @@ class CrossTabulation:
 
             return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n\n{pearson_test}\n\n {lr_test}\n"
 
+    # also mutates tbl_est
     def _extract_estimates(self, tbl_est, vars_levels) -> tuple[np.ndarray, np.ndarray]:
 
         levels = list(tbl_est.point_est.keys())
         missing_levels = vars_levels[~np.isin(vars_levels, levels)]
-
         if missing_levels.shape[0] > 0:
             for level in vars_levels:
                 if level in missing_levels:
                     tbl_est.point_est[level] = 0.0
+                    tbl_est.stderror[level] = 0.0
+                    tbl_est.lower_ci[level] = 0.0
+                    tbl_est.upper_ci[level] = 0.0
                     tbl_est.covariance[level] = {}
                     for ll in vars_levels:
                         tbl_est.covariance[level][ll] = 0.0
                 else:
                     for ll in missing_levels:
                         tbl_est.covariance[level][ll] = 0.0
-                        tbl_est.covariance[level] = dict(sorted(tbl_est.covariance[level].items()))
+                    tbl_est.covariance[level] = dict(sorted(tbl_est.covariance[level].items()))
 
         _tbl_est_point_est = dict(sorted(tbl_est.point_est.items()))
         _tbl_est_covariance = dict(sorted(tbl_est.covariance.items()))
         return (
             np.array(list(_tbl_est_point_est.values())),
             pd.DataFrame.from_dict(_tbl_est_covariance, orient="index").to_numpy(),
+            missing_levels,
         )
 
     def tabulate(
@@ -466,9 +470,11 @@ class CrossTabulation:
         )
 
         tbl_est = tbl_est_prop
-        cell_est, cov_prop = self._extract_estimates(
+        # self._extract_estimates() also mutates tbl_est
+        cell_est, cov_prop, missing_levels = self._extract_estimates(
             tbl_est=tbl_est_prop, vars_levels=vars_levels_concat
         )
+
         cov_prop_srs = (
             np.diag(cell_est)
             # - cell_est.reshape(vars_levels.shape[0], 1)
@@ -508,6 +514,7 @@ class CrossTabulation:
         cell_stderror = np.zeros(vars_levels.shape[0])
         cell_lower_ci = np.zeros(vars_levels.shape[0])
         cell_upper_ci = np.zeros(vars_levels.shape[0])
+        #breakpoint()
         for k in range(vars_levels.shape[0]):
             if vars_levels_concat[k] in tbl_keys:
                 cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]

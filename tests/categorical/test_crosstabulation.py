@@ -7,6 +7,28 @@ from samplics.categorical import CrossTabulation
 from samplics.estimation import TaylorEstimator
 
 
+# Example 1, returns error "KeyError: '1__by__two'"
+dummy = {'q1': [1, 2, 2, 1, 2, 1, 2, 1, 2], 
+         'group': ['one', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two'],
+         'nr_weight': [200, 123, 0, 0, 234, 123, 234, 0, 0], 
+         'respondent': ['respondent', 'respondent', 
+                        'non-respondent', 'non-respondent', 
+                        'respondent', 'respondent',
+                        'respondent', 'non-respondent',
+                        'non-respondent']}
+
+df_dummy = pd.DataFrame.from_dict(dummy)
+
+print(pd.crosstab(df_dummy['q1'], df_dummy['group']))
+
+crosstab_temp = CrossTabulation("count")
+crosstab_temp.tabulate(
+vars=df_dummy[['q1', 'group']],
+samp_weight=1,
+remove_nan=True,
+single_psu = 'skip')
+
+
 def test_empty_cells():
     df = pd.DataFrame(
         data=[["Woman", "European"]] * 100
