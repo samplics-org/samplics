@@ -430,3 +430,34 @@ def test_empty_cells_2():
     assert crosstab_temp2.point_est["Woman"]["American"] == 91
     assert crosstab_temp2.point_est["Woman"]["European"] == 260
     assert crosstab_temp2.point_est["Woman"]["Other"] == 243.3
+
+
+# Fix an error "LinAlgError: Singular matrix"
+dummy2 = {
+    "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
+    "group": ["one", "one", "two", "one", "two", "one", "two", "one", "one"],
+    "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 123],
+    "respondent": [
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "non-respondent",
+        "respondent",
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "respondent",
+    ],
+}
+
+df_dummy2 = pd.DataFrame.from_dict(dummy2)
+
+
+def test_singular_matrix_due_to_missing_category():
+    crosstab_temp = CrossTabulation("proportion")
+    crosstab_temp.tabulate(
+        vars=df_dummy2[["q1", "group"]],
+        samp_weight=df_dummy2["nr_weight"],
+        remove_nan=True,
+        single_psu="skip",
+    )
