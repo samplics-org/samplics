@@ -111,12 +111,12 @@ class Ttest:
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
-        coef_variation: bool = False,
+        coef_var: bool = False,
         single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
     ) -> None:
 
-        one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
+        one_sample = TaylorEstimator(param="mean", alpha=self.alpha)
         one_sample.estimate(
             y=y,
             samp_weight=samp_weight,
@@ -124,7 +124,7 @@ class Ttest:
             psu=psu,
             ssu=ssu,
             fpc=fpc,
-            coef_variation=coef_variation,
+            coef_var=coef_var,
             single_psu=single_psu,
             strata_comb=strata_comb,
         )
@@ -261,12 +261,12 @@ class Ttest:
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
-        coef_variation: bool = False,
+        coef_var: bool = False,
         single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
     ) -> None:
 
-        two_samples_unpaired = TaylorEstimator(parameter="mean", alpha=self.alpha)
+        two_samples_unpaired = TaylorEstimator(param="mean", alpha=self.alpha)
         two_samples_unpaired.estimate(
             y=y,
             by=group,
@@ -275,7 +275,7 @@ class Ttest:
             psu=psu,
             ssu=ssu,
             fpc=fpc,
-            coef_variation=coef_variation,
+            coef_var=coef_var,
             single_psu=single_psu,
             strata_comb=strata_comb,
         )
@@ -292,7 +292,7 @@ class Ttest:
         psu: Optional[Array] = None,
         ssu: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
-        coef_variation: bool = False,
+        coef_var: bool = False,
         single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
@@ -326,12 +326,12 @@ class Ttest:
                 psu=psu,
                 ssu=ssu,
                 fpc=fpc,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
             )
         elif self.samp_type == "one-sample" and group is not None:
-            one_sample = TaylorEstimator(parameter="mean", alpha=self.alpha)
+            one_sample = TaylorEstimator(param="mean", alpha=self.alpha)
             one_sample.estimate(
                 y=y,
                 domain=group,
@@ -340,7 +340,7 @@ class Ttest:
                 psu=psu,
                 ssu=ssu,
                 fpc=fpc,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
             )
@@ -362,12 +362,12 @@ class Ttest:
                 psu=psu,
                 ssu=ssu,
                 fpc=fpc,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
             )
 
-            two_samples_unpaired = TaylorEstimator(parameter="mean", alpha=self.alpha)
+            two_samples_unpaired = TaylorEstimator(param="mean", alpha=self.alpha)
             two_samples_unpaired.estimate(
                 y=y,
                 by=group,
@@ -376,7 +376,7 @@ class Ttest:
                 psu=psu,
                 ssu=ssu,
                 fpc=fpc,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
             )

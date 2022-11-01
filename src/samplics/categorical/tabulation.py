@@ -26,13 +26,13 @@ from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUE
 class Tabulation:
     def __init__(
         self,
-        parameter: str = "count",
+        param: str = "count",
         alpha: float = 0.05,
         ciprop_method: str = "logit",
     ) -> None:
 
-        if parameter.lower() in ("count", "proportion"):
-            self.parameter = parameter.lower()
+        if param.lower() in ("count", "proportion"):
+            self.param = param.lower()
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.type = "oneway"
@@ -49,7 +49,7 @@ class Tabulation:
         self.vars_levels: dict[str, list[StringNumber]] = {}
 
     def __repr__(self) -> str:
-        return f"Tabulation(parameter={self.parameter}, alpha={self.alpha})"
+        return f"Tabulation(parameter={self.param}, alpha={self.alpha})"
 
     def __str__(self) -> str:
 
@@ -57,9 +57,9 @@ class Tabulation:
             return "No categorical variables to tabulate"
         else:
             tbl_head = f"Tabulation of {self.vars_names[0]}"
-            tbl_subhead1 = f" Number of strata: {self.design_info['number_strata']}"
-            tbl_subhead2 = f" Number of PSUs: {self.design_info['number_psus']}"
-            tbl_subhead3 = f" Number of observations: {self.design_info['number_obs']}"
+            tbl_subhead1 = f" Number of strata: {self.design_info['nb_strata']}"
+            tbl_subhead2 = f" Number of PSUs: {self.design_info['nb_psus']}"
+            tbl_subhead3 = f" Number of observations: {self.design_info['nb_obs']}"
             tbl_subhead4 = f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
 
             return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n"
@@ -74,7 +74,7 @@ class Tabulation:
         ssu: Optional[Array] = None,
         fpc: Union[dict, float] = 1,
         deff: bool = False,
-        coef_variation: bool = False,
+        coef_var: bool = False,
         single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
@@ -92,8 +92,8 @@ class Tabulation:
 
         var_of_ones = numpy_array(var_of_ones)
 
-        if self.parameter == "count":
-            tbl_est = TaylorEstimator(parameter="total", alpha=self.alpha)
+        if self.param == "count":
+            tbl_est = TaylorEstimator(param="total", alpha=self.alpha)
             tbl_est.estimate(
                 y=var_of_ones,
                 samp_weight=samp_weight,
@@ -103,13 +103,13 @@ class Tabulation:
                 domain=var,
                 fpc=fpc,
                 deff=deff,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
                 remove_nan=False,
             )
-        elif self.parameter == "proportion":
-            tbl_est = TaylorEstimator(parameter=self.parameter, alpha=self.alpha)
+        elif self.param == "proportion":
+            tbl_est = TaylorEstimator(param=self.param, alpha=self.alpha)
             tbl_est.estimate(
                 y=var,
                 samp_weight=samp_weight,
@@ -118,7 +118,7 @@ class Tabulation:
                 ssu=ssu,
                 fpc=fpc,
                 deff=deff,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
                 remove_nan=False,
@@ -139,7 +139,7 @@ class Tabulation:
         # TODO: by: Optional[Array] = None,
         fpc: Union[dict, float] = 1,
         deff: bool = False,
-        coef_variation: bool = False,
+        coef_var: bool = False,
         single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
@@ -187,19 +187,19 @@ class Tabulation:
                 ssu=ssu,
                 fpc=fpc,
                 deff=deff,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
                 remove_nan=remove_nan,
             )
             self.vars_levels[vars_names[0]] = var_levels
-            if self.parameter == "count":
+            if self.param == "count":
                 self.point_est[vars_names[0]] = tbl_est.point_est
                 self.stderror[vars_names[0]] = tbl_est.stderror
                 self.lower_ci[vars_names[0]] = tbl_est.lower_ci
                 self.upper_ci[vars_names[0]] = tbl_est.upper_ci
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff
-            elif self.parameter == "proportion":
+            elif self.param == "proportion":
                 self.point_est[vars_names[0]] = tbl_est.point_est
                 self.stderror[vars_names[0]] = tbl_est.stderror
                 self.lower_ci[vars_names[0]] = tbl_est.lower_ci
@@ -218,19 +218,19 @@ class Tabulation:
                     ssu=ssu,
                     fpc=fpc,
                     deff=deff,
-                    coef_variation=coef_variation,
+                    coef_var=coef_var,
                     single_psu=single_psu,
                     strata_comb=strata_comb,
                     remove_nan=remove_nan,
                 )
                 self.vars_levels[vars_names[k]] = var_levels
-                if self.parameter == "count":
+                if self.param == "count":
                     self.point_est[vars_names[k]] = tbl_est.point_est
                     self.stderror[vars_names[k]] = tbl_est.stderror
                     self.lower_ci[vars_names[k]] = tbl_est.lower_ci
                     self.upper_ci[vars_names[k]] = tbl_est.upper_ci
                     self.deff[vars_names[k]] = {}  # todo: tbl_est.deff
-                elif self.parameter == "proportion":
+                elif self.param == "proportion":
                     self.point_est[vars_names[k]] = tbl_est.point_est
                     self.stderror[vars_names[k]] = tbl_est.stderror
                     self.lower_ci[vars_names[k]] = tbl_est.lower_ci
@@ -239,11 +239,11 @@ class Tabulation:
 
         self.vars_names = vars_names
         self.design_info = {
-            "number_strata": tbl_est.number_strata,
-            "number_psus": tbl_est.number_psus,
-            "number_obs": nb_obs,
+            "nb_strata": tbl_est.nb_strata,
+            "nb_psus": tbl_est.nb_psus,
+            "nb_obs": nb_obs,
             "design_effect": 0,
-            "degrees_of_freedom": tbl_est.number_psus - tbl_est.number_strata,
+            "degrees_of_freedom": tbl_est.nb_psus - tbl_est.nb_strata,
         }
 
     def to_dataframe(
@@ -255,7 +255,7 @@ class Tabulation:
         for var in self.vars_names:
             var_df = pd.DataFrame(np.repeat(var, len(self.vars_levels[var])), columns=["variable"])
             var_df["category"] = self.vars_levels[var]
-            var_df[self.parameter] = list(self.point_est[var].values())
+            var_df[self.param] = list(self.point_est[var].values())
             var_df["stderror"] = list(self.stderror[var].values())
             var_df["lower_ci"] = list(self.lower_ci[var].values())
             var_df["upper_ci"] = list(self.upper_ci[var].values())
@@ -282,13 +282,13 @@ class CrossTabulation:
 
     def __init__(
         self,
-        parameter: str = "count",
+        param: str = "count",
         alpha: float = 0.05,
         ciprop_method: str = "logit",
     ) -> None:
 
-        if parameter.lower() in ("count", "proportion"):
-            self.parameter = parameter.lower()
+        if param.lower() in ("count", "proportion"):
+            self.param = param.lower()
         else:
             raise ValueError("parameter must be 'count' or 'proportion'")
         self.type = "twoway"
@@ -308,7 +308,7 @@ class CrossTabulation:
         self.col_levels: list[StringNumber] = []
 
     def __repr__(self) -> str:
-        return f"CrossTabulation(parameter={self.parameter}, alpha={self.alpha})"
+        return f"CrossTabulation(parameter={self.param}, alpha={self.alpha})"
 
     def __str__(self) -> str:
 
@@ -316,9 +316,9 @@ class CrossTabulation:
             return "No categorical variables to tabulate"
         else:
             tbl_head = f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
-            tbl_subhead1 = f" Number of strata: {self.design_info['number_strata']}"
-            tbl_subhead2 = f" Number of PSUs: {self.design_info['number_psus']}"
-            tbl_subhead3 = f" Number of observations: {self.design_info['number_obs']}"
+            tbl_subhead1 = f" Number of strata: {self.design_info['nb_strata']}"
+            tbl_subhead2 = f" Number of PSUs: {self.design_info['nb_psus']}"
+            tbl_subhead3 = f" Number of observations: {self.design_info['nb_obs']}"
             tbl_subhead4 = f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
 
             chisq_dist = f"chi2({self.stats['Pearson-Unadj']['df']})"
@@ -375,7 +375,7 @@ class CrossTabulation:
         # Todo: by: Optional[Array] = None,
         fpc: Union[dict, float] = 1,
         deff: bool = False,
-        coef_variation: bool = False,
+        coef_var: bool = False,
         single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
@@ -458,7 +458,7 @@ class CrossTabulation:
             func1d=concatenate_series_to_str, axis=1, arr=vars_levels
         )
 
-        tbl_est_prop = TaylorEstimator(parameter="mean", alpha=self.alpha)
+        tbl_est_prop = TaylorEstimator(param="mean", alpha=self.alpha)
         tbl_est_prop.estimate(
             y=vars_for_oneway,
             samp_weight=samp_weight,
@@ -466,7 +466,7 @@ class CrossTabulation:
             psu=psu,
             ssu=ssu,
             fpc=fpc,
-            coef_variation=coef_variation,
+            coef_var=coef_var,
             single_psu=single_psu,
             strata_comb=strata_comb,
             as_factor=True,
@@ -486,8 +486,8 @@ class CrossTabulation:
         ) / vars.shape[0]
         # breakpoint()
 
-        if self.parameter == "count":
-            tbl_est_count = TaylorEstimator(parameter="total", alpha=self.alpha)
+        if self.param == "count":
+            tbl_est_count = TaylorEstimator(param="total", alpha=self.alpha)
             tbl_est_count.estimate(
                 y=vars_for_oneway,
                 samp_weight=samp_weight,
@@ -495,7 +495,7 @@ class CrossTabulation:
                 psu=psu,
                 ssu=ssu,
                 fpc=fpc,
-                coef_variation=coef_variation,
+                coef_var=coef_var,
                 single_psu=single_psu,
                 strata_comb=strata_comb,
                 as_factor=True,
@@ -559,7 +559,7 @@ class CrossTabulation:
 
         point_est_df = pd.DataFrame.from_dict(self.point_est, orient="index").values
 
-        if self.parameter == "count":
+        if self.param == "count":
             point_est_df = point_est_df / np.sum(point_est_df)
 
         point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ point_est_df.sum(
@@ -582,7 +582,7 @@ class CrossTabulation:
         f_lr = float(chisq_lr / np.trace(delta_est))
 
         df_num = float((np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est))
-        df_den = float((tbl_est.number_psus - tbl_est.number_strata) * df_num)
+        df_den = float((tbl_est.nb_psus - tbl_est.nb_strata) * df_num)
 
         self.stats = {
             "Pearson-Unadj": {
@@ -613,11 +613,11 @@ class CrossTabulation:
         self.col_levels = list(col_levels)
         self.vars_names = vars_names
         self.design_info = {
-            "number_strata": tbl_est.number_strata,
-            "number_psus": tbl_est.number_psus,
-            "number_obs": vars.shape[0],
+            "nb_strata": tbl_est.nb_strata,
+            "nb_psus": tbl_est.nb_psus,
+            "nb_obs": vars.shape[0],
             "design_effect": 0,
-            "degrees_of_freedom": tbl_est.number_psus - tbl_est.number_strata,
+            "degrees_of_freedom": tbl_est.nb_psus - tbl_est.nb_strata,
         }
 
         # breakpoint()
@@ -632,7 +632,7 @@ class CrossTabulation:
 
         for _ in range(len(self.row_levels)):
             for _ in range(len(self.col_levels)):
-                twoway_df[self.parameter] = sum(
+                twoway_df[self.param] = sum(
                     pd.DataFrame.from_dict(self.point_est, orient="index").values.tolist(), []
                 )
                 twoway_df["stderror"] = sum(

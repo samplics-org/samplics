@@ -3,7 +3,7 @@ authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
 description = "Select, weight and analyze complex sample data"
 license = "MIT"
 name = "samplics"
-version = "0.3.43"
+version = "0.4.0"
 
 readme = "README.md"
 
@@ -47,7 +47,7 @@ isort = "^5.10"
 # jupyterlab = "^3.4" 
 mypy = "^0.960" 
 nb-black-only = "^1.0" 
-nox = "^p2022.1.7" 
+nox = "^2022.8" 
 pylint = "^2.9" 
 pytest = "^7.1" 
 pytest-cov = "^3.0" 

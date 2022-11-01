@@ -436,7 +436,7 @@ def test_size_str_wald_size4_with_resp_rate2():
 
 
 def test_size_str_wald_size5():
-    size_str_wald.calculate(target=0.8, half_ci=0.1, deff=1.5, number_strata=5)
+    size_str_wald.calculate(target=0.8, half_ci=0.1, deff=1.5, nb_strata=5)
     assert size_str_wald.samp_size["_stratum_1"] == 93
     assert size_str_wald.samp_size["_stratum_2"] == 93
     assert size_str_wald.samp_size["_stratum_3"] == 93
@@ -445,7 +445,7 @@ def test_size_str_wald_size5():
 
 
 def test_size_str_wald_size5_with_resp_rate():
-    size_str_wald.calculate(target=0.8, half_ci=0.1, deff=1.5, number_strata=5, resp_rate=0.5)
+    size_str_wald.calculate(target=0.8, half_ci=0.1, deff=1.5, nb_strata=5, resp_rate=0.5)
     assert size_str_wald.samp_size["_stratum_1"] == 185
     assert size_str_wald.samp_size["_stratum_2"] == 185
     assert size_str_wald.samp_size["_stratum_3"] == 185
@@ -459,7 +459,7 @@ def test_size_str_wald_size5_with_resp_rate():
 
 
 def test_size_str_wald_df():
-    size_str_wald.calculate(target=0.80, half_ci=0.10, number_strata=5)
+    size_str_wald.calculate(target=0.80, half_ci=0.10, nb_strata=5)
     size_df = size_str_wald.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
@@ -468,7 +468,7 @@ def test_size_str_wald_df():
 
 
 def test_size_str_wald_df_with_resp_rate():
-    size_str_wald.calculate(target=0.80, half_ci=0.10, number_strata=5, resp_rate=0.56)
+    size_str_wald.calculate(target=0.80, half_ci=0.10, nb_strata=5, resp_rate=0.56)
     size_df = size_str_wald.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
@@ -733,7 +733,7 @@ def test_size_str_fleiss_size4():
 
 
 def test_size_str_fleiss_size5():
-    size_str_fleiss.calculate(target=0.8, half_ci=0.1, deff=1.5, number_strata=5)
+    size_str_fleiss.calculate(target=0.8, half_ci=0.1, deff=1.5, nb_strata=5)
     assert size_str_fleiss.samp_size["_stratum_1"] == 132
     assert size_str_fleiss.samp_size["_stratum_2"] == 132
     assert size_str_fleiss.samp_size["_stratum_3"] == 132
@@ -742,7 +742,7 @@ def test_size_str_fleiss_size5():
 
 
 def test_size_str_fleiss_df1():
-    size_str_fleiss.calculate(target=0.80, half_ci=0.10, number_strata=5)
+    size_str_fleiss.calculate(target=0.80, half_ci=0.10, nb_strata=5)
     size_df = size_str_fleiss.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
@@ -751,7 +751,7 @@ def test_size_str_fleiss_df1():
 
 
 def test_size_str_fleiss_df1_with_resp_rate():
-    size_str_fleiss.calculate(target=0.80, half_ci=0.10, number_strata=5, resp_rate=0.4)
+    size_str_fleiss.calculate(target=0.80, half_ci=0.10, nb_strata=5, resp_rate=0.4)
     size_df = size_str_fleiss.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
@@ -760,14 +760,14 @@ def test_size_str_fleiss_df1_with_resp_rate():
 
 
 def test_size_str_fleiss_df2():
-    size_str_fleiss.calculate(target=0.80, half_ci=0.10, number_strata=5)
+    size_str_fleiss.calculate(target=0.80, half_ci=0.10, nb_strata=5)
     size_df = size_str_fleiss.to_dataframe(["param", "str", "prop", "sigma", "half_ci", "size"])
     assert size_df.shape[0] == 5
     assert (size_df.columns == ["param", "str", "prop", "sigma", "half_ci", "size"]).all()
 
 
 def test_size_str_fleiss_df2_with_resp_rate():
-    size_str_fleiss.calculate(target=0.80, half_ci=0.10, number_strata=5, resp_rate=0.6)
+    size_str_fleiss.calculate(target=0.80, half_ci=0.10, nb_strata=5, resp_rate=0.6)
     size_df = size_str_fleiss.to_dataframe(["param", "str", "prop", "sigma", "half_ci", "size"])
     assert size_df.shape[0] == 5
     assert (size_df.columns == ["param", "str", "prop", "sigma", "half_ci", "size"]).all()

@@ -21,7 +21,7 @@ sample_data1 = pd.DataFrame.from_dict(
 
 
 def test_single_psu_mean_skip():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -39,7 +39,7 @@ def test_single_psu_mean_skip():
 
 
 def test_single_psu_mean_domain_skip():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -66,7 +66,7 @@ def test_single_psu_mean_domain_skip():
 
 @pytest.mark.xfail
 def test_single_psu_mean_certainty11():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -78,7 +78,7 @@ def test_single_psu_mean_certainty11():
 
 
 def test_single_psu_mean_certainty12():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -91,7 +91,7 @@ def test_single_psu_mean_certainty12():
 
 @pytest.mark.xfail
 def test_single_psu_mean_domain_certainty11():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -104,7 +104,7 @@ def test_single_psu_mean_domain_certainty11():
 
 
 def test_single_psu_mean_domain_certainty12():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -118,7 +118,7 @@ def test_single_psu_mean_domain_certainty12():
 
 @pytest.mark.xfail
 def test_single_psu_mean_domain_certainty21():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -132,7 +132,7 @@ def test_single_psu_mean_domain_certainty21():
 
 
 def test_single_psu_mean_domain_certainty22():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -146,7 +146,7 @@ def test_single_psu_mean_domain_certainty22():
 
 
 def test_single_psu_mean_combine11():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -159,7 +159,7 @@ def test_single_psu_mean_combine11():
 
 
 def test_single_psu_mean_combine12():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data1["age"],
         samp_weight=sample_data1["wgt"],
@@ -184,7 +184,7 @@ sample_data2 = pd.DataFrame.from_dict(
 
 
 def test_single_psu_mean_dict_skip():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],
@@ -202,7 +202,7 @@ def test_single_psu_mean_dict_skip():
 
 
 def test_single_psu_mean_domain_dict_skip():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],
@@ -229,7 +229,7 @@ def test_single_psu_mean_domain_dict_skip():
 
 @pytest.mark.xfail
 def test_single_psu_mean_dict_certainty11():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],
@@ -241,7 +241,7 @@ def test_single_psu_mean_dict_certainty11():
 
 
 def test_single_psu_mean_dict_certainty12():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],
@@ -253,7 +253,7 @@ def test_single_psu_mean_dict_certainty12():
 
 
 def test_single_psu_mean_domain_dict_certainty11():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],
@@ -267,7 +267,7 @@ def test_single_psu_mean_domain_dict_certainty11():
 
 @pytest.mark.xfail
 def test_single_psu_mean_domain_dict_certainty12():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],
@@ -281,7 +281,7 @@ def test_single_psu_mean_domain_dict_certainty12():
 
 
 def test_single_psu_mean_domain_dict_certainty13():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],
@@ -295,7 +295,7 @@ def test_single_psu_mean_domain_dict_certainty13():
 
 
 def test_single_psu_mean_dict_combine11():
-    svy_mean_single_psu = TaylorEstimator(parameter="mean")
+    svy_mean_single_psu = TaylorEstimator(param="mean")
     svy_mean_single_psu.estimate(
         y=sample_data2["age"],
         samp_weight=sample_data2["wgt"],

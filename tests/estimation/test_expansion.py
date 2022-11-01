@@ -47,9 +47,9 @@ def test_total_estimator_without_str_to_dataframe():
     est_df = svy_total_without_str.to_dataframe()
 
     assert (
-        est_df.columns == ["_parameter", "_estimate", "_stderror", "_lci", "_uci", "_cv"]
+        est_df.columns == ["_param", "_estimate", "_stderror", "_lci", "_uci", "_cv"]
     ).all()
-    assert est_df._parameter[0] == "total"
+    assert est_df._param[0] == "total"
     assert np.isclose(est_df._estimate[0], 7938.333)
     assert np.isclose(est_df._stderror[0], 560.0856)
     assert np.isclose(est_df._lci[0], 6813.915)
@@ -1034,7 +1034,7 @@ def test_factor_mean_estimator_with_str_dataframe():
     svy_est_df = svy_est.to_dataframe()
 
     assert svy_est_df.columns.tolist() == [
-        "_parameter",
+        "_param",
         "_domain",
         "_estimate",
         "_stderror",
@@ -1077,7 +1077,7 @@ def test_factor_mean_estimator_with_str_dataframe_as_factor():
     svy_est_df = svy_est.to_dataframe()
 
     assert svy_est_df.columns.tolist() == [
-        "_parameter",
+        "_param",
         "_domain",
         "_level",
         "_estimate",

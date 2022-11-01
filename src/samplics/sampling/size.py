@@ -186,7 +186,7 @@ class SampleSize:
         sigma: Optional[Union[DictStrNum, Number]] = None,
         deff: Union[DictStrNum, Number, Number] = 1.0,
         resp_rate: Union[DictStrNum, Number] = 1.0,
-        number_strata: Optional[int] = None,
+        nb_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Number]] = None,
         alpha: float = 0.05,
     ) -> None:
@@ -223,7 +223,7 @@ class SampleSize:
                 self.pop_size,
                 self.alpha,
             ) = convert_numbers_to_dicts(
-                number_strata, half_ci, target, sigma, deff, resp_rate, pop_size, alpha
+                nb_strata, half_ci, target, sigma, deff, resp_rate, pop_size, alpha
             )
         else:
             (
@@ -362,7 +362,7 @@ class SampleSizeMeanOneSample:
         delta: Union[DictStrNum, Array, Number] = 0.0,
         deff: Union[DictStrNum, Array, Number] = 1.0,
         resp_rate: Union[DictStrNum, Array, Number] = 1.0,
-        number_strata: Optional[int] = None,
+        nb_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
         alpha: Union[DictStrNum, Array, Number] = 0.05,
         power: Union[DictStrNum, Array, Number] = 0.80,
@@ -380,7 +380,7 @@ class SampleSizeMeanOneSample:
                 self.alpha,
                 self.power,
             ) = convert_numbers_to_dicts(
-                number_strata,
+                nb_strata,
                 mean_0,
                 mean_1,
                 sigma,
@@ -502,7 +502,7 @@ class SampleSizePropOneSample:
         continuity: bool = False,
         deff: Union[DictStrNum, Array, Number] = 1.0,
         resp_rate: Union[DictStrNum, Array, Number] = 1.0,
-        number_strata: Optional[int] = None,
+        nb_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
         alpha: Union[DictStrNum, Array, Number] = 0.05,
         power: Union[DictStrNum, Array, Number] = 0.80,
@@ -519,7 +519,7 @@ class SampleSizePropOneSample:
                 self.alpha,
                 self.power,
             ) = convert_numbers_to_dicts(
-                number_strata,
+                nb_strata,
                 prop_0,
                 prop_1,
                 delta,
@@ -651,7 +651,7 @@ class SampleSizeMeanTwoSample:
         delta: Union[DictStrNum, Array, Number] = 0.0,
         deff: Union[DictStrNum, Array, Number] = 1.0,
         resp_rate: Union[DictStrNum, Array, Number] = 1.0,
-        number_strata: Optional[int] = None,
+        nb_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
         alpha: Union[DictStrNum, Array, Number] = 0.05,
         power: Union[DictStrNum, Array, Number] = 0.80,
@@ -672,7 +672,7 @@ class SampleSizeMeanTwoSample:
                 self.alpha,
                 self.power,
             ) = convert_numbers_to_dicts(
-                number_strata,
+                nb_strata,
                 mean_1,
                 mean_2,
                 sigma_1,
@@ -804,7 +804,7 @@ class SampleSizePropTwoSample:
         delta: Union[DictStrNum, Array, Number] = 0.0,
         deff: Union[DictStrNum, Array, Number] = 1.0,
         resp_rate: Union[DictStrNum, Array, Number] = 1.0,
-        number_strata: Optional[int] = None,
+        nb_strata: Optional[int] = None,
         pop_size: Optional[Union[DictStrNum, Array, Number]] = None,
         alpha: Union[DictStrNum, Array, Number] = 0.05,
         power: Union[DictStrNum, Array, Number] = 0.80,
@@ -822,7 +822,7 @@ class SampleSizePropTwoSample:
                 self.alpha,
                 self.power,
             ) = convert_numbers_to_dicts(
-                number_strata,
+                nb_strata,
                 prop_1,
                 prop_2,
                 kappa,

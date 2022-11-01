@@ -148,9 +148,9 @@ def test_twoway_count_stats_likelihood_ratio():
 
 
 def test_twoway_count_design_info():
-    assert tbl_count.design_info["number_strata"] == 1
-    assert tbl_count.design_info["number_psus"] == 923
-    assert tbl_count.design_info["number_obs"] == 923
+    assert tbl_count.design_info["nb_strata"] == 1
+    assert tbl_count.design_info["nb_psus"] == 923
+    assert tbl_count.design_info["nb_obs"] == 923
     assert tbl_count.design_info["degrees_of_freedom"] == 922
 
 
@@ -233,9 +233,9 @@ def test_twoway_prop_stats_likelihood_ratio():
 
 
 def test_twoway_prop_design_info():
-    assert tbl_prop.design_info["number_strata"] == 1
-    assert tbl_prop.design_info["number_psus"] == 923
-    assert tbl_prop.design_info["number_obs"] == 923
+    assert tbl_prop.design_info["nb_strata"] == 1
+    assert tbl_prop.design_info["nb_psus"] == 923
+    assert tbl_prop.design_info["nb_obs"] == 923
     assert tbl_prop.design_info["degrees_of_freedom"] == 922
 
 
@@ -320,9 +320,9 @@ def test_nhanes_twoway_prop_stats_likelihood_ratio():
 
 
 def test_nhanes_twoway_prop_design_info():
-    assert tbl1_nhanes.design_info["number_strata"] == 15
-    assert tbl1_nhanes.design_info["number_psus"] == 31
-    assert tbl1_nhanes.design_info["number_obs"] == 7846
+    assert tbl1_nhanes.design_info["nb_strata"] == 15
+    assert tbl1_nhanes.design_info["nb_psus"] == 31
+    assert tbl1_nhanes.design_info["nb_obs"] == 7846
     assert tbl1_nhanes.design_info["degrees_of_freedom"] == 16
 
 
@@ -399,9 +399,9 @@ def test_nhanes_twoway_count_stats_likelihood_ratio():
 
 
 def test_nhanes_twoway_count_design_info():
-    assert tbl2_nhanes.design_info["number_strata"] == 15
-    assert tbl2_nhanes.design_info["number_psus"] == 31
-    assert tbl2_nhanes.design_info["number_obs"] == 7846
+    assert tbl2_nhanes.design_info["nb_strata"] == 15
+    assert tbl2_nhanes.design_info["nb_psus"] == 31
+    assert tbl2_nhanes.design_info["nb_obs"] == 7846
     assert tbl2_nhanes.design_info["degrees_of_freedom"] == 16
 
 

@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from samplics.utils.types import SelectMethod
+
 from samplics.sampling import SampleSelection
 
 
@@ -14,8 +16,10 @@ sample_size = int(np.rint(countries.size / 40))
 np.random.seed(12345)
 
 
+
+
 """Simple random sampling"""
-grs_design = SampleSelection(method="grs")
+grs_design = SampleSelection(method=SelectMethod.grs)
 
 
 def test_grs_select():
@@ -27,7 +31,7 @@ def test_grs_select():
     assert (grs_probs == probs).all()
 
 
-srs_design_wr = SampleSelection(method="srs")
+srs_design_wr = SampleSelection(method=SelectMethod.srs)
 
 
 def test_srswr_probs():
@@ -42,7 +46,7 @@ def test_srswr_select():
     assert (np.isclose(srs_probs, sample_size / countries.size)).all()
 
 
-srs_design_wor = SampleSelection(method="srs", with_replacement=False)
+srs_design_wor = SampleSelection(method=SelectMethod.srs, wr=False)
 
 
 def test_srswor_probs():
@@ -70,7 +74,7 @@ sample_sizes = dict(
     }
 )
 
-str_srswr_design = SampleSelection(method="srs", stratification=True)
+str_srswr_design = SampleSelection(method=SelectMethod.srs, strat=True)
 
 
 def test_stratified_srswr_probs_same_size():
@@ -100,7 +104,7 @@ def test_stratified_srswr_select_same_size():
         countries, size, continent
     )
     strata = np.unique(continent)
-    obtained_sample_sizes = dict()
+    # obtained_sample_sizes = dict()
     for s in strata:
         assert size == np.sum(str_srswr_number_hits[continent == s])
 
@@ -116,7 +120,7 @@ def test_stratified_srswr_select():
     assert sample_sizes == obtained_sample_sizes
 
 
-str_srswor_design = SampleSelection(method="srs", stratification=True, with_replacement=False)
+str_srswor_design = SampleSelection(method=SelectMethod.srs, strat=True, wr=False)
 
 
 def test_stratified_srswor_probs():
@@ -135,13 +139,13 @@ def test_stratified_srswor_select_same_size():
         countries, size, continent
     )
     strata = np.unique(continent)
-    obtained_sample_sizes = dict()
+    # obtained_sample_sizes = dict()
     for s in strata:
         assert size == np.sum(str_srswor_number_hits[continent == s])
     assert (np.unique(str_srswor_number_hits) == (0, 1)).all()
 
 
-def test_stratified_srswor_select():
+def test_stratified_srswor_select1():
     str_srswor_sample, str_srswor_number_hits, _ = str_srswor_design.select(
         countries, sample_sizes, continent
     )
@@ -153,20 +157,20 @@ def test_stratified_srswor_select():
     assert sample_sizes == obtained_sample_sizes
 
 
-def test_stratified_srswor_select():
+def test_stratified_srswor_select2():
     size = 2
     str_srswor_sample, str_srswor_number_hits, _ = str_srswor_design.select(
         countries, size, continent
     )
     strata = np.unique(continent)
-    obtained_sample_sizes = dict()
+    # obtained_sample_sizes = dict()
     for s in strata:
         assert size == np.sum(str_srswor_number_hits[continent == s])
     assert (np.unique(str_srswor_number_hits) == (0, 1)).all()
 
 
 """SYS sampling"""
-str_syswor_design = SampleSelection(method="sys", stratification=True, with_replacement=False)
+str_syswor_design = SampleSelection(method=SelectMethod.sys, strat=True, wr=False)
 
 
 def test_stratified_syswor_select():
@@ -178,7 +182,7 @@ def test_stratified_syswor_select():
 """PPS sampling"""
 mos = countries_population["population_2019"].to_numpy()
 
-pps_sys_design_wr = SampleSelection(method="pps-sys")
+pps_sys_design_wr = SampleSelection(method=SelectMethod.pps_sys)
 
 
 def test_ppswr_sys_probs():
@@ -212,7 +216,7 @@ def test_ppswr_sys_select_shuffle():
     # assert np.isclose(pps_probs_shuffled, sample_size * mos / np.sum(mos)).all()
 
 
-pps_hv_design_wor = SampleSelection(method="pps-hv", with_replacement=False)
+pps_hv_design_wor = SampleSelection(method=SelectMethod.pps_hv, wr=False)
 
 
 def test_ppswor_hv_probs():
@@ -227,12 +231,12 @@ def test_ppswor_hv_select():
     assert (np.unique(pps_number_hits) == (0, 1)).all()
 
 
-pps_brewer_design_wor = SampleSelection(method="pps-brewer", with_replacement=False)
+pps_brewer_design_wor = SampleSelection(method=SelectMethod.pps_brewer, wr=False)
 
 
 def test_ppswor_brewer_probs():
     pps_probs = pps_brewer_design_wor.inclusion_probs(countries, sample_size, mos=mos)
-    return np.isclose(pps_probs.all(), sample_size * mos / np.sum(mos))
+    assert (np.isclose(pps_probs, sample_size * mos / np.sum(mos))).all()
 
 
 def test_ppswor_brewer_select():
@@ -242,7 +246,7 @@ def test_ppswor_brewer_select():
     assert (np.unique(pps_number_hits) == (0, 1)).all()
 
 
-pps_murphy_design_wor = SampleSelection(method="pps-murphy", with_replacement=False)
+pps_murphy_design_wor = SampleSelection(method=SelectMethod.pps_murphy, wr=False)
 
 
 def test_ppswor_murphy_probs():
@@ -270,7 +274,7 @@ sample_sizes_pps = dict(
     }
 )
 
-str_ppswr_sys_design = SampleSelection(method="pps-sys", stratification=True)
+str_ppswr_sys_design = SampleSelection(method=SelectMethod.pps_sys, strat=True)
 
 
 def test_stratified_ppswr_sys_probs():
@@ -298,7 +302,7 @@ def test_stratified_ppswr_sys_select():
     assert sample_sizes_pps == obtained_sample_sizes
 
 
-str_ppswr_hv_design = SampleSelection(method="pps-hv", stratification=True)
+str_ppswr_hv_design = SampleSelection(method=SelectMethod.pps_hv, strat=True)
 
 
 def test_stratified_ppswr_hv_probs():
@@ -326,7 +330,7 @@ def test_stratified_ppswr_hv_probs():
 #     assert sample_sizes_pps == obtained_sample_sizes
 
 
-str_ppswr_brewer_design = SampleSelection(method="pps-brewer", stratification=True)
+str_ppswr_brewer_design = SampleSelection(method=SelectMethod.pps_brewer, strat=True)
 
 
 def test_stratified_ppswr_brewer_probs():
@@ -373,7 +377,7 @@ sample_sizes_murphy = dict(
     }
 )
 
-str_ppswr_murphy_design = SampleSelection(method="pps-murphy", stratification=True)
+str_ppswr_murphy_design = SampleSelection(method=SelectMethod.pps_murphy, strat=True)
 
 
 def test_stratified_ppswr_murphy_probs():

@@ -1,6 +1,6 @@
 """Sampling selection module
 
-The module has one main class called *SampleSelection* which provides a number of random selection methodsand associated probability of selection. All the samping techniques implemented in this 
+The module has one main class called *SampleSelection* which provides a number of random selection methods and associated probability of selection. All the samping techniques implemented in this 
 modules are discussed in the following reference book: Cochran, W.G. (1977) [#c1977]_, 
 Kish, L. (1965) [#k1965]_, and Lohr, S.L. (2010) [#l2010]_. Furthermore, Brewer, K.R.W. and 
 Hanif, M. (1983) [#bh1983]_ provides comprehensive and detailed descriptions of these complex 
@@ -45,14 +45,14 @@ class SampleSelection:
     to size (pps), and the generic selection.
 
     Attributes of the class:
-        | method (str): a string specifying the sampling algorithm. The available
+        | method (SelectMethod): a string specifying the sampling algorithm. The available
         |   sampling algorithms are: simple random sampling (srs), systematic selection (sys),
         |   Brewer's procedure (pps-brewer), Hanurav-Vijayan procedure (pps-hv),
         |   Murphy's procedure (pps-murphy), Rao-Sampford procedure (pps-rs), systematic
         |   pps (pps-sys), and a generic selection from arbitrary probabilities using
         |   *numpy.random.choice()* method.
-        | stratification (bool): indicates if the sampling procedure is stratified or not.
-        | with_replacement (bool): indicates whether the selection is with replacement.
+        | strat (bool): indicates if the sampling procedure is stratified or not.
+        | wr (bool): indicates whether the selection is with replacement.
 
     Main functions:
         | inclusion_probs(): provides the inclusion probabilities.
@@ -64,27 +64,28 @@ class SampleSelection:
 
     def __init__(
         self,
-        method: str,
-        stratification: bool = False,
-        with_replacement: bool = True,
+        method: SelectMethod,
+        strat: bool = False,
+        wr: bool = True,
     ) -> None:
-        if method.lower() in (
-            "srs",
-            "sys",
-            "pps-brewer",
-            "pps-hv",  # Hanurav-Vijayan
-            "pps-murphy",
-            "pps-rs",
-            "pps-sys",
-            "grs",
-        ):
-            self.method = method.lower()  # grs for generic random selection
-        else:
-            raise ValueError(
-                "method must be in ('srs', 'sys', 'pps-brewer', 'pps-hv', 'pps-murphy', 'pps-rs, 'pps-sys', 'grs')"
-            )
-        self.stratification: bool = True if stratification else False
-        self.with_replacement: bool = with_replacement
+        # if method.lower() in (
+        #     "srs",
+        #     "sys",
+        #     "pps-brewer",
+        #     "pps-hv",  # Hanurav-Vijayan
+        #     "pps-murphy",
+        #     "pps-rs",
+        #     "pps-sys",
+        #     "grs",
+        # ):
+        #     self.method = method.lower()  # grs for generic random selection
+        # else:
+        #     raise ValueError(
+        #         "method must be in ('srs', 'sys', 'pps-brewer', 'pps-hv', 'pps-murphy', 'pps-rs, 'pps-sys', 'grs')"
+        #     )
+        self.method: SelectMethod = method
+        self.strat: bool = True if strat else False
+        self.wr: bool = wr
         self.fpc: Union[DictStrNum, Number] = {}
 
     @staticmethod
@@ -124,7 +125,7 @@ class SampleSelection:
     ) -> None:
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
-        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
+        samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         if isinstance(samp_size, dict):
             self.fpc = dict()
@@ -143,7 +144,7 @@ class SampleSelection:
         stratum: Optional[np.ndarray] = None,
     ) -> tuple[np.ndarray, np.ndarray]:
 
-        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
+        samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
         sample = np.zeros(samp_unit.size).astype(bool)
         hits = np.zeros(samp_unit.size).astype(int)
         self._calculate_fpc(samp_unit, samp_size, stratum)
@@ -156,7 +157,7 @@ class SampleSelection:
                 sampled_indices_s = np.random.choice(
                     all_indices[stratum_units],
                     samp_size[s],
-                    self.with_replacement,
+                    self.wr,
                     probs_s,
                 )
                 sampled_indices_list.append(sampled_indices_s)
@@ -167,7 +168,7 @@ class SampleSelection:
             sampled_indices = np.random.choice(
                 samp_unit.size,
                 samp_size,
-                self.with_replacement,
+                self.wr,
                 probs / np.sum(probs),
             )
 
@@ -204,7 +205,7 @@ class SampleSelection:
     ) -> np.ndarray:
 
         samp_unit = formats.sample_units(samp_unit)
-        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
+        samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         number_units = samp_unit.size
         incl_probs: np.ndarray
@@ -231,7 +232,7 @@ class SampleSelection:
     ) -> np.ndarray:
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
-        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
+        samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         incl_probs: np.ndarray
         if isinstance(samp_size, dict):
@@ -427,52 +428,52 @@ class SampleSelection:
     ) -> tuple[np.ndarray, np.ndarray]:
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
-        samp_size = formats.sample_size_dict(samp_size, self.stratification, stratum)
+        samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         sample = hits = np.zeros(samp_unit.size).astype(int)
         if isinstance(samp_size, dict):
             for s in np.unique(stratum):
                 stratum_units = stratum == s
-                if self.method in "pps-sys":  # systematic
+                if self.method == SelectMethod.pps_sys:  # systematic
                     (sample[stratum_units], hits[stratum_units],) = self._pps_sys_select(
                         samp_unit[stratum_units],
                         samp_size[s],
                         mos[stratum_units],
                     )
-                elif self.method in "pps-hv":  # "hanurav-vijayan"
+                elif self.method == SelectMethod.pps_hv:  # "hanurav-vijayan"
                     (sample[stratum_units], hits[stratum_units],) = self._pps_hv_select(
                         samp_unit[stratum_units],
                         samp_size[s],
                         mos[stratum_units],
                     )
-                elif self.method in "pps-brewer":
+                elif self.method == SelectMethod.pps_brewer:
                     (sample[stratum_units], hits[stratum_units],) = self._pps_brewer_select(
                         samp_unit[stratum_units],
                         samp_size[s],
                         mos[stratum_units],
                     )
-                elif self.method in "pps-murphy":
+                elif self.method == SelectMethod.pps_murphy:
                     (sample[stratum_units], hits[stratum_units],) = self._pps_murphy_select(
                         samp_unit[stratum_units],
                         samp_size[s],
                         mos[stratum_units],
                     )
-                elif self.method in "pps-rs":
+                elif self.method == SelectMethod.pps_rs:
                     (sample[stratum_units], hits[stratum_units],) = self._pps_rs_select(
                         samp_unit[stratum_units],
                         samp_size[s],
                         mos[stratum_units],
                     )
         else:
-            if self.method in "pps-sys":  # systematic
+            if self.method == SelectMethod.pps_sys:  # systematic
                 sample, hits = self._pps_sys_select(samp_unit, samp_size, mos)
-            elif self.method in "pps-hv":  # "hanurav-vijayan"
+            elif self.method == SelectMethod.pps_hv:  # "hanurav-vijayan"
                 sample, hits = self._pps_hv_select(samp_unit, samp_size, mos)
-            elif self.method in "pps-brewer":
+            elif self.method == SelectMethod.pps_brewer:
                 sample, hits = self._pps_brewer_select(samp_unit, samp_size, mos)
-            elif self.method in "pps-murphy":
+            elif self.method == SelectMethod.pps_murphy:
                 sample, hits = self._pps_murphy_select(samp_unit, samp_size, mos)
-            elif self.method in "pps-rs":
+            elif self.method == SelectMethod.pps_rs:
                 sample, hits = self._pps_rs_select(samp_unit, samp_size, mos)
 
         return sample, hits
@@ -526,7 +527,7 @@ class SampleSelection:
     ) -> tuple[np.ndarray, np.ndarray]:
 
         sample = hits = np.zeros(samp_unit.size).astype(int)
-        if self.stratification and (isinstance(samp_size, dict) or isinstance(samp_rate, dict)):
+        if self.strat and (isinstance(samp_size, dict) or isinstance(samp_rate, dict)):
             for s in np.unique(stratum):
                 samp_size_s = None
                 if samp_size is not None:
@@ -578,7 +579,7 @@ class SampleSelection:
                 "Both samp_size and samp_rate are provided. Only one of the two parameters should be specified."
             )
 
-        if self.stratification and stratum is None:
+        if self.strat and stratum is None:
             raise AssertionError("Stratum must be provided for stratified samples!")
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
@@ -601,21 +602,21 @@ class SampleSelection:
 
         mos = formats.numpy_array(mos) if mos is not None else np.ones(samp_unit.shape[0])
 
-        samp_size_temp = formats.sample_size_dict(samp_size_temp, self.stratification, stratum)
+        samp_size_temp = formats.sample_size_dict(samp_size_temp, self.strat, stratum)
 
-        if self.method == "srs":
+        if self.method == SelectMethod.srs:
             incl_probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum)
         elif self.method in (
-            "pps-brewer",
-            "pps-hv",
-            "pps-murphy",
-            "pps-rs",
-            "pps-sys",
+            SelectMethod.pps_sys,
+            SelectMethod.pps_hv,
+            SelectMethod.pps_brewer,
+            SelectMethod.pps_murphy,
+            SelectMethod.pps_rs,
         ):
             if self._anycertainty(samp_size_temp, stratum, mos):
                 raise AssertionError("Some clusters are certainties.")
             incl_probs = self._pps_inclusion_probs(samp_unit, samp_size_temp, mos, stratum)
-        elif self.method == "sys":
+        elif self.method == SelectMethod.sys:
             incl_probs = self._sys_inclusion_probs(samp_unit, samp_size_temp, stratum, samp_rate)
         else:
             raise ValueError("method not valid!")
@@ -671,7 +672,7 @@ class SampleSelection:
                 "Both samp_size and samp_rate are provided. Only one of the two parameters should be specified."
             )
 
-        if self.stratification and stratum is None:
+        if self.strat and stratum is None:
             raise AssertionError("Stratum must be provided for stratified samples!")
 
         samp_unit = formats.sample_units(samp_unit, unique=True)
@@ -708,23 +709,23 @@ class SampleSelection:
             probs = formats.numpy_array(probs)
 
         suffled_order = None
-        if shuffle and self.method in ("sys", "pps-sys"):
+        if shuffle and self.method in (SelectMethod.sys, SelectMethod.pps_sys):
             suffled_order = np.linspace(0, samp_unit.size - 1, samp_unit.size).astype(int)
             np.random.shuffle(suffled_order)
             samp_unit = samp_unit[suffled_order]
             if stratum is not None:
                 stratum = stratum[suffled_order]
-            if self.method == "pps-sys" and mos is not None:
+            if self.method == SelectMethod.pps_sys and mos is not None:
                 mos = mos[suffled_order]
 
-        if self.method == "srs" and samp_size_temp is not None:
+        if self.method == SelectMethod.srs and samp_size_temp is not None:
             probs = self._srs_inclusion_probs(
                 samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum
             )
             sample, hits = self._grs_select(
                 probs=probs, samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum
             )
-        elif self.method == "sys" and samp_rate_temp is not None:
+        elif self.method == SelectMethod.sys and samp_rate_temp is not None:
             # probs = self._sys_inclusion_probs(
             #     samp_unit=samp_unit, samp_rate=samp_rate_temp, stratum=stratum
             # )
@@ -732,11 +733,11 @@ class SampleSelection:
                 samp_unit=samp_unit, samp_size=None, samp_rate=samp_rate_temp, stratum=stratum
             )
         elif self.method in (
-            "pps-brewer",
-            "pps-hv",
-            "pps-murphy",
-            "pps-rs",
-            "pps-sys",
+            SelectMethod.pps_sys,
+            SelectMethod.pps_hv,
+            SelectMethod.pps_brewer,
+            SelectMethod.pps_murphy,
+            SelectMethod.pps_rs,
         ):
             if self._anycertainty(samp_size_temp, stratum, mos):
                 raise AssertionError("Some clusters are certainties.")
@@ -746,7 +747,7 @@ class SampleSelection:
             sample, hits = self._pps_select(
                 samp_unit=samp_unit, samp_size=samp_size_temp, stratum=stratum, mos=mos
             )
-        elif self.method == "sys" and samp_rate_temp is None:
+        elif self.method == SelectMethod.sys and samp_rate_temp is None:
             # probs = self._srs_inclusion_probs(samp_unit, samp_size, stratum) - Todo
             sample, hits = self._sys_select(
                 samp_unit=samp_unit,
@@ -754,7 +755,7 @@ class SampleSelection:
                 stratum=stratum,
                 samp_rate=None,
             )
-        elif self.method == "grs":
+        elif self.method == SelectMethod.grs:
             if probs is None:
                 raise ValueError("Probabilities of inclusion not provided!")
             else:

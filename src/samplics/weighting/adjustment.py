@@ -20,22 +20,22 @@ from samplics.utils.types import Array, DictStrFloat, DictStrInt, DictStrNum, Nu
 
 
 class SampleWeight:
-    """*SampleWeight* implements several adjustments to sample weights. The class does not computes design sample weights. It is expected at this point some initial weights are
+    """*SampleWeight* implements several adjustments to sample weights. The class does not compute design sample weights. It is expected at this point some initial weights are
     available e.g. design sample weights or some other sample weights. Using this module,
     the user will be able to adjust sample weights to account for nonresponse, normalize
     sample weights so that they sum to some control value(s), poststratify, and calibrate
     based on auxiliary information.
 
     Attributes
-        | adjust_method (str): adjustment method. Possible values are nonresponse,
+        | adj_method (str): adjustment method. Possible values are nonresponse,
         |   normalization, poststratification, calibration.
-        | number_units (dict): number of units per domain.
-        | deff_wgt (dict): design effect due to unequal weights per domain.
-        | adjust_factor (dict): normalizing adjustment factor per domain.
+        | nb_units (dict): number of units per domain.
+        | deff_weight (dict): design effect due to unequal weights per domain.
+        | adj_factor (dict): normalizing adjustment factor per domain.
         | control (dict): control values per domain.
 
     Methods
-        | deff_weight(): computes the design effect due to weighting.
+        | calculate_deff_weight(): computes the design effect due to weighting.
         | adjust(): adjust the sample weights to account for nonresponse.
         | normalize(): normalize the sample weights to ensure they sum to a control value.
         | poststratify(): poststratify the sample weights.
@@ -49,10 +49,10 @@ class SampleWeight:
 
     def __init__(self) -> None:
 
-        self.adjust_method: str = ""
-        self.number_units: Union[DictStrInt, int] = {}
-        self.deff_wgt: Union[DictStrNum, Number] = {}
-        self.adjust_factor: Union[DictStrNum, Number] = {}
+        self.adj_method: str = ""
+        self.nb_units: Union[DictStrInt, int] = {}
+        self.deff_weight: Union[DictStrNum, Number] = {}
+        self.adj_factor: Union[DictStrNum, Number] = {}
         self.control: Union[DictStrNum, Number] = {}
 
     def __repr__(self) -> str:
@@ -61,17 +61,17 @@ class SampleWeight:
     def __str__(self) -> str:
         pass
 
-    def _number_units(self, domain: Optional[np.ndarray], samp_weight: np.ndarray) -> None:
+    def _nb_units(self, domain: Optional[np.ndarray], samp_weight: np.ndarray) -> None:
         """Returns the number of units"""
 
         if domain is None:
-            self.number_units = len(samp_weight)
+            self.nb_units = len(samp_weight)
         elif domain is not None:
             keys, values = np.unique(domain, return_counts=True)
-            self.number_units = dict(zip(keys, values))
+            self.nb_units = dict(zip(keys, values))
 
     @staticmethod
-    def _deff_wgt(samp_weight: np.ndarray) -> Number:
+    def _deff_weight(samp_weight: np.ndarray) -> Number:
         """compute the design effect due to unequal weights -
         Page 71 of Valliant and Dever (2018)"""
 
@@ -80,7 +80,7 @@ class SampleWeight:
 
         return float(1 + np.mean(relvar_w))
 
-    def deff_weight(
+    def calculate_deff_weight(
         self, samp_weight: Array, domain: Optional[np.ndarray] = None
     ) -> Union[DictStrNum, Number]:
         """Computes the design effect due to unequal weights.
@@ -99,13 +99,13 @@ class SampleWeight:
         samp_weight = formats.numpy_array(samp_weight)
 
         if domain is None:
-            self.deff_wgt = self._deff_wgt(samp_weight)
-            return self.deff_wgt
+            self.deff_weight = self._deff_weight(samp_weight)
+            return self.deff_weight
         else:
-            self.deff_wgt = {}
+            self.deff_weight = {}
             for d in np.unique(domain):
-                self.deff_wgt[d] = self._deff_wgt(samp_weight[domain == d])
-            return self.deff_wgt
+                self.deff_weight[d] = self._deff_weight(samp_weight[domain == d])
+            return self.deff_weight
 
     @staticmethod
     def _norm_adjustment(
@@ -114,9 +114,9 @@ class SampleWeight:
     ) -> tuple[np.ndarray, Number]:
 
         sum_weights = np.sum(samp_weight)
-        adjust_factor = float(control / sum_weights)
+        adj_factor = float(control / sum_weights)
 
-        return np.asarray(samp_weight * adjust_factor), adjust_factor
+        return np.asarray(samp_weight * adj_factor), adj_factor
 
     @staticmethod
     def _response(
@@ -138,7 +138,7 @@ class SampleWeight:
         return resp_code
 
     @staticmethod
-    def _adjust_factor(
+    def _adj_factor(
         samp_weight: np.ndarray, resp_code: np.ndarray, unknown_to_inelig: bool
     ) -> tuple[np.ndarray, Number]:
 
@@ -153,24 +153,24 @@ class SampleWeight:
         uk_weights_sum = float(np.sum(samp_weight[uk_sample]))
 
         if unknown_to_inelig:
-            adjust_uk = (in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum) / (
+            adj_uk = (in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum) / (
                 in_weights_sum + rr_weights_sum + nr_weights_sum
             )
-            adjust_rr = (rr_weights_sum + nr_weights_sum) / rr_weights_sum
+            adj_rr = (rr_weights_sum + nr_weights_sum) / rr_weights_sum
         else:
-            adjust_uk = 1
-            adjust_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
+            adj_uk = 1
+            adj_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
 
-        adjust_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 1 by default
-        adjust_factor[rr_sample] = adjust_rr * adjust_uk
-        adjust_factor[in_sample] = adjust_uk
+        adj_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 1 by default
+        adj_factor[rr_sample] = adj_rr * adj_uk
+        adj_factor[in_sample] = adj_uk
 
-        return adjust_factor, adjust_rr
+        return adj_factor, adj_rr
 
     def adjust(
         self,
         samp_weight: Array,
-        adjust_class: Array,
+        adj_class: Array,
         resp_status: Array,
         resp_dict: Optional[Union[dict[str, StringNumber]]] = None,
         unknown_to_inelig: bool = True,
@@ -180,7 +180,7 @@ class SampleWeight:
         Args:
             samp_weight (np.ndarray): array of the pre-adjustment sample weight. This vector
                 should contains numeric values.
-            adjust_class (np.ndarray): array indicating the adjustment class for each sample unit.
+            adj_class (np.ndarray): array indicating the adjustment class for each sample unit.
                 The sample weight adjustments will be performed within the classes defined by this
                 parameter.
             resp_status (np.ndarray): array indicating the eligibility and response status of the
@@ -192,7 +192,7 @@ class SampleWeight:
             unknown_to_inelig (bool, optional): [description]. Defaults to True.
 
         Raises:
-            AssertionError: raises an assertion error if adjust_class is not a list, numpy array,
+            AssertionError: raises an assertion error if adj_class is not a list, numpy array,
             or pandas dataframe/series.
 
         Returns:
@@ -203,34 +203,34 @@ class SampleWeight:
         samp_weight = formats.numpy_array(samp_weight)
         adjusted_weight = np.ones(samp_weight.size) * np.nan
 
-        if adjust_class is None:
+        if adj_class is None:
             (
-                adjust_factor,
-                self.adjust_factor,
-            ) = self._adjust_factor(samp_weight, resp_code, unknown_to_inelig)
-            adjusted_weight = adjust_factor * samp_weight
+                adj_factor,
+                self.adj_factor,
+            ) = self._adj_factor(samp_weight, resp_code, unknown_to_inelig)
+            adjusted_weight = adj_factor * samp_weight
         else:
-            if isinstance(adjust_class, list):
-                adjust_class = pd.DataFrame(np.column_stack(adjust_class))
-            elif isinstance(adjust_class, np.ndarray):
-                adjust_class = pd.DataFrame(adjust_class)
-            elif not isinstance(adjust_class, (pd.Series, pd.DataFrame)):
+            if isinstance(adj_class, list):
+                adj_class = pd.DataFrame(np.column_stack(adj_class))
+            elif isinstance(adj_class, np.ndarray):
+                adj_class = pd.DataFrame(adj_class)
+            elif not isinstance(adj_class, (pd.Series, pd.DataFrame)):
                 raise AssertionError(
-                    "adjust_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
+                    "adj_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
                 )
 
-            adjust_array = formats.dataframe_to_array(adjust_class)
-            self.adjust_factor = {}
-            for c in np.unique(adjust_array):
-                samp_weight_c = samp_weight[adjust_array == c]
-                resp_code_c = resp_code[adjust_array == c]
-                adjust_factor_c, self.adjust_factor[c] = self._adjust_factor(
+            adj_array = formats.dataframe_to_array(adj_class)
+            self.adj_factor = {}
+            for c in np.unique(adj_array):
+                samp_weight_c = samp_weight[adj_array == c]
+                resp_code_c = resp_code[adj_array == c]
+                adj_factor_c, self.adj_factor[c] = self._adj_factor(
                     samp_weight_c, resp_code_c, unknown_to_inelig
                 )
-                adjusted_weight[adjust_array == c] = adjust_factor_c * samp_weight_c
+                adjusted_weight[adj_array == c] = adj_factor_c * samp_weight_c
 
-        self.deff_wgt = self.deff_weight(adjusted_weight)
-        self.adjust_method = "nonresponse"
+        self.deff_weight = self.calculate_deff_weight(adjusted_weight)
+        self.adj_method = "nonresponse"
 
         return np.asarray(adjusted_weight)
 
@@ -283,7 +283,7 @@ class SampleWeight:
             domain = formats.numpy_array(domain)
             keys = np.unique(domain)
             levels: np.ndarray = np.zeros(keys.size) * np.nan
-            self.adjust_factor = {}
+            self.adj_factor = {}
             self.control = {}
             for k, key in enumerate(keys):
                 weight_k = samp_weight[domain == key]
@@ -296,18 +296,18 @@ class SampleWeight:
 
                 (
                     norm_weight[domain == key],
-                    self.adjust_factor[key],
+                    self.adj_factor[key],
                 ) = self._norm_adjustment(weight_k, levels[k])
                 self.control[key] = levels[k]
         else:
             if control is None:
                 self.control = int(np.sum(samp_weight.size))
-                norm_weight, self.adjust_factor = self._norm_adjustment(samp_weight, self.control)
+                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, self.control)
             elif isinstance(control, (int, float)):
-                norm_weight, self.adjust_factor = self._norm_adjustment(samp_weight, control)
+                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, control)
                 self.control = control
 
-        self.adjust_method = "normalization"
+        self.adj_method = "normalization"
 
         return norm_weight
 
@@ -361,7 +361,7 @@ class SampleWeight:
                 control = sum_weight * factor
 
         ps_weight = self.normalize(samp_weight, control, domain)
-        self.adjust_method = "poststratification"
+        self.adj_method = "poststratification"
 
         return ps_weight
 
@@ -484,13 +484,11 @@ class SampleWeight:
             return np.asarray(np.dot(core_factor, x_i))
 
         if x.shape == (x.size,):
-            adjust_factor = _core_vector(x, core_factor)
+            adj_factor = _core_vector(x, core_factor)
         else:
-            adjust_factor = np.apply_along_axis(
-                _core_vector, axis=1, arr=x, core_factor=core_factor
-            )
+            adj_factor = np.apply_along_axis(_core_vector, axis=1, arr=x, core_factor=core_factor)
 
-        return adjust_factor
+        return adj_factor
 
     def calibrate(
         self,
@@ -547,13 +545,13 @@ class SampleWeight:
                 x_control=np.array(list(control.values())),
                 scale=scale,
             )
-            adjust_factor = 1 + self._calib_wgt(aux_vars, core_factor) / scale
+            adj_factor = 1 + self._calib_wgt(aux_vars, core_factor) / scale
         else:
             domains = np.unique(domain)
             if additive:
-                adjust_factor = np.ones((samp_size, domains.size)) * np.nan
+                adj_factor = np.ones((samp_size, domains.size)) * np.nan
             else:
-                adjust_factor = np.ones(samp_size) * np.nan
+                adj_factor = np.ones(samp_size) * np.nan
 
             for k, d in enumerate(domains):
                 if one_dimension:
@@ -585,7 +583,7 @@ class SampleWeight:
                         x_control=np.array(control_d_values),
                         scale=scale,
                     )
-                    adjust_factor[:, k] = (domain == d) + self._calib_wgt(
+                    adj_factor[:, k] = (domain == d) + self._calib_wgt(
                         aux_vars, core_factor_d
                     ) / scale
                 else:
@@ -596,14 +594,14 @@ class SampleWeight:
                         x_control=np.array(control_d_values),
                         scale=scale_d,
                     )
-                    adjust_factor[domain == d] = 1 + self._calib_wgt(x_d, core_factor_d) / scale_d
+                    adj_factor[domain == d] = 1 + self._calib_wgt(x_d, core_factor_d) / scale_d
 
         if additive:
-            calib_weight = np.transpose(np.transpose(adjust_factor) * samp_weight)
+            calib_weight = np.transpose(np.transpose(adj_factor) * samp_weight)
         else:
-            calib_weight = samp_weight * adjust_factor
+            calib_weight = samp_weight * adj_factor
 
-        self.adjust_method = "calibration"
+        self.adj_method = "calibration"
 
         return calib_weight
 

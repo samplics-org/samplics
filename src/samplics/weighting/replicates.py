@@ -33,12 +33,12 @@ class ReplicateWeight:
     Attributes:
         | method (str): replicate method.
         | fay_coef (float): Fay coefficient when implementing BRR-Fay.
-        | number_reps (int): number of replicates.
+        | nb_reps (int): number of replicates.
         | rep_coefs (np.ndarray): coefficients associated to the replicates.
-        | stratification (bool): stratification indicator.
-        | number_psus (int): number of primary sampling units.
-        | number_strata (int): number of strata.
-        | random_seed (int): random seed.
+        | strat (bool): strat indicator.
+        | nb_psus (int): number of primary sampling units.
+        | nb_strata (int): number of strata.
+        | rand_seed (int): random seed.
 
 
     Methods:
@@ -49,28 +49,28 @@ class ReplicateWeight:
     def __init__(
         self,
         method: str,
-        stratification: bool = True,
-        number_reps: int = 500,
+        strat: bool = True,
+        nb_reps: int = 500,
         fay_coef: float = 0.0,
-        random_seed: Optional[int] = None,
+        rand_seed: Optional[int] = None,
     ):
 
         self.method = method.lower()
-        self.stratification = stratification
+        self.strat = strat
         if self.method == "bootstrap":
-            self.number_reps = number_reps
-            self.rep_coefs = list((1 / number_reps) * np.ones(number_reps))
+            self.nb_reps = nb_reps
+            self.rep_coefs = list((1 / nb_reps) * np.ones(nb_reps))
         elif self.method == "brr":
-            self.number_reps = 0
+            self.nb_reps = 0
             self.fay_coef = fay_coef
 
-        self.number_psus = 0
-        self.number_strata = 0
+        self.nb_psus = 0
+        self.nb_strata = 0
         self.rep_coefs = []
         self.degree_of_freedom = 0
-        if random_seed is not None:
-            self.random_seed = random_seed
-            np.random.seed(random_seed)
+        if rand_seed is not None:
+            self.rand_seed = rand_seed
+            np.random.seed(rand_seed)
 
     def _reps_to_dataframe(
         self, psus: pd.DataFrame, rep_data: np.ndarray, rep_prefix: str
@@ -122,28 +122,28 @@ class ReplicateWeight:
     # Bootstrap methods
     @staticmethod
     def _boot_psus_replicates(
-        number_psus: int,
-        number_reps: int,
+        nb_psus: int,
+        nb_reps: int,
         samp_rate: Number = 0,
         size_gap: int = 1,
     ) -> np.ndarray:
         """Creates the bootstrap replicates structure"""
 
-        if number_psus <= size_gap:
+        if nb_psus <= size_gap:
             raise AssertionError("size_gap should be smaller than the number of units")
 
-        sample_size = number_psus - size_gap
-        psu = np.arange(0, number_psus)
-        psu_boot = np.random.choice(psu, size=(number_reps, sample_size))
-        psu_replicates = np.zeros(shape=(number_psus, number_reps))
-        for rep in np.arange(0, number_reps):
+        sample_size = nb_psus - size_gap
+        psu = np.arange(0, nb_psus)
+        psu_boot = np.random.choice(psu, size=(nb_reps, sample_size))
+        psu_replicates = np.zeros(shape=(nb_psus, nb_reps))
+        for rep in np.arange(0, nb_reps):
             psu_ids, psus_counts = np.unique(psu_boot[rep, :], return_counts=True)
             psu_replicates[:, rep][psu_ids] = psus_counts
 
-        ratio_sqrt = np.sqrt((1 - samp_rate) * sample_size / (number_psus - 1))
+        ratio_sqrt = np.sqrt((1 - samp_rate) * sample_size / (nb_psus - 1))
 
         return np.asarray(
-            1 - ratio_sqrt + ratio_sqrt * (number_psus / sample_size) * psu_replicates
+            1 - ratio_sqrt + ratio_sqrt * (nb_psus / sample_size) * psu_replicates
         )
 
     def _boot_replicates(
@@ -157,15 +157,15 @@ class ReplicateWeight:
         if stratum is None:
             psu_ids = np.unique(psu)
             boot_coefs = self._boot_psus_replicates(
-                psu_ids.size, self.number_reps, samp_rate, size_gap
+                psu_ids.size, self.nb_reps, samp_rate, size_gap
             )
         else:
             strata = np.unique(stratum)
             for k, s in enumerate(strata):
                 psu_ids_s = np.unique(psu[stratum == s])
-                number_psus_s = psu_ids_s.size
+                nb_psus_s = psu_ids_s.size
                 boot_coefs_s = self._boot_psus_replicates(
-                    number_psus_s, self.number_reps, samp_rate, size_gap
+                    nb_psus_s, self.nb_reps, samp_rate, size_gap
                 )
                 if k == 0:
                     boot_coefs = boot_coefs_s
@@ -175,44 +175,44 @@ class ReplicateWeight:
         return boot_coefs
 
     # BRR methods
-    def _brr_number_reps(self, psu: np.ndarray, stratum: Optional[np.ndarray] = None) -> None:
+    def _brr_nb_reps(self, psu: np.ndarray, stratum: Optional[np.ndarray] = None) -> None:
 
         if stratum is None:
-            self.number_psus = np.unique(psu).size
-            self.number_strata = self.number_psus // 2 + self.number_psus % 2
+            self.nb_psus = np.unique(psu).size
+            self.nb_strata = self.nb_psus // 2 + self.nb_psus % 2
         else:
-            self.number_psus = np.unique(np.array(list(zip(stratum, psu))), axis=0).shape[0]
-            self.number_strata = np.unique(stratum).size
-            if 2 * self.number_strata != self.number_psus:
+            self.nb_psus = np.unique(np.array(list(zip(stratum, psu))), axis=0).shape[0]
+            self.nb_strata = np.unique(stratum).size
+            if 2 * self.nb_strata != self.nb_psus:
                 raise AssertionError("Number of psus must be twice the number of strata!")
 
-        if self.number_reps < self.number_strata:
-            self.number_reps = self.number_strata
+        if self.nb_reps < self.nb_strata:
+            self.nb_reps = self.nb_strata
 
-        if self.number_reps <= 28:
-            if self.number_reps % 4 != 0:
-                self.number_reps = 4 * (self.number_reps // 4 + 1)
+        if self.nb_reps <= 28:
+            if self.nb_reps % 4 != 0:
+                self.nb_reps = 4 * (self.nb_reps // 4 + 1)
         else:
-            nb_reps_log2 = int(math.log(self.number_reps, 2))
-            if math.pow(2, nb_reps_log2) != self.number_reps:
-                self.number_reps = int(math.pow(2, nb_reps_log2))
+            nb_reps_log2 = int(math.log(self.nb_reps, 2))
+            if math.pow(2, nb_reps_log2) != self.nb_reps:
+                self.nb_reps = int(math.pow(2, nb_reps_log2))
 
     def _brr_replicates(self, psu: np.ndarray, stratum: Optional[np.ndarray]) -> np.ndarray:
         """Creates the brr replicate structure"""
 
         if not (0 <= self.fay_coef < 1):
             raise ValueError("The Fay coefficient must be greater or equal to 0 and lower than 1.")
-        self._brr_number_reps(psu, stratum)
+        self._brr_nb_reps(psu, stratum)
 
         self.rep_coefs = list(
-            (1 / (self.number_reps * pow(1 - self.fay_coef, 2))) * np.ones(self.number_reps)
+            (1 / (self.nb_reps * pow(1 - self.fay_coef, 2))) * np.ones(self.nb_reps)
         )
 
-        brr_coefs = hdd.hadamard(self.number_reps).astype(float)
-        brr_coefs = brr_coefs[:, 1 : self.number_strata + 1]
+        brr_coefs = hdd.hadamard(self.nb_reps).astype(float)
+        brr_coefs = brr_coefs[:, 1 : self.nb_strata + 1]
         brr_coefs = np.repeat(brr_coefs, 2, axis=1)
-        for r in np.arange(self.number_reps):
-            for h in np.arange(self.number_strata):
+        for r in np.arange(self.nb_reps):
+            for h in np.arange(self.nb_strata):
                 start = 2 * h
                 end = start + 2
                 if brr_coefs[r, start] == 1.0:
@@ -230,32 +230,32 @@ class ReplicateWeight:
 
     # Jackknife
     @staticmethod
-    def _jkn_psus_replicates(number_psus: int) -> np.ndarray:
+    def _jkn_psus_replicates(nb_psus: int) -> np.ndarray:
         """Creates the jackknife delete-1 replicate structure"""
 
-        jk_coefs = (number_psus / (number_psus - 1)) * (
-            np.ones((number_psus, number_psus)) - np.identity(number_psus)
+        jk_coefs = (nb_psus / (nb_psus - 1)) * (
+            np.ones((nb_psus, nb_psus)) - np.identity(nb_psus)
         )
 
         return np.asarray(jk_coefs)
 
     def _jkn_replicates(self, psu: np.ndarray, stratum: Optional[np.ndarray]) -> np.ndarray:
 
-        self.rep_coefs = ((self.number_reps - 1) / self.number_reps) * np.ones(self.number_reps)
+        self.rep_coefs = ((self.nb_reps - 1) / self.nb_reps) * np.ones(self.nb_reps)
 
         if stratum is None:
             psu_ids = np.unique(psu)
             jk_coefs = self._jkn_psus_replicates(psu_ids.size)
         else:
             strata = np.unique(stratum)
-            jk_coefs = np.ones((self.number_reps, self.number_reps))
+            jk_coefs = np.ones((self.nb_reps, self.nb_reps))
             start = end = 0
             for s in strata:
                 psu_ids_s = np.unique(psu[stratum == s])
-                number_psus_s = psu_ids_s.size
-                end = start + number_psus_s
-                jk_coefs[start:end, start:end] = self._jkn_psus_replicates(number_psus_s)
-                self.rep_coefs[start:end] = (number_psus_s - 1) / number_psus_s
+                nb_psus_s = psu_ids_s.size
+                end = start + nb_psus_s
+                jk_coefs[start:end, start:end] = self._jkn_psus_replicates(nb_psus_s)
+                self.rep_coefs[start:end] = (nb_psus_s - 1) / nb_psus_s
                 start = end
 
         self.rep_coefs = list(self.rep_coefs)
@@ -299,14 +299,14 @@ class ReplicateWeight:
 
         samp_weight = formats.numpy_array(samp_weight)
         psu = formats.numpy_array(psu)
-        if not self.stratification:
+        if not self.strat:
             stratum = None
         else:
             stratum = formats.numpy_array(stratum)
 
         self._degree_of_freedom(samp_weight, stratum, psu)
 
-        if self.stratification and stratum is None:
+        if self.strat and stratum is None:
             raise AssertionError("For a stratified design, stratum must be specified.")
         elif stratum is not None:
             stratum_psu = pd.DataFrame({str_varname: stratum, psu_varname: psu})
@@ -329,14 +329,14 @@ class ReplicateWeight:
         psus_ids = stratum_psu.drop_duplicates()
 
         if self.method == "jackknife":
-            self.number_reps = psus_ids.shape[0]
+            self.nb_reps = psus_ids.shape[0]
             _rep_data = self._jkn_replicates(psu, stratum)
         elif self.method == "bootstrap":
             _rep_data = self._boot_replicates(psu, stratum)
         elif self.method == "brr":
             _rep_data = self._brr_replicates(psu, stratum)
             self.rep_coefs = list(
-                (1 / self.number_reps * pow(1 - self.fay_coef, 2)) * np.ones(self.number_reps)
+                (1 / self.nb_reps * pow(1 - self.fay_coef, 2)) * np.ones(self.nb_reps)
             )
         else:
             raise AssertionError(
