@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.245">
+<meta name="generator" content="quarto-1.1.251">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -163,9 +163,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../pages/tutorial.html">Tutorial</a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/examples.html">Examples</a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -383,12 +380,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       </ul>
   </li>
       </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">Examples</span>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">References</span>
   </li>
     </ul>
     </div>
@@ -794,14 +785,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"nr_weight"</span>] <span class="op">=</span> SampleWeight().adjust(</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>],</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    adjust_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    adj_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    resp_status<span class="op">=</span>full_sample[<span class="st">"response_status"</span>],</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    resp_dict<span class="op">=</span>status_mapping,</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"nr_weight2"</span>] <span class="op">=</span> SampleWeight().adjust(</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>],</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    adjust_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    adj_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    resp_status<span class="op">=</span>full_sample[<span class="st">"response_status"</span>],</span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    resp_dict<span class="op">=</span>status_mapping,</span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    unknown_to_inelig<span class="op">=</span><span class="va">False</span>,</span>
@@ -1055,7 +1046,7 @@ Important
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"nr_weight3"</span>] <span class="op">=</span> SampleWeight().adjust(</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>],</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    adjust_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    adj_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    resp_status<span class="op">=</span>response_status2,</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    resp_dict<span class="op">=</span>status_mapping2,</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1133,7 +1124,7 @@ Important
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"nr_weight4"</span>] <span class="op">=</span> SampleWeight().adjust(</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>],</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    adjust_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    adj_class<span class="op">=</span>full_sample[[<span class="st">"region"</span>, <span class="st">"cluster"</span>]],</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    resp_status<span class="op">=</span>response_status3,</span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
@@ -1470,10 +1461,10 @@ Warning
 </div>
 <p>The crosstable below shows that only one adjustment factor was calculated and applied per adjustment class or region.</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_adjust_fct"</span>] <span class="op">=</span> <span class="op">\</span></span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_adj_fct"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(full_sample[<span class="st">"ps_weight"</span>] <span class="op">/</span> full_sample[<span class="st">"nr_weight"</span>], <span class="dv">12</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>pd.crosstab(full_sample[<span class="st">"ps_adjust_fct"</span>], full_sample[<span class="st">"region"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>pd.crosstab(full_sample[<span class="st">"ps_adj_fct"</span>], full_sample[<span class="st">"region"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 
 <div>
@@ -1488,7 +1479,7 @@ Warning
       <th>West</th>
     </tr>
     <tr>
-      <th>ps_adjust_fct</th>
+      <th>ps_adj_fct</th>
       <th></th>
       <th></th>
       <th></th>
@@ -1555,7 +1546,7 @@ Warning
       <th>response_status</th>
       <th>nr_weight</th>
       <th>ps_weight</th>
-      <th>ps_adjust_fct</th>
+      <th>ps_adj_fct</th>
       <th>ps_weight2</th>
     </tr>
   </thead>
@@ -2397,6 +2388,10 @@ Note
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/ld/zzh65kn12yn3sykchz7mcbw40000gn/T/ipykernel_41848/2566768256.py:6: FutureWarning: The default value of numeric_only in DataFrameGroupBy.sum is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
+  weight_sum = full_sample.groupby(["region"]).sum()</code></pre>
+</div>
 <div class="cell-output cell-output-display" data-execution_count="26">
 
 <div>
@@ -2446,17 +2441,21 @@ Note
 </div>
 </div>
 <div class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>norm_level <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">10</span>, <span class="st">"North"</span>: <span class="dv">20</span>, <span class="st">"South"</span>: <span class="dv">30</span>, <span class="st">"West"</span>: <span class="dv">50</span>}</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight4"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    control<span class="op">=</span>norm_level, </span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>, <span class="st">"norm_weight4"</span>,]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>norm_level <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">10</span>, <span class="st">"North"</span>: <span class="dv">20</span>, <span class="st">"South"</span>: <span class="dv">30</span>, <span class="st">"West"</span>: <span class="dv">50</span>}</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight4"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    control<span class="op">=</span>norm_level, </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>, <span class="st">"norm_weight4"</span>,]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/ld/zzh65kn12yn3sykchz7mcbw40000gn/T/ipykernel_41848/2547399335.py:9: FutureWarning: The default value of numeric_only in DataFrameGroupBy.sum is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
+  weight_sum = full_sample.groupby(["region"]).sum()</code></pre>
+</div>
 <div class="cell-output cell-output-display" data-execution_count="27">
 
 <div>

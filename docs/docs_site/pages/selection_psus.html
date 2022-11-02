@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.245">
+<meta name="generator" content="quarto-1.1.251">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -163,9 +163,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../pages/tutorial.html">Tutorial</a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../pages/examples.html">Examples</a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -384,12 +381,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>
       </ul>
   </li>
-        <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">Examples</span>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">References</span>
-  </li>
     </ul>
     </div>
 </nav>
@@ -437,7 +428,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_psu_frame</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSelection</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics <span class="im">import</span> SelectMethod</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSelection</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="sample-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="sample-dataset">Sample Dataset</h2>
@@ -731,7 +724,7 @@ The sample size per stratum is:
 </div>
 </div>
 <div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stage1_design <span class="op">=</span> SampleSelection(method<span class="op">=</span><span class="st">"pps-sys"</span>, stratification<span class="op">=</span><span class="va">True</span>, with_replacement<span class="op">=</span><span class="va">False</span>)</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stage1_design <span class="op">=</span> SampleSelection(method<span class="op">=</span>SelectMethod.pps_sys, strat<span class="op">=</span><span class="va">True</span>, wr<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>psu_frame[<span class="st">"psu_prob"</span>] <span class="op">=</span> stage1_design.inclusion_probs(</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    psu_frame[<span class="st">"cluster"</span>], </span>
@@ -1240,21 +1233,21 @@ PSU sample without the non-sampled units
 </div>
 <p>The systematic selection method can be implemented with or without replacement. The other <em>samplics</em> algorithms for selecting sample with unequal probablities of selection are Brewer, Hanurav-Vijayan (hv), Murphy, and Rao-Sampford (rs) methods. As shown below, all these sampling techniques can be specified when extentiating a <em>Sample</em> class; then call <em>select()</em> to draw samples.</p>
 <div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span><span class="st">"pps-sys"</span>, with_replacement<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span><span class="st">"pps-sys"</span>, with_replacement<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span><span class="st">"pps-brewer"</span>, with_replacement<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span><span class="st">"pps-hv"</span>, with_replacement<span class="op">=</span><span class="va">False</span>) <span class="co"># Hanurav-Vijayan method</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span><span class="st">"pps-murphy"</span>, with_replacement<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span><span class="st">"pps-sampford"</span>, with_replacement<span class="op">=</span><span class="va">False</span>) <span class="co"># Rao-Sampford method</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_sys, wr<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_sys, wr<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_brewer, wr<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_hv, wr<span class="op">=</span><span class="va">False</span>) <span class="co"># Hanurav-Vijayan method</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_murphy, wr<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_rs, wr<span class="op">=</span><span class="va">False</span>) <span class="co"># Rao-Sampford method</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For example, if we wanted to select the sample using the Rao-Sampford method, we could use the following snippet of code.</p>
 <div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>stage1_sampford <span class="op">=</span> SampleSelection(</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">"pps-rs"</span>, </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    stratification<span class="op">=</span><span class="va">True</span>, </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    with_replacement<span class="op">=</span><span class="va">False</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>SelectMethod.pps_rs, </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    strat<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    wr<span class="op">=</span><span class="va">False</span></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>psu_sample_sampford <span class="op">=</span> stage1_sampford.select(</span>
