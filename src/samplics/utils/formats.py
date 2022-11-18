@@ -18,15 +18,7 @@ from samplics.utils.checks import assert_not_unique
 from samplics.utils.types import Array, DictStrInt, DictStrNum, Number, Series, StringNumber
 
 
-def numpy_array(arr: Array) -> np.ndarray:
-    """Converts an array-like input data to np.ndarray.
-
-    Args:
-        arr (Array): array-like input data.
-
-    Returns:
-        np.ndarray: an numpy array
-    """
+def _numpy_array(arr: Array) -> np.ndarray:
 
     if not isinstance(arr, np.ndarray):
         arr_np = np.asarray(arr)
@@ -37,46 +29,22 @@ def numpy_array(arr: Array) -> np.ndarray:
         return arr
 
 
-def array_to_dict(arr: np.ndarray, domain: Optional[np.ndarray] = None) -> DictStrNum:
-    """Converts an array to a dictionary where the keys are the unique values of the array and
-    the values of the dictionary are the counts of the array values.
-
-    Args:
-        arr (np.ndarray): an input area.
-        domain (np.ndarray, optional): an array to provide the group associated with the
-            observations in arr. If not None, a dictionarry of dictionaries is produced.
-            Defaults to None.
-
-    Returns:
-        dict[StringNumber, Number]: a dictionary with the unique values of *arr* as keys.
-            The values of the dictionary correspond to the counts of the keys in *arr*.
-    """
+def _array_to_dict(arr: np.ndarray, domain: Optional[np.ndarray] = None) -> DictStrNum:
 
     if domain is None:
-        keys, counts = np.unique(numpy_array(arr), return_counts=True)
+        keys, counts = np.unique(_numpy_array(arr), return_counts=True)
         out_dict = dict(zip(keys, counts))
     else:
         out_dict = {}
         for d in np.unique(domain):
             arr_d = arr[domain == d]
-            keys_d, counts_d = np.unique(numpy_array(arr_d), return_counts=True)
+            keys_d, counts_d = np.unique(_numpy_array(arr_d), return_counts=True)
             out_dict[d] = dict(zip(keys_d, counts_d))
 
     return out_dict
 
 
-def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
-    """Returns a pandas dataframe from an np.ndarray.
-
-    Args:
-        df (pd.DataFrame): a pandas dataframe or series.
-
-    Raises:
-        AssertionError: return an exception if data is not a pandas dataframe or series.
-
-    Returns:
-        np.ndarray: an numpy array.
-    """
+def _dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 
     if isinstance(df, pd.Series):
         x_array = df
@@ -108,15 +76,15 @@ def sample_size_dict(
         raise AssertionError
 
 
-def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
-    all_units = numpy_array(all_units)
+def _sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
+    all_units = _numpy_array(all_units)
     if unique:
         assert_not_unique(all_units)
 
     return all_units
 
 
-def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
+def _dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
 
     if isinstance(args[0], dict):
         values_df = pd.DataFrame(columns=col_names)
@@ -155,23 +123,23 @@ def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
     return values_df
 
 
-def remove_nans(excluded_units: Array, *args: Any) -> list:
+def _remove_nans(excluded_units: Array, *args: Any) -> list:
 
-    excluded_units = numpy_array(excluded_units)
-    vars = list()
+    excluded_units = _numpy_array(excluded_units)
+    vars_list = list()
     for var in args:
         if var is not None and len(var.shape) != 0:
-            vars.append(var[~excluded_units])
+            vars_list.append(var[~excluded_units])
         else:
-            vars.append(None)
+            vars_list.append(None)
 
-    return vars
+    return vars_list
 
 
 def fpc_as_dict(stratum: Optional[Array], fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
 
     if stratum is not None:
-        stratum = numpy_array(stratum)
+        stratum = _numpy_array(stratum)
 
     if stratum is None and isinstance(fpc, (int, float)):
         return fpc
@@ -220,14 +188,7 @@ def convert_numbers_to_dicts(
 
 
 def concatenate_series_to_str(row: Series) -> str:
-    """concatenate the elements into one string using '_' to separate the elements
 
-    Args:
-        row (Array): [description]
-
-    Returns:
-        str: [description]
-    """
     return "__by__".join([str(c) for c in row])
 
 

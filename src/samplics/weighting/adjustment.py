@@ -96,7 +96,7 @@ class SampleWeight:
                 unequal weights.
         """
 
-        samp_weight = formats.numpy_array(samp_weight)
+        samp_weight = formats._numpy_array(samp_weight)
 
         if domain is None:
             self.deff_weight = self._deff_weight(samp_weight)
@@ -123,7 +123,7 @@ class SampleWeight:
         resp_status: np.ndarray, resp_dict: Optional[dict[str, StringNumber]]
     ) -> np.ndarray:
 
-        resp_status = formats.numpy_array(resp_status)
+        resp_status = formats._numpy_array(resp_status)
         checks.assert_response_status(resp_status, resp_dict)
 
         if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any() and resp_dict is not None:
@@ -199,8 +199,8 @@ class SampleWeight:
             np.ndarray: array of the adjusted sample weights.
         """
 
-        resp_code = self._response(formats.numpy_array(resp_status), resp_dict)
-        samp_weight = formats.numpy_array(samp_weight)
+        resp_code = self._response(formats._numpy_array(resp_status), resp_dict)
+        samp_weight = formats._numpy_array(samp_weight)
         adjusted_weight = np.ones(samp_weight.size) * np.nan
 
         if adj_class is None:
@@ -219,7 +219,7 @@ class SampleWeight:
                     "adj_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
                 )
 
-            adj_array = formats.dataframe_to_array(adj_class)
+            adj_array = formats._dataframe_to_array(adj_class)
             self.adj_factor = {}
             for c in np.unique(adj_array):
                 samp_weight_c = samp_weight[adj_array == c]
@@ -276,11 +276,11 @@ class SampleWeight:
             An arrays: the normalized sample weight.
         """
 
-        samp_weight = formats.numpy_array(samp_weight)
+        samp_weight = formats._numpy_array(samp_weight)
         norm_weight = samp_weight.copy()
 
         if domain is not None:
-            domain = formats.numpy_array(domain)
+            domain = formats._numpy_array(domain)
             keys = np.unique(domain)
             levels: np.ndarray = np.zeros(keys.size) * np.nan
             self.adj_factor = {}
@@ -399,9 +399,9 @@ class SampleWeight:
             raise AssertionError("x_cat and/or x_cont must be specified.")
         else:
             if x_cat is not None:
-                x_concat = formats.dataframe_to_array(data[x_cat])
+                x_concat = formats._dataframe_to_array(data[x_cat])
                 x_dummies = pd.get_dummies(x_concat)
-                x_dict = formats.array_to_dict(x_concat)
+                x_dict = formats._array_to_dict(x_concat)
                 # x_dummies.insert(0, "intercept", 1)
             if x_cont is None and x_dummies is not None:
                 x_array = x_dummies.astype("int")
@@ -517,15 +517,15 @@ class SampleWeight:
             np.ndarray: an array of the calibrated sample weights.
         """
 
-        samp_weight = formats.numpy_array(samp_weight)
-        aux_vars = formats.numpy_array(aux_vars)
+        samp_weight = formats._numpy_array(samp_weight)
+        aux_vars = formats._numpy_array(aux_vars)
         samp_size = samp_weight.size
         if domain is not None:
-            domain = formats.numpy_array(domain)
+            domain = formats._numpy_array(domain)
         if isinstance(scale, (float, int)):
             scale = np.repeat(scale, samp_size)
         else:
-            scale = formats.numpy_array(scale)
+            scale = formats._numpy_array(scale)
         if aux_vars.shape == (samp_size,):
             x_w = aux_vars * samp_weight
             one_dimension = True

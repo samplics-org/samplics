@@ -176,7 +176,7 @@ class ReplicateEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, _, _ = formats.remove_nans(
+            y, samp_weight, x, stratum, domain, _, _ = formats._remove_nans(
                 excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
@@ -434,17 +434,17 @@ class ReplicateEstimator(_SurveyEstimator):
         if self.param == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
-        y = formats.numpy_array(y)
-        samp_weight = formats.numpy_array(samp_weight)
-        rep_weights = formats.numpy_array(rep_weights)
-        x = formats.numpy_array(x) if x is not None else None
+        y = formats._numpy_array(y)
+        samp_weight = formats._numpy_array(samp_weight)
+        rep_weights = formats._numpy_array(rep_weights)
+        x = formats._numpy_array(x) if x is not None else None
 
         if remove_nan:
             if self.param == "ratio" and x is not None:
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, domain = formats.remove_nans(
+            y, samp_weight, x, domain = formats._remove_nans(
                 excluded_units,
                 y,
                 samp_weight,

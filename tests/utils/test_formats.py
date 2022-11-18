@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.formats import (
-    array_to_dict,
+    _array_to_dict,
     convert_numbers_to_dicts,
-    dataframe_to_array,
-    dict_to_dataframe,
-    numpy_array,
+    _dataframe_to_array,
+    _dict_to_dataframe,
+    _numpy_array,
     sample_size_dict,
-    sample_units,
+    _sample_units,
 )
 
 
@@ -22,20 +22,20 @@ da2 = [1, 2, 3, 4, 5]
 
 @pytest.mark.parametrize("input_data", [df, ds, da, da2])
 def test_numpy_array(input_data):
-    arr = numpy_array(input_data)
+    arr = _numpy_array(input_data)
     assert isinstance(arr, np.ndarray) == True
 
 
 @pytest.mark.parametrize("arr", [da])
 @pytest.mark.parametrize("domain", [da, None])
 def test_array_to_dict1(arr, domain):
-    dictionary = array_to_dict(arr, domain)
+    dictionary = _array_to_dict(arr, domain)
     assert isinstance(dictionary, dict) == True
 
 
 @pytest.mark.parametrize("input_df", [df, ds])
 def test_dataframe_to_array(input_df):
-    arr = dataframe_to_array(input_df)
+    arr = _dataframe_to_array(input_df)
     assert isinstance(arr, np.ndarray) == True
 
 
@@ -76,22 +76,22 @@ def test_sample_size_dict_str2(sample_size=samp_size, stratification=True, strat
 
 
 def test_sample_units1(all_units=da, unique=True):
-    all_units = sample_units(all_units, unique)
+    all_units = _sample_units(all_units, unique)
     assert all_units.size == 5
 
 
 def test_sample_units2(all_units=da2, unique=True):
-    all_units = sample_units(all_units, unique)
+    all_units = _sample_units(all_units, unique)
     assert all_units.size == 5
 
 
 def test_sample_units3(all_units=[1, 2, 2, 3, 3, 3], unique=False):
-    all_units = sample_units(all_units, unique)
+    all_units = _sample_units(all_units, unique)
     assert all_units.size == 6
 
 
 def test_dict_to_dataframe():
-    df = dict_to_dataframe(["parameter", "domain", "size"], samp_size)
+    df = _dict_to_dataframe(["parameter", "domain", "size"], samp_size)
     assert isinstance(df, pd.DataFrame) == True
     assert (df.columns == ["parameter", "domain", "size"]).all()
 

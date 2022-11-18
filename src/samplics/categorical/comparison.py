@@ -18,7 +18,7 @@ from scipy.stats import t
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
-from samplics.utils.formats import numpy_array, remove_nans
+from samplics.utils.formats import _numpy_array, _remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst
 
 
@@ -58,7 +58,7 @@ class Ttest:
                     tbl_subhead1 = f" Null hypothesis (Ho): mean = {self.stats['known_mean']}"
                 else:
                     tbl_subhead1 = f" Null hypothesis (Ho): mean(Diff = {self.vars_names[0]} - {self.vars_names[1]}) = 0"
-                tbl_subhead2 = f" t statictics: {self.stats['t']:.4f}"
+                tbl_subhead2 = f" t statistics: {self.stats['t']:.4f}"
                 tbl_subhead3 = f" Degrees of freedom: {self.stats['df']:.2f}"
                 tbl_subhead4 = f" Alternative hypothesis (Ha):"
                 tbl_subhead4a = f"  Prob(T < t) = {self.stats['p_value']['less_than']:.4f}"
@@ -72,7 +72,7 @@ class Ttest:
             ):
                 tbl_subhead1 = f" Null hypothesis (Ho): mean({self.group_names[0]}) = mean({self.group_names[1]}) "
                 tbl_subhead2 = f" Equal variance assumption:"
-                tbl_subhead2a = f"  t statictics: {self.stats['t_eq_variance']:.4f}"
+                tbl_subhead2a = f"  t statistics: {self.stats['t_eq_variance']:.4f}"
                 tbl_subhead2b = f"  Degrees of freedom: {self.stats['df_eq_variance']:.2f}"
                 tbl_subhead3 = f"  Alternative hypothesis (Ha):"
                 tbl_subhead3a = (
@@ -85,7 +85,7 @@ class Ttest:
                     f"   Prob(T > t) = {self.stats['p_value_eq_variance']['greater_than']:.4f}"
                 )
                 tbl_subhead4 = f" Unequal variance assumption:"
-                tbl_subhead4a = f"  t statictics: {self.stats['t_uneq_variance']:.4f}"
+                tbl_subhead4a = f"  t statistics: {self.stats['t_uneq_variance']:.4f}"
                 tbl_subhead4b = f"  Degrees of freedom: {self.stats['df_uneq_variance']:.2f}"
                 tbl_subhead5 = f"  Alternative hypothesis (Ha):"
                 tbl_subhead5a = (
@@ -314,8 +314,8 @@ class Ttest:
         else:
             raise AssertionError("varnames should be a string or a list of string")
 
-        y = numpy_array(y)
-        group = numpy_array(group)
+        y = _numpy_array(y)
+        group = _numpy_array(group)
 
         if self.samp_type == "one-sample" and known_mean is not None:
             self._one_sample_one_group(

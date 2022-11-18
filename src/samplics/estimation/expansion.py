@@ -23,7 +23,7 @@ import pandas as pd
 from scipy.stats import t as student
 
 from samplics.utils.basic_functions import get_single_psu_strata
-from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
+from samplics.utils.formats import _dict_to_dataframe, fpc_as_dict, _numpy_array, _remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst, SamplicsError
 
 
@@ -134,8 +134,8 @@ class _SurveyEstimator:
         psu: Optional[np.ndarray] = None,
     ) -> None:
 
-        stratum = numpy_array(stratum)
-        psu = numpy_array(psu)
+        stratum = _numpy_array(stratum)
+        psu = _numpy_array(psu)
 
         if stratum.size <= 1:
             self.nb_psus = np.unique(psu).size if psu.size > 1 else samp_weight.size
@@ -149,7 +149,7 @@ class _SurveyEstimator:
             self.nb_psus = np.unique([stratum, psu], axis=1).shape[1]
             self.nb_strata = np.unique(stratum).size
         else:
-            samp_weight = numpy_array(samp_weight)
+            samp_weight = _numpy_array(samp_weight)
             self.nb_psus = samp_weight.size
             self.nb_strata = np.unique(stratum).size
 
@@ -200,7 +200,7 @@ class _SurveyEstimator:
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, domain = remove_nans(excluded_units, y, samp_weight, x, domain)
+            y, samp_weight, x, domain = _remove_nans(excluded_units, y, samp_weight, x, domain)
 
         if self.param == "proportion" or as_factor:
             y_dummies = pd.get_dummies(y)
@@ -438,7 +438,7 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-                y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
+                y, samp_weight, x, stratum, domain, psu, ssu = _remove_nans(
                     excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
                 )
 
@@ -746,13 +746,13 @@ class TaylorEstimator(_SurveyEstimator):
         if self.param == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
-        y = numpy_array(y)
+        y = _numpy_array(y)
         y_temp = y.copy()
 
-        x = numpy_array(x) if x is not None else None
-        _stratum = numpy_array(stratum).copy() if stratum is not None else None
-        _psu = numpy_array(psu).copy() if psu is not None else None
-        _ssu = numpy_array(ssu).copy() if ssu is not None else None
+        x = _numpy_array(x) if x is not None else None
+        _stratum = _numpy_array(stratum).copy() if stratum is not None else None
+        _psu = _numpy_array(psu).copy() if psu is not None else None
+        _ssu = _numpy_array(ssu).copy() if ssu is not None else None
 
         if samp_weight is None:
             weight_temp = np.ones(y_temp.shape[0])
@@ -768,7 +768,7 @@ class TaylorEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y_temp) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y_temp)
-            y_temp, weight_temp, x, _stratum, _psu, _ssu, domain, by = remove_nans(
+            y_temp, weight_temp, x, _stratum, _psu, _ssu, domain, by = _remove_nans(
                 excluded_units, y_temp, weight_temp, x, _stratum, _psu, _ssu, domain, by
             )
 
@@ -797,10 +797,10 @@ class TaylorEstimator(_SurveyEstimator):
                     if single_psu[s] == SinglePSUEst.error:
                         self._raise_singleton_error()
                     if single_psu[s] == SinglePSUEst.skip:
-                        skipped_strata = self._skip_singleton(skipped_strata=numpy_array(s))
+                        skipped_strata = self._skip_singleton(skipped_strata=_numpy_array(s))
                     if single_psu[s] == SinglePSUEst.certainty:
                         _psu = self._certainty_singleton(
-                            singletons=numpy_array(s), _stratum=_stratum, _psu=_psu, _ssu=_ssu
+                            singletons=_numpy_array(s), _stratum=_stratum, _psu=_psu, _ssu=_ssu
                         )
                     if single_psu[s] == SinglePSUEst.combine:
                         _stratum = self._combine_strata(strata_comb, _stratum)
@@ -813,11 +813,11 @@ class TaylorEstimator(_SurveyEstimator):
                 self._raise_singleton_error()
 
         if domain is not None:
-            domain = numpy_array(domain)
+            domain = _numpy_array(domain)
             self.domains = np.unique(domain).tolist()
 
         if by is not None:
-            by = numpy_array(by)
+            by = _numpy_array(by)
             self.by = np.unique(by).tolist()
 
         if not isinstance(fpc, dict):
@@ -931,7 +931,7 @@ class TaylorEstimator(_SurveyEstimator):
                 raise AssertionError("col_names must have 7 values")
 
         if self.deff == {}:
-            est_df = dict_to_dataframe(
+            est_df = _dict_to_dataframe(
                 col_names,
                 self.point_est,
                 self.stderror,
@@ -940,7 +940,7 @@ class TaylorEstimator(_SurveyEstimator):
                 self.coef_var,
             )
         else:
-            est_df = dict_to_dataframe(
+            est_df = _dict_to_dataframe(
                 col_names,
                 self.point_est,
                 self.stderror,

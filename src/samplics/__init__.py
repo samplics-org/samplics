@@ -36,7 +36,7 @@ from samplics.utils import (
     PopParam,
     SelectMethod,
     SizeMethod,
-    array_to_dict,
+    _array_to_dict,
     transform,
     SinglePSUEst,
 )
@@ -45,7 +45,7 @@ from samplics.weighting import ReplicateWeight, SampleWeight
 
 __all__ = [
     "allocate",
-    "array_to_dict",
+    "_array_to_dict",
     "calculate_power",
     "calculate_power_prop",
     "calculate_ss_fleiss_prop",

@@ -12,10 +12,8 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 
-from scipy.stats import norm as normal
-from scipy.stats import t as student
 
-from samplics.sampling.power_functions import calculate_power, calculate_power_prop
+from samplics.sampling.power_functions import calculate_power
 from samplics.sampling.size_functions import (
     calculate_ss_fleiss_prop,
     calculate_ss_wald_mean,
@@ -24,8 +22,8 @@ from samplics.sampling.size_functions import (
     calculate_ss_wald_prop,
     calculate_ss_wald_prop_two_samples,
 )
-from samplics.utils.formats import convert_numbers_to_dicts, dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number, PopParam, SizeMethod, StringNumber
+from samplics.utils.formats import convert_numbers_to_dicts, _dict_to_dataframe, _numpy_array
+from samplics.utils.types import Array, DictStrNum, Number, PopParam, SizeMethod
 
 
 def allocate(
@@ -39,7 +37,7 @@ def allocate(
 ) -> tuple[DictStrNum, DictStrNum]:
     """Reference: Kish(1965), page 97"""
 
-    stratum = list(numpy_array(stratum))
+    stratum = list(_numpy_array(stratum))
 
     if method.lower() == "equal":
         if isinstance(constant, (int, float)):
@@ -300,7 +298,7 @@ class SampleSize:
                 raise AssertionError(
                     "col_names must have 6 values for stratified design and 5 for not stratified design."
                 )
-        est_df = dict_to_dataframe(
+        est_df = _dict_to_dataframe(
             col_names,
             self.target,
             self.sigma,

@@ -108,15 +108,15 @@ class ReplicateWeight:
         psu: np.ndarray,
     ) -> None:
 
-        stratum = formats.numpy_array(stratum)
-        psu = formats.numpy_array(psu)
+        stratum = formats._numpy_array(stratum)
+        psu = formats._numpy_array(psu)
 
         if stratum.size <= 1:
             self.degree_of_freedom = np.unique(psu).size - 1
         elif psu.size > 1:
             self.degree_of_freedom = np.unique(psu).size - np.unique(stratum).size
         else:
-            weight = formats.numpy_array(weight)
+            weight = formats._numpy_array(weight)
             self.degree_of_freedom = weight.size
 
     # Bootstrap methods
@@ -297,12 +297,12 @@ class ReplicateWeight:
             pd.DataFrame: a dataframe of the replicates sample weights.
         """
 
-        samp_weight = formats.numpy_array(samp_weight)
-        psu = formats.numpy_array(psu)
+        samp_weight = formats._numpy_array(samp_weight)
+        psu = formats._numpy_array(psu)
         if not self.strat:
             stratum = None
         else:
-            stratum = formats.numpy_array(stratum)
+            stratum = formats._numpy_array(stratum)
 
         self._degree_of_freedom(samp_weight, stratum, psu)
 

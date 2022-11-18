@@ -13,8 +13,7 @@ import pandas as pd
 
 from scipy.stats import norm as normal
 
-from samplics.utils.checks import assert_proportions
-from samplics.utils.formats import numpy_array
+from samplics.utils.formats import _numpy_array
 from samplics.utils.types import Array, DictStrNum, Number
 
 
@@ -28,17 +27,17 @@ def _ss_for_proportion_wald(
 ) -> Union[Number, Array]:
 
     if isinstance(target, (np.ndarray, pd.Series, list, tuple)):
-        target = numpy_array(target)
+        target = _numpy_array(target)
     if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
-        half_ci = numpy_array(half_ci)
+        half_ci = _numpy_array(half_ci)
     if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
-        deff_c = numpy_array(deff_c)
+        deff_c = _numpy_array(deff_c)
     if isinstance(resp_rate, (np.ndarray, pd.Series, list, tuple)):
-        resp_rate = numpy_array(resp_rate)
+        resp_rate = _numpy_array(resp_rate)
     if isinstance(pop_size, (np.ndarray, pd.Series, list, tuple)):
-        pop_size = numpy_array(pop_size)
+        pop_size = _numpy_array(pop_size)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
-        alpha = numpy_array(alpha)
+        alpha = _numpy_array(alpha)
 
     z_value = normal().ppf(1 - alpha / 2)
 
@@ -121,15 +120,15 @@ def _ss_for_proportion_fleiss(
 ) -> Union[Number, Array]:
 
     if isinstance(target, (np.ndarray, pd.Series, list, tuple)):
-        target = numpy_array(target)
+        target = _numpy_array(target)
     if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
-        half_ci = numpy_array(half_ci)
+        half_ci = _numpy_array(half_ci)
     if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
-        deff_c = numpy_array(deff_c)
+        deff_c = _numpy_array(deff_c)
     if isinstance(resp_rate, (np.ndarray, pd.Series, list, tuple)):
-        resp_rate = numpy_array(resp_rate)
+        resp_rate = _numpy_array(resp_rate)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
-        alpha = numpy_array(alpha)
+        alpha = _numpy_array(alpha)
 
     z_value = normal().ppf(1 - alpha / 2)
 
@@ -215,17 +214,17 @@ def _ss_for_mean_wald(
 ) -> Union[Number, Array]:
 
     if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
-        half_ci = numpy_array(half_ci)
+        half_ci = _numpy_array(half_ci)
     if isinstance(sigma, (np.ndarray, pd.Series, list, tuple)):
-        sigma = numpy_array(sigma)
+        sigma = _numpy_array(sigma)
     if isinstance(deff_c, (np.ndarray, pd.Series, list, tuple)):
-        deff_c = numpy_array(deff_c)
+        deff_c = _numpy_array(deff_c)
     if isinstance(resp_rate, (np.ndarray, pd.Series, list, tuple)):
-        resp_rate = numpy_array(resp_rate)
+        resp_rate = _numpy_array(resp_rate)
     if isinstance(pop_size, (np.ndarray, pd.Series, list, tuple)):
-        pop_size = numpy_array(pop_size)
+        pop_size = _numpy_array(pop_size)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
-        alpha = numpy_array(alpha)
+        alpha = _numpy_array(alpha)
 
     z_value = normal().ppf(1 - alpha / 2)
     if pop_size is not None:

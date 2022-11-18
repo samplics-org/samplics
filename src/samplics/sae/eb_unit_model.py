@@ -196,7 +196,7 @@ class EbUnitModel:
             Defaults to 100.
         """
 
-        ys = formats.numpy_array(ys)
+        ys = formats._numpy_array(ys)
 
         ys_transformed = basic_functions.transform(
             ys,
@@ -368,13 +368,13 @@ class EbUnitModel:
 
         self.number_samples = int(number_samples)
 
-        Xr = formats.numpy_array(Xr)
-        arear = formats.numpy_array(arear)
+        Xr = formats._numpy_array(Xr)
+        arear = formats._numpy_array(arear)
         self.arear_list = np.unique(arear)
         if isinstance(scaler, (float, int)):
             scaler = np.asarray(np.ones(Xr.shape[0]) * scaler)
         else:
-            scaler = formats.numpy_array(scaler)
+            scaler = formats._numpy_array(scaler)
         if intercept:
             if Xr.ndim == 1:
                 n = Xr.shape[0]
@@ -440,8 +440,8 @@ class EbUnitModel:
 
         """
 
-        X_r = formats.numpy_array(Xr)
-        area_r = formats.numpy_array(arear)
+        X_r = formats._numpy_array(Xr)
+        area_r = formats._numpy_array(arear)
         arear_list = np.unique(area_r)
 
         if intercept:
@@ -458,7 +458,7 @@ class EbUnitModel:
         if isinstance(scaler, (float, int)):
             scale_r = np.ones(X_r.shape[0]) * scaler
         else:
-            scale_r = formats.numpy_array(scaler)
+            scale_r = formats._numpy_array(scaler)
 
         ps = np.isin(area_r, self.areas_list)
         areas_ps = np.unique(area_r[ps])
@@ -645,8 +645,8 @@ class EbUnitModel:
             col_names.pop()  # remove the last element same as .pop(-1)
 
         if self.area_mse_boot is None:
-            area_df = formats.dict_to_dataframe(col_names, self.area_est)
+            area_df = formats._dict_to_dataframe(col_names, self.area_est)
         else:
-            area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse_boot)
+            area_df = formats._dict_to_dataframe(col_names, self.area_est, self.area_mse_boot)
 
         return area_df

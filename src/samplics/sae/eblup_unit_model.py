@@ -37,7 +37,7 @@ import statsmodels.api as sm
 
 from samplics.sae.sae_core_functions import area_stats
 from samplics.utils.basic_functions import sumby
-from samplics.utils.formats import dict_to_dataframe, numpy_array
+from samplics.utils.formats import _dict_to_dataframe, _numpy_array
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 
@@ -227,9 +227,9 @@ class EblupUnitModel:
             Defaults to 100.
         """
 
-        areas = numpy_array(areas)
-        ys = numpy_array(ys)
-        Xs = numpy_array(Xs)
+        areas = _numpy_array(areas)
+        ys = _numpy_array(ys)
+        Xs = _numpy_array(Xs)
 
         self.ys = ys
         self.Xs = Xs
@@ -243,12 +243,12 @@ class EblupUnitModel:
             else:
                 Xs = np.insert(Xs, 0, 1, axis=1)
         if samp_weight is not None:
-            samp_weight = numpy_array(samp_weight)
+            samp_weight = _numpy_array(samp_weight)
 
         if isinstance(scales, (float, int)):
             scales = np.asarray(np.ones(ys.shape[0]) * scales)
         else:
-            scales = numpy_array(scales)
+            scales = _numpy_array(scales)
         self.scales = scales
 
         self.afactors = dict(zip(self.areas_list, sumby(areas, scales)))
@@ -334,7 +334,7 @@ class EblupUnitModel:
                 "The model must be fitted first with .fit() before running the prediction."
             )
 
-        Xmean = numpy_array(Xmean)
+        Xmean = _numpy_array(Xmean)
         self.Xp_mean = Xmean
         if intercept:
             if Xmean.ndim == 1:
@@ -351,10 +351,10 @@ class EblupUnitModel:
             Xs_mean = self.Xs_mean
             Xs = self.Xs
 
-        area = numpy_array(area)
+        area = _numpy_array(area)
         pop_size_dict = {}
         if pop_size is not None:
-            pop_size = numpy_array(pop_size)
+            pop_size = _numpy_array(pop_size)
             pop_size_dict = dict(zip(area, pop_size))
 
         self.areap = area
@@ -556,14 +556,14 @@ class EblupUnitModel:
                 raise AssertionError("col_names must have 5 values")
 
         if self.area_mse_boot is not None:
-            est_df = dict_to_dataframe(
+            est_df = _dict_to_dataframe(
                 col_names,
                 self.area_est,
                 self.area_mse,
                 self.area_mse_boot,
             )
         else:
-            est_df = dict_to_dataframe(
+            est_df = _dict_to_dataframe(
                 col_names,
                 self.area_est,
                 self.area_mse,

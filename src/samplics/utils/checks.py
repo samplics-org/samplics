@@ -53,7 +53,7 @@ def assert_in_range(low: Number, high: Number, x: Union[Number, Iterable]) -> bo
 
 
 def assert_weights(weights: Array) -> None:
-    weights = formats.numpy_array(weights)
+    weights = formats._numpy_array(weights)
     if (weights < 0).any():
         raise ValueError("Sample weights must be positive values")
 

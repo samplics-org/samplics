@@ -68,21 +68,6 @@ class SampleSelection:
         strat: bool = False,
         wr: bool = True,
     ) -> None:
-        # if method.lower() in (
-        #     "srs",
-        #     "sys",
-        #     "pps-brewer",
-        #     "pps-hv",  # Hanurav-Vijayan
-        #     "pps-murphy",
-        #     "pps-rs",
-        #     "pps-sys",
-        #     "grs",
-        # ):
-        #     self.method = method.lower()  # grs for generic random selection
-        # else:
-        #     raise ValueError(
-        #         "method must be in ('srs', 'sys', 'pps-brewer', 'pps-hv', 'pps-murphy', 'pps-rs, 'pps-sys', 'grs')"
-        #     )
         self.method: SelectMethod = method
         self.strat: bool = True if strat else False
         self.wr: bool = wr
@@ -124,7 +109,7 @@ class SampleSelection:
         stratum: Optional[np.ndarray],
     ) -> None:
 
-        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_unit = formats._sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         if isinstance(samp_size, dict):
@@ -204,7 +189,7 @@ class SampleSelection:
         stratum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
 
-        samp_unit = formats.sample_units(samp_unit)
+        samp_unit = formats._sample_units(samp_unit)
         samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         number_units = samp_unit.size
@@ -231,7 +216,7 @@ class SampleSelection:
         stratum: Optional[np.ndarray] = None,
     ) -> np.ndarray:
 
-        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_unit = formats._sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         incl_probs: np.ndarray
@@ -427,7 +412,7 @@ class SampleSelection:
         mos: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
 
-        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_unit = formats._sample_units(samp_unit, unique=True)
         samp_size = formats.sample_size_dict(samp_size, self.strat, stratum)
 
         sample = hits = np.zeros(samp_unit.size).astype(int)
@@ -555,25 +540,7 @@ class SampleSelection:
         mos: Optional[Array] = None,
         samp_rate: Optional[Union[DictStrFloat, float]] = None,
     ) -> np.ndarray:
-        """Computes the inclusion probabilities according to the sampling scheme.
 
-        Args:
-            samp_unit (Array): an array of all the observations in the target population.
-            samp_size (Union[dict[Any, Number], Number, None], optional): the dictionary of sample
-            sizes by stratum, if applicable. Defaults to None.
-            stratum (Optional[Array], optional): array of the strata associated to the
-                population units. Defaults to None.
-            mos (Optional[Array], optional): array of the measure of size associated to the
-                population units. Defaults to None.
-            samp_rate (Union[dict[Any, Number], Number, None], optional): sampling rate provided
-                by stratum if applicable. Defaults to None.
-
-        Raises:
-            AssertionError: raises an assertion error if some of the clusters are certainties.
-
-        Returns:
-            np.ndarray: an array of the probabilities of inclusion.
-        """
         if samp_size is not None and samp_rate is not None:
             raise AssertionError(
                 "Both samp_size and samp_rate are provided. Only one of the two parameters should be specified."
@@ -582,11 +549,11 @@ class SampleSelection:
         if self.strat and stratum is None:
             raise AssertionError("Stratum must be provided for stratified samples!")
 
-        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_unit = formats._sample_units(samp_unit, unique=True)
 
         samp_size_temp: Union[DictStrInt, int]
         if stratum is not None:
-            stratum = formats.numpy_array(stratum)
+            stratum = formats._numpy_array(stratum)
             if isinstance(samp_size, (int, float)):
                 strata = np.unique(stratum)
                 samp_size_temp = dict(zip(strata, np.repeat(int(samp_size), strata.shape[0])))
@@ -600,7 +567,7 @@ class SampleSelection:
             else:
                 raise TypeError("samp_size or samp_rate has the wrong type")
 
-        mos = formats.numpy_array(mos) if mos is not None else np.ones(samp_unit.shape[0])
+        mos = formats._numpy_array(mos) if mos is not None else np.ones(samp_unit.shape[0])
 
         samp_size_temp = formats.sample_size_dict(samp_size_temp, self.strat, stratum)
 
@@ -637,35 +604,8 @@ class SampleSelection:
         shuffle: bool = False,
         to_dataframe: bool = False,
         sample_only: bool = False,
+        remove_nan: bool = False,
     ) -> Union[tuple[np.ndarray, np.ndarray, np.ndarray], pd.DataFrame]:
-        """Selects the random sample.
-
-        Args:
-            samp_unit (Array): an array of all the observations in the target population.
-            samp_size (Union[dict[Any, Number], Number, None], optional): the dictionary of sample
-            sizes by stratum, if applicable. Defaults to None.
-            stratum (Optional[Array], optional): array of the strata associated to the
-                population units. Defaults to None.
-            mos (Optional[Array], optional): array of the measure of size associated to the
-                population units. Defaults to None.
-            samp_rate (Union[dict[Any, Number], Number, None], optional): sampling rate provided
-                by stratum if applicable. Defaults to None.
-            probs (Optional[Array], optional): array of the probability of selection associated to  the population units. Defaults to None.
-            shuffle (bool, optional): indicates whether to shuffle the data prior to running the
-                selection algorithm. Defaults to False.
-            to_dataframe (bool, optional): indicates whether to convert the output to a pandas
-                dataframe. Defaults to False.
-            sample_only (bool, optional): indicates whether to return only the sample without
-                the out of sample units. Defaults to False.
-
-        Raises:
-            AssertionError: raises an assertion error if both samp_size and samp_rate is
-                provided as input.
-            AssertionError: raises an assertion error if some of the clusters are certainties.
-
-        Returns:
-            Union[pd.DataFrame, tuple[np.ndarray, np.ndarray, np.ndarray]]: [description]
-        """
 
         if samp_size is not None and samp_rate is not None:
             raise AssertionError(
@@ -675,13 +615,13 @@ class SampleSelection:
         if self.strat and stratum is None:
             raise AssertionError("Stratum must be provided for stratified samples!")
 
-        samp_unit = formats.sample_units(samp_unit, unique=True)
+        samp_unit = formats._sample_units(samp_unit, unique=True)
 
         samp_size_temp: Union[DictStrInt, int]
         samp_rate_temp: Union[DictStrFloat, float]
 
         if stratum is not None:
-            stratum = formats.numpy_array(stratum)
+            stratum = formats._numpy_array(stratum)
             if isinstance(samp_size, (int, float)):
                 strata = np.unique(stratum)
                 samp_size_temp = dict(zip(strata, np.repeat(samp_size, strata.shape[0])))
@@ -704,9 +644,10 @@ class SampleSelection:
             else:
                 raise TypeError("samp_size or samp_rate has the wrong type")
 
-        mos = formats.numpy_array(mos) if mos is not None else np.ones(samp_unit.shape[0])
+        mos = formats._numpy_array(mos) if mos is not None else np.ones(samp_unit.shape[0])
+        
         if probs is not None:
-            probs = formats.numpy_array(probs)
+            probs = formats._numpy_array(probs)
 
         suffled_order = None
         if shuffle and self.method in (SelectMethod.sys, SelectMethod.pps_sys):
