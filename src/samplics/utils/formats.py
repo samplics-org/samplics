@@ -18,7 +18,7 @@ from samplics.utils.checks import assert_not_unique
 from samplics.utils.types import Array, DictStrInt, DictStrNum, Number, Series, StringNumber
 
 
-def _numpy_array(arr: Array) -> np.ndarray:
+def numpy_array(arr: Array) -> np.ndarray:
 
     if not isinstance(arr, np.ndarray):
         arr_np = np.asarray(arr)
@@ -29,32 +29,32 @@ def _numpy_array(arr: Array) -> np.ndarray:
         return arr
 
 
-def _array_to_dict(arr: np.ndarray, domain: Optional[np.ndarray] = None) -> DictStrNum:
+def array_to_dict(arr: np.ndarray, domain: Optional[np.ndarray] = None) -> DictStrNum:
 
     if domain is None:
-        keys, counts = np.unique(_numpy_array(arr), return_counts=True)
+        keys, counts = np.unique(numpy_array(arr), return_counts=True)
         out_dict = dict(zip(keys, counts))
     else:
         out_dict = {}
         for d in np.unique(domain):
             arr_d = arr[domain == d]
-            keys_d, counts_d = np.unique(_numpy_array(arr_d), return_counts=True)
+            keys_d, counts_d = np.unique(numpy_array(arr_d), return_counts=True)
             out_dict[d] = dict(zip(keys_d, counts_d))
 
     return out_dict
 
 
-def _dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
+def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
 
     if isinstance(df, pd.Series):
         x_array = df
     elif isinstance(df, pd.DataFrame):
         nb_vars = df.shape[1]
-        varlist = df.columns
-        x_array = df[varlist[0]]
+        col_names = df.columns
+        x_array = df[col_names[0]]
         if nb_vars > 1:
             for k in range(1, nb_vars):
-                x_array = x_array.astype(str) + "_&_" + df[varlist[k]].astype(str)
+                x_array = x_array.astype(str) + "_&_" + df[col_names[k]].astype(str)
     else:
         raise AssertionError("The input data is not a pandas dataframe")
 
@@ -76,15 +76,15 @@ def sample_size_dict(
         raise AssertionError
 
 
-def _sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
-    all_units = _numpy_array(all_units)
+def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
+    all_units = numpy_array(all_units)
     if unique:
         assert_not_unique(all_units)
 
     return all_units
 
 
-def _dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
+def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
 
     if isinstance(args[0], dict):
         values_df = pd.DataFrame(columns=col_names)
@@ -117,15 +117,15 @@ def _dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
                 values_df[col_names[k + 2]] = arg.values()
     else:
         values_df = pd.DataFrame({args})
-        values_df.insert(0, "_parameter", None)
+        values_df.insert(0, "_parameter", " ")
         values_df.columns = col_names
 
     return values_df
 
 
-def _remove_nans(excluded_units: Array, *args: Any) -> list:
+def remove_nans(excluded_units: Array, *args: Any) -> list:
 
-    excluded_units = _numpy_array(excluded_units)
+    excluded_units = numpy_array(excluded_units)
     vars_list = list()
     for var in args:
         if var is not None and len(var.shape) != 0:
@@ -139,7 +139,7 @@ def _remove_nans(excluded_units: Array, *args: Any) -> list:
 def fpc_as_dict(stratum: Optional[Array], fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
 
     if stratum is not None:
-        stratum = _numpy_array(stratum)
+        stratum = numpy_array(stratum)
 
     if stratum is None and isinstance(fpc, (int, float)):
         return fpc
@@ -192,9 +192,9 @@ def concatenate_series_to_str(row: Series) -> str:
     return "__by__".join([str(c) for c in row])
 
 
-def numpy_to_dummies(arr: np.ndarray, varsnames: list[str]) -> np.ndarray:
+def numpy_to_dummies(arr: np.ndarray, vars_names: list[str]) -> np.ndarray:
 
     df = pd.DataFrame(arr.astype(str))
-    df.columns = varsnames
+    df.columns = vars_names
 
     return np.asarray(pd.get_dummies(df, drop_first=True).to_numpy())

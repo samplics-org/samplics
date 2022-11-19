@@ -18,7 +18,7 @@ from scipy.stats import t
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
-from samplics.utils.formats import _numpy_array, _remove_nans
+from samplics.utils.formats import numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst
 
 
@@ -314,8 +314,8 @@ class Ttest:
         else:
             raise AssertionError("varnames should be a string or a list of string")
 
-        y = _numpy_array(y)
-        group = _numpy_array(group)
+        y = numpy_array(y)
+        group = numpy_array(group)
 
         if self.samp_type == "one-sample" and known_mean is not None:
             self._one_sample_one_group(

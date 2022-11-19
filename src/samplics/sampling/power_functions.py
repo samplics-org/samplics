@@ -14,7 +14,7 @@ import pandas as pd
 from scipy.stats import norm as normal
 
 from samplics.utils.checks import assert_proportions
-from samplics.utils.formats import _numpy_array
+from samplics.utils.formats import numpy_array
 from samplics.utils.types import Array, DictStrNum, Number
 
 
@@ -71,9 +71,9 @@ def calculate_power_prop(
         and isinstance(prop_1, (np.ndarray, pd.Series, list, tuple))
         and isinstance(samp_size, (np.ndarray, pd.Series, list, tuple))
     ):
-        prop_0 = _numpy_array(prop_0)
-        prop_1 = _numpy_array(prop_1)
-        samp_size = _numpy_array(samp_size)
+        prop_0 = numpy_array(prop_0)
+        prop_1 = numpy_array(prop_1)
+        samp_size = numpy_array(samp_size)
 
         if two_sides:
             z = (prop_1 - prop_0) / np.sqrt(prop_1 * (1 - prop_1) / samp_size)
@@ -131,8 +131,8 @@ def calculate_power(
         and isinstance(sigma, (np.ndarray, pd.Series, list, tuple))
         and isinstance(samp_size, (np.ndarray, pd.Series, list, tuple))
     ):
-        delta = _numpy_array(delta)
-        sigma = _numpy_array(sigma)
+        delta = numpy_array(delta)
+        sigma = numpy_array(sigma)
         power = np.zeros(delta.shape[0])
         for k in range(delta.shape[0]):
             if two_sides:
@@ -172,7 +172,7 @@ def power_for_one_proportion(
     if isinstance(alpha, (int, float)):
         z_value = normal().ppf(1 - alpha / 2) if type == "two-sided" else normal().ppf(1 - alpha)
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
-        alpha = _numpy_array(alpha)
+        alpha = numpy_array(alpha)
         z_value = normal().ppf(1 - alpha / 2) if type == "two-sided" else normal().ppf(1 - alpha)
 
     if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(samp_size, dict):
@@ -221,9 +221,9 @@ def power_for_one_proportion(
         and isinstance(prop_1, (np.ndarray, pd.Series, list, tuple))
         and isinstance(samp_size, (np.ndarray, pd.Series, list, tuple))
     ):
-        prop_0 = _numpy_array(prop_0)
-        prop_1 = _numpy_array(prop_1)
-        samp_size = _numpy_array(samp_size)
+        prop_0 = numpy_array(prop_0)
+        prop_1 = numpy_array(prop_1)
+        samp_size = numpy_array(samp_size)
 
         for s in prop_0:
             if arcsin:
@@ -323,9 +323,9 @@ def power_for_one_mean(
         and isinstance(sigma, (np.np.ndarray, pd.Series, list, tuple))
         and isinstance(samp_size, (np.np.ndarray, pd.Series, list, tuple))
     ):
-        mean_0 = _numpy_array(mean_0)
-        mean_1 = _numpy_array(mean_1)
-        sigma = _numpy_array(sigma)
+        mean_0 = numpy_array(mean_0)
+        mean_1 = numpy_array(mean_1)
+        sigma = numpy_array(sigma)
         power = np.zeros(mean_0.shape[0])
         for k in range(mean_0.shape[0]):
             if type == "two-sided":

@@ -23,7 +23,7 @@ from typing import Any, Optional, Union
 import numpy as np
 import pandas as pd
 
-from samplics.utils.formats import _dict_to_dataframe, _numpy_array
+from samplics.utils.formats import dict_to_dataframe, numpy_array
 from samplics.utils.types import Array, DictStrNum, Number
 
 
@@ -395,16 +395,16 @@ class EblupAreaModel:
             Defaults to 100.
         """
 
-        area = _numpy_array(area)
-        yhat = _numpy_array(yhat)
-        X = _numpy_array(X)
+        area = numpy_array(area)
+        yhat = numpy_array(yhat)
+        X = numpy_array(X)
 
-        error_std = _numpy_array(error_std)
-        error_std = _numpy_array(error_std)
+        error_std = numpy_array(error_std)
+        error_std = numpy_array(error_std)
         if isinstance(b_const, (int, float)):
             b_const = np.asarray(np.ones(area.size) * b_const)
         else:
-            b_const = _numpy_array(b_const)
+            b_const = numpy_array(b_const)
 
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)
@@ -479,20 +479,20 @@ class EblupAreaModel:
             Exception: [description]
         """
 
-        area = _numpy_array(area)
+        area = numpy_array(area)
         if not self.fitted:
             raise Exception(
                 "The model must be fitted first with .fit() before running the prediction."
             )
 
-        X = _numpy_array(X)
+        X = numpy_array(X)
         if intercept and isinstance(X, np.ndarray):
             X = np.insert(X, 0, 1, axis=1)
 
         if isinstance(b_const, (int, float)):
             b_const = np.asarray(np.ones(area.size) * b_const)
         else:
-            b_const = _numpy_array(b_const)
+            b_const = numpy_array(b_const)
 
         point_est, mse, mse1, mse2, g1, g2, g3, g3_star = self._eb_estimates(
             X=X,
@@ -518,7 +518,7 @@ class EblupAreaModel:
             [type]: a pandas dataframe
         """
 
-        est_df = _dict_to_dataframe(col_names, self.area_est, self.area_mse)
+        est_df = dict_to_dataframe(col_names, self.area_est, self.area_mse)
         est_df.iloc[:, 0] = "mean"
 
         return est_df

@@ -19,7 +19,7 @@ from scipy.stats import chi2, f
 
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
-from samplics.utils.formats import concatenate_series_to_str, _numpy_array, _remove_nans
+from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst
 
 
@@ -82,7 +82,7 @@ class Tabulation:
 
         if remove_nan:
             excluded_units = var.isna().values.ravel()
-            var_of_ones, samp_weight, stratum, psu, ssu = _remove_nans(
+            var_of_ones, samp_weight, stratum, psu, ssu = remove_nans(
                 excluded_units, var_of_ones, samp_weight, stratum, psu, ssu
             )
             var = var.dropna().astype(str)
@@ -90,7 +90,7 @@ class Tabulation:
             var.fillna("nan", inplace=True)
         var = var.to_numpy().ravel()
 
-        var_of_ones = _numpy_array(var_of_ones)
+        var_of_ones = numpy_array(var_of_ones)
 
         if self.param == "count":
             tbl_est = TaylorEstimator(param="total", alpha=self.alpha)
@@ -151,7 +151,7 @@ class Tabulation:
         if vars is None:
             raise AssertionError("vars need to be an array-like object")
 
-        vars_df = pd.DataFrame(_numpy_array(vars))
+        vars_df = pd.DataFrame(numpy_array(vars))
         nb_vars = 1 if len(vars_df.shape) == 1 else vars_df.shape[1]
 
         if varnames is None:
@@ -175,7 +175,7 @@ class Tabulation:
         elif isinstance(samp_weight, (int, float)):
             samp_weight = np.repeat(samp_weight, vars_df.shape[0])
         else:
-            samp_weight = _numpy_array(samp_weight)
+            samp_weight = numpy_array(samp_weight)
 
         if nb_vars == 1:
             tbl_est, var_levels, nb_obs = self._estimate(
@@ -384,14 +384,14 @@ class CrossTabulation:
         if vars is None:
             raise AssertionError("vars need to be an array-like object")
         elif not isinstance(vars, (np.ndarray, pd.DataFrame)):
-            vars = _numpy_array(vars)
+            vars = numpy_array(vars)
 
         if samp_weight is None:
             samp_weight = np.ones(vars.shape[0])
         elif isinstance(samp_weight, (int, float)):
             samp_weight = np.repeat(samp_weight, vars.shape[0])
         else:
-            samp_weight = _numpy_array(samp_weight)
+            samp_weight = numpy_array(samp_weight)
 
         if varnames is None:
             prefix = "var"
@@ -407,15 +407,15 @@ class CrossTabulation:
         if isinstance(vars, np.ndarray):
             vars = pd.DataFrame(vars)
 
-        samp_weight = _numpy_array(samp_weight)
-        stratum = _numpy_array(stratum)
-        psu = _numpy_array(psu)
-        ssu = _numpy_array(ssu)
+        samp_weight = numpy_array(samp_weight)
+        stratum = numpy_array(stratum)
+        psu = numpy_array(psu)
+        ssu = numpy_array(ssu)
 
         if remove_nan:
             vars_nans = vars.isna()
             excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
-            samp_weight, stratum, psu, ssu = _remove_nans(
+            samp_weight, stratum, psu, ssu = remove_nans(
                 excluded_units, samp_weight, stratum, psu, ssu
             )
             vars = vars.dropna()

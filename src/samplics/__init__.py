@@ -36,7 +36,7 @@ from samplics.utils import (
     PopParam,
     SelectMethod,
     SizeMethod,
-    _array_to_dict,
+    array_to_dict,
     transform,
     SinglePSUEst,
 )

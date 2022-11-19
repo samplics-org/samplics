@@ -1,12 +1,15 @@
-<img src="./img/samplics_logo.jpg" width="150" height="110" align="left" />
+<img src="./img/samplics_logo.jpg"  align="left" style="height: 110px; border-radius: 10%; padding: 5px;"/>
 
-# _Sample Analytics_
+
+<h1> Sample Analytics </h1>
 
 [<img src="https://github.com/survey-methods/samplics/workflows/Testing/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting)
 [<img src="https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage)
 [<img src="https://github.com/survey-methods/samplics/workflows/Docs/badge.svg">](https://github.com/samplics-org/samplics/actions?query=workflow%3ADocs)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.03376/status.svg)](https://doi.org/10.21105/joss.03376)
 [<img src="https://pepy.tech/badge/samplics">](https://pepy.tech/project/samplics)
+
+
 
 In large-scale surveys, often complex random mechanisms are used to select samples. Estimates derived from such samples must reflect the random mechanism. _Samplics_ is a python package that implements a set of sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four sub-packages.
 

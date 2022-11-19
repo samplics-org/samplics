@@ -8,7 +8,7 @@ import numpy as np
 import statsmodels.api as sm
 
 from samplics.estimation.expansion import TaylorEstimator
-from samplics.utils.formats import _dict_to_dataframe, fpc_as_dict, _numpy_array, _remove_nans
+from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
 from samplics.utils.types import Array, Number, Series, StringNumber
 
 
@@ -72,11 +72,11 @@ class SurveyGLM:
         remove_nan: bool = False,
     ) -> None:
 
-        y = _numpy_array(y)
+        y = numpy_array(y)
         y_temp = y.copy()
 
-        x = _numpy_array(x) if x is not None else None
-        psu = _numpy_array(psu) if psu is not None else None
+        x = numpy_array(x) if x is not None else None
+        psu = numpy_array(psu) if psu is not None else None
 
         if samp_weight is None:
             weight_temp = np.ones(y.shape[0])

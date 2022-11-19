@@ -173,9 +173,9 @@ class EllUnitModel:
                 added to Xs. Defaults to True.
         """
 
-        areas = formats._numpy_array(areas)
-        ys = formats._numpy_array(ys)
-        Xs = formats._numpy_array(Xs)
+        areas = formats.numpy_array(areas)
+        ys = formats.numpy_array(ys)
+        Xs = formats.numpy_array(Xs)
         if intercept:
             if Xs.ndim == 1:
                 n = Xs.shape[0]
@@ -183,12 +183,12 @@ class EllUnitModel:
             else:
                 Xs = np.insert(Xs, 0, 1, axis=1)
         if samp_weight is not None:
-            samp_weight = formats._numpy_array(samp_weight)
+            samp_weight = formats.numpy_array(samp_weight)
 
         if isinstance(scales, (float, int)):
             scales = np.asarray(np.ones(ys.shape[0]) * scales)
         else:
-            scales = formats._numpy_array(scales)
+            scales = formats.numpy_array(scales)
 
         if self.method in ("REML", "ML"):
             eb_ul = EbUnitModel(
@@ -409,15 +409,15 @@ class EllUnitModel:
                 "The model must be fitted first with .fit() before running the prediction."
             )
 
-        X = formats._numpy_array(X)
+        X = formats.numpy_array(X)
         self.number_samples = int(number_samples)
         if isinstance(scale, (float, int)):
             scale = np.ones(X.shape[0]) * scale
         else:
-            scale = formats._numpy_array(scale)
-        area = formats._numpy_array(area)
+            scale = formats.numpy_array(scale)
+        area = formats.numpy_array(area)
         self.areas_p = np.unique(area)
-        X = formats._numpy_array(X)
+        X = formats.numpy_array(X)
         if intercept:
             if X.ndim == 1:
                 n = X.shape[0]
