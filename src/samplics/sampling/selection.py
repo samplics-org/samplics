@@ -50,9 +50,9 @@ class SampleSelection:
     samp_rate: Union[DictStrNum, Number] = field(init=False, default=0)
     strata: list = field(init=False, default=list)
 
-    sample: np.ndarray = field(init=False, default=None)
-    hits: np.ndarray = field(init=False, default=None)
-    probs: np.ndarray = field(init=False, default=None)
+    # sample: np.ndarray = field(init=False, default=None)
+    # hits: np.ndarray = field(init=False, default=None)
+    # probs: np.ndarray = field(init=False, default=None)zzzzzz
 
     shuffle: InitVar[bool] = field(init=True, default=False)
     remove_nan: InitVar[bool] = field(init=True, default=False)
@@ -565,8 +565,6 @@ class SampleSelection:
 
         return sample, hits
 
-    # SYSTEMATIC methods
-
     def _sys_inclusion_probs(
         self,
         samp_unit: np.ndarray,
@@ -635,7 +633,7 @@ class SampleSelection:
 
         return sample, hits
 
-    def inclusion_probs(
+    def _inclusion_probs(
         self,
         samp_unit: Array,
         samp_size: Optional[Union[DictStrInt, int]] = None,
@@ -760,8 +758,8 @@ class SampleSelection:
             SelectMethod.pps_rs,
             SelectMethod.pps_sys,
         ):
-            mos = numpy_array(mos)
-            if self._anycertainty(samp_size=self.samp_size, stratum=_stratum, mos=mos):
+            _mos = numpy_array(mos)
+            if self._anycertainty(samp_size=self.samp_size, stratum=_stratum, mos=_mos):
                 raise CertaintyError("Some clusters are certainties.")
 
         suffled_order = None
@@ -773,8 +771,8 @@ class SampleSelection:
             samp_unit = samp_unit[suffled_order]
             if stratum is not None:
                 stratum = stratum[suffled_order]
-            if self.method == SelectMethod.pps_sys and mos is not None:
-                mos = mos[suffled_order]
+            if self.method == SelectMethod.pps_sys and _mos is not None:
+                _mos = _mos[suffled_order]
 
         samp_ids = np.linspace(
             start=0, stop=samp_unit.shape[0] - 1, num=samp_unit.shape[0], dtype="int"
@@ -797,7 +795,7 @@ class SampleSelection:
             )
         elif self.method == SelectMethod.pps_wr:
             probs = self._pps_inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, mos=mos, stratum=_stratum
+                samp_unit=samp_ids, samp_size=self.samp_size, mos=_mos, stratum=_stratum
             )
             sample, hits = self._grs_select(
                 probs=probs / np.sum(probs),
@@ -807,39 +805,39 @@ class SampleSelection:
                 wr=self.wr,
             )
         elif self.method == SelectMethod.pps_sys:
-            probs = self.inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+            probs = self._inclusion_probs(
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
             sample, hits = self._pps_sys_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_brewer:
-            probs = self.inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+            probs = self._inclusion_probs(
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
             sample, hits = self._pps_brewer_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_hv:
-            probs = self.inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+            probs = self._inclusion_probs(
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
             sample, hits = self._pps_hv_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_murphy:
-            probs = self.inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+            probs = self._inclusion_probs(
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
             sample, hits = self._pps_brewer_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_rs:
-            probs = self.inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+            probs = self._inclusion_probs(
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
             sample, hits = self._pps_rs_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=mos
+                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.grs:
             sample, hits = self._grs_select(
@@ -860,7 +858,7 @@ class SampleSelection:
             frame = self._to_dataframe(
                 samp_unit=samp_unit,
                 stratum=_stratum,
-                mos=mos,
+                mos=_mos,
                 sample=sample,
                 hits=hits,
                 probs=probs,
@@ -870,7 +868,7 @@ class SampleSelection:
             frame = self._to_dataframe(
                 samp_unit=samp_unit,
                 stratum=_stratum,
-                mos=mos,
+                mos=_mos,
                 sample=sample,
                 hits=hits,
                 probs=probs,

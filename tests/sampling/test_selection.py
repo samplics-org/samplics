@@ -34,7 +34,7 @@ srs_design_wr = SampleSelection(method=SelectMethod.srs_wr)
 
 
 def test_srswr_probs():
-    srs_probs = srs_design_wr.inclusion_probs(countries, sample_size)
+    srs_probs = srs_design_wr._inclusion_probs(countries, sample_size)
     assert (np.isclose(srs_probs, sample_size / countries.size)).all()
 
 
@@ -49,7 +49,7 @@ srs_design_wor = SampleSelection(method=SelectMethod.srs_wor)
 
 
 def test_srswor_probs():
-    srs_probs = srs_design_wor.inclusion_probs(countries, sample_size)
+    srs_probs = srs_design_wor._inclusion_probs(countries, sample_size)
     assert (np.isclose(srs_probs, sample_size / countries.size)).all()
 
 
@@ -78,7 +78,7 @@ str_srswr_design = SampleSelection(method=SelectMethod.srs_wr, strat=True)
 
 def test_stratified_srswr_probs_same_size():
     size = 2
-    str_srswr_probs = str_srswr_design.inclusion_probs(countries, size, continent)
+    str_srswr_probs = str_srswr_design._inclusion_probs(countries, size, continent)
     strata = np.unique(continent)
     initial_probs = obtained_probs = dict()
     for s in strata:
@@ -88,7 +88,7 @@ def test_stratified_srswr_probs_same_size():
 
 
 def test_stratified_srswr_probs():
-    str_srswr_probs = str_srswr_design.inclusion_probs(countries, sample_sizes, continent)
+    str_srswr_probs = str_srswr_design._inclusion_probs(countries, sample_sizes, continent)
     strata = np.unique(continent)
     initial_probs = obtained_probs = dict()
     for s in strata:
@@ -123,7 +123,7 @@ str_srswor_design = SampleSelection(method=SelectMethod.srs_wor, strat=True, wr=
 
 
 def test_stratified_srswor_probs():
-    str_srswor_probs = str_srswor_design.inclusion_probs(countries, sample_sizes, continent)
+    str_srswor_probs = str_srswor_design._inclusion_probs(countries, sample_sizes, continent)
     strata = np.unique(continent)
     initial_probs = obtained_probs = dict()
     for s in strata:
@@ -185,7 +185,7 @@ pps_sys_design_wr = SampleSelection(method=SelectMethod.pps_sys)
 
 
 def test_ppswr_sys_probs():
-    pps_probs = pps_sys_design_wr.inclusion_probs(countries, sample_size, mos=mos)
+    pps_probs = pps_sys_design_wr._inclusion_probs(countries, sample_size, mos=mos)
     assert (np.isclose(pps_probs, sample_size * mos / np.sum(mos))).all()
 
 
@@ -221,7 +221,7 @@ pps_hv_design_wor = SampleSelection(method=SelectMethod.pps_hv, wr=False)
 
 
 def test_ppswor_hv_probs():
-    pps_probs = pps_hv_design_wor.inclusion_probs(countries, sample_size, mos=mos)
+    pps_probs = pps_hv_design_wor._inclusion_probs(countries, sample_size, mos=mos)
     assert (np.isclose(pps_probs, sample_size * mos / np.sum(mos))).all()
 
 
@@ -236,7 +236,7 @@ pps_brewer_design_wor = SampleSelection(method=SelectMethod.pps_brewer, wr=False
 
 
 def test_ppswor_brewer_probs():
-    pps_probs = pps_brewer_design_wor.inclusion_probs(countries, sample_size, mos=mos)
+    pps_probs = pps_brewer_design_wor._inclusion_probs(countries, sample_size, mos=mos)
     assert (np.isclose(pps_probs, sample_size * mos / np.sum(mos))).all()
 
 
@@ -251,7 +251,7 @@ pps_murphy_design_wor = SampleSelection(method=SelectMethod.pps_murphy, wr=False
 
 
 def test_ppswor_murphy_probs():
-    pps_probs = pps_murphy_design_wor.inclusion_probs(countries, 2, mos=mos)
+    pps_probs = pps_murphy_design_wor._inclusion_probs(countries, 2, mos=mos)
     assert (np.isclose(pps_probs, 2 * mos / np.sum(mos))).all()
 
 
@@ -279,7 +279,7 @@ str_ppswr_sys_design = SampleSelection(method=SelectMethod.pps_sys, strat=True)
 
 
 def test_stratified_ppswr_sys_probs():
-    str_ppswr_sys_probs = str_ppswr_sys_design.inclusion_probs(
+    str_ppswr_sys_probs = str_ppswr_sys_design._inclusion_probs(
         countries, sample_sizes_pps, continent, mos=mos
     )
     strata = np.unique(continent)
@@ -307,7 +307,7 @@ str_ppswr_hv_design = SampleSelection(method=SelectMethod.pps_hv, strat=True)
 
 
 def test_stratified_ppswr_hv_probs():
-    str_ppswr_hv_probs = str_ppswr_hv_design.inclusion_probs(
+    str_ppswr_hv_probs = str_ppswr_hv_design._inclusion_probs(
         countries, sample_sizes_pps, continent, mos=mos
     )
     strata = np.unique(continent)
@@ -335,7 +335,7 @@ str_ppswr_brewer_design = SampleSelection(method=SelectMethod.pps_brewer, strat=
 
 
 def test_stratified_ppswr_brewer_probs():
-    str_ppswr_brewer_probs = str_ppswr_brewer_design.inclusion_probs(
+    str_ppswr_brewer_probs = str_ppswr_brewer_design._inclusion_probs(
         countries, sample_sizes_pps, continent, mos=mos
     )
     strata = np.unique(continent)
@@ -382,7 +382,7 @@ str_ppswr_murphy_design = SampleSelection(method=SelectMethod.pps_murphy, strat=
 
 
 def test_stratified_ppswr_murphy_probs():
-    str_ppswr_murphy_probs = str_ppswr_murphy_design.inclusion_probs(
+    str_ppswr_murphy_probs = str_ppswr_murphy_design._inclusion_probs(
         countries_murphy, sample_sizes_murphy, continent_murphy, mos=mos_murphy
     )
     strata = np.unique(continent_murphy)
