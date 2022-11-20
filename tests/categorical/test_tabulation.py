@@ -5,6 +5,7 @@ import pandas as pd
 
 from samplics.categorical import Tabulation
 
+
 birthcat = pd.read_csv(
     "./tests/categorical/birthcat.csv", dtype={"agecat": "string", "birthcat": "category"}
 )

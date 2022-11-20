@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
 
-from samplics.utils.types import SelectMethod
-
 from samplics.sampling import SampleSelection
+from samplics.utils.types import SelectMethod
 
 
 countries_population = pd.read_csv("./tests/sampling/countries_population_2019.csv")
@@ -16,8 +15,6 @@ sample_size = int(np.rint(countries.size / 40))
 np.random.seed(12345)
 
 
-
-
 """Simple random sampling"""
 grs_design = SampleSelection(method=SelectMethod.grs)
 
@@ -25,13 +22,15 @@ grs_design = SampleSelection(method=SelectMethod.grs)
 def test_grs_select():
     unnormalized_probs = np.random.sample(countries.size) * countries.size
     probs = unnormalized_probs / np.sum(unnormalized_probs)
-    grs_sample, grs_number_hits, grs_probs = grs_design.select(countries, sample_size, probs=probs)
+    grs_sample, grs_number_hits, grs_probs = grs_design.select(
+        samp_unit=countries, samp_size=sample_size, probs=probs
+    )
     assert sum(grs_sample) <= sample_size
     assert sum(grs_number_hits) == sample_size
     assert (grs_probs == probs).all()
 
 
-srs_design_wr = SampleSelection(method=SelectMethod.srs)
+srs_design_wr = SampleSelection(method=SelectMethod.srs_wr)
 
 
 def test_srswr_probs():
@@ -46,7 +45,7 @@ def test_srswr_select():
     assert (np.isclose(srs_probs, sample_size / countries.size)).all()
 
 
-srs_design_wor = SampleSelection(method=SelectMethod.srs, wr=False)
+srs_design_wor = SampleSelection(method=SelectMethod.srs_wor)
 
 
 def test_srswor_probs():
@@ -74,7 +73,7 @@ sample_sizes = dict(
     }
 )
 
-str_srswr_design = SampleSelection(method=SelectMethod.srs, strat=True)
+str_srswr_design = SampleSelection(method=SelectMethod.srs_wr, strat=True)
 
 
 def test_stratified_srswr_probs_same_size():
@@ -101,7 +100,7 @@ def test_stratified_srswr_probs():
 def test_stratified_srswr_select_same_size():
     size = 2
     str_srswr_sample, str_srswr_number_hits, _ = str_srswr_design.select(
-        countries, size, continent
+        samp_unit=countries, samp_size=size, stratum=continent
     )
     strata = np.unique(continent)
     # obtained_sample_sizes = dict()
@@ -120,7 +119,7 @@ def test_stratified_srswr_select():
     assert sample_sizes == obtained_sample_sizes
 
 
-str_srswor_design = SampleSelection(method=SelectMethod.srs, strat=True, wr=False)
+str_srswor_design = SampleSelection(method=SelectMethod.srs_wor, strat=True, wr=False)
 
 
 def test_stratified_srswor_probs():
@@ -192,7 +191,9 @@ def test_ppswr_sys_probs():
 
 def test_ppswr_sys_select_same_size():
     size = 2
-    pps_sample, pps_number_hits, pps_probs = pps_sys_design_wr.select(countries, size, mos=mos)
+    pps_sample, pps_number_hits, pps_probs = pps_sys_design_wr.select(
+        samp_unit=countries, samp_size=size, mos=mos
+    )
     assert np.sum(pps_sample) <= size
     assert np.sum(pps_number_hits) == size
     assert np.isclose(pps_probs, size * mos / np.sum(mos)).all()

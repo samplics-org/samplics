@@ -12,7 +12,6 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 
-
 from samplics.sampling.power_functions import calculate_power
 from samplics.sampling.size_functions import (
     calculate_ss_fleiss_prop,

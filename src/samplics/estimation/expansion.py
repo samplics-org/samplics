@@ -24,7 +24,7 @@ from scipy.stats import t as student
 
 from samplics.utils.basic_functions import get_single_psu_strata
 from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst, SamplicsError
+from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber
 
 
 class _SurveyEstimator:

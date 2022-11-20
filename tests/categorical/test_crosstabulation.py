@@ -6,6 +6,7 @@ import pandas as pd
 from samplics.categorical import CrossTabulation
 from samplics.estimation import TaylorEstimator
 
+
 # dummy2 = {
 #     "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
 #     "group": ["one", "one", "two", "one", "two", "one", "two", "one", "one"],

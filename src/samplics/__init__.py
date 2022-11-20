@@ -33,19 +33,24 @@ from samplics.sampling import (
     power_for_one_proportion,
 )
 from samplics.utils import (
+    CertaintyError,
+    MethodError,
     PopParam,
+    ProbError,
+    SamplicsError,
     SelectMethod,
+    SinglePSUError,
+    SinglePSUEst,
     SizeMethod,
     array_to_dict,
     transform,
-    SinglePSUEst,
 )
 from samplics.weighting import ReplicateWeight, SampleWeight
 
 
 __all__ = [
     "allocate",
-    "_array_to_dict",
+    "array_to_dict",
     "calculate_power",
     "calculate_power_prop",
     "calculate_ss_fleiss_prop",
@@ -88,6 +93,12 @@ __all__ = [
     "ReplicateEstimator",
     "TaylorEstimator",
     "transform",
+    # Custom exception classes
+    "SamplicsError",
+    "CertaintyError",
+    "MethodError",
+    "ProbError",
+    "SinglePSUError",
 ]
 
 __version__ = "0.4.1"

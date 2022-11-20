@@ -61,17 +61,17 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
     return np.asarray(x_array.to_numpy())
 
 
-def sample_size_dict(
-    sample_size: Union[DictStrInt, int],
-    stratification: bool,
+def data_to_dict(
+    data: Union[DictStrInt, int],
+    strat: bool,
     stratum: Array,
 ) -> Union[DictStrInt, int]:
-    if not isinstance(sample_size, dict) and stratification:
-        return dict(zip(stratum, np.repeat(sample_size, len(stratum))))
-    if isinstance(sample_size, (int, float)) and not stratification:
-        return sample_size
-    elif isinstance(sample_size, dict):
-        return sample_size
+    if not isinstance(data, dict) and strat:
+        return dict(zip(stratum, np.repeat(data, len(stratum))))
+    if isinstance(data, (int, float)) and not strat:
+        return data
+    elif isinstance(data, dict):
+        return data
     else:
         raise AssertionError
 

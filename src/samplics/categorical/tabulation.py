@@ -20,7 +20,7 @@ from scipy.stats import chi2, f
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, Series, StringNumber, SinglePSUEst
+from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber
 
 
 class Tabulation:
