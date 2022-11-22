@@ -40,16 +40,16 @@ class SurveyGLM:
         samp_weight: np.ndarray,
         resid: np.ndarray,
         x: np.ndarray,
-        stratum: Optional[np.ndarray],
-        psu: Optional[np.ndarray],
+        stratum: np.ndarray,
+        psu: np.ndarray,
         fpc: Union[dict[StringNumber, Number], Number],
         glm_scale=Number,
     ) -> np.ndarray:
 
         e = (samp_weight * resid)[:, None] * x / glm_scale
-        if psu is None:
+        if psu.shape in ((), (0,)):
             psu = np.arange(e.shape[0])
-        if stratum is None:
+        if stratum.shape in ((), (0,)):
             e_h, n_h = self._residuals(e=e, psu=psu, nb_vars=x.shape[1])
             return fpc * (n_h / (n_h - 1)) * e_h
         else:
@@ -72,38 +72,34 @@ class SurveyGLM:
         remove_nan: bool = False,
     ) -> None:
 
-        y = numpy_array(y)
-        y_temp = y.copy()
+        _y = numpy_array(y)
+        _x = numpy_array(x)
+        _psu = numpy_array(psu)
+        _stratum = numpy_array(stratum)
+        _samp_weight = numpy_array(samp_weight)
 
-        x = numpy_array(x) if x is not None else None
-        psu = numpy_array(psu) if psu is not None else None
-
-        if samp_weight is None:
-            weight_temp = np.ones(y.shape[0])
-        elif isinstance(samp_weight, (float, int)):
-            weight_temp = samp_weight * np.ones(y_temp.shape[0])
-        elif isinstance(samp_weight, np.ndarray):
-            weight_temp = samp_weight.copy()
-        else:
-            weight_temp = np.asarray(samp_weight)
+        if _samp_weight.shape in ((), (0,)):
+            _samp_weight = np.ones(y.shape[0])
+        if _samp_weight.shape[0] == 1:
+            _samp_weight = _samp_weight * np.ones(_y.shape[0])
 
         if not isinstance(fpc, dict):
-            self.fpc = fpc_as_dict(stratum, fpc)
+            self.fpc = fpc_as_dict(_stratum, fpc)
         else:
-            if list(np.unique(stratum)) != list(fpc.keys()):
+            if np.unique(_stratum).tolist() != list(fpc.keys()):
                 raise AssertionError("fpc dictionary keys must be the same as the strata!")
             else:
                 self.fpc = fpc
 
-        glm_model = sm.GLM(endog=y_temp, exog=x, var_weights=weight_temp)
+        glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
         glm_results = glm_model.fit()
 
         g = self._calculate_g(
-            samp_weight=samp_weight,
+            samp_weight=_samp_weight,
             resid=glm_results.resid_response,
-            x=x,
-            stratum=stratum,
-            psu=psu,
+            x=_x,
+            stratum=_stratum,
+            psu=_psu,
             fpc=self.fpc,
             glm_scale=glm_results.scale,
         )

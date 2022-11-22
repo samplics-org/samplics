@@ -155,15 +155,13 @@ class _SurveyEstimator:
 
         self.degree_of_freedom = self.nb_psus - self.nb_strata
 
-    def _get_point_d(
-        self, y: np.ndarray, samp_weight: np.ndarray, x: Optional[np.ndarray] = None
-    ) -> float:
+    def _get_point_d(self, y: np.ndarray, samp_weight: np.ndarray, x: np.ndarray) -> float:
 
         if self.param in ("proportion", "mean"):
             return float(np.sum(samp_weight * y) / np.sum(samp_weight))
         elif self.param == "total":
             return float(np.sum(samp_weight * y))
-        elif self.param == "ratio" and x is not None:
+        elif self.param == "ratio" and x.shape not in ((), (0,)):
             return float(np.sum(samp_weight * y) / np.sum(samp_weight * x))
         else:
             raise ValueError("Parameter not valid!")
@@ -172,8 +170,8 @@ class _SurveyEstimator:
         self,
         y: np.ndarray,
         samp_weight: np.ndarray,
-        x: Optional[np.ndarray] = None,
-        domain: Optional[np.newaxis] = None,
+        x: np.ndarray,
+        domain: np.ndarray,
         as_factor: bool = False,
         remove_nan: bool = False,
     ) -> Any:  # Union[dict[StringNumber, DictStrNum], DictStrNum, Number]:
@@ -192,15 +190,15 @@ class _SurveyEstimator:
 
         """
 
-        if self.param == "ratio" and x is None:
+        if self.param == "ratio" and x.shape in ((), (0,)):
             raise AssertionError("Parameter x must be provided for ratio estimation.")
 
-        if remove_nan:
-            if self.param == "ratio" and x is not None:
-                excluded_units = np.isnan(y) | np.isnan(x)
-            else:
-                excluded_units = np.isnan(y)
-            y, samp_weight, x, domain = remove_nans(excluded_units, y, samp_weight, x, domain)
+        # if remove_nan:
+        #     if self.param == "ratio" and x is not None:
+        #         excluded_units = np.isnan(y) | np.isnan(x)
+        #     else:
+        #         excluded_units = np.isnan(y)
+        #     y, samp_weight, x, domain = remove_nans(excluded_units, y, samp_weight, x, domain)
 
         if self.param == "proportion" or as_factor:
             y_dummies = pd.get_dummies(y)
@@ -210,16 +208,18 @@ class _SurveyEstimator:
             categories = None
             y_dummies = None
 
-        if domain is None:
+        if domain.shape in ((), (0,)):
             if self.param == "proportion" or as_factor:
                 cat_dict: dict[StringNumber, float] = {}
                 for k in range(categories.size):
                     y_k = y_dummies[:, k]
-                    cat_dict_k = dict({categories[k]: self._get_point_d(y_k, samp_weight)})
+                    cat_dict_k = dict(
+                        {categories[k]: self._get_point_d(y=y_k, samp_weight=samp_weight, x=x)}
+                    )
                     cat_dict.update(cat_dict_k)
                 return cat_dict
             else:
-                return self._get_point_d(y, samp_weight, x)
+                return self._get_point_d(y=y, samp_weight=samp_weight, x=x)
         else:
             domain_ids = np.unique(domain)
             if self.param == "proportion" or as_factor:
@@ -229,7 +229,9 @@ class _SurveyEstimator:
                     cat_dict_d: dict[StringNumber, float] = {}
                     for k in range(categories.size):
                         y_d_k = y_dummies[domain == d, k]
-                        cat_dict_d_k = dict({categories[k]: self._get_point_d(y_d_k, weight_d)})
+                        cat_dict_d_k = dict(
+                            {categories[k]: self._get_point_d(y=y_d_k, samp_weight=weight_d, x=x)}
+                        )
                         cat_dict_d.update(cat_dict_d_k)
                     estimate1[d] = cat_dict_d
                 return estimate1
@@ -238,11 +240,11 @@ class _SurveyEstimator:
                 for d in domain_ids:
                     weight_d = samp_weight[domain == d]
                     y_d = y[domain == d]
-                    if x is not None:
+                    if x.shape not in ((), (0,)):
                         x_d = x[domain == d] if self.param == "ratio" else None
                     else:
                         x_d = None
-                    estimate2[d] = self._get_point_d(y_d, weight_d, x_d)
+                    estimate2[d] = self._get_point_d(y=y_d, samp_weight=weight_d, x=x_d)
                 return estimate2
 
 
@@ -317,12 +319,12 @@ class TaylorEstimator(_SurveyEstimator):
         y_score_s: np.ndarray,
         samp_weight_s: np.ndarray,
         nb_psus_in_s: int,
-        psu_s: Optional[np.ndarray],
+        psu_s: np.ndarray,
     ) -> np.ndarray:
         """Computes the variance for one stratum"""
 
         covariance = np.asarray([])
-        if psu_s is not None:
+        if psu_s.shape not in ((), (0,)):
             scores_s_mean = np.asarray(y_score_s.sum(axis=0) / nb_psus_in_s)  # new
             psus = np.unique(psu_s)
             scores_psus_sums = np.zeros((nb_psus_in_s, scores_s_mean.shape[0]))
@@ -353,7 +355,7 @@ class TaylorEstimator(_SurveyEstimator):
 
         variance = 0.0
 
-        if ssu_s is not None:
+        if ssu_s.shape not in ((), (0,)):
             psus = np.unique(psu_s)
             for psu in np.unique(psus):
                 scores_psu_mean = y_score_s[psus == psu].mean()
@@ -373,15 +375,15 @@ class TaylorEstimator(_SurveyEstimator):
         self,
         y_score: np.ndarray,
         samp_weight: np.ndarray,
-        stratum: Optional[np.ndarray],
-        psu: Optional[np.ndarray],
-        ssu: Optional[np.ndarray] = None,
+        stratum: np.ndarray,
+        psu: np.ndarray,
+        ssu: np.ndarray,
         fpc: Union[dict[StringNumber, Number], Number] = 1,
         skipped_strata: Optional[np.ndarray] = None,
     ) -> np.ndarray:
         """Computes the variance across stratum"""
 
-        if stratum is None and isinstance(fpc, (int, float)):
+        if stratum.shape in ((), (0,)) and isinstance(fpc, (int, float)):
             nb_psus = np.unique(psu).size
             return np.asarray(
                 fpc
@@ -399,9 +401,9 @@ class TaylorEstimator(_SurveyEstimator):
             for s in strata[~singletons]:
                 y_score_s = y_score[stratum == s]
                 samp_weight_s = samp_weight[stratum == s]
-                psu_s = psu[stratum == s] if psu is not None else None  # np.array([])
-                nb_psus_in_s = np.size(np.unique(psu_s)) if psu_s is not None else 0
-                ssu_s = ssu[stratum == s] if ssu is not None else None
+                psu_s = psu[stratum == s] if psu.shape not in ((), (0,)) else psu
+                nb_psus_in_s = np.size(np.unique(psu_s)) if psu_s.shape not in ((), (0,)) else 0
+                ssu_s = ssu[stratum == s] if ssu.shape not in ((), (0,)) else ssu
                 covariance += fpc[s] * self._variance_stratum_between(
                     y_score_s=y_score_s,
                     samp_weight_s=samp_weight_s,
@@ -416,11 +418,11 @@ class TaylorEstimator(_SurveyEstimator):
         self,
         y: np.ndarray,
         samp_weight: np.ndarray,
-        x: Optional[np.ndarray] = None,
-        stratum: Optional[np.ndarray] = None,
-        psu: Optional[np.ndarray] = None,
-        ssu: Optional[np.ndarray] = None,
-        domain: Optional[np.ndarray] = None,
+        x: np.ndarray,
+        stratum: np.ndarray,
+        psu: np.ndarray,
+        ssu: np.ndarray,
+        domain: np.ndarray,
         fpc: Union[dict[StringNumber, Number], Number] = 1,
         skipped_strata: Optional[np.ndarray] = None,
         as_factor: bool = False,
@@ -430,24 +432,24 @@ class TaylorEstimator(_SurveyEstimator):
         Union[dict[StringNumber, Any], np.ndarray],
     ]:
 
-        if self.param == "ratio" and x is None:
+        if self.param == "ratio" and x.shape in ((), (0,)):
             raise AssertionError("Parameter x must be provided for ratio estimation.")
 
-        if remove_nan:
-            if self.param == "ratio" and x is not None:
-                excluded_units = np.isnan(y) | np.isnan(x)
-            else:
-                excluded_units = np.isnan(y)
-                y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
-                    excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
-                )
+        # if remove_nan:
+        #     if self.param == "ratio" and x is not None:
+        #         excluded_units = np.isnan(y) | np.isnan(x)
+        #     else:
+        #         excluded_units = np.isnan(y)
+        #         y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
+        #             excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
+        #         )
 
         if self.param == "proportion" or as_factor:
             y_df = pd.get_dummies(y).astype(int)
             categories = list(y_df.columns)
             y = y_df.values
 
-        if domain is None:
+        if domain.shape in ((), (0,)):
             y_score = self._score_variable(y, samp_weight, x)  # new
             cov_score = self._taylor_variance(
                 y_score=y_score,
@@ -524,11 +526,11 @@ class TaylorEstimator(_SurveyEstimator):
         self,
         y: np.ndarray,
         samp_weight: np.ndarray,
-        x: Optional[np.ndarray],
-        stratum: Optional[np.ndarray],
-        psu: Optional[np.ndarray],
-        ssu: Optional[np.ndarray],
-        domain: Optional[np.ndarray],
+        x: np.ndarray,
+        stratum: np.ndarray,
+        psu: np.ndarray,
+        ssu: np.ndarray,
+        domain: np.ndarray,
         fpc: Union[dict[StringNumber, Number], Number],
         deff: bool,
         coef_var: bool,
@@ -562,7 +564,7 @@ class TaylorEstimator(_SurveyEstimator):
         self._degree_of_freedom(samp_weight, stratum, psu)
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
-        if domain is None:
+        if domain.shape in ((), (0,)):
             if (
                 (self.param == "proportion" or as_factor and self.param == "mean")
                 and isinstance(self.point_est, dict)
@@ -701,7 +703,7 @@ class TaylorEstimator(_SurveyEstimator):
         _psu: Array,
         _ssu: Array,
     ) -> Array:
-        if _ssu is not None:
+        if _ssu.shape not in ((), (0,)):
             certainties = np.isin(_stratum, singletons)
             _psu[certainties] = _ssu[certainties]
         else:
@@ -743,38 +745,43 @@ class TaylorEstimator(_SurveyEstimator):
         if as_factor and self.param not in ("mean", "total"):
             raise AssertionError("When as_factor is True, parameter must be mean or total!")
 
-        if self.param == "ratio" and x is None:
+        if self.param == "ratio" and x.shape in ((), (0,)):
             raise AssertionError("x must be provided for ratio estimation.")
 
-        y = numpy_array(y)
-        y_temp = y.copy()
+        _y = numpy_array(y)
+        _x = numpy_array(x)
+        _stratum = numpy_array(stratum)
+        _psu = numpy_array(psu)
+        _ssu = numpy_array(ssu)
+        _domain = numpy_array(domain)
+        _by = numpy_array(by)
+        _samp_weight = numpy_array(samp_weight)
 
-        x = numpy_array(x) if x is not None else None
-        _stratum = numpy_array(stratum).copy() if stratum is not None else None
-        _psu = numpy_array(psu).copy() if psu is not None else None
-        _ssu = numpy_array(ssu).copy() if ssu is not None else None
-
-        if samp_weight is None:
-            weight_temp = np.ones(y_temp.shape[0])
-        elif isinstance(samp_weight, (float, int)):
-            weight_temp = samp_weight * np.ones(y_temp.shape[0])
-        elif isinstance(samp_weight, np.ndarray):
-            weight_temp = samp_weight.copy()
-        else:
-            weight_temp = np.asarray(samp_weight)
+        if _samp_weight.shape in ((), (0,)):
+            _samp_weight = np.ones(_y.shape[0])
+        if _samp_weight.shape[0] == 1:
+            _samp_weight = samp_weight * np.ones(_y.shape[0])
 
         if remove_nan:
-            if self.param == "ratio" and x is not None:
-                excluded_units = np.isnan(y_temp) | np.isnan(x)
-            else:
-                excluded_units = np.isnan(y_temp)
-            y_temp, weight_temp, x, _stratum, _psu, _ssu, domain, by = remove_nans(
-                excluded_units, y_temp, weight_temp, x, _stratum, _psu, _ssu, domain, by
+            to_keep = remove_nans(_y.shape[0], _y, _x)
+
+            _y = _y[to_keep] if _y.shape not in ((), (0,)) else _y
+            _x = _x[to_keep] if _x.shape not in ((), (0,)) else _x
+            _stratum = _stratum[to_keep] if _stratum.shape not in ((), (0,)) else _stratum
+            _psu = _psu[to_keep] if _psu.shape not in ((), (0,)) else _psu
+            _ssu = _ssu[to_keep] if _ssu.shape not in ((), (0,)) else _ssu
+            _domain = _domain[to_keep] if _domain.shape not in ((), (0,)) else _domain
+            _by = _by[to_keep] if _by.shape not in ((), (0,)) else _by
+            _samp_weight = (
+                _samp_weight[to_keep] if _samp_weight.shape not in ((), (0,)) else _samp_weight
             )
 
-        if _stratum is not None:
-            # _stratum = numpy_array(stratum).copy()
-            self.strata = np.unique(_stratum).tolist()
+        self.by = np.unique(_by).tolist() if _by.shape not in ((), (0,)) else _by
+        self.strata = np.unique(_stratum) if _stratum.shape not in ((), (0,)) else _stratum
+
+        self.domains = np.unique(_domain) if _domain.shape not in ((), (0,)) else _domain
+
+        if _stratum.shape not in ((), (0,)):
             # TODO: we could improve efficiency by creating the pair [stratum,psu, ssu] ounce and
             # use it in get_single_psu_strata and in the uncertainty calculation functions
             self.single_psu_strata = get_single_psu_strata(_stratum, _psu)
@@ -812,16 +819,8 @@ class TaylorEstimator(_SurveyEstimator):
             ]:  # TODO: add the left our singletons when using the dict instead of SinglePSUEst
                 self._raise_singleton_error()
 
-        if domain is not None:
-            domain = numpy_array(domain)
-            self.domains = np.unique(domain).tolist()
-
-        if by is not None:
-            by = numpy_array(by)
-            self.by = np.unique(by).tolist()
-
         if not isinstance(fpc, dict):
-            self.fpc = fpc_as_dict(stratum, fpc)
+            self.fpc = fpc_as_dict(_stratum, fpc)
         else:
             if list(np.unique(_stratum)) != list(fpc.keys()):
                 raise AssertionError("fpc dictionary keys must be the same as the strata!")
@@ -830,15 +829,15 @@ class TaylorEstimator(_SurveyEstimator):
 
         self.as_factor = as_factor
 
-        if by is None:
+        if _by.shape in ((), (0,)):
             self._estimate(
-                y=y_temp,
-                samp_weight=weight_temp,
-                x=x,
+                y=_y,
+                samp_weight=_samp_weight,
+                x=_x,
                 stratum=_stratum,
                 psu=_psu,
                 ssu=_ssu,
-                domain=domain,
+                domain=_domain,
                 fpc=self.fpc,
                 deff=deff,
                 coef_var=coef_var,
@@ -848,14 +847,14 @@ class TaylorEstimator(_SurveyEstimator):
             )
         else:
             for b in self.by:
-                group_b = by == b
-                y_temp_b = y_temp[group_b]
-                weight_temp_b = weight_temp[group_b]
-                x_b = x[group_b] if x is not None else None
-                _stratum_b = _stratum[group_b] if _stratum is not None else None
-                _psu_b = _psu[group_b] if _psu is not None else None
-                _ssu_b = _ssu[group_b] if _ssu is not None else None
-                domain_b = domain[group_b] if domain is not None else None
+                group_b = _by == b
+                _y_b = _y[group_b]
+                _samp_weight_b = _samp_weight[group_b]
+                _x_b = _x[group_b] if _x.shape not in ((), (0,)) else _x
+                _stratum_b = _stratum[group_b] if _stratum.shape not in ((), (0,)) else _stratum
+                _psu_b = _psu[group_b] if _psu.shape not in ((), (0,)) else _psu
+                _ssu_b = _ssu[group_b] if _ssu.shape not in ((), (0,)) else _ssu
+                _domain_b = _domain[group_b] if _domain.shape not in ((), (0,)) else _domain
 
                 by_est = TaylorEstimator(
                     param=self.param,
@@ -864,13 +863,13 @@ class TaylorEstimator(_SurveyEstimator):
                     ciprop_method=self.ciprop_method,
                 )
                 by_est._estimate(
-                    y=y_temp_b,
-                    samp_weight=weight_temp_b,
-                    x=x_b,
+                    y=_y_b,
+                    samp_weight=_samp_weight_b,
+                    x=_x_b,
                     stratum=_stratum_b,
                     psu=_psu_b,
                     ssu=_ssu_b,
-                    domain=domain_b,
+                    domain=_domain_b,
                     fpc=self.fpc,
                     deff=deff,
                     coef_var=coef_var,
@@ -917,7 +916,7 @@ class TaylorEstimator(_SurveyEstimator):
                 ]
             if self.deff == {}:
                 col_names.pop()
-            if self.domains is None:
+            if self.domains.shape in ((), (0,)):
                 col_names.pop(1)
         else:
             ncols = len(col_names)

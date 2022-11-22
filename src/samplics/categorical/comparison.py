@@ -106,10 +106,10 @@ class Ttest:
         self,
         y: np.ndarray,
         known_mean: Number,
-        samp_weight: Array = None,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
+        samp_weight: Array,
+        stratum: Array,
+        psu: Array,
+        ssu: Array,
         fpc: Union[Dict, float] = 1,
         coef_var: bool = False,
         single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
@@ -314,17 +314,21 @@ class Ttest:
         else:
             raise AssertionError("varnames should be a string or a list of string")
 
-        y = numpy_array(y)
-        group = numpy_array(group)
+        _y = numpy_array(y)
+        _group = numpy_array(group)
+        _samp_weight = numpy_array(samp_weight)
+        _stratum = numpy_array(stratum)
+        _psu = numpy_array(psu)
+        _ssu = numpy_array(ssu)
 
         if self.samp_type == "one-sample" and known_mean is not None:
             self._one_sample_one_group(
-                y=y,
+                y=_y,
                 known_mean=known_mean,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
+                samp_weight=_samp_weight,
+                stratum=_stratum,
+                psu=_psu,
+                ssu=_ssu,
                 fpc=fpc,
                 coef_var=coef_var,
                 single_psu=single_psu,
@@ -333,12 +337,12 @@ class Ttest:
         elif self.samp_type == "one-sample" and group is not None:
             one_sample = TaylorEstimator(param="mean", alpha=self.alpha)
             one_sample.estimate(
-                y=y,
-                domain=group,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
+                y=_y,
+                domain=_group,
+                samp_weight=_samp_weight,
+                stratum=_stratum,
+                psu=_psu,
+                ssu=_ssu,
                 fpc=fpc,
                 coef_var=coef_var,
                 single_psu=single_psu,
@@ -351,16 +355,16 @@ class Ttest:
                 self.lower_ci,
                 self.upper_ci,
                 self.stats,
-            ) = self._two_groups_unpaired(mean_est=one_sample, group=group)
+            ) = self._two_groups_unpaired(mean_est=one_sample, group=_group)
             self.group_names = list(self.point_est.keys())
         elif self.samp_type == "two-sample" and not self.paired:
             self._two_samples_unpaired(
-                y=y,
-                group=group,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
+                y=_y,
+                group=_group,
+                samp_weight=_samp_weight,
+                stratum=_stratum,
+                psu=_psu,
+                ssu=_ssu,
                 fpc=fpc,
                 coef_var=coef_var,
                 single_psu=single_psu,
@@ -369,12 +373,12 @@ class Ttest:
 
             two_samples_unpaired = TaylorEstimator(param="mean", alpha=self.alpha)
             two_samples_unpaired.estimate(
-                y=y,
-                by=group,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
+                y=_y,
+                by=_group,
+                samp_weight=_samp_weight,
+                stratum=_stratum,
+                psu=_psu,
+                ssu=_ssu,
                 fpc=fpc,
                 coef_var=coef_var,
                 single_psu=single_psu,
@@ -390,18 +394,18 @@ class Ttest:
             ) = self._two_groups_unpaired(mean_est=two_samples_unpaired, group=group)
             self.group_names = list(self.point_est.keys())
         elif self.samp_type == "two-sample" and self.paired:
-            if len(y.shape) == 1 or y.shape[1] != 2:
+            if len(_y.shape) == 1 or _y.shape[1] != 2:
                 raise AssertionError(
                     "Parameter y must be an array-like object of dimension n by 2 for two-sample paired T-test"
                 )
-            d = y[:, 0] - y[:, 1]
+            d = _y[:, 0] - _y[:, 1]
             self._one_sample_one_group(
                 y=d,
                 known_mean=0,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
+                samp_weight=_samp_weight,
+                stratum=_stratum,
+                psu=_psu,
+                ssu=_ssu,
                 fpc=fpc,
             )
         else:

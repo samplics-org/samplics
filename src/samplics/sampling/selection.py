@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.errors import MethodError, ProbError, CertaintyError
-from samplics.utils.formats import numpy_array, data_to_dict, sample_units
+from samplics.utils.formats import numpy_array, data_to_dict, sample_units, remove_nans
 from samplics.utils.types import (
     Array,
     DictStrBool,
@@ -40,6 +40,18 @@ from samplics.utils.types import (
 
 @dataclass
 class SampleSelection:
+
+    # __slot__ = (
+    #     "method",
+    #     "strat",
+    #     "wr",
+    #     "pop_size",
+    #     "samp_size",
+    #     "samp_rate",
+    #     "strata",
+    #     "shuffle",
+    #     "remove_nan",
+    # )
 
     method: InitVar[SelectMethod] = field(init=True, default=False)
     strat: InitVar[bool] = field(init=True, default=False)
@@ -84,11 +96,11 @@ class SampleSelection:
     @staticmethod
     def _to_dataframe(
         samp_unit: np.ndarray,
-        stratum: Optional[np.ndarray],
-        mos: Optional[np.ndarray],
+        stratum: np.ndarray,
+        mos: np.ndarray,
         sample: np.ndarray,
         hits: np.ndarray,
-        probs: Optional[np.ndarray],
+        probs: np.ndarray,
     ) -> pd.DataFrame:
 
         df = pd.DataFrame(
@@ -103,9 +115,9 @@ class SampleSelection:
         )
         df.reset_index(drop=True, inplace=True)
 
-        if stratum is None:
+        if stratum.shape in ((), (0,)):
             df.drop(columns=["_stratum"], inplace=True)
-        if mos is None:
+        if mos.shape in ((), (0,)):
             df.drop(columns=["_mos"], inplace=True)
 
         return df
@@ -115,7 +127,7 @@ class SampleSelection:
         strat: bool,
         pop_size: Union[DictStrInt, int],
         samp_rate: Union[DictStrInt, int],
-    ):
+    ) -> Union[DictStrInt, int]:
         if strat:
             samp_size = {}
             for s in samp_rate:
@@ -133,10 +145,10 @@ class SampleSelection:
         if strat:
             samp_rate = {}
             for s in samp_size:
-                samp_rate[s] = math.ceil(samp_size[s] / pop_size[s])
+                samp_rate[s] = samp_size[s] / pop_size[s]
             return samp_rate
         else:
-            return math.ceil(samp_size / pop_size)
+            return samp_size / pop_size
 
     @staticmethod
     def _calculate_fpc(
@@ -148,7 +160,7 @@ class SampleSelection:
         if strat:
             fpc = {}
             for s in samp_size:
-                fpc[s] = np.sqrt((pop_size[s] - samp_size[s]) / (samp_size - 1))
+                fpc[s] = np.sqrt((pop_size[s] - samp_size[s]) / (pop_size[s] - 1))
             return fpc
         else:
             return np.sqrt((pop_size - samp_size) / (pop_size - 1))
@@ -165,7 +177,7 @@ class SampleSelection:
         sample = np.zeros(samp_unit.size).astype(bool)
         hits = np.zeros(samp_unit.size).astype(int)
 
-        if stratum is None:
+        if stratum.shape in ((), (0,)):
             sampled_indices = np.random.choice(
                 a=samp_unit.size,
                 size=samp_size,
@@ -200,27 +212,30 @@ class SampleSelection:
         mos: np.ndarray,
     ) -> bool:
 
-        if stratum is not None and isinstance(samp_size, dict):
-            probs = np.zeros(stratum.size)
+        certainty = False
+        if stratum.shape not in ((), (0,)) and isinstance(samp_size, dict):
             for s in np.unique(stratum):
                 stratum_units = stratum == s
                 mos_s = mos[stratum_units]
-                probs[stratum_units] = samp_size[s] * mos_s / np.sum(mos_s)
+                if (samp_size[s] * mos_s / np.sum(mos_s) >= 1).any():
+                    certainty = True
+                    break
         elif isinstance(samp_size, (int, float)):
-            probs = samp_size * mos / np.sum(mos)
+            if (samp_size * mos / np.sum(mos) >= 1).any():
+                certainty = True
 
-        return bool((probs >= 1).any())  # to make mypy happy
+        return certainty
 
     # SRS methods
     def _srs_inclusion_probs(
         self,
-        samp_unit: Array,
+        samp_unit: np.ndarray,
         samp_size: Union[DictStrInt, int],
-        stratum: Optional[np.ndarray] = None,
+        stratum: np.ndarray,
     ) -> np.ndarray:
 
         number_units = samp_unit.size
-        if stratum is not None and isinstance(samp_size, dict):
+        if stratum.shape not in ((), (0,)) and isinstance(samp_size, dict):
             incl_probs = np.zeros(number_units) * np.nan
             for s in np.unique(stratum):
                 number_units_s = samp_unit[stratum == s].size
@@ -236,10 +251,10 @@ class SampleSelection:
     # PPS methods
     def _pps_inclusion_probs(
         self,
-        samp_unit: Array,
+        samp_unit: np.ndarray,
         samp_size: Union[DictStrInt, int],
         mos: np.ndarray,
-        stratum: Optional[np.ndarray] = None,
+        stratum: np.ndarray,
     ) -> np.ndarray:
 
         if isinstance(samp_size, dict):
@@ -528,7 +543,9 @@ class SampleSelection:
             remaining_sample = np.random.choice(
                 remaining_indices, samp_size - 1, p=remaining_probs
             )
-            _, counts = np.unique(np.append(sampled_indices, remaining_sample), return_counts=True)
+            sampled_indices, counts = np.unique(
+                np.append(sampled_indices, remaining_sample), return_counts=True
+            )
             if (counts == 1).all():
                 stop = True
 
@@ -568,9 +585,9 @@ class SampleSelection:
     def _sys_inclusion_probs(
         self,
         samp_unit: np.ndarray,
-        samp_size: Optional[Union[DictStrInt, int]] = None,
-        stratum: Optional[np.ndarray] = None,
-        samp_rate: Optional[Union[DictStrFloat, float]] = None,
+        samp_size: Union[DictStrInt, int],
+        stratum: np.ndarray,
+        samp_rate: Union[DictStrFloat, float],
     ) -> np.ndarray:
 
         pass
@@ -607,9 +624,9 @@ class SampleSelection:
     def _sys_select(
         self,
         samp_unit: np.ndarray,
-        samp_size: Optional[Union[DictStrInt, int]] = None,
-        stratum: Optional[np.ndarray] = None,
-        samp_rate: Union[DictStrFloat, float, None] = None,
+        samp_size: Union[DictStrInt, int],
+        stratum: np.ndarray,
+        samp_rate: Union[DictStrFloat, float],
     ) -> tuple[np.ndarray, np.ndarray]:
 
         sample = hits = np.zeros(samp_unit.size).astype(int)
@@ -635,21 +652,12 @@ class SampleSelection:
 
     def _inclusion_probs(
         self,
-        samp_unit: Array,
-        samp_size: Optional[Union[DictStrInt, int]] = None,
-        stratum: Optional[Array] = None,
-        mos: Optional[Array] = None,
-        samp_rate: Optional[Union[DictStrFloat, float]] = None,
+        samp_unit: np.ndarray,
+        samp_size: Union[DictStrInt, int],
+        stratum: np.ndarray,
+        mos: np.ndarray,
+        samp_rate: Union[DictStrFloat, float],
     ) -> np.ndarray:
-
-        if samp_size is not None and samp_rate is not None:
-            raise AssertionError(
-                """Both samp_size and samp_rate are provided. 
-                Only one of the two parameters should be specified."""
-            )
-
-        if self.strat and stratum is None:
-            raise AssertionError("Stratum must be provided for stratified samples!")
 
         samp_unit = sample_units(samp_unit, unique=True)
 
@@ -718,15 +726,16 @@ class SampleSelection:
         if self.strat and stratum is None:
             raise AssertionError("Stratum must be provided for stratified samples!")
 
-        _stratum = numpy_array(stratum) if stratum is not None else None
-        samp_unit = sample_units(samp_unit, unique=True)
+        _samp_unit = numpy_array(samp_unit)
+        _stratum = numpy_array(stratum)  # if stratum is not None else None
+        _samp_unit = sample_units(_samp_unit, unique=True)
         if self.strat:
             self.strata = np.unique(_stratum).tolist()
             strata, nobs = np.unique(_stratum, return_counts=True)
             self.pop_size = dict(zip(strata, nobs))
         else:
             self.strata = []
-            self.pop_size = samp_unit.shape[0]
+            self.pop_size = _samp_unit.shape[0]
         if samp_rate is None:
             self.samp_size = data_to_dict(data=samp_size, strat=self.strat, stratum=_stratum)
             self.samp_rate = self._calculate_samp_rate(
@@ -738,12 +747,19 @@ class SampleSelection:
                 strat=self.strat, pop_size=self.pop_size, samp_rate=self.samp_rate
             )
 
-        if probs is not None:
-            probs = numpy_array(probs)
-            if (probs < 0).any() | (probs > 1).any():
-                raise ProbError("Probabilities must be between 0 and 1!")
+        self.fpc = self._calculate_fpc(
+            strat=self.strat, pop_size=self.pop_size, samp_size=self.samp_size
+        )
 
-        if mos is None and self.method in (
+        if self.method == SelectMethod.grs:
+            _probs = numpy_array(probs)
+            if _probs.shape in ((), (0,)) or (_probs < 0).any() or (_probs > 1).any():
+                raise ProbError("Probabilities must be between 0 and 1!")
+        else:
+            _probs = np.array(None)
+
+        _mos = numpy_array(mos)
+        if _mos.shape in ((), (0,)) and self.method in (
             SelectMethod.pps_brewer,
             SelectMethod.pps_hv,
             SelectMethod.pps_murphy,
@@ -751,16 +767,26 @@ class SampleSelection:
             SelectMethod.pps_sys,
         ):
             raise MethodError("Measure of size (MOS) not provided!")
-        elif mos is not None and self.method in (
+        elif _mos.shape not in ((), (0,)) and self.method in (
             SelectMethod.pps_brewer,
             SelectMethod.pps_hv,
             SelectMethod.pps_murphy,
             SelectMethod.pps_rs,
             SelectMethod.pps_sys,
         ):
-            _mos = numpy_array(mos)
             if self._anycertainty(samp_size=self.samp_size, stratum=_stratum, mos=_mos):
                 raise CertaintyError("Some clusters are certainties.")
+
+        _samp_ids = np.linspace(
+            start=0, stop=_samp_unit.shape[0] - 1, num=_samp_unit.shape[0], dtype="int"
+        )
+
+        if remove_nan:
+            items_to_keep = remove_nans(_samp_ids.shape[0], _samp_ids, _stratum, _mos, _probs)
+            _samp_ids = _samp_ids[items_to_keep]
+            _stratum = _stratum[items_to_keep]
+            _mos = _mos[items_to_keep]
+            _probs = _probs[items_to_keep]
 
         suffled_order = None
         if shuffle and self.method in (SelectMethod.sys, SelectMethod.pps_sys):
@@ -768,81 +794,101 @@ class SampleSelection:
                 start=0, stop=self.pop_size - 1, num=self.pop_size, dtype="int"
             )
             np.random.shuffle(suffled_order)
-            samp_unit = samp_unit[suffled_order]
-            if stratum is not None:
-                stratum = stratum[suffled_order]
-            if self.method == SelectMethod.pps_sys and _mos is not None:
+            _samp_unit = _samp_unit[suffled_order]
+            if _stratum.shape not in ((), (0,)):
+                _stratum = _stratum[suffled_order]
+            if self.method == SelectMethod.pps_sys and _mos.shape not in ((), (0,)):
                 _mos = _mos[suffled_order]
 
-        samp_ids = np.linspace(
-            start=0, stop=samp_unit.shape[0] - 1, num=samp_unit.shape[0], dtype="int"
-        )
-
         if self.method in (SelectMethod.srs_wr, SelectMethod.srs_wor):
-            probs = self._srs_inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum
+            _probs = self._srs_inclusion_probs(
+                samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum
             )
             sample, hits = self._grs_select(
-                probs=probs,
-                samp_unit=samp_ids,
+                probs=_probs,
+                samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 stratum=_stratum,
                 wr=self.wr,
             )
         elif self.method == SelectMethod.sys:
             sample, hits = self._sys_select(
-                samp_unit=samp_ids, samp_size=None, samp_rate=self.samp_rate, stratum=_stratum
+                samp_unit=_samp_ids, samp_size=None, samp_rate=self.samp_rate, stratum=_stratum
             )
         elif self.method == SelectMethod.pps_wr:
-            probs = self._pps_inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, mos=_mos, stratum=_stratum
+            _probs = self._pps_inclusion_probs(
+                samp_unit=_samp_ids,
+                samp_size=self.samp_size,
+                samp_rate=self.samp_rate,
+                mos=_mos,
+                stratum=_stratum,
             )
             sample, hits = self._grs_select(
-                probs=probs / np.sum(probs),
-                samp_unit=samp_ids,
+                probs=_probs / np.sum(probs),
+                samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 stratum=_stratum,
                 wr=self.wr,
             )
         elif self.method == SelectMethod.pps_sys:
-            probs = self._inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+            _probs = self._inclusion_probs(
+                samp_unit=_samp_ids,
+                samp_size=self.samp_size,
+                samp_rate=self.samp_rate,
+                stratum=_stratum,
+                mos=_mos,
             )
             sample, hits = self._pps_sys_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+                samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_brewer:
-            probs = self._inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+            _probs = self._inclusion_probs(
+                samp_unit=_samp_ids,
+                samp_size=self.samp_size,
+                samp_rate=self.samp_rate,
+                stratum=_stratum,
+                mos=_mos,
             )
             sample, hits = self._pps_brewer_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+                samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_hv:
-            probs = self._inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+            _probs = self._inclusion_probs(
+                samp_unit=_samp_ids,
+                samp_size=self.samp_size,
+                samp_rate=self.samp_rate,
+                stratum=_stratum,
+                mos=_mos,
             )
             sample, hits = self._pps_hv_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+                samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_murphy:
-            probs = self._inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+            _probs = self._inclusion_probs(
+                samp_unit=_samp_ids,
+                samp_size=self.samp_size,
+                samp_rate=self.samp_rate,
+                stratum=_stratum,
+                mos=_mos,
             )
-            sample, hits = self._pps_brewer_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+            sample, hits = self._pps_murphy_select(
+                samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_rs:
-            probs = self._inclusion_probs(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+            _probs = self._inclusion_probs(
+                samp_unit=_samp_ids,
+                samp_size=self.samp_size,
+                samp_rate=self.samp_rate,
+                stratum=_stratum,
+                mos=_mos,
             )
             sample, hits = self._pps_rs_select(
-                samp_unit=samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
+                samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.grs:
             sample, hits = self._grs_select(
-                probs=probs,
-                samp_unit=samp_ids,
+                probs=_probs,
+                samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 stratum=_stratum,
                 wr=self.wr,
@@ -856,25 +902,25 @@ class SampleSelection:
 
         if to_dataframe and sample_only:
             frame = self._to_dataframe(
-                samp_unit=samp_unit,
+                samp_unit=_samp_unit,
                 stratum=_stratum,
                 mos=_mos,
                 sample=sample,
                 hits=hits,
-                probs=probs,
+                probs=_probs,
             )
             return frame.loc[frame["_sample"] == 1].reset_index(drop=True)
         elif to_dataframe and not sample_only:
             frame = self._to_dataframe(
-                samp_unit=samp_unit,
+                samp_unit=_samp_unit,
                 stratum=_stratum,
                 mos=_mos,
                 sample=sample,
                 hits=hits,
-                probs=probs,
+                probs=_probs,
             )
             return frame
         elif not to_dataframe and sample_only and probs is not None:
             return sample[sample], hits[sample], probs[sample]
         else:
-            return sample, hits, probs
+            return sample, hits, _probs

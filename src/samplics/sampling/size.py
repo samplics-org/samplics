@@ -123,6 +123,21 @@ def calculate_clusters() -> None:
 class SampleSize:
     """*SampleSize* implements sample size calculation methods"""
 
+    # __slot__ = (
+    #     "param",
+    #     "method",
+    #     "strat",
+    #     "target",
+    #     "sigma",
+    #     "half_ci",
+    #     "samp_size",
+    #     "deff_c",
+    #     "deff_w",
+    #     "resp_rate",
+    #     "pop_size",
+    #     "alpha",
+    # )
+
     param: InitVar[PopParam] = field(init=True, default=PopParam.prop)
     method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
     strat: InitVar[bool] = field(init=True, default=False)
@@ -311,7 +326,30 @@ class SampleSize:
 
 @dataclass
 class SampleSizeMeanOneSample:
-    """SampleSizeMeanOneSample implements sample size calculation for mean under one-sample design"""
+    """SampleSizeMeanOneSample implements sample size calculation for mean under
+    one-sample design"""
+
+    # __slots__ = (
+    #     "method",
+    #     "strat",
+    #     "two_sides",
+    #     "params_estimated",
+    #     "param",
+    #     "mean_0",
+    #     "mean_1",
+    #     "epsilon",
+    #     "delta",
+    #     "sigma",
+    #     "samp_size",
+    #     "actual_power",
+    #     "deff_c",
+    #     "deff_w",
+    #     "resp_rate",
+    #     "pop_size",
+    #     "alpha",
+    #     "beta",
+    #     "power",
+    # )
 
     method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
     strat: InitVar[bool] = field(init=True, default=False)
@@ -450,7 +488,30 @@ class SampleSizeMeanOneSample:
 
 @dataclass
 class SampleSizePropOneSample:
-    """SampleSizePropOneSample implements sample size calculation for propoertion under one-sample design"""
+    """SampleSizePropOneSample implements sample size calculation for propoertion under
+    one-sample design"""
+
+    # __slots__ = (
+    #     "method",
+    #     "strat",
+    #     "two_sides",
+    #     "params_estimated",
+    #     "param",
+    #     "prop_0",
+    #     "prop_1",
+    #     "epsilon",
+    #     "delta",
+    #     "sigma",
+    #     "samp_size",
+    #     "actual_power",
+    #     "deff_c",
+    #     "deff_w",
+    #     "resp_rate",
+    #     "pop_size",
+    #     "alpha",
+    #     "beta",
+    #     "power",
+    # )
 
     method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
     strat: InitVar[bool] = field(init=True, default=False)
@@ -593,7 +654,32 @@ class SampleSizePropOneSample:
 
 @dataclass
 class SampleSizeMeanTwoSample:
-    """SampleSizeMeanTwoSample implements sample size calculation for mean under two-sample design"""
+    """SampleSizeMeanTwoSample implements sample size calculation for mean under
+    two-sample design"""
+
+    # __slots__ = (
+    #     "method",
+    #     "strat",
+    #     "two_sides",
+    #     "params_estimated",
+    #     "param",
+    #     "mean_1",
+    #     "mean_2",
+    #     "epsilon",
+    #     "delta",
+    #     "sigma_1",
+    #     "sigma_2",
+    #     "equal_var",
+    #     "samp_size",
+    #     "actual_power",
+    #     "deff_c",
+    #     "deff_w",
+    #     "resp_rate",
+    #     "pop_size",
+    #     "alpha",
+    #     "beta",
+    #     "power",
+    # )
 
     method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
     strat: InitVar[bool] = field(init=True, default=False)
@@ -752,7 +838,29 @@ class SampleSizeMeanTwoSample:
 
 @dataclass
 class SampleSizePropTwoSample:
-    """SampleSizeMeanTwoSample implements sample size calculation for mean under two-sample design"""
+    """SampleSizeMeanTwoSample implements sample size calculation for mean under
+    two-sample design"""
+
+    # __slots__ = (
+    #     "method",
+    #     "strat",
+    #     "two_sides",
+    #     "params_estimated",
+    #     "param",
+    #     "prop_1",
+    #     "prop_2",
+    #     "epsilon",
+    #     "delta",
+    #     "samp_size",
+    #     "actual_power",
+    #     "deff_c",
+    #     "deff_w",
+    #     "resp_rate",
+    #     "pop_size",
+    #     "alpha",
+    #     "beta",
+    #     "power",
+    # )
 
     method: InitVar[SizeMethod] = field(init=True, default=SizeMethod.wald)
     strat: InitVar[bool] = field(init=True, default=False)

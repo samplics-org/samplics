@@ -123,29 +123,42 @@ def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
     return values_df
 
 
-def remove_nans(excluded_units: Array, *args: Any) -> list:
+# def remove_nans(excluded_units: Array, *args: Any) -> list:
 
-    excluded_units = numpy_array(excluded_units)
-    vars_list = list()
+#     excluded_units = numpy_array(excluded_units)
+#     vars_list = list()
+#     for var in args:
+#         if var is not None and len(var.shape) != 0:
+#             vars_list.append(var[~excluded_units])
+#         else:
+#             vars_list.append(None)
+
+#     return vars_list
+
+
+def remove_nans(n: Number, *args: np.ndarray) -> list:
+
+    excluded_units = np.zeros(n).astype(bool)
+
     for var in args:
-        if var is not None and len(var.shape) != 0:
-            vars_list.append(var[~excluded_units])
-        else:
-            vars_list.append(None)
+        if var.shape not in ((), (0,)):
+            assert n == var.shape[0]
+            if var.dtype.kind in ("i", "u", "f", "c", "b", "m", "M"):
+                excluded_units = excluded_units | np.isnan(var)
+            else:
+                var = var.astype(str)
+                excluded_units = excluded_units | np.isin(var, ("nan", ""))
 
-    return vars_list
+    return ~excluded_units
 
 
-def fpc_as_dict(stratum: Optional[Array], fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
+def fpc_as_dict(stratum: np.ndarray, fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
 
-    if stratum is not None:
-        stratum = numpy_array(stratum)
-
-    if stratum is None and isinstance(fpc, (int, float)):
+    if stratum.shape in ((), (0,)) and isinstance(fpc, (int, float)):
         return fpc
-    elif stratum is not None and isinstance(fpc, (int, float)):
+    elif stratum.shape not in ((), (0,)) and isinstance(fpc, (int, float)):
         return dict(zip(stratum, np.repeat(fpc, stratum.shape[0])))
-    elif stratum is not None and isinstance(fpc, np.ndarray):
+    elif stratum.shape not in ((), (0,)) and isinstance(fpc, np.ndarray):
         return dict(zip(stratum, fpc))
     else:
         raise TypeError("stratum and fpc are not compatible!")

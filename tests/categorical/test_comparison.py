@@ -36,13 +36,13 @@ def test_one_sample_wrong_specifications2():
 )
 def test_one_sample_wrong_specifications3():
     one_sample_wrong = Ttest("two-sample")
-    one_sample_wrong.compare(y, known_mean=0, group=make)
+    one_sample_wrong.compare(y=y, known_mean=0, group=make)
 
 
 ## One-sample with known mean for comparison
 
 one_sample_known_mean = Ttest(samp_type="one-sample")
-one_sample_known_mean.compare(y, known_mean=20)
+one_sample_known_mean.compare(y=y, known_mean=20)
 
 
 def test_one_sample_known_mean_mean():

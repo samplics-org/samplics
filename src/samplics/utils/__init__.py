@@ -1,6 +1,7 @@
 from samplics.utils.basic_functions import transform
 from samplics.utils.errors import (
     CertaintyError,
+    DimensionError,
     MethodError,
     ProbError,
     SamplicsError,
@@ -19,6 +20,7 @@ __all__ = [
     "transform",
     "SamplicsError",
     "CertaintyError",
+    "DimensionError",
     "SinglePSUError",
     "ProbError",
     "MethodError",

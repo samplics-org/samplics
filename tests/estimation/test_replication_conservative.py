@@ -21,7 +21,13 @@ rep_wgt_jkn = rep_wgt_jkn.values
 
 def test_jkn_mean():
     jkn_mean = ReplicateEstimator("jackknife", "mean")
-    jkn_mean.estimate(y_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=True, remove_nan=True)
+    jkn_mean.estimate(
+        y=y_jkn,
+        samp_weight=sample_wgt_jkn,
+        rep_weights=rep_wgt_jkn,
+        conservative=True,
+        remove_nan=True,
+    )
     jkn_var = jkn_mean.variance
     jkn_stderr = pow(jkn_var, 0.5)
     assert np.isclose(jkn_stderr, 0.2320822, atol=1e-7)
@@ -30,9 +36,9 @@ def test_jkn_mean():
 def test_jkn_mean_d():
     jkn_mean_d = ReplicateEstimator("jackknife", "mean")
     jkn_mean_d.estimate(
-        y_jkn,
-        sample_wgt_jkn,
-        rep_wgt_jkn,
+        y=y_jkn,
+        samp_weight=sample_wgt_jkn,
+        rep_weights=rep_wgt_jkn,
         domain=domain_jkn,
         conservative=True,
         remove_nan=True,

@@ -9,7 +9,7 @@ from numpy.lib.arraysetops import isin
 from scipy.stats import t as student
 
 from samplics.estimation.expansion import _SurveyEstimator
-from samplics.utils import formats
+from samplics.utils.formats import numpy_array, remove_nans
 from samplics.utils.types import Array, DictStrNum, Number, StringNumber
 
 
@@ -128,7 +128,7 @@ class ReplicateEstimator(_SurveyEstimator):
         y: np.ndarray,
         rep_weights: np.ndarray,
         rep_coefs: np.ndarray,
-        x: Optional[np.ndarray],
+        x: np.ndarray,
         estimate: float,
         conservative: bool = False,
     ) -> Number:
@@ -176,7 +176,7 @@ class ReplicateEstimator(_SurveyEstimator):
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
-            y, samp_weight, x, stratum, domain, _, _ = formats.remove_nans(
+            y, samp_weight, x, stratum, domain, _, _ = remove_nans(
                 excluded_units, y, samp_weight, x, None, domain, None, None
             )
             rep_weights = rep_weights[~excluded_units, :]
@@ -249,12 +249,14 @@ class ReplicateEstimator(_SurveyEstimator):
             categories = y_dummies.columns
             y_dummies = y_dummies.values
 
-        if domain is None:
+        if domain.shape in ((), (0,)):
             if self.param == "proportion":
                 estimate_k: dict
                 cat_dict = dict()
                 for k in range(categories.size):
-                    estimate_k = self._get_point(y_dummies[:, k], samp_weight, x)
+                    estimate_k = self._get_point(
+                        y=y_dummies[:, k], samp_weight=samp_weight, x=x, domain=np.array(None)
+                    )
                     cat_dict_k = dict(
                         {
                             categories[k]: self._variance(
@@ -270,7 +272,7 @@ class ReplicateEstimator(_SurveyEstimator):
                     cat_dict.update(cat_dict_k)
                 return cat_dict
             else:
-                estimate = self._get_point(y, samp_weight, x)
+                estimate = self._get_point(y=y, samp_weight=samp_weight, x=x, domain=domain)
                 return self._variance(y, rep_weights, rep_coefs, x, estimate, conservative)
         else:
             variance_else1 = {}
@@ -286,16 +288,21 @@ class ReplicateEstimator(_SurveyEstimator):
                     y_dummies_d = np.asarray(y_dummies * (domain == d)[:, None])
                     cat_dict = dict()
                     for k in range(categories.size):
-                        estimate_d_k = self._get_point(y_dummies_d[:, k], samp_weight_d, x_d)[1]
+                        estimate_d_k = self._get_point(
+                            y=y_dummies_d[:, k],
+                            samp_weight=samp_weight_d,
+                            x=x_d,
+                            domain=np.array(None),
+                        )[1]
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._variance(
-                                    y_dummies_d[:, k],
-                                    rep_weights_d,
-                                    rep_coefs,
-                                    x_d,
-                                    estimate_d_k,
-                                    conservative,
+                                    y=y_dummies_d[:, k],
+                                    rep_weights=rep_weights_d,
+                                    rep_coefs=rep_coefs,
+                                    x=x_d,
+                                    estimate=estimate_d_k,
+                                    conservative=conservative,
                                 )
                             }
                         )
@@ -303,14 +310,16 @@ class ReplicateEstimator(_SurveyEstimator):
                     variance_else1[d] = cat_dict
                 else:
                     y_d = y * (domain == d)
-                    estimate_d = self._get_point(y_d, samp_weight_d, x_d)
+                    estimate_d = self._get_point(
+                        y=y_d, samp_weight=samp_weight_d, x=x_d, domain=np.array(None)
+                    )
                     variance_else2[d] = self._variance(
-                        y_d,
-                        rep_weights_d,
-                        rep_coefs,
-                        x_d,
-                        estimate_d,
-                        conservative,
+                        y=y_d,
+                        rep_weights=rep_weights_d,
+                        rep_coefs=rep_coefs,
+                        x=x_d,
+                        estimate=estimate_d,
+                        conservative=conservative,
                     )
             if self.param == "proportion":
                 return variance_else1
@@ -327,7 +336,7 @@ class ReplicateEstimator(_SurveyEstimator):
 
         lower_ci = {}
         upper_ci = {}
-        if self.domains is None:
+        if self.domains.shape in ((), (0,)):
             if param == "proportion":
                 for level in variance:
                     point_est = estimate[level]
@@ -380,7 +389,7 @@ class ReplicateEstimator(_SurveyEstimator):
         variance: Any,
     ) -> Any:  # Any := Union[dict[StringNumber, DictStrNum], DictStrNum, Number]
 
-        if self.domains is None:
+        if self.domains.shape in ((), (0,)):
             if param == "proportion":
                 coef_var = {}
                 for level in variance:
@@ -434,24 +443,24 @@ class ReplicateEstimator(_SurveyEstimator):
         if self.param == "ratio" and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
-        y = formats.numpy_array(y)
-        samp_weight = formats.numpy_array(samp_weight)
-        rep_weights = formats.numpy_array(rep_weights)
-        x = formats.numpy_array(x) if x is not None else None
+        _y = numpy_array(y)
+        _x = numpy_array(x)
+        _samp_weight = numpy_array(samp_weight)
+        _rep_weights = numpy_array(rep_weights)
+        _rep_coefs = numpy_array(rep_coefs)
+        _domain = numpy_array(domain)
 
         if remove_nan:
-            if self.param == "ratio" and x is not None:
-                excluded_units = np.isnan(y) | np.isnan(x)
-            else:
-                excluded_units = np.isnan(y)
-            y, samp_weight, x, domain = formats.remove_nans(
-                excluded_units,
-                y,
-                samp_weight,
-                x,
-                domain,
+            to_keep = remove_nans(_y.shape[0], _y)
+
+            _y = _y[to_keep]
+            _x = _x[to_keep] if _x.shape not in ((), (0,)) else _x
+            _samp_weight = _samp_weight[to_keep]
+            _rep_coefs = _rep_coefs[to_keep] if _rep_coefs.shape not in ((), (0,)) else _rep_coefs
+            _rep_weights = (
+                _rep_weights[to_keep] if _rep_weights.shape not in ((), (0,)) else _rep_weights
             )
-            rep_weights = rep_weights[~excluded_units, :]
+            _domain = _domain[to_keep] if _domain.shape not in ((), (0,)) else _domain
 
         self.conservative = conservative
 
@@ -460,21 +469,18 @@ class ReplicateEstimator(_SurveyEstimator):
 
         self._rep_coefs(rep_coefs)
 
-        if domain is not None:
-            self.domains = np.unique(domain)
-        else:
-            self.domains = None
+        self.domains = np.unique(_domain) if _domain.shape not in ((), (0,)) else _domain
 
-        self.point_est = self._get_point(y, samp_weight, x, domain)
+        self.point_est = self._get_point(y=_y, samp_weight=_samp_weight, x=_x, domain=_domain)
         self.variance = self._get_variance(
-            y,
-            samp_weight,
-            rep_weights,
-            np.array(self.rep_coefs),
-            x,
-            domain,
-            conservative,
-            remove_nan,
+            y=_y,
+            samp_weight=_samp_weight,
+            rep_weights=_rep_weights,
+            rep_coefs=np.array(self.rep_coefs),
+            x=_x,
+            domain=_domain,
+            conservative=conservative,
+            remove_nan=remove_nan,
         )
 
         if self.method == "brr" and self.degree_of_freedom is None:
@@ -489,7 +495,7 @@ class ReplicateEstimator(_SurveyEstimator):
         )
         self.coef_var = self._get_coefvar(self.param, self.point_est, self.variance)
 
-        if self.domains is None:
+        if self.domains.shape in ((), (0,)):
             if self.param == "proportion":
                 for level in self.variance:
                     self.stderror[level] = pow(self.variance[level], 0.5)

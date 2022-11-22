@@ -38,6 +38,7 @@ from samplics.utils import (
     PopParam,
     ProbError,
     SamplicsError,
+    DimensionError,
     SelectMethod,
     SinglePSUError,
     SinglePSUEst,
@@ -96,6 +97,7 @@ __all__ = [
     # Custom exception classes
     "SamplicsError",
     "CertaintyError",
+    "DimensionError",
     "MethodError",
     "ProbError",
     "SinglePSUError",

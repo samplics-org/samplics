@@ -11,7 +11,17 @@ from samplics.utils.formats import (
     numpy_array,
     data_to_dict,
     sample_units,
+    remove_nans,
 )
+
+
+def test_remove_nans():
+    da = np.array([np.nan, 2, 3, 4, 5])
+    np_txt = pd.Series(["one", "two", np.nan, "four", ""]).values
+    np_none = np.array(None)
+    np_empty = np.array([])
+    to_keep = remove_nans(5, da, np_txt, np_none, np_empty)
+    assert (to_keep == (False, True, False, True, False)).all()
 
 
 df = pd.DataFrame({"one": [1, 2, 2, 3, 0], "two": [4, 9, 5, 6, 6]})
@@ -49,7 +59,7 @@ def test_sample_size_dict1(sample_size=5, stratification=False, stratum=stratum)
     assert samp_dict1 == 5
 
 
-def test_sample_size_dict1(sample_size=5, stratification=False, stratum=stratum):
+def test_sample_size_dict2(sample_size=5, stratification=False, stratum=stratum):
     samp_dict2 = data_to_dict(sample_size, stratification, stratum)
     assert isinstance(samp_dict2, int) == True
     assert samp_dict2 == 5

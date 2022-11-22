@@ -26,3 +26,9 @@ class CertaintyError(SamplicsError):
     """Method not applicable"""
 
     pass
+
+
+class DimensionError(SamplicsError):
+    """Method not applicable"""
+
+    pass

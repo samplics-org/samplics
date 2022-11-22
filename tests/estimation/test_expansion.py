@@ -43,12 +43,10 @@ svy_total_without_str = TaylorEstimator("total")
 
 
 def test_total_estimator_without_str_to_dataframe():
-    svy_total_without_str.estimate(y, weight, psu=psu, remove_nan=True)
+    svy_total_without_str.estimate(y=y, samp_weight=weight, psu=psu, remove_nan=True)
     est_df = svy_total_without_str.to_dataframe()
 
-    assert (
-        est_df.columns == ["_param", "_estimate", "_stderror", "_lci", "_uci", "_cv"]
-    ).all()
+    assert (est_df.columns == ["_param", "_estimate", "_stderror", "_lci", "_uci", "_cv"]).all()
     assert est_df._param[0] == "total"
     assert np.isclose(est_df._estimate[0], 7938.333)
     assert np.isclose(est_df._stderror[0], 560.0856)

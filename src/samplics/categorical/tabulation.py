@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import itertools
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 from patsy import dmatrix
 
@@ -20,7 +20,8 @@ from scipy.stats import chi2, f
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber
+from samplics.utils.types import Array, Number, SinglePSUEst, StringNumber
+from samplics.utils.errors import DimensionError
 
 
 class Tabulation:
@@ -68,10 +69,10 @@ class Tabulation:
         self,
         var_of_ones: Array,
         var: pd.DataFrame,
-        samp_weight: Array = None,
-        stratum: Optional[Array] = None,
-        psu: Optional[Array] = None,
-        ssu: Optional[Array] = None,
+        samp_weight: np.ndarray,
+        stratum: np.ndarray,
+        psu: np.ndarray,
+        ssu: np.ndarray,
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_var: bool = False,
@@ -81,14 +82,32 @@ class Tabulation:
     ) -> tuple[TaylorEstimator, list, int]:
 
         if remove_nan:
-            excluded_units = var.isna().values.ravel()
-            var_of_ones, samp_weight, stratum, psu, ssu = remove_nans(
-                excluded_units, var_of_ones, samp_weight, stratum, psu, ssu
+            to_keep = remove_nans(
+                var.values.ravel().shape[0],
+                var_of_ones,
+                samp_weight,
+                stratum,
+                psu,
+                ssu,
             )
-            var = var.dropna().astype(str)
+            if var.ndim == 1:  # Series
+                to_keep = to_keep & remove_nans(var.values.ravel().shape[0], var.values.ravel())
+            elif var.ndim == 2:  # DataFrame
+                for col in var.columns:
+                    to_keep = to_keep & remove_nans(
+                        var.values.ravel().shape[0], var[col].values.ravel()
+                    )
+            else:
+                raise DimensionError("The dimension must be 1 or 2.")
+
+            var_of_ones = var_of_ones[to_keep]
+            var = var.loc[to_keep]
+            samp_weight = samp_weight[to_keep]
+            stratum = stratum[to_keep] if stratum.shape not in ((), (0,)) else stratum
+            psu = psu[to_keep] if psu.shape not in ((), (0,)) else psu
+            ssu = ssu[to_keep] if ssu.shape not in ((), (0,)) else ssu
         else:
             var.fillna("nan", inplace=True)
-        var = var.to_numpy().ravel()
 
         var_of_ones = numpy_array(var_of_ones)
 
@@ -100,7 +119,7 @@ class Tabulation:
                 stratum=stratum,
                 psu=psu,
                 ssu=ssu,
-                domain=var,
+                domain=var.to_numpy().ravel(),
                 fpc=fpc,
                 deff=deff,
                 coef_var=coef_var,
@@ -111,7 +130,7 @@ class Tabulation:
         elif self.param == "proportion":
             tbl_est = TaylorEstimator(param=self.param, alpha=self.alpha)
             tbl_est.estimate(
-                y=var,
+                y=var.to_numpy().ravel(),
                 samp_weight=samp_weight,
                 stratum=stratum,
                 psu=psu,
@@ -170,21 +189,28 @@ class Tabulation:
                 "Length of varnames must be the same as the number of columns of vars"
             )
 
-        if samp_weight is None:
-            samp_weight = np.ones(vars_df.shape[0])
-        elif isinstance(samp_weight, (int, float)):
-            samp_weight = np.repeat(samp_weight, vars_df.shape[0])
-        else:
-            samp_weight = numpy_array(samp_weight)
+        _samp_weight = numpy_array(samp_weight)
+
+        _samp_weight = (
+            np.ones(vars_df.shape[0]) if _samp_weight.shape in ((), (0,)) else _samp_weight
+        )
+        _samp_weight = (
+            np.repeat(_samp_weight, vars_df.shape[0])
+            if _samp_weight.shape[0] == 1
+            else _samp_weight
+        )
+        _stratum = numpy_array(stratum)
+        _psu = numpy_array(psu)
+        _ssu = numpy_array(ssu)
 
         if nb_vars == 1:
             tbl_est, var_levels, nb_obs = self._estimate(
                 var_of_ones=np.ones(vars_df.shape[0]),
                 var=vars_df,
-                samp_weight=samp_weight,
-                stratum=stratum,
-                psu=psu,
-                ssu=ssu,
+                samp_weight=_samp_weight,
+                stratum=_stratum,
+                psu=_psu,
+                ssu=_ssu,
                 fpc=fpc,
                 deff=deff,
                 coef_var=coef_var,
@@ -212,10 +238,10 @@ class Tabulation:
                 tbl_est, var_levels, nb_obs = self._estimate(
                     var_of_ones=var_of_ones,
                     var=vars_df.iloc[:, k],
-                    samp_weight=samp_weight,
-                    stratum=stratum,
-                    psu=psu,
-                    ssu=ssu,
+                    samp_weight=_samp_weight,
+                    stratum=_stratum,
+                    psu=_psu,
+                    ssu=_ssu,
                     fpc=fpc,
                     deff=deff,
                     coef_var=coef_var,
@@ -265,7 +291,7 @@ class Tabulation:
         return oneway_df
 
 
-def saturated_two_ways_model(varsnames: list[str]) -> str:
+def _saturated_two_ways_model(varsnames: list[str]) -> str:
     """
     docstring
     """
@@ -413,12 +439,21 @@ class CrossTabulation:
         ssu = numpy_array(ssu)
 
         if remove_nan:
-            vars_nans = vars.isna()
-            excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
-            samp_weight, stratum, psu, ssu = remove_nans(
-                excluded_units, samp_weight, stratum, psu, ssu
+            # breakpoint()
+            # vars_nans = vars.isna()
+            # excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
+            to_keep = remove_nans(vars.shape[0], vars.iloc[:, 0].values, vars.iloc[:, 1].values)
+            samp_weight = (
+                samp_weight[to_keep] if samp_weight.shape not in ((), (0,)) else samp_weight
             )
-            vars = vars.dropna()
+            stratum = stratum[to_keep] if stratum.shape not in ((), (0,)) else stratum
+            psu = psu[to_keep] if psu.shape not in ((), (0,)) else psu
+            ssu = ssu[to_keep] if ssu.shape not in ((), (0,)) else ssu
+            vars = vars.loc[to_keep]
+            # samp_weight, stratum, psu, ssu = remove_nans(
+            #     excluded_units, samp_weight, stratum, psu, ssu
+            # )
+            # vars = vars.dropna()
         else:
             vars = vars.fillna("nan")
 
@@ -428,12 +463,12 @@ class CrossTabulation:
         vars.reset_index(inplace=True, drop=True)
         vars.sort_values(by=vars_names, inplace=True)
         samp_weight = samp_weight[vars.index]
-        stratum = stratum[vars.index] if stratum is not None else None
-        psu = psu[vars.index] if psu is not None else None
-        ssu = ssu[vars.index] if ssu is not None else None
+        stratum = stratum[vars.index] if stratum.shape not in ((), (0,)) else None
+        psu = psu[vars.index] if psu.shape not in ((), (0,)) else None
+        ssu = ssu[vars.index] if ssu.shape not in ((), (0,)) else None
 
         vars_names_str = ["var_" + str(x) for x in vars_names]
-        two_way_full_model = saturated_two_ways_model(vars_names_str)
+        two_way_full_model = _saturated_two_ways_model(vars_names_str)
         # vars.sort_values(by=vars_names, inplace=True)
         row_levels = vars[vars_names[0]].unique()
         col_levels = vars[vars_names[1]].unique()
