@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.251">
+<meta name="generator" content="quarto-1.2.313">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -68,6 +68,7 @@ ul.task-list li input[type="checkbox"] {
 <meta property="og:site-name" content="Samplics Documentation">
 <meta name="twitter:title" content="Samplics Documentation - Introduction">
 <meta name="twitter:description" content="">
+<meta name="twitter:site" content="@MamadouSDiallo">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -91,22 +92,24 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page">Overview</a>
+    <a class="nav-link active" href="./index.html" aria-current="page">
+ <span class="menu-text">Overview</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./pages/tutorial.html">Tutorial</a>
+    <a class="nav-link" href="./pages/tutorial.html">
+ <span class="menu-text">Tutorial</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://twitter.com/MamadouSDiallo"><i class="bi bi-twitter" role="img" aria-label="Twitter">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/samplics-org/samplics"><i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
- </a>
+ <span class="menu-text"></span></a>
   </li>  
 </ul>
               <div id="quarto-search" class="" title="Search"></div>
@@ -333,6 +336,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
@@ -340,22 +344,6 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <p><a href="https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting"><img src="https://github.com/survey-methods/samplics/workflows/Testing/badge.svg" class="img-fluid" alt="Testing Status"></a> <a href="https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage"><img src="https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg" class="img-fluid"></a> <a href="https://github.com/samplics-org/samplics/actions?query=workflow%3ADocs"><img src="https://github.com/survey-methods/samplics/workflows/Docs/badge.svg"></a> <a href="https://doi.org/10.21105/joss.03376"><img src="https://joss.theoj.org/papers/10.21105/joss.03376/status.svg" class="img-fluid"></a> <a href="https://pypi.org/project/samplics/ansicolortags/"><img src="https://img.shields.io/pypi/l/ansicolortags.svg" class="img-fluid" alt="License"></a> <a href="https://pepy.tech/project/samplics"><img src="https://pepy.tech/badge/samplics"></a></p>
-<p><br></p>
-<div class="callout-important callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The current minor version 0.4.x is dedicated to harmonizing the APIs (based on users’ feedback) and to fixing bugs. Users should expect some APIs to change significantly in 0.4.x. This phase will be completed by January 2023.</p>
-<p>The next minor version 0.5.x will be much more stable and the focus will be on the regression and SAE modules.</p>
-<p>If you would like to support the projet visit <a href="https://github.com/sponsors/samplics" class="uri">https://github.com/sponsors/samplics</a></p>
-</div>
-</div>
 <p><br></p>
 <p>In large scale surveys, often complex random mechanisms are used to select samples. Estimations obtained from such samples must reflect the random mechanism to ensure accurate calculations. <em>samplics</em> implements a set of sampling techniques for complex survey designs.</p>
 <p><strong>Sampling.</strong> Since the full population cannot be observed, a sample is selected to estimate population parameters of interest. The assumption is that the sample is representative of the population for the characteristics of interest. The sample size calculation and selection methods in <em>samplics</em> are:</p>
@@ -428,7 +416,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -464,24 +469,42 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

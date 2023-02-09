@@ -126,7 +126,7 @@ dmypy.json
 #MacOS
 .DS_Store
 
-# Github 
+# Github
 # .github
 
 #Extra
@@ -142,3 +142,5 @@ roadmap.md
 *.docx
 
 # End of https://www.gitignore.io/api/python
+
+/.luarc.json
