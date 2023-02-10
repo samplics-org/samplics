@@ -495,5 +495,3 @@ def test_singular_matrix_due_to_missing_category():
         remove_nan=True,
         single_psu="skip",
     )
-
-    breakpoint()
