@@ -3,7 +3,7 @@ import pandas as pd
 
 from samplics.sae.eblup_area_model import EblupAreaModel
 
-
+# R SAE package datasets
 milk = pd.read_csv("./tests/sae/milk.csv")
 
 area = milk["SmallArea"]
@@ -460,4 +460,157 @@ def test_fay_herriot_FH_mse():
             ]
         ),
         atol=1e-4,
+    ).all()
+
+
+# EUSLIC DATASETS
+euslic_samp = pd.read_csv("./tests/sae/eusilcA_smpAgg.csv")
+euslic_samp.columns = euslic_samp.columns.str.lower()
+
+euslic_pop = pd.read_csv("./tests/sae/eusilcA_popAgg.csv")
+euslic_pop.columns = euslic_pop.columns.str.lower()
+
+X = euslic_pop[["cash", "self_empl"]]
+X.insert(0, "intercept", 1)
+
+# REML method
+euslic_fh_model_ml = EblupAreaModel(method="ML")
+euslic_fh_model_ml.fit(
+    yhat=euslic_samp["mean"],
+    X=X,
+    area=euslic_pop["domain"],
+    intercept=False,
+    error_std=pow(euslic_samp["var_mean"], 1 / 2),
+    tol=1e-4,
+)
+
+euslic_fh_model_ml.predict(
+    X=X,
+    area=euslic_pop["domain"],
+    intercept=False,
+)
+
+
+def test_euslic_fay_herriot_reml_fixed_effect():
+    assert np.isclose(
+        euslic_fh_model_ml.fixed_effects,
+        np.array([3070.512910, 1.059385, 1.745637]),
+        atol=1e-4,
+    ).all()
+    assert np.isclose(
+        euslic_fh_model_ml.fe_std,
+        np.array(
+            [
+                635.94430477,
+                0.07049039,
+                0.22017419,
+            ]
+        ),
+        atol=1e-4,
+    ).all()
+
+
+def test_euslic_fay_herriot_ml_area_est():
+    area_est = np.array(list(euslic_fh_model_ml.area_est.values()))
+    assert np.isclose(
+        area_est,
+        np.array(
+            [
+                14242.044,
+                21616.396,
+                12680.376,
+                11925.817,
+                32101.689,
+                22523.495,
+                23590.330,
+                22159.121,
+                23382.354,
+                14991.811,
+                30782.726,
+                51531.727,
+                18303.219,
+                9341.751,
+                17907.619,
+                19690.482,
+                10833.620,
+                20937.018,
+                36325.416,
+                18087.657,
+                16565.892,
+                14993.730,
+                16298.128,
+                12899.951,
+                8851.299,
+                15748.383,
+                12173.923,
+                15141.148,
+                30124.734,
+                15866.413,
+                9066.641,
+                17337.568,
+                13043.883,
+                22348.719,
+                29190.070,
+                24878.742,
+                13851.775,
+                16322.241,
+                21132.958,
+                8949.421,
+                15733.651,
+                22011.672,
+                14547.917,
+                11978.578,
+                13789.016,
+                28445.416,
+                23095.508,
+                21841.047,
+                12471.885,
+                18309.944,
+                42317.171,
+                9327.607,
+                19506.368,
+                16148.916,
+                18457.456,
+                16452.668,
+                11942.690,
+                19425.208,
+                18690.556,
+                15402.908,
+                16461.955,
+                12529.574,
+                29621.081,
+                19116.535,
+                13800.069,
+                16988.456,
+                15647.446,
+                14571.726,
+                11688.408,
+                11879.320,
+                14871.849,
+                13639.344,
+                26365.895,
+                20366.991,
+                14524.252,
+                17383.976,
+                19870.931,
+                44279.730,
+                21778.081,
+                17414.037,
+                19585.314,
+                17189.073,
+                14200.622,
+                9518.329,
+                16542.144,
+                15644.838,
+                20598.962,
+                14690.123,
+                19750.224,
+                19114.520,
+                17480.644,
+                18905.333,
+                10043.399,
+                10400.148,
+            ]
+        ),
+        atol=1e-3,
     ).all()

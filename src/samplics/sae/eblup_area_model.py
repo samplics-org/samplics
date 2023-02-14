@@ -128,8 +128,9 @@ class EblupAreaModel:
         b_const: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
 
-        V = np.diag(sigma2_v * (b_const**2) + sigma2_e)
-        V_inv = np.linalg.inv(V)
+        # V = np.diag(sigma2_v * (b_const**2) + sigma2_e)
+        # V_inv = np.linalg.inv(V)
+        V_inv = np.diag(1 / (sigma2_v * (b_const**2) + sigma2_e))  
         x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
         x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
         beta_hat = np.matmul(x_v_x_inv_x, yhat)
