@@ -6,39 +6,130 @@ import pandas as pd
 from samplics.categorical import CrossTabulation
 
 
-# dummy2 = {
-#     "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
-#     "group": ["one", "one", "two", "one", "two", "one", "two", "one", "one"],
-#     "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 123],
-#     "respondent": [
-#         "respondent",
-#         "respondent",
-#         "non-respondent",
-#         "non-respondent",
-#         "respondent",
-#         "respondent",
-#         "respondent",
-#         "non-respondent",
-#         "respondent",
-#     ],
-# }
+# Categories have zero counts
 
-# df_dummy2 = pd.DataFrame.from_dict(dummy2)
+dummy1 = {
+    "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
+    "group": ["one", "one", "two", "one", "two", "one", "two", "one", "one"],
+    "nr_weight": [200, 0, 0, 234, 0, 234, 0, 123, 0],
+    "respondent": [
+        "respondent",
+        "non-respondent",
+        "non-respondent",
+        "respondent",
+        "non-respondent",
+        "respondent",
+        "non-respondent",
+        "respondent",
+        "non-respondent",
+    ],
+}
+
+df_dummy1 = pd.DataFrame.from_dict(dummy1)
 
 
-# crosstab_temp = CrossTabulation("proportion")
-# crosstab_temp.tabulate(
-#     vars=df_dummy2[["q1", "group"]],
-#     samp_weight=df_dummy2["nr_weight"],
-#     remove_nan=True,
-#     single_psu="skip",
-# )
-# print(crosstab_temp)
-# breakpoint()
+def test_unique_cell_1():
+    crosstab_temp1 = CrossTabulation("proportion")
+    crosstab_temp1.tabulate(
+        vars=df_dummy1[["q1", "group"]],
+        samp_weight=df_dummy1["nr_weight"],
+        remove_nan=True,
+        single_psu="skip",
+    )
 
-# def test_singular_matrix_due_to_missing_category():
-#     assert crosstab_temp.point["1"]["one"] == 0.31147541
 
+dummy2 = {
+    "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
+    "group": ["one", "one", "two", "one", "two", "one", "two", "one", "two"],
+    "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 0],
+    "respondent": [
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "non-respondent",
+        "respondent",
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "non-respondent",
+    ],
+}
+
+df_dummy2 = pd.DataFrame.from_dict(dummy2)
+
+
+def test_empty_cells_2():
+    crosstab_temp2 = CrossTabulation("count")
+    crosstab_temp2.tabulate(
+        vars=df_dummy2[["q1", "group"]], samp_weight=1, remove_nan=True, single_psu="skip"
+    )
+    assert crosstab_temp2.point_est["1"]["one"] == 4
+    assert crosstab_temp2.point_est["1"]["two"] == 0
+    assert crosstab_temp2.point_est["2"]["one"] == 1
+    assert crosstab_temp2.point_est["2"]["two"] == 4
+
+
+dummy3 = pd.DataFrame(
+    data=[["Woman", "European"]] * 100
+    + [["Woman", "American"]] * 35
+    + [["Woman", "Other"]] * 93
+    + [["Man", "European"]] * 150
+    + [["Man", "American"]] * 77,
+    columns=["Gender", "Nationality"],
+)
+
+dummy3["weights"] = [1, 0.3, 8, 3, 0.7] * 91
+
+
+def test_empty_cells_3():
+
+    crosstab_temp3 = CrossTabulation("count")
+    crosstab_temp3.tabulate(
+        vars=dummy3[["Gender", "Nationality"]],
+        samp_weight=dummy3["weights"],
+        remove_nan=True,
+    )
+    assert crosstab_temp3.point_est["Man"]["American"] == 198.7
+    assert crosstab_temp3.point_est["Man"]["European"] == 390
+    assert crosstab_temp3.point_est["Man"]["Other"] == 0
+    assert crosstab_temp3.point_est["Woman"]["American"] == 91
+    assert crosstab_temp3.point_est["Woman"]["European"] == 260
+    assert crosstab_temp3.point_est["Woman"]["Other"] == 243.3
+
+
+dummy4 = {
+    "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
+    "group": ["one", "one", "two", "one", "two", "one", "two", "one", "one"],
+    "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 123],
+    "respondent": [
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "non-respondent",
+        "respondent",
+        "respondent",
+        "respondent",
+        "non-respondent",
+        "respondent",
+    ],
+}
+
+df_dummy4 = pd.DataFrame.from_dict(dummy4)
+
+
+def test_empty_cells_4():
+    crosstab_temp4 = CrossTabulation("proportion")
+    crosstab_temp4.tabulate(
+        vars=df_dummy4[["q1", "group"]],
+        samp_weight=df_dummy4["nr_weight"],
+        remove_nan=True,
+        single_psu="skip",
+    )
+
+    assert np.isclose(crosstab_temp4.point_est["1"]["one"], 0.311475409, atol=1e-6)
+
+
+# Birth Category
 
 birthcat = pd.read_csv("./tests/categorical/birthcat.csv")
 
@@ -406,92 +497,4 @@ def test_nhanes_twoway_count_design_info():
     assert tbl2_nhanes.design_info["degrees_of_freedom"] == 16
 
 
-# Category '1__by__two' has zero count
-dummy = {
-    "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
-    "group": ["one", "one", "two", "one", "two", "one", "two", "one", "two"],
-    "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 0],
-    "respondent": [
-        "respondent",
-        "respondent",
-        "non-respondent",
-        "non-respondent",
-        "respondent",
-        "respondent",
-        "respondent",
-        "non-respondent",
-        "non-respondent",
-    ],
-}
-
-df_dummy = pd.DataFrame.from_dict(dummy)
-
-
-def test_empty_cells_1():
-    crosstab_temp = CrossTabulation("count")
-    crosstab_temp.tabulate(
-        vars=df_dummy[["q1", "group"]], samp_weight=1, remove_nan=True, single_psu="skip"
-    )
-    assert crosstab_temp.point_est["1"]["one"] == 4
-    assert crosstab_temp.point_est["1"]["two"] == 0
-    assert crosstab_temp.point_est["2"]["one"] == 1
-    assert crosstab_temp.point_est["2"]["two"] == 4
-
-
-df = pd.DataFrame(
-    data=[["Woman", "European"]] * 100
-    + [["Woman", "American"]] * 35
-    + [["Woman", "Other"]] * 93
-    + [["Man", "European"]] * 150
-    + [["Man", "American"]] * 77,
-    columns=["Gender", "Nationality"],
-)
-
-df["weights"] = [1, 0.3, 8, 3, 0.7] * 91
-
-
-def test_empty_cells_2():
-
-    crosstab_temp2 = CrossTabulation("count")
-    crosstab_temp2.tabulate(
-        vars=df[["Gender", "Nationality"]],
-        samp_weight=df["weights"],
-        remove_nan=True,
-    )
-    assert crosstab_temp2.point_est["Man"]["American"] == 198.7
-    assert crosstab_temp2.point_est["Man"]["European"] == 390
-    assert crosstab_temp2.point_est["Man"]["Other"] == 0
-    assert crosstab_temp2.point_est["Woman"]["American"] == 91
-    assert crosstab_temp2.point_est["Woman"]["European"] == 260
-    assert crosstab_temp2.point_est["Woman"]["Other"] == 243.3
-
-
-# Fix an error "LinAlgError: Singular matrix"
-dummy2 = {
-    "q1": [1, 2, 2, 1, 2, 1, 2, 1, 2],
-    "group": ["one", "one", "two", "one", "two", "one", "two", "one", "one"],
-    "nr_weight": [200, 123, 0, 0, 234, 123, 234, 0, 123],
-    "respondent": [
-        "respondent",
-        "respondent",
-        "non-respondent",
-        "non-respondent",
-        "respondent",
-        "respondent",
-        "respondent",
-        "non-respondent",
-        "respondent",
-    ],
-}
-
-df_dummy2 = pd.DataFrame.from_dict(dummy2)
-
-
-def test_singular_matrix_due_to_missing_category():
-    crosstab_temp = CrossTabulation("proportion")
-    crosstab_temp.tabulate(
-        vars=df_dummy2[["q1", "group"]],
-        samp_weight=df_dummy2["nr_weight"],
-        remove_nan=True,
-        single_psu="skip",
-    )
+#

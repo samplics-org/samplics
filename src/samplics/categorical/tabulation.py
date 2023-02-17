@@ -203,6 +203,14 @@ class Tabulation:
         _psu = numpy_array(psu)
         _ssu = numpy_array(ssu)
 
+        if _samp_weight.shape != ():
+            positive_weights = _samp_weight > 0
+            _samp_weight = _samp_weight[positive_weights]
+            vars_df = vars_df[positive_weights]
+            _stratum = _stratum[positive_weights] if _stratum.shape != () else _stratum
+            _psu = _psu[positive_weights] if _psu.shape != () else _psu
+            _ssu = _ssu[positive_weights] if _ssu.shape != () else _ssu
+
         if nb_vars == 1:
             tbl_est, var_levels, nb_obs = self._estimate(
                 var_of_ones=np.ones(vars_df.shape[0]),
@@ -438,8 +446,15 @@ class CrossTabulation:
         psu = numpy_array(psu)
         ssu = numpy_array(ssu)
 
+        if samp_weight.shape != ():
+            positive_weights = samp_weight > 0
+            samp_weight = samp_weight[positive_weights]
+            vars = vars[positive_weights]
+            stratum = stratum[positive_weights] if stratum.shape != () else stratum
+            psu = psu[positive_weights] if psu.shape != () else psu
+            ssu = ssu[positive_weights] if ssu.shape != () else ssu
+
         if remove_nan:
-            # breakpoint()
             # vars_nans = vars.isna()
             # excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
             to_keep = remove_nans(vars.shape[0], vars.iloc[:, 0].values, vars.iloc[:, 1].values)
@@ -508,6 +523,7 @@ class CrossTabulation:
         )
 
         tbl_est = tbl_est_prop
+
         # self._extract_estimates() also mutates tbl_est
         cell_est, cov_prop, missing_levels = self._extract_estimates(
             tbl_est=tbl_est_prop, vars_levels=vars_levels_concat
@@ -519,7 +535,6 @@ class CrossTabulation:
             # @ np.transpose(cell_est.reshape(vars_levels.shape[0], 1))
             # @ cell_est.reshape(1, cell_est.shape[0])
         ) / vars.shape[0]
-        # breakpoint()
 
         if self.param == "count":
             tbl_est_count = TaylorEstimator(param="total", alpha=self.alpha)
@@ -536,24 +551,24 @@ class CrossTabulation:
                 as_factor=True,
             )
             tbl_est = tbl_est_count
-        # breakpoint()
+
         nrows = row_levels.__len__()
         ncols = col_levels.__len__()
         x1 = vars_dummies[:, 0 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
         x1_t = np.transpose(x1)
-        # breakpoint()
+
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_prop_srs @ x1) @ (x1_t @ cov_prop_srs @ x2)
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_prop_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov_prop @ x2_tilde
         )
-        # breakpoint()
+
         tbl_keys = list(tbl_est.point_est.keys())
         cell_est = np.zeros(vars_levels.shape[0])
         cell_stderror = np.zeros(vars_levels.shape[0])
         cell_lower_ci = np.zeros(vars_levels.shape[0])
         cell_upper_ci = np.zeros(vars_levels.shape[0])
-        # breakpoint()
+
         for k in range(vars_levels.shape[0]):
             if vars_levels_concat[k] in tbl_keys:
                 cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
@@ -605,7 +620,6 @@ class CrossTabulation:
             vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null)
         )
         f_p = float(chisq_p / np.trace(delta_est))
-        # breakpoint()
 
         # valid indexes (i,j) correspond to n_ij > 0
         valid_indx = (point_est_df != 0) & (point_est_null != 0)
@@ -654,8 +668,6 @@ class CrossTabulation:
             "design_effect": 0,
             "degrees_of_freedom": tbl_est.nb_psus - tbl_est.nb_strata,
         }
-
-        # breakpoint()
 
     def to_dataframe(
         self,
