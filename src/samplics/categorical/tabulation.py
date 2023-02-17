@@ -559,7 +559,7 @@ class CrossTabulation:
         x1 = vars_dummies[:, 0 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
 
-        if np.prod(cell_est) == 0.0:  # np.linalg.det(cov_prop_srs) == 0:
+        if missing_levels.shape[0] > 0:  # np.linalg.det(cov_prop_srs) == 0:
             nonnull_rows = ~np.isin(vars_levels_concat, missing_levels)
             x1 = x1[nonnull_rows]
             x2 = x2[nonnull_rows]
@@ -568,7 +568,10 @@ class CrossTabulation:
             cov_prop_srs = cov_prop_srs[nonnull_rows][:, nonnull_rows]
             cov_prop = cov_prop[nonnull_rows][:, nonnull_rows]
 
-        # breakpoint()
+        # TODO:
+        # Replace the inversion of cov_prop and cov_prop_srs below by the a multiplication
+        # we have that inv(x' V x) = inv(x' L L' x) = z'z where z = inv(L) x
+        # L is the Cholesky factor i.e. L = np.linalg.cholesky(V)
         x1_t = np.transpose(x1)
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_prop_srs @ x1) @ (x1_t @ cov_prop_srs @ x2)
 
