@@ -6,6 +6,38 @@ import pandas as pd
 from samplics.categorical import CrossTabulation
 
 
+# dummy
+
+f2_0 = np.concatenate((np.repeat(1, 13), np.repeat(2, 7), np.repeat(3, 4)))
+f2_1 = np.concatenate((np.repeat(1, 51), np.repeat(2, 10), np.repeat(3, 8)))
+f2_2 = np.concatenate((np.repeat(1, 49), np.repeat(2, 15), np.repeat(3, 16)))
+f2_3 = np.concatenate((np.repeat(1, 121), np.repeat(2, 30), np.repeat(3, 29)))
+f2_4 = np.concatenate((np.repeat(1, 11), np.repeat(2, 6), np.repeat(3, 9)))
+f2_5 = np.concatenate((np.repeat(1, 46), np.repeat(2, 11), np.repeat(3, 21)))
+f2_6 = np.repeat(1, 3)
+
+f2 = np.concatenate((f2_0, f2_1, f2_2, f2_3, f2_4, f2_5, f2_6))
+
+educ = np.concatenate(
+    (
+        np.repeat(0, f2_0.shape[0]),
+        np.repeat(1, f2_1.shape[0]),
+        np.repeat(2, f2_2.shape[0]),
+        np.repeat(3, f2_3.shape[0]),
+        np.repeat(4, f2_4.shape[0]),
+        np.repeat(5, f2_5.shape[0]),
+        np.repeat(6, f2_6.shape[0]),
+    )
+)
+
+
+def test_unique_cell_0():
+    dummy0 = pd.DataFrame({"f2": f2, "educ": educ})
+    crosstab_temp = CrossTabulation("proportion")
+    crosstab_temp.tabulate(vars=dummy0[["f2", "educ"]])
+    # breakpoint()
+
+
 # Categories have zero counts
 
 dummy1 = {
@@ -26,14 +58,6 @@ dummy1 = {
 }
 
 df_dummy1 = pd.DataFrame.from_dict(dummy1)
-
-crosstab_temp1 = CrossTabulation("proportion")
-crosstab_temp1.tabulate(
-    vars=df_dummy1[["q1", "group"]],
-    samp_weight=df_dummy1["nr_weight"],
-    remove_nan=True,
-    single_psu="skip",
-)
 
 
 def test_unique_cell_1():

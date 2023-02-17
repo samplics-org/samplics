@@ -371,7 +371,9 @@ class CrossTabulation:
             return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n\n{pearson_test}\n\n {lr_test}\n"
 
     # also mutates tbl_est
-    def _extract_estimates(self, tbl_est, vars_levels) -> tuple[np.ndarray, np.ndarray]:
+    def _extract_estimates(
+        self, tbl_est, vars_levels
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
         levels = list(tbl_est.point_est.keys())
         missing_levels = vars_levels[~np.isin(vars_levels, levels)]
@@ -556,11 +558,22 @@ class CrossTabulation:
         ncols = col_levels.__len__()
         x1 = vars_dummies[:, 0 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
-        x1_t = np.transpose(x1)
 
+        if np.prod(cell_est) == 0.0:  # np.linalg.det(cov_prop_srs) == 0:
+            nonnull_rows = ~np.isin(vars_levels_concat, missing_levels)
+            x1 = x1[nonnull_rows]
+            x2 = x2[nonnull_rows]
+            zero_cols = np.sum(x2, axis=0).astype(bool)
+            x2 = x2[:, zero_cols]
+            cov_prop_srs = cov_prop_srs[nonnull_rows][:, nonnull_rows]
+            cov_prop = cov_prop[nonnull_rows][:, nonnull_rows]
+
+        # breakpoint()
+        x1_t = np.transpose(x1)
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_prop_srs @ x1) @ (x1_t @ cov_prop_srs @ x2)
+
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_prop_srs @ x2_tilde) @ (
-            np.transpose(x2_tilde) @ cov_prop @ x2_tilde
+            np.transpose(x2_tilde) @ cov_prop @ x2_tilde  # TODO: is it cov_prop_srs
         )
 
         tbl_keys = list(tbl_est.point_est.keys())
