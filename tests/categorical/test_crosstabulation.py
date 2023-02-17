@@ -27,6 +27,14 @@ dummy1 = {
 
 df_dummy1 = pd.DataFrame.from_dict(dummy1)
 
+crosstab_temp1 = CrossTabulation("proportion")
+crosstab_temp1.tabulate(
+    vars=df_dummy1[["q1", "group"]],
+    samp_weight=df_dummy1["nr_weight"],
+    remove_nan=True,
+    single_psu="skip",
+)
+
 
 def test_unique_cell_1():
     crosstab_temp1 = CrossTabulation("proportion")

@@ -619,7 +619,6 @@ class CrossTabulation:
         chisq_p = float(
             vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null)
         )
-        f_p = float(chisq_p / np.trace(delta_est))
 
         # valid indexes (i,j) correspond to n_ij > 0
         valid_indx = (point_est_df != 0) & (point_est_null != 0)
@@ -628,10 +627,19 @@ class CrossTabulation:
         log_mat[valid_indx] = np.log(point_est_df[valid_indx] / point_est_null[valid_indx])
 
         chisq_lr = float(2 * vars.shape[0] * np.sum(point_est_df * log_mat))
-        f_lr = float(chisq_lr / np.trace(delta_est))
 
-        df_num = float((np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est))
-        df_den = float((tbl_est.nb_psus - tbl_est.nb_strata) * df_num)
+        trace_delta = np.trace(delta_est)
+
+        if trace_delta != 0:
+            f_p = float(chisq_p / trace_delta)
+            f_lr = float(chisq_lr / trace_delta)
+            df_num = float((np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est))
+            df_den = float((tbl_est.nb_psus - tbl_est.nb_strata) * df_num)
+        else:
+            f_p = 0  # np.nan
+            f_lr = 0  # np.nan
+            df_num = 0  # np.nan
+            df_den = 0  # np.nan
 
         self.stats = {
             "Pearson-Unadj": {
