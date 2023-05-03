@@ -75,7 +75,6 @@ class EblupAreaModel:
     """
 
     def __init__(self, method: str = "REML") -> None:
-
         if method.upper() not in ("FH", "ML", "REML"):
             raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'.")
         else:
@@ -103,7 +102,6 @@ class EblupAreaModel:
         self.area_mse_terms: dict[str, DictStrNum]
 
     def __str__(self) -> str:
-
         estimation = pd.DataFrame()
         estimation["area"] = self.area
         estimation["estimate"] = self.area_est
@@ -127,10 +125,9 @@ class EblupAreaModel:
         sigma2_v: float,
         b_const: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
-
         # V = np.diag(sigma2_v * (b_const**2) + sigma2_e)
         # V_inv = np.linalg.inv(V)
-        V_inv = np.diag(1 / (sigma2_v * (b_const**2) + sigma2_e))  
+        V_inv = np.diag(1 / (sigma2_v * (b_const**2) + sigma2_e))
         x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(np.transpose(X), V_inv), X))
         x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, np.transpose(X)), V_inv)
         beta_hat = np.matmul(x_v_x_inv_x, yhat)
@@ -141,7 +138,6 @@ class EblupAreaModel:
     def _log_likelihood(
         self, y: np.ndarray, X: np.ndarray, beta: np.ndarray, V: np.ndarray
     ) -> Number:
-
         m = y.size
         const = m * np.log(2 * np.pi)
         ll_term1 = np.log(np.linalg.det(V))
@@ -170,7 +166,6 @@ class EblupAreaModel:
         sigma2_v: Number,
         b_const: np.ndarray,
     ) -> tuple[Number, Number]:
-
         deriv_sigma = 0.0
         info_sigma = 0.0
         if self.method == "ML":
@@ -286,7 +281,6 @@ class EblupAreaModel:
         np.ndarray,
         np.ndarray,
     ]:
-
         m = self.yhat.size
         v_i = sigma2_e + sigma2_v * (b_const**2)
         V_inv = np.diag(1 / v_i)
@@ -401,7 +395,12 @@ class EblupAreaModel:
         X = numpy_array(X)
 
         error_std = numpy_array(error_std)
-        error_std = numpy_array(error_std)
+
+        if (error_std <= 0).any():
+            raise ValueError(
+                "Some of the standard errors are not strictly positive. All standard errors must be greater than 0."
+            )
+
         if isinstance(b_const, (int, float)):
             b_const = np.asarray(np.ones(area.size) * b_const)
         else:

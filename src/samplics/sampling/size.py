@@ -1,4 +1,4 @@
-"""Sample size calculation module 
+"""Sample size calculation module
 
 """
 
