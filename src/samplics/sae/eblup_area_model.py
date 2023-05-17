@@ -257,7 +257,7 @@ class EblupAreaModel:
                 b_const=b_const,
             )
             sigma2_v += deriv_sigma / info_sigma
-            tolerance = abs(sigma2_v - sigma2_v_previous)
+            tolerance = abs((sigma2_v - sigma2_v_previous)/sigma2_v_previous)
             iterations += 1
 
         return float(max(sigma2_v, 0)), 1 / info_sigma, iterations, tolerance, tolerance <= tol
@@ -369,7 +369,7 @@ class EblupAreaModel:
         re_std_start: float = 0.001,
         b_const: Union[np.ndarray, Number] = 1.0,
         intercept: bool = True,
-        tol: float = 1e-8,
+        tol: float = 1e-4,
         maxiter: int = 100,
     ) -> None:
         """Fits the linear mixed models to estimate the fixed effects and the standard error of
