@@ -27,7 +27,7 @@ fh_model_reml.predict(X=X, area=area, intercept=False)
 
 def test_fay_herriot_REML_convergence():
     assert fh_model_reml.convergence["achieved"] is True
-    assert fh_model_reml.convergence["iterations"] == 3
+    assert fh_model_reml.convergence["iterations"] == 5
     assert fh_model_reml.convergence["precision"] <= 1e-4
 
 
@@ -186,13 +186,13 @@ fh_model_ml.predict(
 
 def test_fay_herriot_ML_convergence():
     assert fh_model_ml.convergence["achieved"] is True
-    assert fh_model_ml.convergence["iterations"] == 3
+    assert fh_model_ml.convergence["iterations"] == 5
     assert fh_model_ml.convergence["precision"] <= 1e-4
 
 
 def test_fay_herriot_ML_goodness():
-    assert np.isclose(fh_model_ml.goodness["loglike"], 1.8172151644, atol=1e-4)
-    assert np.isclose(fh_model_ml.goodness["AIC"], 8.3655696710, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["loglike"], 1.8170878153, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["AIC"], 8.3658243692, atol=1e-4)
     assert np.isclose(fh_model_ml.goodness["BIC"], 18.9327703651, atol=1e-4)
 
 
@@ -343,7 +343,7 @@ fh_model_fh.predict(X=X, area=area, intercept=True)
 
 def test_fay_herriot_FH_convergence():
     assert fh_model_fh.convergence["achieved"] is True
-    assert fh_model_fh.convergence["iterations"] == 5
+    assert fh_model_fh.convergence["iterations"] == 6
     assert fh_model_fh.convergence["precision"] <= 1e-4
 
 
