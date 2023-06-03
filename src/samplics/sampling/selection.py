@@ -650,13 +650,13 @@ class SampleSelection:
 
         return sample, hits
 
-    def _inclusion_probs(
+    def inclusion_probs(
         self,
         samp_unit: np.ndarray,
-        samp_size: Union[DictStrInt, int],
-        stratum: np.ndarray,
-        mos: np.ndarray,
-        samp_rate: Union[DictStrFloat, float],
+        samp_size: Optional[Union[DictStrInt, int]] = None,
+        stratum: Optional[np.ndarray] = None,
+        mos: Optional[np.ndarray] = None,
+        samp_rate: Optional[Union[DictStrFloat, float]] = None,
     ) -> np.ndarray:
 
         samp_unit = sample_units(samp_unit, unique=True)
@@ -831,7 +831,7 @@ class SampleSelection:
                 wr=self.wr,
             )
         elif self.method == SelectMethod.pps_sys:
-            _probs = self._inclusion_probs(
+            _probs = self.inclusion_probs(
                 samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 samp_rate=self.samp_rate,
@@ -842,7 +842,7 @@ class SampleSelection:
                 samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_brewer:
-            _probs = self._inclusion_probs(
+            _probs = self.inclusion_probs(
                 samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 samp_rate=self.samp_rate,
@@ -853,7 +853,7 @@ class SampleSelection:
                 samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_hv:
-            _probs = self._inclusion_probs(
+            _probs = self.inclusion_probs(
                 samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 samp_rate=self.samp_rate,
@@ -864,7 +864,7 @@ class SampleSelection:
                 samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_murphy:
-            _probs = self._inclusion_probs(
+            _probs = self.inclusion_probs(
                 samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 samp_rate=self.samp_rate,
@@ -875,7 +875,7 @@ class SampleSelection:
                 samp_unit=_samp_ids, samp_size=self.samp_size, stratum=_stratum, mos=_mos
             )
         elif self.method == SelectMethod.pps_rs:
-            _probs = self._inclusion_probs(
+            _probs = self.inclusion_probs(
                 samp_unit=_samp_ids,
                 samp_size=self.samp_size,
                 samp_rate=self.samp_rate,

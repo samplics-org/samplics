@@ -33,7 +33,7 @@ def docs(session):
         session.run("sphinx-autobuild", *sphinx_args)
     else:
         session.run("sphinx-build", *sphinx_args)
-
+~~
 
 @nox.session
 def lint(session):
