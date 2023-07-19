@@ -51,13 +51,13 @@ Furthermore, the population is located in four natural regions i.e. North, South
 > ```python
 > from samplics.sampling import SampleSize
 >
-> sample_size = SampleSize(parameter="proportion", method="wald", stratification=True)
+> sample_size = SampleSize(parameter="proportion", method="wald", strat=True)
 >
 > expected_proportions = {"North": 0.95, "South": 0.70, "East": 0.30, "West": 0.50}
 > half_ci = {"North": 0.30, "South": 0.10, "East": 0.15, "West": 0.10}
 > deff = {"North": 1, "South": 1.5, "East": 2.5, "West": 2.0}
 >
-> sample_size = SampleSize(parameter = "proportion", method="Fleiss", stratification=True)
+> sample_size = SampleSize(parameter = "proportion", method="Fleiss", strat=True)
 > sample_size.calculate(target=expected_proportions, half_ci=half_ci, deff=deff)
 > ```
 
@@ -76,7 +76,7 @@ we can use code similar to the snippets below. Note that we first use the `datas
 > psu_sample_size = {"East":3, "West": 2, "North": 2, "South": 3}
 > pps_design = SampleSelection(
 >    method="pps-sys",
->    stratification=True,
+>    strat=True,
 >    with_replacement=False
 >    )
 >
