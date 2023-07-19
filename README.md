@@ -77,7 +77,7 @@ we can use code similar to the snippets below. Note that we first use the `datas
 > pps_design = SampleSelection(
 >    method="pps-sys",
 >    strat=True,
->    with_replacement=False
+>    wr=False
 >    )
 >
 > psu_frame["psu_prob"] = pps_design.inclusion_probs(
