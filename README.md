@@ -72,10 +72,11 @@ we can use code similar to the snippets below. Note that we first use the `datas
 >
 > # Code for the sample selection
 > from samplics.sampling import SampleSelection
+> from samplics.utils import SelectMethod
 >
 > psu_sample_size = {"East":3, "West": 2, "North": 2, "South": 3}
 > pps_design = SampleSelection(
->    method="pps-sys",
+>    method=SelectMethod.pps_sys,
 >    strat=True,
 >    wr=False
 >    )
