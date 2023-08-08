@@ -8,9 +8,10 @@ milk = pd.read_csv("./tests/sae/milk.csv")
 
 area = milk["SmallArea"]
 yhat = milk["yi"]
-X = pd.get_dummies(milk["MajorArea"])
+X = pd.get_dummies(milk["MajorArea"], dtype=float)
 X.loc[:, 1] = 1
 sigma_e = milk["SD"]
+
 
 # REML method
 fh_model_reml = EblupAreaModel(method="REML")
@@ -23,7 +24,6 @@ fh_model_reml.fit(
     tol=1e-4,
 )
 fh_model_reml.predict(X=X, area=area, intercept=False)
-
 
 def test_fay_herriot_REML_convergence():
     assert fh_model_reml.convergence["achieved"] is True

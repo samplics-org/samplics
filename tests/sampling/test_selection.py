@@ -52,7 +52,6 @@ def test_srswor_select():
 
 
 def test_srswor_select_to_dataframet():
-
     sample_df = srs_design_wor.select(
         samp_unit=countries, samp_size=sample_size, to_dataframe=True
     )
@@ -146,6 +145,12 @@ str_syswor_design = SampleSelection(method=SelectMethod.sys, strat=True, wr=Fals
 def test_stratified_syswor_select():
     str_srswor_sample, str_srswor_number_hits, _ = str_syswor_design.select(
         countries, stratum=continent, samp_rate=0.3
+    )
+
+
+def test_stratified_syswor_select2():
+    str_srswor_sample, str_srswor_number_hits, _ = str_syswor_design.select(
+        countries, stratum=continent, samp_size=sample_sizes
     )
 
 
@@ -338,7 +343,6 @@ def test_stratified_ppswr_murphy_select():
 
 
 def test_stratified_ppswr_to_dataframet():
-
     sample_df = str_ppswr_murphy_design.select(
         samp_unit=countries_murphy,
         samp_size=sample_sizes_murphy,
