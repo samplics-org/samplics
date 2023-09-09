@@ -5,7 +5,7 @@ import numpy as np
 # FitMethod
 
 
-class Test_FitMethod:
+class TestFitMethod1:
     def test_fh_enum(self):
         fh_method = FitMethod.fh
         assert fh_method.name == "fh"
@@ -25,7 +25,7 @@ class Test_FitMethod:
 # Direct Estimator
 
 
-class Test_DirectEst:
+class TestDirectEst1:
     def test_direct_est0(self):
         est = DirectEst(
             area=["one", "two", "three", "four", "five"],
@@ -130,6 +130,96 @@ class Test_DirectEst:
         assert est.est == dict(zip(est.area, est_pd["est"].values))
         assert est.stderr == dict(zip(est.area, est_pd["stderr"].values))
         assert est.ssize == dict(zip(est.area, est_pd["ssize"].values))
+
+
+class TestDirectEst2:
+    # Tests that an instance of DirectEst can be created with valid inputs.
+    def test_create_instance_with_valid_inputs(self):
+        area = [1, 2, 3]
+        est = {1: 10, 2: 20, 3: 30}
+        stderr = {1: 1, 2: 2, 3: 3}
+        ssize = {1: 100, 2: 200, 3: 300}
+        psize = {1: 1000, 2: 2000, 3: 3000}
+
+        direct_est = DirectEst(area, est, stderr, ssize, psize)
+
+        assert direct_est.area == (1, 2, 3)
+        assert direct_est.est == {1: 10, 2: 20, 3: 30}
+        assert direct_est.stderr == {1: 1, 2: 2, 3: 3}
+        assert direct_est.ssize == {1: 100, 2: 200, 3: 300}
+        assert direct_est.psize == {1: 1000, 2: 2000, 3: 3000}
+
+    # Tests that the cv property of an instance of DirectEst can be accessed.
+    def test_access_cv_property(self):
+        area = [1, 2, 3]
+        est = {1: 10, 2: 20, 3: 30}
+        stderr = {1: 1, 2: 2, 3: 3}
+        ssize = {1: 100, 2: 200, 3: 300}
+        psize = {1: 1000, 2: 2000, 3: 3000}
+
+        direct_est = DirectEst(area, est, stderr, ssize, psize)
+
+        cv = direct_est.cv
+
+        assert cv == {1: 0.1, 2: 0.1, 3: 0.1}
+
+    # Tests that an instance of DirectEst can be converted to a numpy array.
+    def test_convert_to_numpy_array(self):
+        area = [1, 2, 3]
+        est = {1: 10, 2: 20, 3: 30}
+        stderr = {1: 1, 2: 2, 3: 3}
+        ssize = {1: 100, 2: 200, 3: 300}
+        psize = {1: 1000, 2: 2000, 3: 3000}
+
+        direct_est = DirectEst(area, est, stderr, ssize, psize)
+
+        numpy_array = direct_est.to_numpy()
+
+        assert numpy_array.shape == (3, 4)
+
+    # Tests that an instance of DirectEst can be converted to a polars dataframe.
+    def test_convert_to_polars_dataframe(self):
+        area = [1, 2, 3]
+        est = {1: 10, 2: 20, 3: 30}
+        stderr = {1: 1, 2: 2, 3: 3}
+        ssize = {1: 100, 2: 200, 3: 300}
+        psize = {1: 1000, 2: 2000, 3: 3000}
+
+        direct_est = DirectEst(area, est, stderr, ssize, psize)
+
+        polars_df = direct_est.to_polars()
+
+        assert polars_df.shape == (3, 4)
+
+    # Tests that an instance of DirectEst can be converted to a pandas dataframe.
+    def test_convert_to_pandas_dataframe(self):
+        area = [1, 2, 3]
+        est = {1: 10, 2: 20, 3: 30}
+        stderr = {1: 1, 2: 2, 3: 3}
+        ssize = {1: 100, 2: 200, 3: 300}
+        psize = {1: 1000, 2: 2000, 3: 3000}
+
+        direct_est = DirectEst(area, est, stderr, ssize, psize)
+
+        pandas_df = direct_est.to_pandas()
+
+        assert pandas_df.shape == (3, 4)
+
+    # Tests that an instance of DirectEst can be created with a single area and a None value as the psize parameter.
+    def test_create_instance_with_single_area_and_none_psize(self):
+        area = [1]
+        est = {1: 10}
+        stderr = {1: 1}
+        ssize = {1: 100}
+        psize = None
+
+        direct_est = DirectEst(area, est, stderr, ssize, psize)
+
+        assert direct_est.area == (1,)
+        assert direct_est.est == {1: 10}
+        assert direct_est.stderr == {1: 1}
+        assert direct_est.ssize == {1: 100}
+        assert direct_est.psize is None
 
 
 # Auxiliary variables

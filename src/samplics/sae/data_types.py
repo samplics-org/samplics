@@ -95,14 +95,13 @@ class DirectEst:
 
     @property
     def cv(self):
-        coef_var = {}
-        for key in self.stderr:
-            coef_var[key] = (
-                self.stderr[key] / self.est[key]
-                if self.est[key] != 0
-                else float("inf") * self.stderr[key]
-            )
-        return coef_var
+
+        return {
+            key: self.stderr[key] / self.est[key]
+            if self.est[key] != 0
+            else float("inf") * self.stderr[key]
+            for key in self.stderr
+        }
 
     def to_numpy(self, varlist: str | list[str] | None = None):
         return self.to_polars(varlist).to_numpy()
