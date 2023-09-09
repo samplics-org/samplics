@@ -95,7 +95,6 @@ class DirectEst:
 
     @property
     def cv(self):
-
         return {
             key: self.stderr[key] / self.est[key]
             if self.est[key] != 0
@@ -159,27 +158,25 @@ class AuxVars:
         self.__attrs_init__(areas_unique, auxdata, record_id)
 
     def to_numpy(self, varlist: str | list[str] | None = None):
-        pass
-        # breakpoint()
-        # aux_vars = dict()
-        # for key, value in self:
-        #     if key in self.varnames:
-        #         aux_vars[key] = value
+        return self.to_polars(varlist).to_numpy()
 
-        # aux_df = pl.from_dict(aux_vars)
+    def to_polars(self, varlist: str | list[str] | None = None):
+        for i, d in enumerate(self.area):
+            if i == 0:
+                df = pl.from_dict(self.auxdata[d])
+                df = df.insert_at_idx(1, pl.repeat(d, n=df.shape[0], eager=True).alias("area"))
+            else:
+                dfi = pl.from_dict(self.auxdata[d])
+                df = pl.concat(
+                    [
+                        df,
+                        dfi.insert_at_idx(
+                            1, pl.repeat(d, n=dfi.shape[0], eager=True).alias("area")
+                        ),
+                    ]
+                )
 
-        # if varlist is None:
-        #     return aux_df.to_numpy()
-        #     # return aux_df.select(["est", "stderr", "ssize"]).to_numpy()
-        # elif isinstance(varlist, (str, list)):
-        #     return aux_df.select(varlist).to_numpy()
-        # else:
-        #     raise TypeError("varlist must be None or str or list[str]")
+        return df if varlist is None else df.select(varlist)
 
-    def to_polars(self):
-        pass
-
-        # if self.auxdata[]
-
-    def to_pandas():
-        pass
+    def to_pandas(self, varlist: str | list[str] | None = None):
+        return self.to_polars(varlist).to_pandas()
