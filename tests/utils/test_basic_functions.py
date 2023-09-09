@@ -144,7 +144,9 @@ def test_transform_exp_inverse(y):
     constant = -min(y) + 10
     llambda = 2
     y_transformed = transform(y + constant, llambda, constant, inverse=True)
-    assert np.isclose(y_transformed, np.exp(np.log(1 + (y + constant) * llambda) / llambda)).all()
+    assert np.isclose(
+        y_transformed, np.exp(np.log(1 + (y + constant) * llambda) / llambda)
+    ).all()
 
 
 @pytest.mark.xfail(strict=True)

@@ -93,7 +93,10 @@ df_dummy2 = pd.DataFrame.from_dict(dummy2)
 def test_empty_cells_2():
     crosstab_temp2 = CrossTabulation("count")
     crosstab_temp2.tabulate(
-        vars=df_dummy2[["q1", "group"]], samp_weight=1, remove_nan=True, single_psu="skip"
+        vars=df_dummy2[["q1", "group"]],
+        samp_weight=1,
+        remove_nan=True,
+        single_psu="skip",
     )
     assert crosstab_temp2.point_est["1"]["one"] == 4
     assert crosstab_temp2.point_est["1"]["two"] == 0
@@ -186,14 +189,20 @@ def test_twoway_count_one_var_count():
     tbl.tabulate(region, remove_nan=True)
 
 
-@pytest.mark.xfail(strict=True, reason="For now, the method will fail if there are missing values")
+@pytest.mark.xfail(
+    strict=True, reason="For now, the method will fail if there are missing values"
+)
 def test_for_missing_values_in_the_design_matrix():
     tbl_prop = CrossTabulation("proportion")
-    tbl_prop.tabulate([region, birth_cat], varnames=["region", "birth_cat"], remove_nan=False)
+    tbl_prop.tabulate(
+        [region, birth_cat], varnames=["region", "birth_cat"], remove_nan=False
+    )
 
 
 tbl_count = CrossTabulation("count")
-tbl_count.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
+tbl_count.tabulate(
+    [age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True
+)
 
 
 def test_twoway_count_to_dataframe():
@@ -250,7 +259,9 @@ def test_twoway_count_upper_ci():
 
 def test_twoway_count_stats_pearson():
     assert np.isclose(tbl_count.stats["Pearson-Unadj"]["df"], 4, atol=1e-2)
-    assert np.isclose(tbl_count.stats["Pearson-Unadj"]["chisq_value"], 324.2777, atol=1e-4)
+    assert np.isclose(
+        tbl_count.stats["Pearson-Unadj"]["chisq_value"], 324.2777, atol=1e-4
+    )
     assert np.isclose(tbl_count.stats["Pearson-Unadj"]["p_value"], 0.0000, atol=1e-4)
 
     assert np.isclose(tbl_count.stats["Pearson-Adj"]["df_num"], 4, atol=1e-2)
@@ -278,7 +289,9 @@ def test_twoway_count_design_info():
 
 
 tbl_prop = CrossTabulation("proportion")
-tbl_prop.tabulate([age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True)
+tbl_prop.tabulate(
+    [age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True
+)
 
 
 def test_twoway_prop_to_dataframe():
@@ -335,7 +348,9 @@ def test_twoway_prop_upper_ci():
 
 def test_twoway_prop_stats_pearson():
     assert np.isclose(tbl_prop.stats["Pearson-Unadj"]["df"], 4, atol=1e-2)
-    assert np.isclose(tbl_prop.stats["Pearson-Unadj"]["chisq_value"], 324.2777, atol=1e-4)
+    assert np.isclose(
+        tbl_prop.stats["Pearson-Unadj"]["chisq_value"], 324.2777, atol=1e-4
+    )
     assert np.isclose(tbl_prop.stats["Pearson-Unadj"]["p_value"], 0.0000, atol=1e-4)
 
     assert np.isclose(tbl_prop.stats["Pearson-Adj"]["df_num"], 4, atol=1e-2)
@@ -372,7 +387,11 @@ weight = nhanes["WTMEC2YR"]
 
 tbl1_nhanes = CrossTabulation("proportion")
 tbl1_nhanes.tabulate(
-    vars=nhanes[["race", "HI_CHOL"]], samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
+    vars=nhanes[["race", "HI_CHOL"]],
+    samp_weight=weight,
+    stratum=stratum,
+    psu=psu,
+    remove_nan=True,
 )
 
 
@@ -423,7 +442,9 @@ def test_nhanes_twoway_prop_upper_ci():
 
 def test_nhanes_twoway_prop_stats_pearson():
     assert np.isclose(tbl1_nhanes.stats["Pearson-Unadj"]["df"], 3, atol=1e-4)
-    assert np.isclose(tbl1_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4)
+    assert np.isclose(
+        tbl1_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4
+    )
     assert np.isclose(tbl1_nhanes.stats["Pearson-Unadj"]["p_value"], 0.0007, atol=1e-4)
 
     assert np.isclose(tbl1_nhanes.stats["Pearson-Adj"]["df_num"], 1.9230, atol=1e-4)
@@ -452,7 +473,11 @@ def test_nhanes_twoway_prop_design_info():
 
 tbl2_nhanes = CrossTabulation("count")
 tbl2_nhanes.tabulate(
-    vars=nhanes[["race", "HI_CHOL"]], samp_weight=weight, stratum=stratum, psu=psu, remove_nan=True
+    vars=nhanes[["race", "HI_CHOL"]],
+    samp_weight=weight,
+    stratum=stratum,
+    psu=psu,
+    remove_nan=True,
 )
 
 
@@ -502,7 +527,9 @@ def test_nhanes_twoway_count_upper_ci():
 
 def test_nhanes_twoway_count_stats_pearson():
     assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["df"], 3, atol=1e-4)
-    assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4)
+    assert np.isclose(
+        tbl2_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4
+    )
     assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["p_value"], 0.0007, atol=1e-4)
 
     assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["df_num"], 1.9230, atol=1e-4)

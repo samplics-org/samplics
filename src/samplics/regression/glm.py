@@ -8,7 +8,12 @@ import numpy as np
 import statsmodels.api as sm
 
 from samplics.estimation.expansion import TaylorEstimator
-from samplics.utils.formats import dict_to_dataframe, fpc_as_dict, numpy_array, remove_nans
+from samplics.utils.formats import (
+    dict_to_dataframe,
+    fpc_as_dict,
+    numpy_array,
+    remove_nans,
+)
 from samplics.utils.types import Array, Number, Series, StringNumber
 
 
@@ -19,7 +24,9 @@ class SurveyGLM:
         self.beta: np.ndarray
 
     @staticmethod
-    def _residuals(e: np.ndarray, psu: np.ndarray, nb_vars: Number) -> tuple(np.ndarray, Number):
+    def _residuals(
+        e: np.ndarray, psu: np.ndarray, nb_vars: Number
+    ) -> tuple(np.ndarray, Number):
 
         psus = np.unique(psu)
         if psus.shape[0] == 1 and e.shape[0] == 1:
@@ -87,7 +94,9 @@ class SurveyGLM:
             self.fpc = fpc_as_dict(_stratum, fpc)
         else:
             if np.unique(_stratum).tolist() != list(fpc.keys()):
-                raise AssertionError("fpc dictionary keys must be the same as the strata!")
+                raise AssertionError(
+                    "fpc dictionary keys must be the same as the strata!"
+                )
             else:
                 self.fpc = fpc
 

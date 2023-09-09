@@ -38,7 +38,9 @@ def set_variables_names(
                 if len(vars.shape) == 2:
                     return [prefix + "_" + str(k) for k in range(1, vars.shape[1] + 1)]
                 else:
-                    return [prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)]
+                    return [
+                        prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)
+                    ]
             elif isinstance(vars, (tuple, list)):
                 return [prefix + "_" + str(k) for k in range(1, len(vars) + 1)]
             else:
@@ -286,7 +288,10 @@ def get_single_psu_strata(stratum: Array, psu: Array) -> Optional(np.ndarray):
     stratum = numpy_array(stratum)
     psu = numpy_array(psu)
 
-    if psu.shape in ((), (0,)):  # psu is None will not work because psu is an np.ndarray
+    if psu.shape in (
+        (),
+        (0,),
+    ):  # psu is None will not work because psu is an np.ndarray
         strata_ids, psu_counts = np.unique(stratum, return_counts=True)
     else:
         strata_ids, psu_counts = np.unique(

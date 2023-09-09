@@ -61,7 +61,9 @@ class Tabulation:
             tbl_subhead1 = f" Number of strata: {self.design_info['nb_strata']}"
             tbl_subhead2 = f" Number of PSUs: {self.design_info['nb_psus']}"
             tbl_subhead3 = f" Number of observations: {self.design_info['nb_obs']}"
-            tbl_subhead4 = f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
+            tbl_subhead4 = (
+                f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
+            )
 
             return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n"
 
@@ -76,7 +78,9 @@ class Tabulation:
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_var: bool = False,
-        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        single_psu: Union[
+            SinglePSUEst, dict[StringNumber, SinglePSUEst]
+        ] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> tuple[TaylorEstimator, list, int]:
@@ -91,7 +95,9 @@ class Tabulation:
                 ssu,
             )
             if var.ndim == 1:  # Series
-                to_keep = to_keep & remove_nans(var.values.ravel().shape[0], var.values.ravel())
+                to_keep = to_keep & remove_nans(
+                    var.values.ravel().shape[0], var.values.ravel()
+                )
             elif var.ndim == 2:  # DataFrame
                 for col in var.columns:
                     to_keep = to_keep & remove_nans(
@@ -159,7 +165,9 @@ class Tabulation:
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_var: bool = False,
-        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        single_psu: Union[
+            SinglePSUEst, dict[StringNumber, SinglePSUEst]
+        ] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> None:
@@ -192,7 +200,9 @@ class Tabulation:
         _samp_weight = numpy_array(samp_weight)
 
         _samp_weight = (
-            np.ones(vars_df.shape[0]) if _samp_weight.shape in ((), (0,)) else _samp_weight
+            np.ones(vars_df.shape[0])
+            if _samp_weight.shape in ((), (0,))
+            else _samp_weight
         )
         _samp_weight = (
             np.repeat(_samp_weight, vars_df.shape[0])
@@ -287,7 +297,9 @@ class Tabulation:
         oneway_df = pd.DataFrame([])
 
         for var in self.vars_names:
-            var_df = pd.DataFrame(np.repeat(var, len(self.vars_levels[var])), columns=["variable"])
+            var_df = pd.DataFrame(
+                np.repeat(var, len(self.vars_levels[var])), columns=["variable"]
+            )
             var_df["category"] = self.vars_levels[var]
             var_df[self.param] = list(self.point_est[var].values())
             var_df["stderror"] = list(self.stderror[var].values())
@@ -349,20 +361,22 @@ class CrossTabulation:
         if self.vars_names == []:
             return "No categorical variables to tabulate"
         else:
-            tbl_head = f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
+            tbl_head = (
+                f"Cross-tabulation of {self.vars_names[0]} and {self.vars_names[1]}"
+            )
             tbl_subhead1 = f" Number of strata: {self.design_info['nb_strata']}"
             tbl_subhead2 = f" Number of PSUs: {self.design_info['nb_psus']}"
             tbl_subhead3 = f" Number of observations: {self.design_info['nb_obs']}"
-            tbl_subhead4 = f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
+            tbl_subhead4 = (
+                f" Degrees of freedom: {self.design_info['degrees_of_freedom']:.2f}"
+            )
 
             chisq_dist = f"chi2({self.stats['Pearson-Unadj']['df']})"
             f_dist = f"F({self.stats['Pearson-Adj']['df_num']:.2f}, {self.stats['Pearson-Adj']['df_den']:.2f}"
 
             pearson_unadj = f"Unadjusted - {chisq_dist}: {self.stats['Pearson-Unadj']['chisq_value']:.4f} with p-value of {self.stats['Pearson-Unadj']['p_value']:.4f}"
             pearson_adj = f"Adjusted - {f_dist}): {self.stats['Pearson-Adj']['f_value']:.4f}  with p-value of {self.stats['Pearson-Adj']['p_value']:.4f}"
-            pearson_test = (
-                f"Pearson (with Rao-Scott adjustment):\n\t{pearson_unadj}\n\t{pearson_adj}"
-            )
+            pearson_test = f"Pearson (with Rao-Scott adjustment):\n\t{pearson_unadj}\n\t{pearson_adj}"
 
             lr_unadj = f" Unadjusted - {chisq_dist}: {self.stats['LR-Unadj']['chisq_value']:.4f} with p-value of {self.stats['LR-Unadj']['p_value']:.4f}"
             lr_adj = f" Adjusted - {f_dist}): {self.stats['LR-Adj']['f_value']:.4f}  with p-value of {self.stats['LR-Adj']['p_value']:.4f}"
@@ -390,7 +404,9 @@ class CrossTabulation:
                 else:
                     for ll in missing_levels:
                         tbl_est.covariance[level][ll] = 0.0
-                    tbl_est.covariance[level] = dict(sorted(tbl_est.covariance[level].items()))
+                    tbl_est.covariance[level] = dict(
+                        sorted(tbl_est.covariance[level].items())
+                    )
 
         _tbl_est_point_est = dict(sorted(tbl_est.point_est.items()))
         _tbl_est_covariance = dict(sorted(tbl_est.covariance.items()))
@@ -412,7 +428,9 @@ class CrossTabulation:
         fpc: Union[dict, float] = 1,
         deff: bool = False,
         coef_var: bool = False,
-        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        single_psu: Union[
+            SinglePSUEst, dict[StringNumber, SinglePSUEst]
+        ] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> None:
@@ -459,9 +477,13 @@ class CrossTabulation:
         if remove_nan:
             # vars_nans = vars.isna()
             # excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
-            to_keep = remove_nans(vars.shape[0], vars.iloc[:, 0].values, vars.iloc[:, 1].values)
+            to_keep = remove_nans(
+                vars.shape[0], vars.iloc[:, 0].values, vars.iloc[:, 1].values
+            )
             samp_weight = (
-                samp_weight[to_keep] if samp_weight.shape not in ((), (0,)) else samp_weight
+                samp_weight[to_keep]
+                if samp_weight.shape not in ((), (0,))
+                else samp_weight
             )
             stratum = stratum[to_keep] if stratum.shape not in ((), (0,)) else stratum
             psu = psu[to_keep] if psu.shape not in ((), (0,)) else psu
@@ -494,7 +516,9 @@ class CrossTabulation:
         vars_levels = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
         vars_levels.columns = vars_names_str
 
-        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels, NA_action="raise"))
+        vars_dummies = np.asarray(
+            dmatrix(two_way_full_model, vars_levels, NA_action="raise")
+        )
 
         # vars_dummies = np.delete(vars_dummies, obj=1, axis=0)
         # vars_dummies = np.delete(vars_dummies, obj=2, axis=1)
@@ -573,7 +597,9 @@ class CrossTabulation:
         # we have that inv(x' V x) = inv(x' L L' x) = z'z where z = inv(L) x
         # L is the Cholesky factor i.e. L = np.linalg.cholesky(V)
         x1_t = np.transpose(x1)
-        x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_prop_srs @ x1) @ (x1_t @ cov_prop_srs @ x2)
+        x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_prop_srs @ x1) @ (
+            x1_t @ cov_prop_srs @ x2
+        )
 
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_prop_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov_prop @ x2_tilde  # TODO: is it cov_prop_srs
@@ -605,17 +631,23 @@ class CrossTabulation:
                 )
                 stderror.update(
                     {
-                        vars_levels.iloc[r * ncols + c, 1]: cell_stderror[r * ncols + c],
+                        vars_levels.iloc[r * ncols + c, 1]: cell_stderror[
+                            r * ncols + c
+                        ],
                     }
                 )
                 lower_ci.update(
                     {
-                        vars_levels.iloc[r * ncols + c, 1]: cell_lower_ci[r * ncols + c],
+                        vars_levels.iloc[r * ncols + c, 1]: cell_lower_ci[
+                            r * ncols + c
+                        ],
                     }
                 )
                 upper_ci.update(
                     {
-                        vars_levels.iloc[r * ncols + c, 1]: cell_upper_ci[r * ncols + c],
+                        vars_levels.iloc[r * ncols + c, 1]: cell_upper_ci[
+                            r * ncols + c
+                        ],
                     }
                 )
             self.point_est.update({vars_levels.iloc[r * ncols, 0]: point_est})
@@ -633,14 +665,17 @@ class CrossTabulation:
         ).reshape(1, ncols)
 
         chisq_p = float(
-            vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null)
+            vars.shape[0]
+            * np.sum((point_est_df - point_est_null) ** 2 / point_est_null)
         )
 
         # valid indexes (i,j) correspond to n_ij > 0
         valid_indx = (point_est_df != 0) & (point_est_null != 0)
 
         log_mat = np.zeros(point_est_null.shape)
-        log_mat[valid_indx] = np.log(point_est_df[valid_indx] / point_est_null[valid_indx])
+        log_mat[valid_indx] = np.log(
+            point_est_df[valid_indx] / point_est_null[valid_indx]
+        )
 
         chisq_lr = float(2 * vars.shape[0] * np.sum(point_est_df * log_mat))
 
@@ -704,16 +739,28 @@ class CrossTabulation:
         for _ in range(len(self.row_levels)):
             for _ in range(len(self.col_levels)):
                 twoway_df[self.param] = sum(
-                    pd.DataFrame.from_dict(self.point_est, orient="index").values.tolist(), []
+                    pd.DataFrame.from_dict(
+                        self.point_est, orient="index"
+                    ).values.tolist(),
+                    [],
                 )
                 twoway_df["stderror"] = sum(
-                    pd.DataFrame.from_dict(self.stderror, orient="index").values.tolist(), []
+                    pd.DataFrame.from_dict(
+                        self.stderror, orient="index"
+                    ).values.tolist(),
+                    [],
                 )
                 twoway_df["lower_ci"] = sum(
-                    pd.DataFrame.from_dict(self.lower_ci, orient="index").values.tolist(), []
+                    pd.DataFrame.from_dict(
+                        self.lower_ci, orient="index"
+                    ).values.tolist(),
+                    [],
                 )
                 twoway_df["upper_ci"] = sum(
-                    pd.DataFrame.from_dict(self.upper_ci, orient="index").values.tolist(), []
+                    pd.DataFrame.from_dict(
+                        self.upper_ci, orient="index"
+                    ).values.tolist(),
+                    [],
                 )
         twoway_df.sort_values(by=self.vars_names, inplace=True)
 

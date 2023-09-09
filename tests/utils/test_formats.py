@@ -75,7 +75,9 @@ def test_sample_size_dict_str1(sample_size=5, stratification=True, stratum=strat
     assert samp_dict_str1[5] == 5
 
 
-def test_sample_size_dict_str2(sample_size=samp_size, stratification=True, stratum=stratum):
+def test_sample_size_dict_str2(
+    sample_size=samp_size, stratification=True, stratum=stratum
+):
     samp_dict_str2 = data_to_dict(sample_size, stratification, stratum)
     assert isinstance(samp_dict_str2, dict) == True
     assert samp_dict_str2["one"] == 11

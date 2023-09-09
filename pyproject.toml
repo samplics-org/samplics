@@ -33,7 +33,7 @@ numpy = ">=1.21"
 polars = {extras = ["pandas", "pyarrow"], version = "^0.18.6"}
 statsmodels = ">=0.13"
 matplotlib = ">=3.4"
-msgspec = ">=0.18.2"
+attrs = "^23.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.3"
@@ -59,8 +59,8 @@ exclude = '''
   | dist
 )/
 '''
-line-length = 99
-target-version = ["py310", "py311", "py312"]
+# line-length = 99
+# target-version = ["py310", "py311"]
 
 # [tool.isort]
 # atomic = true
@@ -122,7 +122,7 @@ line-length = 99
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Assume Python 3.11.
-target-version = ["py310", "py311", "py312"]
+target-version =  "py311"
 
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.

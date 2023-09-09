@@ -15,7 +15,14 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.checks import assert_not_unique
-from samplics.utils.types import Array, DictStrInt, DictStrNum, Number, Series, StringNumber
+from samplics.utils.types import (
+    Array,
+    DictStrInt,
+    DictStrNum,
+    Number,
+    Series,
+    StringNumber,
+)
 
 
 def numpy_array(arr: Array) -> np.ndarray:
@@ -92,7 +99,11 @@ def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
         number_keys = len(keys)
         for k, arg in enumerate(args):
             args_keys = list(args[k].keys())
-            if not isinstance(arg, dict) or (keys != args_keys) or number_keys != len(args_keys):
+            if (
+                not isinstance(arg, dict)
+                or (keys != args_keys)
+                or number_keys != len(args_keys)
+            ):
                 raise AssertionError(
                     "All input parameters must be dictionaries with the same keys."
                 )
@@ -152,7 +163,9 @@ def remove_nans(n: Number, *args: np.ndarray) -> list:
     return ~excluded_units
 
 
-def fpc_as_dict(stratum: np.ndarray, fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
+def fpc_as_dict(
+    stratum: np.ndarray, fpc: Union[Array, Number]
+) -> Union[DictStrNum, Number]:
 
     if stratum.shape in ((), (0,)) and isinstance(fpc, (int, float)):
         return fpc

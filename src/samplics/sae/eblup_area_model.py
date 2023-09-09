@@ -195,7 +195,9 @@ class EblupAreaModel:
             V = np.diag(v_i)
             v_inv = np.linalg.inv(V)
             x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
-            x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
+            x_xvinvx_x = np.matmul(
+                np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X)
+            )
             P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
             P_B = np.matmul(P, B)
             P_B_P = np.matmul(P_B, P)
@@ -257,10 +259,16 @@ class EblupAreaModel:
                 b_const=b_const,
             )
             sigma2_v += deriv_sigma / info_sigma
-            tolerance = abs((sigma2_v - sigma2_v_previous)/sigma2_v_previous)
+            tolerance = abs((sigma2_v - sigma2_v_previous) / sigma2_v_previous)
             iterations += 1
 
-        return float(max(sigma2_v, 0)), 1 / info_sigma, iterations, tolerance, tolerance <= tol
+        return (
+            float(max(sigma2_v, 0)),
+            1 / info_sigma,
+            iterations,
+            tolerance,
+            tolerance <= tol,
+        )
 
     def _eb_estimates(
         self,

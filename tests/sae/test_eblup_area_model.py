@@ -25,6 +25,7 @@ fh_model_reml.fit(
 )
 fh_model_reml.predict(X=X, area=area, intercept=False)
 
+
 def test_fay_herriot_REML_convergence():
     assert fh_model_reml.convergence["achieved"] is True
     assert fh_model_reml.convergence["iterations"] == 5
