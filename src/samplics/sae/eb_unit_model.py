@@ -1,24 +1,24 @@
 """EB  for the unit level model.
 
 This module implements the basic EB unit level model. The functionalities are organized in
-classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*. 
+classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*.
 Linear Mixed Models (LMM) are the core underlying statistical framework used to model the hierarchical nature of the small area estimation (SAE) techniques implemented in this module, see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more details on LMM.
 
 The *EbUnitModel* class implements the model developed by Molina, I. and Rao, J.N.K. (2010)
-[#mr2010]_. So far, only the basic approach requiring the normal distribution of the errors is 
-implemented. This approach allows estimating complex indicators such as poverty indices and 
-other nonlinear paramaters. The class fits the model parameters using REML or ML. To predict the 
-area level indicators estimates, a Monte Carlo (MC) approach is used. MSE estimation is achieved 
-using a bootstrap procedure.  
+[#mr2010]_. So far, only the basic approach requiring the normal distribution of the errors is
+implemented. This approach allows estimating complex indicators such as poverty indices and
+other nonlinear paramaters. The class fits the model parameters using REML or ML. To predict the
+area level indicators estimates, a Monte Carlo (MC) approach is used. MSE estimation is achieved
+using a bootstrap procedure.
 
-For a comprehensive review of the small area estimation models and its applications, 
+For a comprehensive review of the small area estimation models and its applications,
 see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 
-.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*, 
+.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*,
    New York: John Wiley & Sons, Inc.
-.. [#mr2010] Molina, , I. and Rao, J.N.K. (2010), Small Area Estimation of Poverty Indicators, 
+.. [#mr2010] Molina, , I. and Rao, J.N.K. (2010), Small Area Estimation of Poverty Indicators,
    *Canadian Journal of Statistics*, **38**, 369-385.
-.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
+.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*,
    John Wiley & Sons, Hoboken, New Jersey.
 """
 

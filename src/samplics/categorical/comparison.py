@@ -1,4 +1,4 @@
-"""Comparison module 
+"""Comparison module
 
 The module implements comparisons of groups.
 
@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import math
 
-from typing import Any, Dict, Generic, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ from scipy.stats import t
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
-from samplics.utils.formats import numpy_array, remove_nans
+from samplics.utils.formats import numpy_array
 from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber
 
 
@@ -68,7 +68,7 @@ class Ttest:
                     tbl_subhead1 = f" Null hypothesis (Ho): mean(Diff = {self.vars_names[0]} - {self.vars_names[1]}) = 0"
                 tbl_subhead2 = f" t statistics: {self.stats['t']:.4f}"
                 tbl_subhead3 = f" Degrees of freedom: {self.stats['df']:.2f}"
-                tbl_subhead4 = f" Alternative hypothesis (Ha):"
+                tbl_subhead4 = " Alternative hypothesis (Ha):"
                 tbl_subhead4a = (
                     f"  Prob(T < t) = {self.stats['p_value']['less_than']:.4f}"
                 )
@@ -85,21 +85,21 @@ class Ttest:
                 self.samp_type == "two-sample" and not self.paired
             ):
                 tbl_subhead1 = f" Null hypothesis (Ho): mean({self.group_names[0]}) = mean({self.group_names[1]}) "
-                tbl_subhead2 = f" Equal variance assumption:"
+                tbl_subhead2 = " Equal variance assumption:"
                 tbl_subhead2a = f"  t statistics: {self.stats['t_eq_variance']:.4f}"
                 tbl_subhead2b = (
                     f"  Degrees of freedom: {self.stats['df_eq_variance']:.2f}"
                 )
-                tbl_subhead3 = f"  Alternative hypothesis (Ha):"
+                tbl_subhead3 = "  Alternative hypothesis (Ha):"
                 tbl_subhead3a = f"   Prob(T < t) = {self.stats['p_value_eq_variance']['less_than']:.4f}"
                 tbl_subhead3b = f"   Prob(|T| > |t|) = {self.stats['p_value_eq_variance']['not_equal']:.4f}"
                 tbl_subhead3c = f"   Prob(T > t) = {self.stats['p_value_eq_variance']['greater_than']:.4f}"
-                tbl_subhead4 = f" Unequal variance assumption:"
+                tbl_subhead4 = " Unequal variance assumption:"
                 tbl_subhead4a = f"  t statistics: {self.stats['t_uneq_variance']:.4f}"
                 tbl_subhead4b = (
                     f"  Degrees of freedom: {self.stats['df_uneq_variance']:.2f}"
                 )
-                tbl_subhead5 = f"  Alternative hypothesis (Ha):"
+                tbl_subhead5 = "  Alternative hypothesis (Ha):"
                 tbl_subhead5a = f"   Prob(T < t) = {self.stats['p_value_uneq_variance']['less_than']:.4f}"
                 tbl_subhead5b = f"   Prob(|T| > |t|) = {self.stats['p_value_uneq_variance']['not_equal']:.4f}"
                 tbl_subhead5c = f"   Prob(T > t) = {self.stats['p_value_uneq_variance']['greater_than']:.4f}"

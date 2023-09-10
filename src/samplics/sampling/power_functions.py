@@ -1,4 +1,4 @@
-"""Sample size calculation module 
+"""Sample size calculation module
 This module compiles the core functions for calculating power and sample size
 """
 

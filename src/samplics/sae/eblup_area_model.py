@@ -1,16 +1,16 @@
 """EBLUP Area Model
 
-The module implements the basic EBLUP area level model initially developed by Fay, R.E. and 
-Herriot, R.A. (1979) [#fh1979]_ and explicitly (mathematically) formulated in Rao, J.N.K. and 
-Molina, I. (2015) [#rm2015]_. The functionalities are organized in one class *EblupAreaModel* with 
-two main methods: *fit()* and *predict()*. The unit level standard error is assume known and the 
-model only estimate the fixed effects and the standard error of the random effects. The model 
-parameters can be fitted using restricted maximum likelihood (REML), maximum likelihood (ML) or 
-Fay-Herriot (FH). The method *predict()* provides both the mean and the MSE estimates at the area 
+The module implements the basic EBLUP area level model initially developed by Fay, R.E. and
+Herriot, R.A. (1979) [#fh1979]_ and explicitly (mathematically) formulated in Rao, J.N.K. and
+Molina, I. (2015) [#rm2015]_. The functionalities are organized in one class *EblupAreaModel* with
+two main methods: *fit()* and *predict()*. The unit level standard error is assume known and the
+model only estimate the fixed effects and the standard error of the random effects. The model
+parameters can be fitted using restricted maximum likelihood (REML), maximum likelihood (ML) or
+Fay-Herriot (FH). The method *predict()* provides both the mean and the MSE estimates at the area
 level.
 
 .. [#fh1979] Fay, R.E. and Herriot, R.A. (1979), Estimation of Income from Small Places: An
-   Application of James-Stein Procedures to Census Data. *Journal of the American Statistical 
+   Application of James-Stein Procedures to Census Data. *Journal of the American Statistical
    Association*, **74**, 269-277.
 """
 
@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import math
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd

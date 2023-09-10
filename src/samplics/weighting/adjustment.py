@@ -1,10 +1,10 @@
 """Sample weighting module
 
-*SampleWeight* is the main class in this module which implements weight adjustments to account for 
-nonresponse, calibrate to auxiliary information, normalize weights, and trim extreme weights. Valliant, R. and Dever, J. A. (2018) [#vd2018]_ provides a step-by-step guide on calculating 
-sample weights. 
+*SampleWeight* is the main class in this module which implements weight adjustments to account for
+nonresponse, calibrate to auxiliary information, normalize weights, and trim extreme weights. Valliant, R. and Dever, J. A. (2018) [#vd2018]_ provides a step-by-step guide on calculating
+sample weights.
 
-.. [#vd2018] Valliant, R. and Dever, J. A. (2018), *Survey Weights: A Step-by-Step Guide to       
+.. [#vd2018] Valliant, R. and Dever, J. A. (2018), *Survey Weights: A Step-by-Step Guide to
    Calculation*, Stata Press.
 """
 
@@ -18,7 +18,6 @@ import pandas as pd
 from samplics.utils import checks, formats
 from samplics.utils.types import (
     Array,
-    DictStrFloat,
     DictStrInt,
     DictStrNum,
     Number,

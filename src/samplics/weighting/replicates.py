@@ -1,13 +1,13 @@
 """Replicate weights module.
 
-The module has one main class called *ReplicateWeight* which implements three replication 
-techniques: Bootstrap, Jackknife, and balanced repeated replication (BRR). For reference, 
-users can consultant Efron, B. and Tibshirani, R.J. (1994) [#et1994]_, Valliant, R. and 
-Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more details. 
+The module has one main class called *ReplicateWeight* which implements three replication
+techniques: Bootstrap, Jackknife, and balanced repeated replication (BRR). For reference,
+users can consultant Efron, B. and Tibshirani, R.J. (1994) [#et1994]_, Valliant, R. and
+Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more details.
 
-.. [#et1994] Efron, B. and Tibshirani, R.J. (1994), *An Introduction to the Boostrap*, 
+.. [#et1994] Efron, B. and Tibshirani, R.J. (1994), *An Introduction to the Boostrap*,
    Chapman & Hall/CRC.
-.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, 
+.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*,
    Springer-Verlag New York, Inc
 """
 

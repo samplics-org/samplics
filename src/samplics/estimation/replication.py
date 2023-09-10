@@ -1,16 +1,15 @@
 import math
 
-from typing import Any, Dict, Optional, Tuple, TypeVar, Union
+from typing import Any, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 import pandas as pd
 
-from numpy.lib.arraysetops import isin
 from scipy.stats import t as student
 
 from samplics.estimation.expansion import _SurveyEstimator
 from samplics.utils.formats import numpy_array, remove_nans
-from samplics.utils.types import Array, DictStrNum, Number, StringNumber
+from samplics.utils.types import Array, Number
 
 
 TypeRepEst = TypeVar("TypeRepEst", bound="ReplicateEstimator")

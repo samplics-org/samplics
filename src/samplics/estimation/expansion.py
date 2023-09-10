@@ -1,14 +1,14 @@
-"""Expansion module 
+"""Expansion module
 
 The module implements the taylor-based variance estimation methods. There are several good books
-that provide the the taylor-based approximations of the sample variance. Some of these reference 
-books are Cochran, W.G. (1977) [#c1977]_, Kish, L. (1965) [#k1965]_, Lohr, S.L. (2010) [#l2010]_, 
-and Wolter, K.M. (2007) [#w2007]_. 
+that provide the the taylor-based approximations of the sample variance. Some of these reference
+books are Cochran, W.G. (1977) [#c1977]_, Kish, L. (1965) [#k1965]_, Lohr, S.L. (2010) [#l2010]_,
+and Wolter, K.M. (2007) [#w2007]_.
 
 .. [#c1977] Cochran, W.G. (1977), *Sampling Techniques, 3rd edn.*, Jonh Wiley & Sons, Inc.
 .. [#k1965] Kish, L. (1965), *Survey Sampling*, Jonh Wiley & Sons, Inc.
 .. [#l2010] Lohr, S.L. (2010), *Sampling: Design and Analysis, 2nd edn.*, Cengage Learning, Inc.
-.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimation, 2nd edn.*, 
+.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimation, 2nd edn.*,
    Springer-Verlag New York, Inc
 """
 from __future__ import annotations
@@ -432,7 +432,7 @@ class TaylorEstimator(_SurveyEstimator):
                 nb_psus_in_s = (
                     np.size(np.unique(psu_s)) if psu_s.shape not in ((), (0,)) else 0
                 )
-                ssu_s = ssu[stratum == s] if ssu.shape not in ((), (0,)) else ssu
+                ssu[stratum == s] if ssu.shape not in ((), (0,)) else ssu
                 covariance += fpc[s] * self._variance_stratum_between(
                     y_score_s=y_score_s,
                     samp_weight_s=samp_weight_s,

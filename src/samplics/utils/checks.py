@@ -1,15 +1,15 @@
-"""Runs checks on the data to help capture some errors faster and provides better error messages. 
+"""Runs checks on the data to help capture some errors faster and provides better error messages.
 
 Functions:
-    | *assert_probabilities()* ensures that probability values are between 0 and 1. 
-    | *assert_weights()* ensures that sample weights are not negatives. 
-    | *assert_not_unique()* return an assertion error if the array has non unique values. 
+    | *assert_probabilities()* ensures that probability values are between 0 and 1.
+    | *assert_weights()* ensures that sample weights are not negatives.
+    | *assert_not_unique()* return an assertion error if the array has non unique values.
     | *assert_response_status()* checks that the response values are in ("in", "rr", "nr", "uk").
-    | *assert_brr_number_psus()* checks that the number of psus is a multiple of 2. 
+    | *assert_brr_number_psus()* checks that the number of psus is a multiple of 2.
 """
 from __future__ import annotations
 
-from typing import Any, Iterable, Optional, Union
+from typing import Iterable, Optional, Union
 
 import numpy as np
 import pandas as pd

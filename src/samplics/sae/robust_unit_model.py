@@ -1,25 +1,25 @@
 """EBLUP and EB Unit Models.
 
-This module implements robust unit level models. The functionalities are organized in classes. 
-Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*. Linear Mixed 
-Models (LMM) are the core underlying statistical framework used to model the hierarchical 
-nature of the small area estimation (SAE) techniques implemented in this module, 
+This module implements robust unit level models. The functionalities are organized in classes.
+Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*. Linear Mixed
+Models (LMM) are the core underlying statistical framework used to model the hierarchical
+nature of the small area estimation (SAE) techniques implemented in this module,
 see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more details on LMM.
 
-The *EllUnitModel* class implements the model Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003) 
-[#ell2003]_. This method is nonparametric at its core, hence does not require normality 
-assumption nor any other parametric distribution. This implementation a semiparametric and 
+The *EllUnitModel* class implements the model Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003)
+[#ell2003]_. This method is nonparametric at its core, hence does not require normality
+assumption nor any other parametric distribution. This implementation a semiparametric and
 nonparametric are provided. In the semiparametric, the normal distribution is used to fit the
-parameters and to draw the fixed-effects. 
+parameters and to draw the fixed-effects.
 
-For a comprehensive review of the small area estimation models and its applications, 
+For a comprehensive review of the small area estimation models and its applications,
 see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 
-.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*, 
+.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*,
    New York: John Wiley & Sons, Inc.
 .. [#ell2003] Elbers, C., Lanjouw, J.O., and Lanjouw, P. (2003), Micro-Level Estimation of Poverty
    and Inequality. *Econometrica*, **71**, 355-364.
-.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
+.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*,
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
@@ -28,7 +28,6 @@ from __future__ import annotations
 from typing import Any, Callable, Optional, Union
 
 import numpy as np
-import pandas as pd
 import statsmodels.api as sm
 
 from samplics.sae.eb_unit_model import EbUnitModel

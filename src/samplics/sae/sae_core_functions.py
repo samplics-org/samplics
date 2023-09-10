@@ -1,14 +1,14 @@
-"""Core functions for fitting the small area models. 
+"""Core functions for fitting the small area models.
 
 Functions:
-   | *area_stats()* computes a several aggregates at the area level. 
-   | *fixed_coefficients()* computes the fixed effects of the regression models. 
-   | *covariance()* computes the covariance matrix of the linear mixed model. 
-   | *inverse_covariance()* computes the inverse of the covariance matrix.  
+   | *area_stats()* computes a several aggregates at the area level.
+   | *fixed_coefficients()* computes the fixed effects of the regression models.
+   | *covariance()* computes the covariance matrix of the linear mixed model.
+   | *inverse_covariance()* computes the inverse of the covariance matrix.
    | *log_det_covariance()* computes the logarithm of the determinant of the covariance matrix.
-   | *log_likelihood()* computes the log-likelihood of the linear mixed model. 
-   | *partial_Derivatives()* computes the partial derivatives and the information matrix. 
-   | *iterative_fisher_scoring()* implements the Fisher scoring algorithm. 
+   | *log_likelihood()* computes the log-likelihood of the linear mixed model.
+   | *partial_Derivatives()* computes the partial derivatives and the information matrix.
+   | *iterative_fisher_scoring()* implements the Fisher scoring algorithm.
 """
 
 from typing import Any, Dict, Optional, Tuple

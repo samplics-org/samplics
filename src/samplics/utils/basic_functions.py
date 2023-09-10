@@ -1,13 +1,13 @@
-"""This module provides basic functions used across multiple classes and modules. 
+"""This module provides basic functions used across multiple classes and modules.
 
 Functions:
-    | *sumby()* sums numpy arrays by some grouping. 
+    | *sumby()* sums numpy arrays by some grouping.
     | *averageby()* average numpy arrays by some grouping.
     | *transform()* implements the Boxcox tranformation.
-    | *skewness()* computes the Pearson's moment coefficient of skewness (assymetry measure). 
+    | *skewness()* computes the Pearson's moment coefficient of skewness (assymetry measure).
     | *kurtosis()* computes the fourth standardized moment, a measure of assymetry.
-    | *plot_skewness()* and *plot_kurtosis()* visualise the skewness and kurtosis coefficients 
-respectively. 
+    | *plot_skewness()* and *plot_kurtosis()* visualise the skewness and kurtosis coefficients
+respectively.
 
 """
 
@@ -16,7 +16,6 @@ from __future__ import annotations
 from typing import Optional, Union
 
 import matplotlib.pyplot as plt
-
 import numpy as np
 import pandas as pd
 

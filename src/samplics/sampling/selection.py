@@ -2,15 +2,15 @@
 
 The module has one main class called *SampleSelection* which provides a number of random selection
 methods and associated probability of selection. All the samping techniques implemented in this
-modules are discussed in the following reference book: Cochran, W.G. (1977) [#c1977]_, 
-Kish, L. (1965) [#k1965]_, and Lohr, S.L. (2010) [#l2010]_. Furthermore, Brewer, K.R.W. and 
-Hanif, M. (1983) [#bh1983]_ provides comprehensive and detailed descriptions of these complex 
+modules are discussed in the following reference book: Cochran, W.G. (1977) [#c1977]_,
+Kish, L. (1965) [#k1965]_, and Lohr, S.L. (2010) [#l2010]_. Furthermore, Brewer, K.R.W. and
+Hanif, M. (1983) [#bh1983]_ provides comprehensive and detailed descriptions of these complex
 sampling algorithms.
 
 .. [#c1977] Cochran, W.G. (1977), *Sampling Techniques, 3rd edn.*, Jonh Wiley & Sons, Inc.
 .. [#k1965] Kish, L. (1965), *Survey Sampling*, Jonh Wiley & Sons, Inc.
 .. [#l2010] Lohr, S.L. (2010), *Sampling: Design and Analysis, 2nd edn.*, Cengage Learning, Inc.
-.. [#bh1983] Brewer, K.R.W. and Hanif, M. (1983), *Sampling With Unequal Probabilities*,  
+.. [#bh1983] Brewer, K.R.W. and Hanif, M. (1983), *Sampling With Unequal Probabilities*,
    Springer-Verlag New York, Inc
 """
 
@@ -25,8 +25,8 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 
-from samplics.utils.errors import MethodError, ProbError, CertaintyError
-from samplics.utils.formats import numpy_array, data_to_dict, sample_units, remove_nans
+from samplics.utils.errors import CertaintyError, MethodError, ProbError
+from samplics.utils.formats import data_to_dict, numpy_array, remove_nans, sample_units
 from samplics.utils.types import (
     Array,
     DictStrBool,
@@ -631,7 +631,7 @@ class SampleSelection:
 
         if samp_size is not None and samp_rate is not None:
             raise AssertionError(
-                """Both samp_size and samp_rate are provided. 
+                """Both samp_size and samp_rate are provided.
                 Only one of the two parameters should be specified."""
             )
 
@@ -759,7 +759,7 @@ class SampleSelection:
 
         if samp_size is not None and samp_rate is not None:
             raise AssertionError(
-                """Both samp_size and samp_rate are provided. 
+                """Both samp_size and samp_rate are provided.
                 Only one of the two parameters should be specified."""
             )
 

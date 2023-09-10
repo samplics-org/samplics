@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 
 # import pandas as pd
 import statsmodels.api as sm
 
-from samplics.estimation.expansion import TaylorEstimator
 from samplics.utils.formats import (
-    dict_to_dataframe,
     fpc_as_dict,
     numpy_array,
-    remove_nans,
 )
 from samplics.utils.types import Array, Number, Series, StringNumber
 

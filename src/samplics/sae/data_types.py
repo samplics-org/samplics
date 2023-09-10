@@ -8,6 +8,7 @@ import pandas as pd
 import polars as pl
 
 from attr import validators
+from attrs import field, frozen
 
 from samplics.utils.formats import numpy_array
 from samplics.utils.types import Array, DictStrNum, Number
@@ -38,9 +39,6 @@ def _is_all_items_positive(obj: Array | DictStrNum) -> bool:
         return True
 
     return (arr > 0).all()
-
-
-from attrs import field, frozen
 
 
 @frozen
@@ -131,6 +129,7 @@ class DirectEst:
 class AuxVars:
     area: tuple
     auxdata: dict
+    ssize: dict
     record_id: tuple | None
     uid: int = int(
         dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
@@ -144,39 +143,109 @@ class AuxVars:
         record_id = numpy_array(record_id) if record_id is not None else None
 
         auxdata = {}
-        for d in areas_unique:
-            auxdata[d] = {}
-            if record_id is not None:
-                auxdata[d]["record_id"] = tuple(record_id[areas == area])
-            else:
-                auxdata[d]["record_id"] = None
-        for varname in varnames:
+        ssize = {}
+        for i, varname in enumerate(varnames):
             vardata = numpy_array(kwargs[varname])
-            for d in areas:
-                auxdata[d][varname] = tuple(vardata[areas == d])
+            for d in areas_unique:
+                auxdata[d] = {}
+                records_d = areas == d
+                auxdata[d][varname] = tuple(vardata[records_d])
+                if i == 0:
+                    ssize[d] = int(records_d.sum())
+                    auxdata[d] = {}
+                    if record_id is not None:
+                        auxdata[d]["record_id"] = tuple(record_id[records_d])
+                    else:
+                        auxdata[d]["record_id"] = None
 
-        self.__attrs_init__(areas_unique, auxdata, record_id)
+        self.__attrs_init__(areas_unique, auxdata, ssize, record_id)
 
     def to_numpy(self, varlist: str | list[str] | None = None):
         return self.to_polars(varlist).to_numpy()
 
     def to_polars(self, varlist: str | list[str] | None = None):
-        for i, d in enumerate(self.area):
-            if i == 0:
-                df = pl.from_dict(self.auxdata[d])
-                df = df.insert_at_idx(1, pl.repeat(d, n=df.shape[0], eager=True).alias("area"))
-            else:
-                dfi = pl.from_dict(self.auxdata[d])
-                df = pl.concat(
-                    [
-                        df,
-                        dfi.insert_at_idx(
-                            1, pl.repeat(d, n=dfi.shape[0], eager=True).alias("area")
-                        ),
-                    ]
+        return pl.concat(
+            [
+                pl.from_dict(self.auxdata[d]).insert_at_idx(
+                    1, pl.repeat(d, n=self.ssize[d], eager=True).alias("area")
                 )
-
-        return df if varlist is None else df.select(varlist)
+                for d in self.area
+            ]
+        )
 
     def to_pandas(self, varlist: str | list[str] | None = None):
         return self.to_polars(varlist).to_pandas()
+
+
+class CovMat:
+    pass
+
+
+@frozen
+class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
+        1e16 * rand.random()
+    )
+    method: FitMethod
+    auxvars: tuple
+    e_stderr: dict
+    fe_est: tuple  # fixed effects
+    fe_stderr: tuple
+    re_stderr: float
+    re_stderr_var: float
+    log_llike: float
+    convergence: dict
+    goodness: dict
+
+    def to_numpy():  # TODO: To decide if these methods are necessary
+        pass
+
+    def to_polars():  # TODO: To decide if these methods are necessary
+        pass
+
+    def to_pandas():  # TODO: To decide if these methods are necessary
+        pass
+
+
+@frozen
+class EbFit:
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
+        1e16 * rand.random()
+    )
+    method: FitMethod
+    auxvars: tuple
+    e_stderr: dict
+    fe_est: tuple  # fixed effects
+    fe_stderr: tuple
+    re_stderr: float
+    re_stderr_var: float
+    log_llike: float
+    convergence: dict
+    goodness: dict
+
+    def to_numpy():  # TODO: To decide if these methods are necessary
+        pass
+
+    def to_polars():  # TODO: To decide if these methods are necessary
+        pass
+
+    def to_pandas():  # TODO: To decide if these methods are necessary
+        pass
+
+
+@frozen
+class EbEst:
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
+        1e16 * rand.random()
+    )
+    area: tuple
+    est: dict
+
+    def to_numpy():
+        pass
+
+    def to_polars():
+        pass
+
+    def to_pandas():
+        pass

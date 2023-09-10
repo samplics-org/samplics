@@ -223,3 +223,15 @@ class TestDirectEst2:
 
 
 # Auxiliary variables
+
+
+aux_vars1 = AuxVars(
+    record_id=None,  # (11, 2, 22, 3, 13),
+    area=("one", "two", "three", "one", "three"),
+    sex=["male", "female", "male", "male", "female"],
+    age=[23, 12, 3, 2, 47],
+)
+
+aux_vars1.to_numpy()
+
+breakpoint()

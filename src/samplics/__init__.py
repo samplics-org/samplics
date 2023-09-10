@@ -34,11 +34,11 @@ from samplics.sampling import (
 )
 from samplics.utils import (
     CertaintyError,
+    DimensionError,
     MethodError,
     PopParam,
     ProbError,
     SamplicsError,
-    DimensionError,
     SelectMethod,
     SinglePSUError,
     SinglePSUEst,

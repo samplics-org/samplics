@@ -2,8 +2,8 @@
 
 Functions:
     | *numpy_array()* converts an array-like data to np.ndarray
-    | *array_to_dict()* converts an array to a dictionary where the keys are the unique values of 
-    |   the array and the values of the dictionary are the counts of the array values. 
+    | *array_to_dict()* converts an array to a dictionary where the keys are the unique values of
+    |   the array and the values of the dictionary are the counts of the array values.
     | *dataframe_to_array()* returns a pandas dataframe from an np.ndarray.
 """
 
