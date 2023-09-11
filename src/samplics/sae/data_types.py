@@ -183,9 +183,6 @@ class CovMat:
 
 @frozen
 class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
-    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
-        1e16 * rand.random()
-    )
     method: FitMethod
     auxvars: tuple
     e_stderr: dict
@@ -196,6 +193,9 @@ class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
     log_llike: float
     convergence: dict
     goodness: dict
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
+        1e16 * rand.random()
+    )
 
     def to_numpy():  # TODO: To decide if these methods are necessary
         pass
@@ -209,9 +209,6 @@ class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
 
 @frozen
 class EbFit:
-    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
-        1e16 * rand.random()
-    )
     method: FitMethod
     auxvars: tuple
     e_stderr: dict
@@ -222,6 +219,9 @@ class EbFit:
     log_llike: float
     convergence: dict
     goodness: dict
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
+        1e16 * rand.random()
+    )
 
     def to_numpy():  # TODO: To decide if these methods are necessary
         pass
@@ -235,11 +235,11 @@ class EbFit:
 
 @frozen
 class EbEst:
+    area: tuple
+    est: dict
     uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
         1e16 * rand.random()
     )
-    area: tuple
-    est: dict
 
     def to_numpy():
         pass
