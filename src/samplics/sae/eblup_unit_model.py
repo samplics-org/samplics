@@ -267,11 +267,11 @@ class EblupUnitModel:
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         basic_fit = basic_model.fit(reml=reml, full_output=True, **fit_kwargs)
 
+
         self.error_std = basic_fit.scale**0.5
         self.fixed_effects = basic_fit.fe_params
-
         self.fe_std = basic_fit.bse_fe
-        self.re_std = float(basic_fit.cov_re) ** 0.5
+        self.re_std = basic_fit.cov_re[0][0] ** 0.5
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"]) - 1
 
@@ -296,7 +296,6 @@ class EblupUnitModel:
         self.goodness["loglike"] = basic_fit.llf
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
-
         self.ys_mean, Xs_mean, gamma, samp_size = area_stats(
             ys,
             Xs,
@@ -511,7 +510,7 @@ class EblupUnitModel:
                 boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale**0.5
-            boot_re_std = float(boot_fit.cov_re) ** 0.5
+            boot_re_std = boot_fit.cov_re[0][0] ** 0.5
             boot_ys_mean, boot_Xs_mean, boot_gamma, _ = area_stats(
                 y_ps_boot[b, :],
                 X_ps,

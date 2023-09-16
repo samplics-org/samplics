@@ -1,6 +1,8 @@
 import datetime as dt
 import random as rand
 
+from collections import namedtuple
+from collections.abc import Iterable
 from enum import Enum, unique
 from typing import Protocol
 
@@ -12,7 +14,7 @@ from attr import validators
 from attrs import field, frozen
 
 from samplics.utils.formats import numpy_array
-from samplics.utils.types import Array, DictStrNum, Number
+from samplics.utils.types import DF, Array, DictStrNum, Number
 
 
 # NumpyArray = TypeVar("np.ndarray", bound=np.ndarray)
@@ -148,29 +150,85 @@ class AuxVars:
         + str(int(1e16 * rand.random()))
     )
 
-    def __init__(self, area: Array, record_id: Array, **kwargs) -> None:
-        varnames = tuple(kwargs.keys())
-        areas = numpy_array(area)
-        areas_unique = tuple(np.unique(areas))
+    def __init__(
+        self,
+        area: Array,
+        record_id: Array = None,
+        auxdata: DF | Array | Iterable[DF | Array] | None = None,
+        **kwargs,
+    ) -> None:
+        assert isinstance(area, Array)
+
+        area = numpy_array(area)
+
+        areas_unique = tuple(np.unique(area))
         record_id = numpy_array(record_id) if record_id is not None else None
 
-        auxdata = {}
-        ssize = {}
-        for i, varname in enumerate(varnames):
-            vardata = numpy_array(kwargs[varname])
-            for d in areas_unique:
-                auxdata[d] = {}
-                records_d = areas == d
-                auxdata[d][varname] = tuple(vardata[records_d])
+        if isinstance(auxdata, (DF, Array)):
+            aux_df = self.__from_df(auxdata)
+            if isinstance(auxdata, Array):
+                aux_df.columns = ["__aux_" + str(i) for i in range(aux_df.shape[1])]
+        elif isinstance(auxdata, Iterable):
+            for i, d in enumerate(auxdata):
+                assert isinstance(d, (DF, Array))
                 if i == 0:
-                    ssize[d] = int(records_d.sum())
-                    auxdata[d] = {}
-                    if record_id is not None:
-                        auxdata[d]["record_id"] = tuple(record_id[records_d])
-                    else:
-                        auxdata[d]["record_id"] = None
+                    aux_df = self.__from_df(d)
+                    if isinstance(d, Array):
+                        aux_df.columns = ["__aux_" + str(i) for i in range(aux_df.shape[1])]
+                else:
+                    d_df = self.__from_df(d)
+                    if isinstance(d, Array):
+                        d_df.columns = ["__aux_" + str(i) for i in range(d_df.shape[1])]
+                    aux_df.hstack([d_df], in_place=True)
+        else:
+            aux_df = None
 
-        self.__attrs_init__(areas_unique, auxdata, ssize, record_id)
+        if aux_df is None:
+            auxdata = pl.from_dict(kwargs)
+
+        else:
+            auxdata = aux_df.hstack(pl.from_dict(kwargs))
+        auxdata_dict = auxdata.insert_at_idx(
+            0, pl.from_numpy(area).to_series().alias("area")
+        ).partition_by("area", as_dict=True)
+
+        # kwargs_vars = tuple(kwargs.keys())
+        # for i, var in enumerate(kwargs_vars):
+        #     vardata = numpy_array(kwargs[var])
+        #     for d in areas_unique:
+        #         kwagrs_data[d] = {}
+        #         records_d = areas == d
+        #         kwagrs_data[d][var] = tuple(vardata[records_d])
+        #         if i == 0:
+        #             # ssize[d] = int(records_d.sum())
+        #             kwagrs_data[d] = {}
+        #             if record_id is not None:
+        #                 kwagrs_data[d]["record_id"] = tuple(record_id[records_d])
+        #             else:
+        #                 kwagrs_data[d]["record_id"] = None
+
+        auxdata_dict = {k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict}
+
+        ssize = {}
+        for k in auxdata_dict:
+            ssize[k] = len(auxdata_dict[k]["area"])
+            del auxdata_dict[k]["area"]
+
+        self.__attrs_init__(areas_unique, auxdata_dict, ssize, record_id)
+
+    def __from_df(self, auxdata: DF | Array) -> pl.DataFrame | None:
+        if isinstance(auxdata, pl.DataFrame):
+            return auxdata
+        elif isinstance(auxdata, pl.Series):
+            return pl.DataFrame(auxdata)
+        elif isinstance(auxdata, (pd.DataFrame, pd.Series)):
+            return pl.from_pandas(auxdata)
+        elif isinstance(auxdata, np.ndarray):
+            return pl.from_numpy(auxdata)
+        elif isinstance(auxdata, Array):
+            return pl.DataFrame(auxdata)
+        else:
+            return None
 
     def to_numpy(self, varlist: str | list[str] | None = None):
         return self.to_polars(varlist).to_numpy()
@@ -196,10 +254,9 @@ class CovMat:
 @frozen
 class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
     method: FitMethod
-    auxvars: tuple
-    e_stderr: dict
-    fe_est: tuple  # fixed effects
-    fe_stderr: tuple
+    err_stderr: float
+    fe_est: namedtuple  # fixed effects
+    fe_stderr: namedtuple
     re_stderr: float
     re_stderr_var: float
     log_llike: float
@@ -222,10 +279,9 @@ class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
 @frozen
 class EbFit:
     method: FitMethod
-    auxvars: tuple
-    e_stderr: dict
-    fe_est: tuple  # fixed effects
-    fe_stderr: tuple
+    err_stderr: float
+    fe_est: namedtuple  # fixed effects
+    fe_stderr: namedtuple
     re_stderr: float
     re_stderr_var: float
     log_llike: float
@@ -246,12 +302,54 @@ class EbFit:
 
 
 @frozen
-class EbEst:
+class EblupEst:
     area: tuple
     est: dict
+    fit_stats: EblupFit
+    mse: dict | None = None
+    mse_boot: dict | None = None
+    mse_jkn: dict | None = None
     uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
         1e16 * rand.random()
     )
+
+    @property
+    def rse():
+        pass
+
+    @property
+    def cv():
+        pass
+
+    def to_numpy():
+        pass
+
+    def to_polars():
+        pass
+
+    def to_pandas():
+        pass
+
+
+@frozen
+class EbEst:
+    area: tuple
+    est: dict
+    fit_stats: EbFit
+    mse: dict | None = None
+    mse_boot: dict | None = None
+    mse_jkn: dict | None = None
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
+        1e16 * rand.random()
+    )
+
+    @property
+    def rse():
+        pass
+
+    @property
+    def cv():
+        pass
 
     def to_numpy():
         pass

@@ -1,4 +1,3 @@
-import pytest
 
 import numpy as np
 import pandas as pd
@@ -156,7 +155,7 @@ def test_norm_with_adj_method():
 def test_norm_wgt_with_class1():
     for region in region_ids:
         norm_wgt_wih_class_r = norm_wgt_wih_class1[region_id == region]
-        response_code_r = response_code[region_id == region]
+        response_code[region_id == region]
         # respondents_r = response_code_r == np.ones(response_code_r.size)
         assert np.isclose(np.sum(norm_wgt_wih_class_r), level1_with[region])
 

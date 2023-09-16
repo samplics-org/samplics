@@ -15,7 +15,20 @@ from samplics.datasets.datasets import (
 )
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.regression import SurveyGLM
-from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
+from samplics.sae import (
+    AuxVars,
+    DirectEst,
+    EbEst,
+    EbFit,
+    EblupAreaModel,
+    EblupEst,
+    EblupFit,
+    EblupUnitModel,
+    EbUnitModel,
+    EllUnitModel,
+    FitMethod,
+    fit_eblup,
+)
 from samplics.sampling import (
     SampleSelection,
     SampleSize,
@@ -52,18 +65,26 @@ from samplics.weighting import ReplicateWeight, SampleWeight
 __all__ = [
     "allocate",
     "array_to_dict",
+    "AuxVars",
     "calculate_power",
     "calculate_power_prop",
     "calculate_ss_fleiss_prop",
     "calculate_ss_wald_prop",
     "calculate_ss_wald_mean",
     "CrossTabulation",
+    "DirectEst",
     "Tabulation",
     "Ttest",
     "EblupAreaModel",
     "EblupUnitModel",
+    "EblupEst",
+    "EblupFit",
     "EbUnitModel",
+    "EbEst",
+    "EbFit",
     "EllUnitModel",
+    "FitMethod",
+    "fit_eblup",
     "load_auto",
     "load_birth",
     "load_county_crop",

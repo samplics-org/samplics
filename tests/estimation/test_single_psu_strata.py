@@ -1,7 +1,6 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import pytest
 
 from samplics.estimation import TaylorEstimator
 from samplics.utils.types import SinglePSUEst

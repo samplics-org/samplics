@@ -2,17 +2,19 @@
 """
 
 from enum import Enum, unique
-from typing import Dict, Union
+from typing import Dict
 
 import numpy as np
 import pandas as pd
+import polars as pl
 
 
-Array = Union[np.ndarray, pd.Series, list, tuple]
-Series = Union[pd.Series, list, tuple]
+DF = pl.DataFrame | pd.DataFrame
+Array = np.ndarray | pd.Series | pl.Series | list | tuple
+Series = pd.Series | pl.Series | list | tuple
 
-Number = Union[float, int]
-StringNumber = Union[str, float, int]
+Number = float | int
+StringNumber = str | float | int
 
 DictStrNum = Dict[StringNumber, Number]
 DictStrInt = Dict[StringNumber, int]

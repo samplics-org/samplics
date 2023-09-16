@@ -521,7 +521,7 @@ size_nat_fleiss = SampleSize(method=SizeMethod.fleiss)
 def test_size_nat_fleiss_basics():
     assert size_nat_fleiss.param == PopParam.prop
     assert size_nat_fleiss.method == SizeMethod.fleiss
-    assert size_nat_fleiss.strat == False
+    assert size_nat_fleiss.strat is False
 
 
 def test_size_nat_fleiss_size1a():
@@ -703,7 +703,7 @@ resp_rate2 = {"stratum1": 1, "stratum2": 0.5, "stratum3": 0.75}
 def test_size_str_fleiss_basics():
     assert size_str_fleiss.param == PopParam.prop
     assert size_str_fleiss.method == SizeMethod.fleiss
-    assert size_str_fleiss.strat == True
+    assert size_str_fleiss.strat is True
 
 
 def test_size_str_fleiss_size1():

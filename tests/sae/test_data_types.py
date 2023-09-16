@@ -1,6 +1,5 @@
-from samplics.sae.data_types import FitMethod, DirectEst, AuxVars
+from samplics.sae.data_types import AuxVars, DirectEst, FitMethod
 
-import numpy as np
 
 # FitMethod
 
@@ -205,7 +204,8 @@ class TestDirectEst2:
 
         assert pandas_df.shape == (3, 4)
 
-    # Tests that an instance of DirectEst can be created with a single area and a None value as the psize parameter.
+    # Tests that an instance of DirectEst can be created with a single area and
+    # a None value as the psize parameter.
     def test_create_instance_with_single_area_and_none_psize(self):
         area = [1]
         est = {1: 10}
@@ -226,12 +226,21 @@ class TestDirectEst2:
 
 
 aux_vars1 = AuxVars(
-    record_id=None,  # (11, 2, 22, 3, 13),
+    area=("one", "two", "three", "one", "three"),
+    # record_id=None,  # (11, 2, 22, 3, 13),
+    record_id=None,
+    sex=["male", "female", "male", "male", "female"],
+    age=[23, 12, 3, 2, 47],
+)
+
+breakpoint()
+aux_vars1 = AuxVars(
+    # record_id=None,  # (11, 2, 22, 3, 13),
     area=("one", "two", "three", "one", "three"),
     sex=["male", "female", "male", "male", "female"],
     age=[23, 12, 3, 2, 47],
 )
 
-aux_vars1.to_numpy()
+# aux_vars1.to_numpy()
 
-# breakpoint()
+breakpoint()

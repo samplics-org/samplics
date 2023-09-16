@@ -1,17 +1,17 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import polars as pl
+import pytest
 
 from samplics.utils.formats import (
     array_to_dict,
     convert_numbers_to_dicts,
+    data_to_dict,
     dataframe_to_array,
     dict_to_dataframe,
     numpy_array,
-    data_to_dict,
-    sample_units,
     remove_nans,
+    sample_units,
 )
 
 
@@ -25,28 +25,30 @@ def test_remove_nans():
 
 
 df = pd.DataFrame({"one": [1, 2, 2, 3, 0], "two": [4, 9, 5, 6, 6]})
+df2 = pl.DataFrame({"one": [1, 2, 2, 3, 0], "two": [4, 9, 5, 6, 6]})
 ds = pd.Series([1, 2, 3, 4, 5])
+ds2 = pl.Series([1, 2, 3, 4, 5])
 da = np.array([1, 2, 3, 4, 5])
 da2 = [1, 2, 3, 4, 5]
+# breakpoint()
 
-
-@pytest.mark.parametrize("input_data", [df, ds, da, da2])
+@pytest.mark.parametrize("input_data", [df, df2, ds, ds2, da, da2])
 def test_numpy_array(input_data):
     arr = numpy_array(input_data)
-    assert isinstance(arr, np.ndarray) == True
+    assert isinstance(arr, np.ndarray)
 
 
 @pytest.mark.parametrize("arr", [da])
 @pytest.mark.parametrize("domain", [da, None])
 def test_array_to_dict1(arr, domain):
     dictionary = array_to_dict(arr, domain)
-    assert isinstance(dictionary, dict) == True
+    assert isinstance(dictionary, dict)
 
 
-@pytest.mark.parametrize("input_df", [df, ds])
+@pytest.mark.parametrize("input_df", [df, df2, ds, ds2])
 def test_dataframe_to_array(input_df):
     arr = dataframe_to_array(input_df)
-    assert isinstance(arr, np.ndarray) == True
+    assert isinstance(arr, np.ndarray)
 
 
 stratum = ["one", "two", 3, 4, 5]
@@ -55,19 +57,19 @@ samp_size = {"one": 11, "two": 22, 3: 33, 4: 44, 5: 55}
 
 def test_sample_size_dict1(sample_size=5, stratification=False, stratum=stratum):
     samp_dict1 = data_to_dict(sample_size, stratification, stratum)
-    assert isinstance(samp_dict1, int) == True
+    assert isinstance(samp_dict1, int)
     assert samp_dict1 == 5
 
 
 def test_sample_size_dict2(sample_size=5, stratification=False, stratum=stratum):
     samp_dict2 = data_to_dict(sample_size, stratification, stratum)
-    assert isinstance(samp_dict2, int) == True
+    assert isinstance(samp_dict2, int)
     assert samp_dict2 == 5
 
 
 def test_sample_size_dict_str1(sample_size=5, stratification=True, stratum=stratum):
     samp_dict_str1 = data_to_dict(sample_size, stratification, stratum)
-    assert isinstance(samp_dict_str1, dict) == True
+    assert isinstance(samp_dict_str1, dict)
     assert samp_dict_str1["one"] == 5
     assert samp_dict_str1["two"] == 5
     assert samp_dict_str1[3] == 5
@@ -75,11 +77,9 @@ def test_sample_size_dict_str1(sample_size=5, stratification=True, stratum=strat
     assert samp_dict_str1[5] == 5
 
 
-def test_sample_size_dict_str2(
-    sample_size=samp_size, stratification=True, stratum=stratum
-):
+def test_sample_size_dict_str2(sample_size=samp_size, stratification=True, stratum=stratum):
     samp_dict_str2 = data_to_dict(sample_size, stratification, stratum)
-    assert isinstance(samp_dict_str2, dict) == True
+    assert isinstance(samp_dict_str2, dict)
     assert samp_dict_str2["one"] == 11
     assert samp_dict_str2["two"] == 22
     assert samp_dict_str2[3] == 33
@@ -104,7 +104,7 @@ def test_sample_units3(all_units=[1, 2, 2, 3, 3, 3], unique=False):
 
 def test_dict_to_dataframe():
     df = dict_to_dataframe(["parameter", "domain", "size"], samp_size)
-    assert isinstance(df, pd.DataFrame) == True
+    assert isinstance(df, pd.DataFrame)
     assert (df.columns == ["parameter", "domain", "size"]).all()
 
 

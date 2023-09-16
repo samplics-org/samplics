@@ -1,7 +1,6 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import pytest
 
 from samplics.sae.eblup_area_model import EblupAreaModel
 

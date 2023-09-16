@@ -39,10 +39,7 @@ eb_bhf_reml.fit(ys, Xs, areas, intercept=True)
 
 eb_bhf_reml.predict(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
-eb_bhf_reml.bootstrap_mse(
-    Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484
-)
-
+eb_bhf_reml.bootstrap_mse(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
 def test_eb_bhf_reml():
     assert eb_bhf_reml.method == "REML"
@@ -145,60 +142,60 @@ X_r = X[sample != 1]
 """REML Method"""
 
 
-eb_bhf_reml = EbUnitModel(
+eb_bhf_reml2 = EbUnitModel(
     method="REML",
     boxcox=0,
     constant=10,
 )
-eb_bhf_reml.fit(y_s, X_s, area_s, tol=1e-6, intercept=True)
+eb_bhf_reml2.fit(y_s, X_s, area_s, tol=1e-6, intercept=True)
 
 
-def test_eb_bhf_reml():
-    assert eb_bhf_reml.method == "REML"
+def test_eb_bhf_reml2():
+    assert eb_bhf_reml2.method == "REML"
 
 
-def test_fixed_effects_eb_bhf_reml():
+def test_fixed_effects_eb_bhf_reml2():
     assert np.isclose(
-        eb_bhf_reml.fixed_effects,
+        eb_bhf_reml2.fixed_effects,
         np.array([5.18988986, 2.89804078, -3.00472657, 2.82705747]),
         atol=1e-4,
     ).all()
 
 
-def test_re_std_eb_bhf_reml():
-    assert np.isclose(eb_bhf_reml.re_std, 0.259776, atol=1e-4)
+def test_re_std_eb_bhf_reml2():
+    assert np.isclose(eb_bhf_reml2.re_std, 0.259776, atol=1e-4)
 
 
-def test_error_var_eb_bhf_reml():
-    assert np.isclose(eb_bhf_reml.error_std, 0.957548, atol=1e-4)
+def test_error_var_eb_bhf_reml2():
+    assert np.isclose(eb_bhf_reml2.error_std, 0.957548, atol=1e-4)
 
 
 """ML Method"""
 
 
-eb_bhf_ml = EbUnitModel(
+eb_bhf_ml2 = EbUnitModel(
     method="ML",
     boxcox=0,
     constant=10,
 )
-eb_bhf_ml.fit(y_s, X_s, area_s, tol=1e-6, intercept=True)
+eb_bhf_ml2.fit(y_s, X_s, area_s, tol=1e-6, intercept=True)
 
 
-def test_eb_bhf_ml():
-    assert eb_bhf_ml.method == "ML"
+def test_eb_bhf_ml2():
+    assert eb_bhf_ml2.method == "ML"
 
 
-def test_fixed_effects_eb_bhf_ml():
+def test_fixed_effects_eb_bhf_ml2():
     assert np.isclose(
-        eb_bhf_ml.fixed_effects,
+        eb_bhf_ml2.fixed_effects,
         np.array([5.189840, 2.898447, -3.005277, 2.827395]),
         atol=1e-4,
     ).all()
 
 
-def test_re_std_eb_bhf_ml():
-    assert np.isclose(eb_bhf_reml.re_std, 0.259776, atol=1e-4)
+def test_re_std_eb_bhf_ml2():
+    assert np.isclose(eb_bhf_reml2.re_std, 0.259776, atol=1e-4)
 
 
-def test_error_var_eb_bhf_ml():
-    assert np.isclose(eb_bhf_reml.error_std, 0.957584, atol=1e-4)
+def test_error_var_eb_bhf_ml2():
+    assert np.isclose(eb_bhf_reml2.error_std, 0.957584, atol=1e-4)

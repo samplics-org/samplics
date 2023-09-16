@@ -110,7 +110,6 @@ class EbUnitModel:
         boxcox: Optional[Number] = None,
         constant: Optional[Number] = None,
     ):
-
         # Setting
         self.method: str = method.upper()
         if self.method not in ("REML", "ML"):
@@ -161,14 +160,10 @@ class EbUnitModel:
         elif self.boxcox["lambda"] != 0.0:
             if inverse:
                 return np.asarray(
-                    np.exp(
-                        np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"]
-                    )
+                    np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
                 )
             else:
-                return np.asarray(
-                    np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
-                )
+                return np.asarray(np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"])
         else:
             raise AssertionError
 
@@ -264,7 +259,6 @@ class EbUnitModel:
         show_progress: bool,
         **kwargs: Any,
     ) -> np.ndarray:
-
         if intercept:
             if self.Xs_mean.ndim == 1:
                 n = self.Xs_mean.shape[0]
@@ -324,9 +318,7 @@ class EbUnitModel:
                         end="",
                     )
 
-            y_d = np.append(
-                y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1
-            )
+            y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
             z_d = basic_functions.transform(
                 y_d,
                 llambda=self.boxcox["lambda"],
@@ -519,9 +511,7 @@ class EbUnitModel:
 
         eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
         eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
-        y_samp_boot = np.zeros(
-            (number_reps, int(np.sum(list(sample_size_dict.values()))))
-        )
+        y_samp_boot = np.zeros((number_reps, int(np.sum(list(sample_size_dict.values())))))
         print(f"Generating the {number_reps} bootstrap replicate populations")
         for b in range(number_cycles):
             start = b * cycle_size
@@ -542,9 +532,7 @@ class EbUnitModel:
                     scale=self.error_std * scale_dict[d],
                     size=(cycle_size, np.sum(indice_dict[d])),
                 )
-                yboot_d = (
-                    (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
-                )
+                yboot_d = (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
                 zboot_d = basic_functions.transform(
                     yboot_d,
                     llambda=self.boxcox["lambda"],
@@ -556,9 +544,7 @@ class EbUnitModel:
                 if i == 0:
                     yboot_s = yboot_d[:, -int(sample_size_dict[d]) :]
                 else:
-                    yboot_s = np.append(
-                        yboot_s, yboot_d[:, -int(sample_size_dict[d]) :], axis=1
-                    )
+                    yboot_s = np.append(yboot_s, yboot_d[:, -int(sample_size_dict[d]) :], axis=1)
 
                 if show_progress:
                     run_id = b * nb_areas_ps + i
@@ -593,9 +579,7 @@ class EbUnitModel:
             # "pgtol": tol,
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
-        print(
-            f"Fitting and predicting using each of the {number_reps} bootstrap populations"
-        )
+        print(f"Fitting and predicting using each of the {number_reps} bootstrap populations")
         for b in range(number_reps):
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore")
@@ -607,8 +591,8 @@ class EbUnitModel:
                     **fit_kwargs,
                 )
 
-            gammaboot = float(boot_fit.cov_re) / (
-                float(boot_fit.cov_re) + boot_fit.scale * (1 / aboot_factor)
+            gammaboot = boot_fit.cov_re[0] / (
+                boot_fit.cov_re[0] + boot_fit.scale * (1 / aboot_factor)
             )
 
             eta_samp_boot[b, :] = self._predict_indicator(
@@ -622,7 +606,7 @@ class EbUnitModel:
                 boot_fit.fe_params,
                 gammaboot,
                 boot_fit.scale,
-                float(boot_fit.cov_re),
+                boot_fit.cov_re[0],
                 scale_r,
                 intercept,
                 max_array_length,
@@ -642,9 +626,7 @@ class EbUnitModel:
 
         print("\n")
 
-        mse_boot = np.asarray(
-            np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
-        )
+        mse_boot = np.asarray(np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0))
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
     def to_dataframe(
@@ -664,9 +646,7 @@ class EbUnitModel:
         ncols = len(col_names)
 
         if self.area_est is None:
-            raise AssertionError(
-                "No prediction yet. Must predict the area level estimates."
-            )
+            raise AssertionError("No prediction yet. Must predict the area level estimates.")
         elif self.area_mse_boot is None and ncols not in (2, 3):
             raise AssertionError("col_names must have 2 or 3 values")
         elif self.area_mse_boot is None and ncols == 3:
@@ -675,8 +655,6 @@ class EbUnitModel:
         if self.area_mse_boot is None:
             area_df = formats.dict_to_dataframe(col_names, self.area_est)
         else:
-            area_df = formats.dict_to_dataframe(
-                col_names, self.area_est, self.area_mse_boot
-            )
+            area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse_boot)
 
         return area_df

@@ -114,7 +114,7 @@ def test_goodness_of_fit_bhf_reml():
 
 
 def test_convergence_bhf_reml():
-    assert eblup_bhf_reml.convergence["achieved"] == True
+    assert eblup_bhf_reml.convergence["achieved"] is True
     assert eblup_bhf_reml.convergence["iterations"] == 4
 
 
@@ -381,7 +381,7 @@ def test_goodness_of_fit_bhf_ml():
 
 
 def test_convergence_bhf_ml():
-    assert eblup_bhf_ml.convergence["achieved"] == True
+    assert eblup_bhf_ml.convergence["achieved"] is True
     assert eblup_bhf_ml.convergence["iterations"] == 3
 
 

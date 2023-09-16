@@ -13,6 +13,7 @@ from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
+import polars as pl
 
 from samplics.utils.checks import assert_not_unique
 from samplics.utils.types import (
@@ -26,8 +27,11 @@ from samplics.utils.types import (
 
 
 def numpy_array(arr: Array) -> np.ndarray:
-
-    if not isinstance(arr, np.ndarray):
+    if isinstance(arr, (pd.DataFrame, pl.DataFrame)):
+        return arr.to_numpy()
+    elif isinstance(arr, (pd.Series, pl.Series)):
+        return arr.to_numpy()
+    elif not isinstance(arr, np.ndarray):
         arr_np = np.asarray(arr)
         if isinstance(arr, (list, tuple)) and len(arr_np.shape) == 2:
             arr_np = np.transpose(arr_np)
@@ -37,7 +41,6 @@ def numpy_array(arr: Array) -> np.ndarray:
 
 
 def array_to_dict(arr: np.ndarray, domain: Optional[np.ndarray] = None) -> DictStrNum:
-
     if domain is None:
         keys, counts = np.unique(numpy_array(arr), return_counts=True)
         out_dict = dict(zip(keys, counts))
@@ -52,20 +55,23 @@ def array_to_dict(arr: np.ndarray, domain: Optional[np.ndarray] = None) -> DictS
 
 
 def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
-
-    if isinstance(df, pd.Series):
-        x_array = df
-    elif isinstance(df, pd.DataFrame):
+    if isinstance(df, (pd.Series, pl.Series)):
+        return df.to_numpy()
+    elif isinstance(df, (pl.DataFrame, pd.DataFrame)):
+        if isinstance(df, pd.DataFrame):
+            df = pl.from_pandas(df)
         nb_vars = df.shape[1]
         col_names = df.columns
-        x_array = df[col_names[0]]
+
+        x_array = df.select(col_names[0]).to_series().cast(pl.Utf8).to_numpy()
         if nb_vars > 1:
             for k in range(1, nb_vars):
-                x_array = x_array.astype(str) + "_&_" + df[col_names[k]].astype(str)
+                x_array = (
+                    x_array + "_&_" + df.select(col_names[k]).to_series().cast(pl.Utf8).to_numpy()
+                )
+        return x_array
     else:
         raise AssertionError("The input data is not a pandas dataframe")
-
-    return np.asarray(x_array.to_numpy())
 
 
 def data_to_dict(
@@ -92,18 +98,13 @@ def sample_units(all_units: Array, unique: bool = True) -> np.ndarray:
 
 
 def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
-
     if isinstance(args[0], dict):
         values_df = pd.DataFrame(columns=col_names)
         keys = list(args[0].keys())
         number_keys = len(keys)
         for k, arg in enumerate(args):
             args_keys = list(args[k].keys())
-            if (
-                not isinstance(arg, dict)
-                or (keys != args_keys)
-                or number_keys != len(args_keys)
-            ):
+            if not isinstance(arg, dict) or (keys != args_keys) or number_keys != len(args_keys):
                 raise AssertionError(
                     "All input parameters must be dictionaries with the same keys."
                 )
@@ -148,7 +149,6 @@ def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
 
 
 def remove_nans(n: Number, *args: np.ndarray) -> list:
-
     excluded_units = np.zeros(n).astype(bool)
 
     for var in args:
@@ -163,10 +163,7 @@ def remove_nans(n: Number, *args: np.ndarray) -> list:
     return ~excluded_units
 
 
-def fpc_as_dict(
-    stratum: np.ndarray, fpc: Union[Array, Number]
-) -> Union[DictStrNum, Number]:
-
+def fpc_as_dict(stratum: np.ndarray, fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
     if stratum.shape in ((), (0,)) and isinstance(fpc, (int, float)):
         return fpc
     elif stratum.shape not in ((), (0,)) and isinstance(fpc, (int, float)):
@@ -180,7 +177,6 @@ def fpc_as_dict(
 def convert_numbers_to_dicts(
     number_strata: Optional[int], *args: Union[DictStrNum, Number]
 ) -> list[DictStrNum]:
-
     dict_number = 0
     stratum: Optional[list[StringNumber]] = None
     for arg in args:
@@ -214,12 +210,10 @@ def convert_numbers_to_dicts(
 
 
 def concatenate_series_to_str(row: Series) -> str:
-
     return "__by__".join([str(c) for c in row])
 
 
 def numpy_to_dummies(arr: np.ndarray, vars_names: list[str]) -> np.ndarray:
-
     df = pd.DataFrame(arr.astype(str))
     df.columns = vars_names
 

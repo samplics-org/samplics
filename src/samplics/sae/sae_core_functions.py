@@ -59,7 +59,7 @@ def area_stats(
         y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
         Xw_d = X[sample_d, :] * aw_factor_d[:, None]
         X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
-        gamma[k] = (re_std**2) / (re_std**2 + (error_std**2) * delta_d)
+        gamma[k] = re_std**2 / (re_std**2 + (error_std**2) * delta_d)
         samp_size[k] = np.sum(sample_d)
 
     return y_mean, X_mean, gamma, samp_size.astype(int)
@@ -92,7 +92,6 @@ def fixed_coefficients(
     x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(X_T, V_inv), X))
     x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, X_T), V_inv)
     beta_hat = np.matmul(x_v_x_inv_x, y)
-
     # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
     return np.asarray(beta_hat.ravel())  # , np.linalg.inv(beta_hat_cov)
 
@@ -161,8 +160,7 @@ def inverse_covariance(
         gamma_d = sigma2u / (sigma2u + sigma2e / sum_scale_d)
         V_inv[start:end, start:end] = (1 / sigma2e) * (
             np.diag(a_d)
-            - (gamma_d / sum_scale_d)
-            * np.matmul(a_d[:, None], np.transpose(a_d[:, None]))
+            - (gamma_d / sum_scale_d) * np.matmul(a_d[:, None], np.transpose(a_d[:, None]))
         )
 
     return V_inv
@@ -188,11 +186,7 @@ def log_det_covariance(
     det = 0
     for d in np.unique(area):
         nd = np.sum(area == d)
-        det += (
-            np.sum(np.log(scale))
-            + nd * np.log(sigma2e)
-            + np.log(1 + nd * sigma2u / sigma2e)
-        )
+        det += np.sum(np.log(scale)) + nd * np.log(sigma2e) + np.log(1 + nd * sigma2u / sigma2e)
 
     return det
 

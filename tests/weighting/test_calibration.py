@@ -1,9 +1,6 @@
-import pytest
 
 import numpy as np
 import pandas as pd
-
-import samplics
 
 from samplics.weighting import SampleWeight
 

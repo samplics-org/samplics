@@ -1,4 +1,3 @@
-import numpy as np
 
 from samplics.sampling import SampleSizeMeanTwoSample, SampleSizePropTwoSample
 
