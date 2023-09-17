@@ -57,7 +57,7 @@ def _is_all_items_positive(obj: Array | DictStrNum) -> bool:
 
 @frozen
 class DirectEst:
-    area: tuple = field(validator=validators.instance_of(tuple))
+    area: list = field(validator=validators.instance_of(list))
     est: dict = field(validator=validators.instance_of(dict))
     stderr: dict
     ssize: dict
@@ -77,8 +77,7 @@ class DirectEst:
     ) -> None:
         assert isinstance(area, Array)
 
-        if not isinstance(area, tuple):
-            area = tuple(numpy_array(area).flatten())
+        area = numpy_array(area).tolist()
 
         if isinstance(stderr, Number):
             stderr = dict(zip(area, tuple(np.repeat(stderr, len(area)))))
@@ -141,10 +140,10 @@ class DirectEst:
 
 @frozen
 class AuxVars:
-    area: tuple
+    area: list
     auxdata: dict
     ssize: dict
-    record_id: tuple | None
+    # record_id: tuple | None
     uid: int = int(
         dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
         + str(int(1e16 * rand.random()))
@@ -161,8 +160,12 @@ class AuxVars:
 
         area = numpy_array(area)
 
-        areas_unique = tuple(np.unique(area))
-        record_id = numpy_array(record_id) if record_id is not None else None
+        areas_unique = np.unique(area).tolist()
+        record_id = (
+            numpy_array(record_id)
+            if record_id is not None
+            else np.linspace(0, area.shape[0] - 1, area.shape[0]).astype(int)
+        )
 
         if isinstance(auxdata, (DF, Array)):
             aux_df = self.__from_df(auxdata)
@@ -185,27 +188,14 @@ class AuxVars:
 
         if aux_df is None:
             auxdata = pl.from_dict(kwargs)
-
         else:
             auxdata = aux_df.hstack(pl.from_dict(kwargs))
-        auxdata_dict = auxdata.insert_at_idx(
-            0, pl.from_numpy(area).to_series().alias("area")
-        ).partition_by("area", as_dict=True)
 
-        # kwargs_vars = tuple(kwargs.keys())
-        # for i, var in enumerate(kwargs_vars):
-        #     vardata = numpy_array(kwargs[var])
-        #     for d in areas_unique:
-        #         kwagrs_data[d] = {}
-        #         records_d = areas == d
-        #         kwagrs_data[d][var] = tuple(vardata[records_d])
-        #         if i == 0:
-        #             # ssize[d] = int(records_d.sum())
-        #             kwagrs_data[d] = {}
-        #             if record_id is not None:
-        #                 kwagrs_data[d]["record_id"] = tuple(record_id[records_d])
-        #             else:
-        #                 kwagrs_data[d]["record_id"] = None
+        auxdata_dict = (
+            auxdata.insert_at_idx(0, pl.from_numpy(area).to_series().alias("area"))
+            .insert_at_idx(0, pl.Series(record_id).alias("record_id"))
+            .partition_by("area", as_dict=True)
+        )
 
         auxdata_dict = {k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict}
 
@@ -214,7 +204,7 @@ class AuxVars:
             ssize[k] = len(auxdata_dict[k]["area"])
             del auxdata_dict[k]["area"]
 
-        self.__attrs_init__(areas_unique, auxdata_dict, ssize, record_id)
+        self.__attrs_init__(areas_unique, auxdata_dict, ssize)
 
     def __from_df(self, auxdata: DF | Array) -> pl.DataFrame | None:
         if isinstance(auxdata, pl.DataFrame):
@@ -303,7 +293,7 @@ class EbFit:
 
 @frozen
 class EblupEst:
-    area: tuple
+    area: list
     est: dict
     fit_stats: EblupFit
     mse: dict | None = None
@@ -333,7 +323,7 @@ class EblupEst:
 
 @frozen
 class EbEst:
-    area: tuple
+    area: list
     est: dict
     fit_stats: EbFit
     mse: dict | None = None
