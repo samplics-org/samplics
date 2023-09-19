@@ -24,7 +24,7 @@ def fit_eblup(
     y: DirectEst,
     x: AuxVars,
     method: FitMethod,
-    stderr_init: float = 0.001,
+    err_init: float = 0.001,
     b_const: Array | Number = 1.0,
     tol: float = 1e-4,
     maxiter: int = 100,
@@ -39,7 +39,7 @@ def fit_eblup(
 
     if (error_std <= 0).any():
         raise ValueError(
-            "Some of the standard errors are not strictly positive. All standard errors must be greater than 0."
+            """Some of the standard errors are not strictly positive. All standard errors must be greater than 0."""
         )
 
     if isinstance(b_const, (int, float)):
@@ -89,7 +89,7 @@ def fit_eblup(
     return EblupFit(
         method=method,
         auxvars=x.auxvars,
-        e_stderr=dict(zip(area, error_std)),
+        err_stderr=dict(zip(area, error_std)),
         fe_est=tuple(beta),
         fe_stderr=tuple(np.diag(beta_cov) ** (1 / 2)),
         re_stderr=sigma2_v ** (1 / 2),

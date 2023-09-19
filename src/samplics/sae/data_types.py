@@ -57,7 +57,7 @@ def _is_all_items_positive(obj: Array | DictStrNum) -> bool:
 
 @frozen
 class DirectEst:
-    area: list = field(validator=validators.instance_of(list))
+    areas: list = field(validator=validators.instance_of(list))
     est: dict = field(validator=validators.instance_of(dict))
     stderr: dict
     ssize: dict
@@ -77,7 +77,7 @@ class DirectEst:
     ) -> None:
         assert isinstance(area, Array)
 
-        area = numpy_array(area).tolist()
+        area = numpy_array(area)
 
         if isinstance(stderr, Number):
             stderr = dict(zip(area, tuple(np.repeat(stderr, len(area)))))
@@ -102,7 +102,7 @@ class DirectEst:
             if isinstance(ssize, Array):
                 psize = dict(zip(area, stderr))
 
-        self.__attrs_init__(area, est, stderr, ssize, psize)
+        self.__attrs_init__(area.tolist(), est, stderr, ssize, psize)
 
     @property
     def cv(self):
@@ -119,7 +119,7 @@ class DirectEst:
     def to_polars(self, varlist: str | list[str] | None = None):
         aux_df = pl.from_dict(
             {
-                "area": list(self.area),
+                "areas": list(self.areas),
                 "est": list(self.est.values()),
                 "stderr": list(self.stderr.values()),
                 "ssize": list(self.ssize.values()),
@@ -140,9 +140,9 @@ class DirectEst:
 
 @frozen
 class AuxVars:
-    area: list
+    areas: list
     auxdata: dict
-    ssize: dict
+    # ssize: dict
     # record_id: tuple | None
     uid: int = int(
         dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
@@ -152,13 +152,14 @@ class AuxVars:
     def __init__(
         self,
         area: Array,
-        record_id: Array = None,
         auxdata: DF | Array | Iterable[DF | Array] | None = None,
+        record_id: Array = None,
         **kwargs,
     ) -> None:
         assert isinstance(area, Array)
 
         area = numpy_array(area)
+        assert area.shape[0] > 0
 
         areas_unique = np.unique(area).tolist()
         record_id = (
@@ -199,12 +200,13 @@ class AuxVars:
 
         auxdata_dict = {k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict}
 
-        ssize = {}
+        # ssize = {}
         for k in auxdata_dict:
-            ssize[k] = len(auxdata_dict[k]["area"])
+            # ssize[k] = len(auxdata_dict[k]["area"])
             del auxdata_dict[k]["area"]
 
-        self.__attrs_init__(areas_unique, auxdata_dict, ssize)
+        # self.__attrs_init__(areas_unique, auxdata_dict, ssize)
+        self.__attrs_init__(areas_unique, auxdata_dict)
 
     def __from_df(self, auxdata: DF | Array) -> pl.DataFrame | None:
         if isinstance(auxdata, pl.DataFrame):
