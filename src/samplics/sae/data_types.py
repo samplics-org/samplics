@@ -21,7 +21,6 @@ from samplics.utils.types import DF, Array, DictStrNum, Number
 # PandasDF = TypeVar("pd.DataFrame", bound=pd.DataFrame)
 # PolarsDF = TypeVar("pl.DataFrame", bound=pl.DataFrame)
 
-
 class ToDataFrame(Protocol):
     def to_numpy():
         pass
@@ -171,18 +170,21 @@ class AuxVars:
         if isinstance(auxdata, (DF, Array)):
             aux_df = self.__from_df(auxdata)
             if isinstance(auxdata, Array):
-                aux_df.columns = ["__aux_" + str(i) for i in range(aux_df.shape[1])]
+                aux_df.columns = ["__aux_" + str(i)
+                                  for i in range(aux_df.shape[1])]
         elif isinstance(auxdata, Iterable):
             for i, d in enumerate(auxdata):
                 assert isinstance(d, (DF, Array))
                 if i == 0:
                     aux_df = self.__from_df(d)
                     if isinstance(d, Array):
-                        aux_df.columns = ["__aux_" + str(i) for i in range(aux_df.shape[1])]
+                        aux_df.columns = [
+                            "__aux_" + str(i) for i in range(aux_df.shape[1])]
                 else:
                     d_df = self.__from_df(d)
                     if isinstance(d, Array):
-                        d_df.columns = ["__aux_" + str(i) for i in range(d_df.shape[1])]
+                        d_df.columns = ["__aux_" +
+                                        str(i) for i in range(d_df.shape[1])]
                     aux_df.hstack([d_df], in_place=True)
         else:
             aux_df = None
@@ -193,12 +195,14 @@ class AuxVars:
             auxdata = aux_df.hstack(pl.from_dict(kwargs))
 
         auxdata_dict = (
-            auxdata.insert_at_idx(0, pl.from_numpy(area).to_series().alias("area"))
+            auxdata.insert_at_idx(0, pl.from_numpy(
+                area).to_series().alias("area"))
             .insert_at_idx(0, pl.Series(record_id).alias("record_id"))
             .partition_by("area", as_dict=True)
         )
 
-        auxdata_dict = {k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict}
+        auxdata_dict = {k: auxdata_dict[k].to_dict(
+            as_series=False) for k in auxdata_dict}
 
         # ssize = {}
         for k in auxdata_dict:
