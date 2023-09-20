@@ -127,7 +127,6 @@ class DirectEst:
 
         if varlist is None:
             return aux_df
-            # return aux_df.select(["est", "stderr", "ssize"]).to_numpy()
         elif isinstance(varlist, (str, list)):
             return aux_df.select(varlist)
         else:
@@ -141,8 +140,6 @@ class DirectEst:
 class AuxVars:
     areas: list
     auxdata: dict
-    # ssize: dict
-    # record_id: tuple | None
     uid: int = int(
         dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
         + str(int(1e16 * rand.random()))
@@ -204,12 +201,9 @@ class AuxVars:
         auxdata_dict = {k: auxdata_dict[k].to_dict(
             as_series=False) for k in auxdata_dict}
 
-        # ssize = {}
         for k in auxdata_dict:
-            # ssize[k] = len(auxdata_dict[k]["area"])
             del auxdata_dict[k]["area"]
 
-        # self.__attrs_init__(areas_unique, auxdata_dict, ssize)
         self.__attrs_init__(areas_unique, auxdata_dict)
 
     def __from_df(self, auxdata: DF | Array) -> pl.DataFrame | None:
