@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 
-from samplics.sae.data_types import (
+from samplics.types import (
     Array,
     AuxVars,
     DictStrNum,
@@ -24,18 +24,24 @@ def fit_eblup(
     y: DirectEst,
     x: AuxVars,
     method: FitMethod,
-    err_init: float = 0.001,
+    intercept: bool = True,  # if True, it adds an intercept of 1
+    err_init: float | None = None,
     b_const: Array | Number = 1.0,
     tol: float = 1e-4,
     maxiter: int = 100,
 ) -> EblupFit:
     # TODO: add a test to check that area is the same in y and x
 
-    area = y.to_numpy("area").flatten()
-    yhat = y.to_numpy("est").flatten()
-    X = np.insert(x.to_numpy(), 0, 1, axis=1)  # add the intercept
+    area = y.to_numpy(keep_vars="__domain").flatten()
+    yhat = y.to_numpy(keep_vars="est").flatten()
+    if intercept:
+        X = np.insert(
+            x.to_numpy(drop_vars=["__record_id", "__domain"]), 0, 1, axis=1
+        )  # add the intercept
+    else:
+        X = x.to_numpy(drop_vars=["__record_id", "__domain"])
 
-    error_std = y.to_numpy("stderr").flatten()
+    error_std = y.to_numpy(keep_vars="stderr").flatten()
 
     if (error_std <= 0).any():
         raise ValueError(
@@ -46,6 +52,9 @@ def fit_eblup(
         b_const = np.asarray(np.ones(area.size) * b_const)
     else:
         b_const = numpy_array(b_const)
+
+    if err_init is None:
+        err_init = np.median(error_std)
 
     (
         sigma2_v,
@@ -80,7 +89,7 @@ def fit_eblup(
     area = area
 
     m = yhat.size
-    p = X.shape[1] + 1
+    p = X.shape[1]
     Z_b2_Z = np.ones(shape=(m, m))
     V = np.diag(error_std**2) + sigma2_v * Z_b2_Z
 
@@ -88,14 +97,17 @@ def fit_eblup(
 
     return EblupFit(
         method=method,
-        auxvars=x.auxvars,
         err_stderr=dict(zip(area, error_std)),
         fe_est=tuple(beta),
         fe_stderr=tuple(np.diag(beta_cov) ** (1 / 2)),
         re_stderr=sigma2_v ** (1 / 2),
         re_stderr_var=sigma2_v_cov,
         log_llike=log_llike,
-        convergence={"achieved": convergence, "iterations": iterations, "precision": tolerance},
+        convergence={
+            "achieved": convergence,
+            "iterations": iterations,
+            "precision": tolerance,
+        },
         goodness={
             "AIC": -2 * log_llike + 2 * (p + 1),
             "BIC": 2 * log_llike + math.log(m) * (p + 1),
@@ -119,24 +131,34 @@ def _iterative_fisher_scoring(
 
     iterations = 0
     tolerance = tol + 1.0
-    sigma2_v = sigma2_v_start
+    sigma2_v_previous = sigma2_v_start
     info_sigma = 0.0
     while iterations < maxiter and tolerance > tol:
-        sigma2_v_previous = sigma2_v
         deriv_sigma, info_sigma = _partial_derivatives(
             method=method,
             area=area,
             yhat=yhat,
             X=X,
             sigma2_e=sigma2_e,
-            sigma2_v=sigma2_v,
+            sigma2_v=sigma2_v_previous,
             b_const=b_const,
         )
-        sigma2_v += deriv_sigma / info_sigma
+        sigma2_v = sigma2_v_previous + deriv_sigma / info_sigma
+        # print(tolerance)
+        # if iterations == 11:
+        #     breakpoint()
+        # print(iterations)
         tolerance = abs((sigma2_v - sigma2_v_previous) / sigma2_v_previous)
         iterations += 1
+        sigma2_v_previous = sigma2_v
 
-    return float(max(sigma2_v, 0)), 1 / info_sigma, iterations, tolerance, tolerance <= tol
+    return (
+        float(max(sigma2_v, 0)),
+        1 / info_sigma,
+        iterations,
+        tolerance,
+        tolerance <= tol,
+    )
 
 
 def _partial_derivatives(
@@ -173,18 +195,21 @@ def _partial_derivatives(
             info_sigma += 0.5 * (term1**2)
     elif method == FitMethod.reml:
         B = np.diag(b_const**2)
-        v_i = sigma2_e + sigma2_v * (b_const**2)
-        V = np.diag(v_i)
-        v_inv = np.linalg.inv(V)
-        x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
-        x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
-        P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
-        P_B = np.matmul(P, B)
-        P_B_P = np.matmul(P_B, P)
-        term1 = float(np.trace(P_B))
-        term2 = np.matmul(np.matmul(np.transpose(yhat), P_B_P), yhat)
-        deriv_sigma = -0.5 * (term1 - term2)
-        info_sigma = 0.5 * float(np.trace(np.matmul(P_B_P, B)))
+        # v_i = sigma2_e + sigma2_v * (b_const**2)
+        # V = np.diag(v_i)
+        # v_inv = np.linalg.inv(V)
+        v_i = 1 / (sigma2_e + sigma2_v * (b_const**2))
+        v_inv = np.diag(v_i)
+        x_vinv_x = np.transpose(X) @ v_inv @ X
+        x_xvinvx_x = X @ np.linalg.inv(x_vinv_x) @ np.transpose(X)
+        P = v_inv - v_inv @ x_xvinvx_x @ v_inv
+        Py = P @ yhat
+        PB = P @ B
+        # P_B_P = P_B @ P
+        term1 = -0.5 * np.trace(PB)
+        term2 = 0.5 * (np.transpose(Py) @ B @ Py)
+        deriv_sigma = term1 + term2
+        info_sigma = 0.5 * np.trace(PB @ PB)
     elif method == FitMethod.fh:  # Fay-Herriot approximation
         beta, beta_cov = _fixed_coefficients(
             area=area,
@@ -208,7 +233,7 @@ def _partial_derivatives(
         p = X.shape[1]
         deriv_sigma = m - p - deriv_sigma
 
-    return float(deriv_sigma), float(info_sigma)
+    return deriv_sigma, info_sigma
 
 
 def _fixed_coefficients(
@@ -238,7 +263,7 @@ def _log_likelihood(
     ll_term1 = np.log(np.linalg.det(V))
     V_inv = np.linalg.inv(V)
     resid_term = y - np.dot(X, beta)
-    if method in (FitMethod.ml, FitMethod.fh):  # Whta is likelihood for FH
+    if method in (FitMethod.ml, FitMethod.fh):  # What is likelihood for FH
         resid_var = np.dot(np.transpose(resid_term), V_inv)
         ll_term2 = np.dot(resid_var, resid_term)
         loglike = -0.5 * (const + ll_term1 + ll_term2)

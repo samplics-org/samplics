@@ -1,7 +1,8 @@
 # import numpy as np
 import polars as pl
 
-from samplics.types import AuxVars, DirectEst
+from samplics.apis.sae import fit_eblup
+from samplics.types import AuxVars, DirectEst, FitMethod
 
 
 # Import the datasets
@@ -10,22 +11,21 @@ milk = pl.read_csv("./tests/sae/milk.csv")
 
 area = milk["SmallArea"]
 yhat = milk["yi"]
-X = milk.select("SmallArea").to_dummies(drop_first=True)  # Select() returns a DF
+X = milk.select("MajorArea").to_dummies(drop_first=True)  # Select() returns a DF
 sigma_e = milk["SD"]
 
 
 # Initialize direct estimates
 yhat = DirectEst(
-    area=milk["SmallArea"], est=milk["yi"], stderr=milk["SD"], ssize=milk["ni"]
+    est=milk["yi"], stderr=milk["SD"], ssize=milk["ni"], domain=milk["SmallArea"]
 )
 
 
 # Initialize AuxVars
-
 auxvars = AuxVars(domain=area, auxdata=X)
 
-# Fit the model
-# fh_model_reml = EblupAreaModel(method="REML")
+fit_reml = fit_eblup(y=yhat, x=auxvars, method=FitMethod.reml)
+
 # fh_model_reml.fit(
 #     yhat=yhat,
 #     X=X,
