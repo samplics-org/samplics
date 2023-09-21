@@ -16,18 +16,10 @@ from samplics.datasets.datasets import (
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.regression import SurveyGLM
 from samplics.sae import (
-    AuxVars,
-    DirectEst,
-    EbEst,
-    EbFit,
     EblupAreaModel,
-    EblupEst,
-    EblupFit,
     EblupUnitModel,
     EbUnitModel,
     EllUnitModel,
-    FitMethod,
-    fit_eblup,
 )
 from samplics.sampling import (
     SampleSelection,
@@ -44,6 +36,15 @@ from samplics.sampling import (
     calculate_ss_wald_prop,
     power_for_one_mean,
     power_for_one_proportion,
+)
+from samplics.types import (
+    AuxVars,
+    DirectEst,
+    EbEst,
+    EbFit,
+    EblupEst,
+    EblupFit,
+    FitMethod,
 )
 from samplics.utils import (
     CertaintyError,

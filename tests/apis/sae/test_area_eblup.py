@@ -1,7 +1,7 @@
 # import numpy as np
 import polars as pl
 
-from samplics.sae.data_types import DirectEst
+from samplics.types import AuxVars, DirectEst
 
 
 # Import the datasets
@@ -15,11 +15,14 @@ sigma_e = milk["SD"]
 
 
 # Initialize direct estimates
-yhat = DirectEst(area=milk["SmallArea"], est=milk["yi"], stderr=milk["SD"], ssize=milk["ni"])
+yhat = DirectEst(
+    area=milk["SmallArea"], est=milk["yi"], stderr=milk["SD"], ssize=milk["ni"]
+)
 
 
 # Initialize AuxVars
 
+auxvars = AuxVars(area=area, auxdata=X)
 
 # Fit the model
 # fh_model_reml = EblupAreaModel(method="REML")
@@ -33,4 +36,4 @@ yhat = DirectEst(area=milk["SmallArea"], est=milk["yi"], stderr=milk["SD"], ssiz
 # )
 # fh_model_reml.predict(X=X, area=area, intercept=False)
 
-# breakpoint()
+breakpoint()
