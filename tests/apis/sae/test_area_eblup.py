@@ -22,7 +22,7 @@ yhat = DirectEst(
 
 # Initialize AuxVars
 
-auxvars = AuxVars(area=area, auxdata=X)
+auxvars = AuxVars(domain=area, auxdata=X)
 
 # Fit the model
 # fh_model_reml = EblupAreaModel(method="REML")

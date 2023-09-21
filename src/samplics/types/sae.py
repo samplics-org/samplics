@@ -14,7 +14,7 @@ from attr import validators
 from attrs import field, frozen
 
 from samplics.utils.formats import numpy_array
-from samplics.utils.types import DF, Array, DictStrNum, Number
+from samplics.utils.types import Array, DictStrNum, Number
 
 
 # NumpyArray = TypeVar("np.ndarray", bound=np.ndarray)
@@ -113,10 +113,18 @@ class DirectEst:
             for key in self.stderr
         }
 
-    def to_numpy(self, varlist: str | list[str] | None = None):
-        return self.to_polars(varlist).to_numpy()
+    def to_numpy(
+        self,
+        keep_vars: str | Iterable[str] | None = None,
+        drop_vars: str | Iterable[str] | None = None,
+    ):
+        return self.to_polars(keep_vars=keep_vars, drop_vars=drop_vars).to_numpy()
 
-    def to_polars(self, varlist: str | list[str] | None = None):
+    def to_polars(
+        self,
+        keep_vars: str | Iterable[str] | None = None,
+        drop_vars: str | Iterable[str] | None = None,
+    ):
         aux_df = pl.from_dict(
             {
                 "areas": list(self.areas),
@@ -126,119 +134,19 @@ class DirectEst:
             }
         )
 
-        if varlist is None:
+        if keep_vars is None:
             return aux_df
-        elif isinstance(varlist, (str, list)):
-            return aux_df.select(varlist)
+        elif isinstance(keep_vars, (str, list)):
+            return aux_df.select(keep_vars)
         else:
             raise TypeError("varlist must be None or str or list[str]")
 
-    def to_pandas(self, varlist: str | list[str] | None = None):
-        return self.to_polars(varlist).to_pandas()
-
-
-@frozen
-class AuxVars:
-    areas: list
-    auxdata: dict
-    uid: int = int(
-        dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
-        + str(int(1e16 * rand.random()))
-    )
-
-    def __init__(
+    def to_pandas(
         self,
-        area: Array,
-        auxdata: DF | Array | Iterable[DF | Array] | None = None,
-        record_id: Array = None,
-        **kwargs,
-    ) -> None:
-        assert isinstance(area, Array)
-
-        area = numpy_array(area)
-        assert area.shape[0] > 0
-
-        areas_unique = np.unique(area).tolist()
-        record_id = (
-            numpy_array(record_id)
-            if record_id is not None
-            else np.linspace(0, area.shape[0] - 1, area.shape[0]).astype(int)
-        )
-
-        if isinstance(auxdata, (DF, Array)):
-            aux_df = self.__from_df(auxdata)
-            if isinstance(auxdata, Array):
-                aux_df.columns = ["__aux_" + str(i) for i in range(aux_df.shape[1])]
-        elif isinstance(auxdata, Iterable):
-            for i, d in enumerate(auxdata):
-                assert isinstance(d, (DF, Array))
-                if i == 0:
-                    aux_df = self.__from_df(d)
-                    if isinstance(d, Array):
-                        aux_df.columns = [
-                            "__aux_" + str(i) for i in range(aux_df.shape[1])
-                        ]
-                else:
-                    d_df = self.__from_df(d)
-                    if isinstance(d, Array):
-                        d_df.columns = ["__aux_" + str(i) for i in range(d_df.shape[1])]
-                    aux_df.hstack([d_df], in_place=True)
-        else:
-            aux_df = None
-
-        if aux_df is None:
-            auxdata = pl.from_dict(kwargs)
-        else:
-            auxdata = aux_df.hstack(pl.from_dict(kwargs))
-
-        auxdata_dict = (
-            auxdata.insert_at_idx(0, pl.from_numpy(area).to_series().alias("area"))
-            .insert_at_idx(0, pl.Series(record_id).alias("record_id"))
-            .partition_by("area", as_dict=True)
-        )
-
-        auxdata_dict = {
-            k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict
-        }
-
-        for k in auxdata_dict:
-            del auxdata_dict[k]["area"]
-
-        self.__attrs_init__(areas_unique, auxdata_dict)
-
-    def __from_df(self, auxdata: DF | Array) -> pl.DataFrame | None:
-        if isinstance(auxdata, pl.DataFrame):
-            return auxdata
-        elif isinstance(auxdata, pl.Series):
-            return pl.DataFrame(auxdata)
-        elif isinstance(auxdata, (pd.DataFrame, pd.Series)):
-            return pl.from_pandas(auxdata)
-        elif isinstance(auxdata, np.ndarray):
-            return pl.from_numpy(auxdata)
-        elif isinstance(auxdata, Array):
-            return pl.DataFrame(auxdata)
-        else:
-            return None
-
-    def to_numpy(self, varlist: str | list[str] | None = None):
-        return self.to_polars(varlist).to_numpy()
-
-    def to_polars(self, varlist: str | list[str] | None = None):
-        return pl.concat(
-            [
-                pl.from_dict(self.auxdata[d]).insert_at_idx(
-                    1, pl.repeat(d, n=self.ssize[d], eager=True).alias("area")
-                )
-                for d in self.areas
-            ]
-        )
-
-    def to_pandas(self, varlist: str | list[str] | None = None):
-        return self.to_polars(varlist).to_pandas()
-
-
-class CovMat:
-    pass
+        keep_vars: str | Iterable[str] | None = None,
+        drop_vars: str | Iterable[str] | None = None,
+    ):
+        return self.to_polars(keep_vars=keep_vars, drop_vars=drop_vars).to_pandas()
 
 
 @frozen
