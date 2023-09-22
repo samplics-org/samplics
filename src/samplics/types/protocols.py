@@ -1,3 +1,4 @@
+from collections import namedtuple
 from typing import Protocol
 
 
@@ -15,3 +16,11 @@ class ToDataFrame(Protocol):
 
     def to_pandas():
         pass
+
+
+class MixedModelsFitStats:
+    err_stderr: float
+    fe_est: namedtuple  # fixed effects
+    fe_stderr: namedtuple
+    re_stderr: float
+    re_stderr_var: float

@@ -287,15 +287,6 @@ class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
         1e16 * rand.random()
     )
 
-    def to_numpy():  # TODO: To decide if these methods are necessary
-        pass
-
-    def to_polars():  # TODO: To decide if these methods are necessary
-        pass
-
-    def to_pandas():  # TODO: To decide if these methods are necessary
-        pass
-
 
 @frozen
 class EbFit:
@@ -311,15 +302,6 @@ class EbFit:
     uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
         1e16 * rand.random()
     )
-
-    def to_numpy():  # TODO: To decide if these methods are necessary
-        pass
-
-    def to_polars():  # TODO: To decide if these methods are necessary
-        pass
-
-    def to_pandas():  # TODO: To decide if these methods are necessary
-        pass
 
 
 @frozen
