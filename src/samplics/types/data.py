@@ -17,9 +17,9 @@ from samplics.utils.formats import numpy_array
 
 @frozen
 class AuxVars:
-    domains: list
     auxdata: dict
     nrecords: dict
+    domains: list
     uid: int = int(
         dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
         + str(int(1e16 * rand.random()))

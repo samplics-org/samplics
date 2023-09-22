@@ -22,8 +22,10 @@ auxvars = AuxVars(domain=area, auxdata=X)
 
 # Fit the linear mixed model
 fit_reml = fit_eblup(y=yhat, x=auxvars, method=FitMethod.reml)
+fit_ml = fit_eblup(y=yhat, x=auxvars, method=FitMethod.ml)
+fit_fh = fit_eblup(y=yhat, x=auxvars, method=FitMethod.fh)
 
 # Predict the small area estimates
-# fh_model_reml.predict(X=X, area=area, intercept=False)
+est_milk_reml = predict_eblup(X=X, area=area, intercept=False)
 
 breakpoint()

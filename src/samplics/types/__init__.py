@@ -10,7 +10,7 @@ from samplics.types.basic import (
     StringNumber,
 )
 from samplics.types.data import AuxVars, DirectEst, EbEst, EbFit, EblupEst, EblupFit
-from samplics.types.options import FitMethod
+from samplics.types.options import FitMethod, Mse
 
 
 __all__ = [
@@ -31,4 +31,5 @@ __all__ = [
     "EbFit",
     "DirectEst",
     "FitMethod",
+    "Mse",
 ]

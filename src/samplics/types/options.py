@@ -8,6 +8,13 @@ class FitMethod(Enum):
     reml = "REML"
 
 
+@unique
+class Mse(Enum):
+    taylor = "Taylor"
+    boot = "Boostrap"
+    jkn = "Jackniffe"
+
+
 # Population parameters
 @unique
 class PopParam(Enum):

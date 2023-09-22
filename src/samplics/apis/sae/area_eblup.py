@@ -279,9 +279,10 @@ def _log_likelihood(
 
 
 def predict_eblup(
-    fit_eblup: EblupFit,
-    y: DirectEst,
     x: AuxVars,
+    fit_eblup: GlmmFitStats,
+    y: DirectEst,
+    mse: MSE | list[MSE] | None = None,
     b_const: DictStrNum | Number = 1.0,
 ) -> EblupEst:
     area = numpy_array(x.area)
@@ -372,8 +373,6 @@ def _eb_estimates(
         g3_scale = 2.0 * m / sum_vi**2
     else:
         g3_scale = 0.0
-
-    breakpoint()
 
     for d in area:
         b_d = b_const[d]

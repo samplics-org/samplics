@@ -45,6 +45,7 @@ from samplics.types import (
     EblupEst,
     EblupFit,
     FitMethod,
+    Mse,
 )
 from samplics.utils import (
     CertaintyError,
@@ -121,6 +122,7 @@ __all__ = [
     "CertaintyError",
     "DimensionError",
     "MethodError",
+    "Mse",
     "ProbError",
     "SinglePSUError",
 ]
