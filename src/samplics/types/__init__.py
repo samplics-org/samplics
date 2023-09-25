@@ -11,6 +11,7 @@ from samplics.types.basic import (
 )
 from samplics.types.data import AuxVars, DirectEst, EbEst, EbFit, EblupEst, EblupFit
 from samplics.types.options import FitMethod, Mse
+from samplics.types.protocols import GlmmFitStats
 
 
 __all__ = [
@@ -23,13 +24,14 @@ __all__ = [
     "DictStrInt",
     "DictStrFloat",
     "DictStrBool",
+    "DirectEst",
     "AuxVars",
     "EblupEst",
     "EblupFit",
     "EbUnitModel",
     "EbEst",
     "EbFit",
-    "DirectEst",
     "FitMethod",
+    "GlmmFitStats",
     "Mse",
 ]

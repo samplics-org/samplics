@@ -5,6 +5,7 @@
 import math
 
 import numpy as np
+import polars as pl
 
 from samplics.types import (
     Array,
@@ -14,6 +15,8 @@ from samplics.types import (
     EblupEst,
     EblupFit,
     FitMethod,
+    GlmmFitStats,
+    Mse,
     Number,
 )
 from samplics.utils.formats import numpy_array
@@ -90,8 +93,12 @@ def fit_eblup(
 
     m = yhat.size
     p = X.shape[1]
-    Z_b2_Z = np.ones(shape=(m, m))
-    V = np.diag(error_std**2) + sigma2_v * Z_b2_Z
+    R = np.diag(np.ones(m)) * (error_std**2)
+    Z = np.diag(np.ones(m))
+    G = np.diag(np.ones(m)) * sigma2_v
+    V = R + Z * G * np.transpose(Z)
+
+    breakpoint()
 
     log_llike = _log_likelihood(method=method, y=yhat, X=X, beta=beta, V=V)
 
@@ -260,17 +267,23 @@ def _log_likelihood(
 ) -> Number:
     m = y.size
     const = m * np.log(2 * np.pi)
-    ll_term1 = np.log(np.linalg.det(V))
-    V_inv = np.linalg.inv(V)
-    resid_term = y - np.dot(X, beta)
+    # ll_term1 = np.log(np.linalg.det(V))
+    ll_term1 = np.log(np.diag(V)).sum()
+    v_inv = np.linalg.inv(V)
+    resid_term = y - X @ beta
     if method in (FitMethod.ml, FitMethod.fh):  # What is likelihood for FH
-        resid_var = np.dot(np.transpose(resid_term), V_inv)
-        ll_term2 = np.dot(resid_var, resid_term)
+        resid_var = np.transpose(resid_term) @ v_inv
+        ll_term2 = resid_var @ resid_term
         loglike = -0.5 * (const + ll_term1 + ll_term2)
     elif method == FitMethod.reml:
-        xT_vinv_x = np.dot(np.dot(np.transpose(X), V_inv), X)
-        ll_term2 = np.log(np.linalg.det(xT_vinv_x))
-        ll_term3 = np.dot(np.dot(y, V_inv), resid_term)
+        x_vinv_x = np.transpose(X) @ v_inv @ X
+        x_xvinvx_x = X @ np.linalg.inv(x_vinv_x) @ np.transpose(X)
+        P = v_inv - v_inv @ x_xvinvx_x @ v_inv
+        # ll_term2 = np.log(np.linalg.det(x_vinv_x))
+        ll_term2 = np.log(np.diag(x_vinv_x).sum())
+        # ll_term3 = np.transpose(resid_term) @ v_inv @ resid_term
+        ll_term3 = np.transpose(y) @ P @ y
+        breakpoint()
         loglike = -0.5 * (const + ll_term1 + ll_term2 + ll_term3)
     else:
         raise AssertionError("A fitting method must be specified.")
@@ -282,47 +295,57 @@ def predict_eblup(
     x: AuxVars,
     fit_eblup: GlmmFitStats,
     y: DirectEst,
-    mse: MSE | list[MSE] | None = None,
+    mse: Mse | list[Mse] | None = None,
+    intercept: bool = True,  # if True, it adds an intercept of 1
     b_const: DictStrNum | Number = 1.0,
 ) -> EblupEst:
-    area = numpy_array(x.area)
-    X = np.insert(x.to_numpy(), 0, 1, axis=1)
+    area = y.to_numpy(keep_vars="__domain").flatten()
+    # yhat = y.to_numpy(keep_vars="est").flatten()
+    # if intercept:
+    #     X = np.insert(
+    #         x.to_numpy(drop_vars=["__record_id", "__domain"]), 0, 1, axis=1
+    #     )  # add the intercept
+    # else:
+    #     X = x.to_numpy(drop_vars=["__record_id", "__domain"])
 
     if isinstance(b_const, (int, float)):
         b_const = dict(zip(area, np.ones(area.size) * b_const))
 
     sigme2_e = {}
-    for d in fit_eblup.e_stderr:
-        sigme2_e[d] = fit_eblup.e_stderr[d] ** 2
+    for d in fit_eblup.err_stderr:
+        sigme2_e[d] = fit_eblup.err_stderr[d] ** 2
 
-    breakpoint()
-    est, mse, mse1, mse2, g1, g2, g3, g3_star = _eb_estimates(
-        method=fit_eblup,
+    est, mse, mse1, mse2, g1, g2, g3, g3_star = _eblup_estimates(
+        method=fit_eblup.method,
         yhat=y.est,
-        X=X,
-        area=np.array(area),
+        auxvars=x,
+        area=area,
         beta=np.array(fit_eblup.fe_est),
         sigma2_e=sigme2_e,
         sigma2_v=fit_eblup.re_stderr**2,
         sigma2_v_cov=fit_eblup.re_stderr_var,
+        intercept=intercept,
         b_const=b_const,
     )
 
     # self.est = dict(zip(area, point_est))
     # self.mse = dict(zip(area, mse))
 
-    return EblupEst(area=area, est=dict(zip(area, est)), mse=dict(zip(area, mse)))
+    return EblupEst(
+        pred=est, fit_stats=fit_eblup, domain=None, mse=mse, mse_boot=None, mse_jkn=None
+    )
 
 
-def _eb_estimates(
+def _eblup_estimates(
     method: FitMethod,
     yhat: dict,
-    X: np.ndarray,
+    auxvars: np.ndarray,
     beta: np.ndarray,
     area: np.ndarray,
     sigma2_e: dict,
     sigma2_v: Number,
     sigma2_v_cov: Number,
+    intercept: bool,
     b_const: dict,
 ) -> tuple[
     np.ndarray,
@@ -335,20 +358,27 @@ def _eb_estimates(
     np.ndarray,
 ]:
     m = len(yhat)
-    v_i = sigma2_e + sigma2_v * (b_const**2)
+    b_const_vec = np.array(list(b_const.values()))
+    v_i = np.array(list(sigma2_e.values())) + sigma2_v * (b_const_vec**2)
     V_inv = np.diag(1 / v_i)
     G = np.diag(np.ones(m) * sigma2_v)
+    Z = np.diag(b_const_vec)
+    b = (G @ np.transpose(Z)) @ V_inv
 
-    Z = np.diag(b_const)
+    if intercept:
+        X = np.insert(
+            auxvars.to_numpy(drop_vars=["__record_id", "__domain"]), 0, 1, axis=1
+        )  # add the intercept
+    else:
+        X = auxvars.to_numpy(drop_vars=["__record_id", "__domain"])
 
-    b = np.matmul(np.matmul(G, np.transpose(Z)), V_inv)
-    d = np.transpose(X - np.matmul(np.transpose(b), X))
+    d = np.transpose(X - np.transpose(b) @ X)
     x_vinv_x = np.matmul(np.matmul(np.transpose(X), V_inv), X)
 
     g2_term = np.linalg.inv(x_vinv_x)
 
     b_term_ml1 = np.linalg.inv(x_vinv_x)
-    b_term_ml2_diag = (b_const**2) / (v_i**2)
+    b_term_ml2_diag = (b_const_vec**2) / (v_i**2)
     b_term_ml2 = np.matmul(np.matmul(np.transpose(X), np.diag(b_term_ml2_diag)), X)
     b_term_ml = float(np.trace(np.matmul(b_term_ml1, b_term_ml2)))
 
@@ -374,117 +404,49 @@ def _eb_estimates(
     else:
         g3_scale = 0.0
 
+    mse = {}
+    mse1_area_specific = {}
+    mse2_area_specific = {}
+
     for d in area:
         b_d = b_const[d]
         phi_d = sigma2_e[d]
-        X_d = X[area == d]
+        del auxvars.auxdata[d]["__record_id"]
+
+        if intercept:
+            X_d = np.insert(pl.from_dict(auxvars.auxdata[d]).to_numpy(), 0, 1, axis=1)
+        else:
+            X_d = pl.from_dict(auxvars.auxdata[d]).to_numpy()
+
         yhat_d = yhat[d]
-        mu_d = np.matmul(X_d, beta)
+        mu_d = X_d @ beta
         resid_d = yhat_d - mu_d
         variance_d = sigma2_v * (b_d**2) + phi_d
         gamma_d = sigma2_v * (b_d**2) / variance_d
-        estimates[area == d] = gamma_d * yhat_d + (1 - gamma_d) * mu_d
-        g1[area == d] = gamma_d * phi_d
-        g2_term_d = np.matmul(np.matmul(X_d, g2_term), np.transpose(X_d))
-        g2[area == d] = ((1 - gamma_d) ** 2) * float(g2_term_d)
-        g3[area == d] = ((1 - gamma_d) ** 2) * g3_scale / variance_d
-        g3_star[area == d] = (g3[area == d] / variance_d) * (resid_d**2)
-        g1_partial[area == d] = (b_d**2) * ((1 - gamma_d) ** 2) * b_sigma2_v
+        estimates[d] = (gamma_d * yhat_d + (1 - gamma_d) * mu_d)[0]
+        g1[d] = gamma_d * phi_d
+        g2_term_d = ((X_d @ g2_term) @ np.transpose(X_d))[0][0]
+        g2[d] = ((1 - gamma_d) ** 2) * (g2_term_d)
+        g3[d] = ((1 - gamma_d) ** 2) * g3_scale / variance_d
+        g3_star[d] = ((g3[d] / variance_d) * (resid_d**2))[0]
+        g1_partial[d] = (b_d**2) * ((1 - gamma_d) ** 2) * b_sigma2_v
 
-    mse = 0
-    mse1_area_specific = 0
-    mse2_area_specific = 0
-    if method == FitMethod.reml:
-        mse = g1 + g2 + 2 * g3
-        mse1_area_specific = g1 + g2 + 2 * g3_star
-        mse2_area_specific = g1 + g2 + g3 + g3_star
-    elif method in (FitMethod.fh, FitMethod.ml):
-        mse = g1 - g1_partial + g2 + 2 * g3
-        mse1_area_specific = g1 - g1_partial + g2 + 2 * g3_star
-        mse2_area_specific = g1 - g1_partial + g2 + g3 + g3_star
+        if method == FitMethod.reml:
+            mse[d] = g1[d] + g2[d] + 2 * g3[d]
+            mse1_area_specific[d] = g1[d] + g2[d] + 2 * g3_star[d]
+            mse2_area_specific[d] = g1[d] + g2[d] + g3[d] + g3_star[d]
+        elif method in (FitMethod.fh, FitMethod.ml):
+            mse[d] = g1 - g1_partial[d] + g2[d] + 2 * g3[d]
+            mse1_area_specific[d] = g1[d] - g1_partial[d] + g2[d] + 2 * g3_star[d]
+            mse2_area_specific[d] = g1[d] - g1_partial[d] + g2[d] + g3[d] + g3_star[d]
 
     return (
-        np.asarray(estimates),
-        np.asarray(mse),
-        np.asarray(mse1_area_specific),
-        np.asarray(mse2_area_specific),
-        np.asarray(g1),
-        np.asarray(g2),
-        np.asarray(g3),
-        np.asarray(g3_star),
+        estimates,
+        mse,
+        mse1_area_specific,
+        mse2_area_specific,
+        g1,
+        g2,
+        g3,
+        g3_star,
     )
-
-
-#######################
-
-
-# import math
-
-# from typing import Any
-
-# import numpy as np
-# import pandas as pd
-
-# from samplics.utils.formats import dict_to_dataframe, numpy_array
-# from samplics.utils.types import Array, DictStrNum, Number
-
-
-# class EblupAreaModel:
-#     def __init__(self, method: str = "REML") -> None:
-#         if method.upper() not in ("FH", "ML", "REML"):
-#             raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'.")
-#         else:
-#             self.method = method.upper()
-
-#         # Sample data
-#         self.yhat: np.ndarray
-#         self.error_std: np.ndarray
-#         self.X: np.ndarray
-#         self.area: np.ndarray
-
-#         # Fitting stats
-#         self.fitted: bool = False
-#         self.fixed_effects: np.ndarray
-#         self.fe_std: np.ndarray
-#         self.re_std: Number
-#         self.convergence: dict[str, Union[float, int, bool]] = {}
-#         self.goodness: dict[str, Number] = {}  # loglikehood, deviance, AIC, BIC
-
-#         # Predict(ino/ed) data
-#         self.est: DictStrNum
-#         self.area_mse: DictStrNum
-#         self.area_mse_as1: DictStrNum
-#         self.area_mse_as2: DictStrNum
-#         self.area_mse_terms: dict[str, DictStrNum]
-
-#     def __str__(self) -> str:
-#         estimation = pd.DataFrame()
-#         estimation["area"] = self.area
-#         estimation["estimate"] = self.est
-#         estimation["mse"] = self.est
-
-#         fit = pd.DataFrame()
-#         fit["beta_coef"] = self.fixed_effects
-#         fit["beta_stderr"] = np.diag(self.fe_std)
-
-#         return f"""\n\nFH Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_std**2}\n\n"""
-
-#     def __repr__(self) -> str:
-#         return self.__str__()
-
-
-#     def to_dataframe(self, col_names: Optional(list) = None) -> pd.DataFrame:
-#         """Returns a pandas dataframe from dictionaries with same keys and one value per key.
-
-#         Args:
-#             col_names (list, optional): list of string to be used for the dataframe columns names.
-#                 Defaults to ["_parameter", "_area", "_estimate", "_mse"].
-
-#         Returns:
-#             [type]: a pandas dataframe
-#         """
-
-#         est_df = dict_to_dataframe(col_names, self.est, self.area_mse)
-#         est_df.iloc[:, 0] = "mean"
-
-#         return est_df

@@ -17,9 +17,10 @@ from samplics.utils.formats import numpy_array
 
 @frozen
 class AuxVars:
+    #TODO: Add missing values functionality
     auxdata: dict
     nrecords: dict
-    domains: list
+    domains: list | None
     uid: int = int(
         dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
         + str(int(1e16 * rand.random()))
@@ -87,7 +88,7 @@ class AuxVars:
         for k in auxdata_dict:
             del auxdata_dict[k]["__domain"]
 
-        self.__attrs_init__(__domain, auxdata_dict, nrecords)
+        self.__attrs_init__(auxdata_dict, nrecords, __domain)
 
     def __from_df(self, auxdata: DF | Array) -> pl.DataFrame | None:
         if isinstance(auxdata, pl.DataFrame):
@@ -275,7 +276,7 @@ class DirectEst:
 @frozen
 class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
     method: FitMethod
-    err_stderr: float
+    err_stderr: dict
     fe_est: namedtuple  # fixed effects
     fe_stderr: namedtuple
     re_stderr: float
@@ -306,8 +307,8 @@ class EbFit:
 
 @frozen
 class EblupEst:
-    area: list
-    est: dict
+    pred: dict
+    domains: list
     fit_stats: EblupFit
     mse: dict | None = None
     mse_boot: dict | None = None
@@ -315,6 +316,32 @@ class EblupEst:
     uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
         1e16 * rand.random()
     )
+
+    def __init__(
+        self,
+        pred: dict | Array,
+        fit_stats: EblupFit,
+        domain: Array | None = None,
+        mse: dict | Array | None = None,
+        mse_boot: dict | Array | None = None,
+        mse_jkn: dict | Array | None = None,
+    ) -> None:
+        if domain is not None:
+            domain = numpy_array(domain)
+            domains = domain.tolist()
+
+            if isinstance(pred, Array):
+                pred = dict(zip(domain, pred))
+            if isinstance(mse, Array):
+                dict(zip(domain, mse))
+            if isinstance(mse_boot, Array):
+                dict(zip(domain, mse_boot))
+            if isinstance(mse_jkn, Array):
+                dict(zip(domain, mse_jkn))
+        else:
+            domains = list(pred.keys())
+
+        self.__attrs_init__(pred, domains, fit_stats, mse, mse_boot, mse_jkn)
 
     @property
     def rse():

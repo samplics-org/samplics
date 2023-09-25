@@ -45,6 +45,7 @@ from samplics.types import (
     EblupEst,
     EblupFit,
     FitMethod,
+    GlmmFitStats,
     Mse,
 )
 from samplics.utils import (
@@ -87,6 +88,7 @@ __all__ = [
     "EllUnitModel",
     "FitMethod",
     "fit_eblup",
+    "GlmmFitStats",
     "load_auto",
     "load_birth",
     "load_county_crop",

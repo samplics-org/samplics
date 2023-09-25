@@ -1,8 +1,8 @@
 # import numpy as np
 import polars as pl
 
-from samplics.apis.sae import fit_eblup
-from samplics.types import AuxVars, DirectEst, FitMethod
+from samplics.apis.sae import fit_eblup, predict_eblup
+from samplics.types import AuxVars, DirectEst, FitMethod, Mse
 
 
 # Import the datasets
@@ -18,7 +18,7 @@ n = milk["ni"]
 yhat = DirectEst(est=yhat, stderr=sigma_e, ssize=n, domain=area)
 
 # Initialize AuxVars
-auxvars = AuxVars(domain=area, auxdata=X)
+auxvars = AuxVars(auxdata=X, domain=area)
 
 # Fit the linear mixed model
 fit_reml = fit_eblup(y=yhat, x=auxvars, method=FitMethod.reml)
@@ -26,6 +26,8 @@ fit_ml = fit_eblup(y=yhat, x=auxvars, method=FitMethod.ml)
 fit_fh = fit_eblup(y=yhat, x=auxvars, method=FitMethod.fh)
 
 # Predict the small area estimates
-est_milk_reml = predict_eblup(X=X, area=area, intercept=False)
+est_milk_reml = predict_eblup(x=auxvars, fit_eblup=fit_reml, y=yhat, mse=Mse.taylor)
+
+est_milk_reml.fit_stats.log_llike
 
 breakpoint()

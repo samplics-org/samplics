@@ -1,4 +1,4 @@
-from samplics.apis.sae.area_eblup import fit_eblup
+from samplics.apis.sae.area_eblup import fit_eblup, predict_eblup
 from samplics.types.errors import (
     CertaintyError,
     DimensionError,
@@ -11,7 +11,6 @@ from samplics.types.options import PopParam, SelectMethod, SinglePSUEst, SizeMet
 
 
 __all__ = [
-    "fit_eblup",
     "PopParam",
     "SinglePSUEst",
     "SelectMethod",
@@ -22,4 +21,6 @@ __all__ = [
     "SinglePSUError",
     "ProbError",
     "MethodError",
+    "fit_eblup",
+    "predict_eblup",
 ]
