@@ -130,7 +130,18 @@ def _iterative_fisher_scoring(
     sig2_e = {d: sig_e[d] ** 2 for d in sig_e}
 
     info_sigma = 0.0
+    beta, beta_cov = None, None
     while iterations < maxiter and tolerance > tol:
+        if method == FitMethod.ml or method == FitMethod.fh:
+            beta, beta_cov = _fixed_coefficients(
+                y=y,
+                x=x,
+                sig2_e=sig2_e,
+                sig2_v=sig2_v_prev,
+                intercept=intercept
+                # b_const=b_const,
+            )
+
         deriv_sigma, info_sigma = _partial_derivatives(
             method=method,
             # area=area,
@@ -140,6 +151,7 @@ def _iterative_fisher_scoring(
             sig2_v=sig2_v_prev,
             # b_const=b_const,
             intercept=intercept,
+            beta=beta,
         )
         sig2_v = sig2_v_prev + deriv_sigma / info_sigma
         # print(tolerance)
@@ -168,81 +180,62 @@ def _partial_derivatives(
     sig2_v: Number,
     # b_const: np.ndarray,
     intercept: bool,
+    beta: np.ndarray,
 ) -> tuple[Number, Number]:
+    x = x.to_polars().drop(["__record_id"])
+
+    if intercept:
+        x0 = pl.Series("__intercept", np.ones(x.shape[0]))
+        x = x.insert_at_idx(0, x0)
+
+    m, p = x.shape
+    p = p - 1  # x has an extra column
+
     deriv_sig = 0.0
     info_sig = 0.0
-    if method == FitMethod.ml or method == FitMethod.fh:
-        beta, beta_cov = _fixed_coefficients(
-            y=y,
-            x=x,
-            sig2_e=sig2_e,
-            sig2_v=sig2_v,
-            intercept=intercept
-            # b_const=b_const,
-        )
-        if method == FitMethod.ml:
-            for d in y.domains:
-                b_d = 1  # b_const[d][0]
-                phi_d = sig2_e[d]
-                x_d = (
-                    x.to_polars()
-                    .filter(pl.col("__domain") == d)
-                    .drop(["__record_id", "__domain"])
-                    .to_numpy()
-                )
-                if intercept:
-                    x_d = np.insert(x_d, 0, 1, axis=1)
-                y_d = y.est[d]
-                mu_d = (x_d @ beta)[0]
-                resid_d = y_d - mu_d
-                sig2_d = sig2_v * (b_d**2) + phi_d
-                term1 = b_d**2 / sig2_d
-                term2 = ((b_d**2) * (resid_d**2)) / (sig2_d**2)
-                deriv_sig += -0.5 * (term1 - term2)
-                info_sig += 0.5 * (term1**2)
-        else:  # Fay-Herriot approximation
-            for d in y.domains:
-                b_d = 1  # b_const[d][0]
-                phi_d = sig2_e[d]
-                x_d = (
-                    x.to_polars()
-                    .filter(pl.col("__domain") == d)
-                    .drop(["__record_id", "__domain"])
-                    .to_numpy()
-                )
-                if intercept:
-                    x_d = np.insert(x_d, 0, 1, axis=1)
-                y_d = y.est[d]
-                mu_d = x_d @ beta
-                resid_d = y_d - mu_d
-                sig2_d = sig2_v * (b_d**2) + phi_d
-                deriv_sig += float((resid_d**2) / sig2_d)
-                info_sig += -float(((b_d**2) * (resid_d**2)) / (sig2_d**2))
-            m = y.size
-            p = x.shape[1]
-            deriv_sig = m - p - deriv_sig
 
-    if method == FitMethod.reml:
+    if method == FitMethod.ml:
         for d in y.domains:
             b_d = 1  # b_const[d][0]
             phi_d = sig2_e[d]
-            x_d = (
-                x.to_polars()
-                .filter(pl.col("__domain") == d)
-                .drop(["__record_id", "__domain"])
-                .to_numpy()
-            )
-            if intercept:
-                x_d = np.insert(x_d, 0, 1, axis=1)
+            x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
             y_d = y.est[d]
             mu_d = (x_d @ beta)[0]
             resid_d = y_d - mu_d
             sig2_d = sig2_v * (b_d**2) + phi_d
-            term1 = b_d**2 / sigma2_d
+            term1 = b_d**2 / sig2_d
             term2 = ((b_d**2) * (resid_d**2)) / (sig2_d**2)
-            term3 = ((b_d**2) * (resid_d**2)) / (sig2_d**2)
             deriv_sig += -0.5 * (term1 - term2)
             info_sig += 0.5 * (term1**2)
+    elif method == FitMethod.fh:  # Fay-Herriot approximation
+        for d in y.domains:
+            b_d = 1  # b_const[d][0]
+            phi_d = sig2_e[d]
+            x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
+            y_d = y.est[d]
+            mu_d = x_d @ beta
+            resid_d = y_d - mu_d
+            sig2_d = sig2_v * (b_d**2) + phi_d
+            deriv_sig += float((resid_d**2) / sig2_d)
+            info_sig += -float(((b_d**2) * (resid_d**2)) / (sig2_d**2))
+        deriv_sig = m - p - deriv_sig
+    elif method == FitMethod.reml:
+        b_const = 1
+        B = np.diag(np.ones(x.shape[0]))
+        x_mat = x.drop("__domain").to_numpy()
+        sig2_e_vec = np.array(list(sig2_e.values()))
+        v_inv = np.diag(1 / (sig2_e_vec + sig2_v * (b_const**2)))
+        x_vinv_x = np.transpose(x_mat) @ v_inv @ x_mat
+        x_xvinvx_x = x_mat @ np.linalg.inv(x_vinv_x) @ np.transpose(x_mat)
+        P = v_inv - v_inv @ x_xvinvx_x @ v_inv
+        Py = P @ y.to_numpy(keep_vars="est").flatten()
+        PB = P @ B
+        term1 = -0.5 * np.trace(PB)
+        term2 = 0.5 * (np.transpose(Py) @ B @ Py)
+        deriv_sig = term1 + term2
+        info_sig = 0.5 * np.trace(PB @ PB)
+    else:
+        raise ValueError("Fitting method not available")
 
     return deriv_sig, info_sig
 
@@ -290,6 +283,7 @@ def _log_likelihood(
     ll_term3 = 0
 
     x = x.to_polars().drop(["__record_id"])
+    breakpoint()
     if intercept:
         x0 = pl.Series("__intercept", np.ones(m))
         x = x.insert_at_idx(0, x0)
@@ -297,48 +291,18 @@ def _log_likelihood(
     if method in (FitMethod.ml, FitMethod.fh):  # What is likelihood for FH
         for d in y.domains:
             x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
-            ll_term2 += np.log((y.est[d] - x_d @ beta)[0] ** 2 / (sig2_e[d] + sig2_v))
-            loglike = -0.5 * (const + ll_term1 + ll_term2)
+            ll_term2 += ((y.est[d] - x_d @ beta)[0] ** 2) / (sig2_e[d] + sig2_v)
+        loglike = -0.5 * (const + ll_term1 + ll_term2)
     elif method == FitMethod.reml:
         for d in y.domains:
             x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
-            ll_term2 += np.log((y.est[d] - x_d @ beta)[0] ** 2 / (sig2_e[d] + sig2_v))
+            ll_term2 += ((y.est[d] - x_d @ beta)[0] ** 2) / (sig2_e[d] + sig2_v)
             ll_term3 += np.log((x_d @ np.transpose(x_d))[0] ** 2 / (sig2_e[d] + sig2_v))
-            loglike = -0.5 * (const + ll_term1 + ll_term2 + ll_term3)
-        # breakpoint()
-
-    else:
-        raise AssertionError("A fitting method must be specified.")
-
-    return loglike
-
-
-def _log_likelihood2(
-    method: FitMethod, y: DirectEst, X: AuxVars, beta: np.ndarray, V: np.ndarray
-) -> Number:
-    m = y.size
-    const = m * np.log(2 * np.pi)
-    # ll_term1 = np.log(np.linalg.det(V))
-    ll_term1 = np.log(np.diag(V)).sum()
-    v_inv = np.linalg.inv(V)
-    resid_term = y - X @ beta
-    if method in (FitMethod.ml, FitMethod.fh):  # What is likelihood for FH
-        resid_var = np.transpose(resid_term) @ v_inv
-        ll_term2 = resid_var @ resid_term
-        loglike = -0.5 * (const + ll_term1 + ll_term2)
-    elif method == FitMethod.reml:
-        x_vinv_x = np.transpose(X) @ v_inv @ X
-        x_xvinvx_x = X @ np.linalg.inv(x_vinv_x) @ np.transpose(X)
-        P = v_inv - v_inv @ x_xvinvx_x @ v_inv
-        # ll_term2 = np.log(np.linalg.det(x_vinv_x))
-        ll_term2 = np.log(np.diag(x_vinv_x).sum())
-        # ll_term3 = np.transpose(resid_term) @ v_inv @ resid_term
-        ll_term3 = np.transpose(y) @ P @ y
         loglike = -0.5 * (const + ll_term1 + ll_term2 + ll_term3)
     else:
         raise AssertionError("A fitting method must be specified.")
 
-    return float(loglike)
+    return loglike
 
 
 def predict_eblup(
