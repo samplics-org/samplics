@@ -83,8 +83,8 @@ class AuxVars:
             __domains = np.unique(__domain).tolist()
             for d in __domains:
                 auxdata_dict[d] = auxdata_dict[d].drop("__domain")
-                record_id_dict[d] = record_id_dict[d].drop("__domain")
-                nrecords[d] = record_id_dict[d].shape[0]
+                record_id_dict[d] = record_id_dict[d]["__record_id"].to_list()
+                nrecords[d] = auxdata_dict[d].shape[0]
 
         else:
             auxdata_dict = x.insert_at_idx(0, pl.Series(record_id).alias("__record_id"))
@@ -95,9 +95,9 @@ class AuxVars:
         auxdata_dict = {
             k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict
         }
-        record_id_dict = {
-            k: record_id_dict[k].to_dict(as_series=False) for k in record_id_dict
-        }
+        # record_id_dict = {
+        #     k: record_id_dict[k].to_dict(as_series=False) for k in record_id_dict
+        # }
 
         self.__attrs_init__(auxdata_dict, nrecords, record_id_dict, __domains)
 
@@ -128,11 +128,15 @@ class AuxVars:
         drop_vars: str | Iterable[str] | None = None,
     ):
         if self.domains is None:
-            auxdata = pl.from_dict(self.x)
+            auxdata = pl.from_dict(self.x).insert_at_idx(
+                0, pl.Series(self.record_id).alias("__record_id")
+            )
         else:
             auxdata = pl.concat(
                 [
-                    pl.from_dict(self.x[d]).insert_at_idx(
+                    pl.from_dict(self.x[d])
+                    .insert_at_idx(0, pl.Series(self.record_id[d]).alias("__record_id"))
+                    .insert_at_idx(
                         1,
                         pl.repeat(d, n=self.nrecords[d], eager=True).alias("__domain"),
                     )

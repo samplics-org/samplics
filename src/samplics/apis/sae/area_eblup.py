@@ -31,7 +31,7 @@ def fit_eblup(
     tol: float = 1e-4,
     maxiter: int = 100,
 ) -> EblupFit:
-    # TODO: add a test to check that area is the same in y and x
+    # TODO: add checks that area is the same in y and x
 
     if err_init is None:
         err_init = np.median(y.to_numpy(keep_vars="stderr").flatten())
@@ -65,19 +65,7 @@ def fit_eblup(
         # b_const=b_const,
     )
 
-    # yhat = yhat
-    # error_std = error_std
-    # X = X
-    # area = area
-
-    # m = yhat.size
     m, p = x.to_numpy(drop_vars=["__drop_id", "__domain"]).shape
-    # R = np.diag(np.ones(m)) * (error_std**2)
-    # Z = np.diag(np.ones(m))
-    # G = np.diag(np.ones(m)) * sigma2_v
-    # V = R + Z * G * np.transpose(Z)
-
-    # breakpoint()
 
     log_llike = _log_likelihood(
         method=method,
@@ -144,20 +132,14 @@ def _iterative_fisher_scoring(
 
         deriv_sigma, info_sigma = _partial_derivatives(
             method=method,
-            # area=area,
             y=y,
             x=x,
             sig2_e=sig2_e,
             sig2_v=sig2_v_prev,
-            # b_const=b_const,
             intercept=intercept,
             beta=beta,
         )
         sig2_v = sig2_v_prev + deriv_sigma / info_sigma
-        # print(tolerance)
-        # if iterations == 11:
-        #     breakpoint()
-        # print(iterations)
         tolerance = abs((sig2_v - sig2_v_prev) / sig2_v_prev)
         iterations += 1
         sig2_v_prev = sig2_v
@@ -171,14 +153,12 @@ def _iterative_fisher_scoring(
     )
 
 
-def _partial_derivatives(
+def _partial_derivatives_fh(
     method: FitMethod,
-    # area: np.ndarray,
     y: DirectEst,
     x: AuxVars,
     sig2_e: dict,
     sig2_v: Number,
-    # b_const: np.ndarray,
     intercept: bool,
     beta: np.ndarray,
 ) -> tuple[Number, Number]:
@@ -194,48 +174,137 @@ def _partial_derivatives(
     deriv_sig = 0.0
     info_sig = 0.0
 
-    if method == FitMethod.ml:
-        for d in y.domains:
-            b_d = 1  # b_const[d][0]
-            x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
-            y_d = y.est[d]
-            resid_d = y_d - (x_d @ beta)[0]
-            sig2_d = sig2_v * (b_d**2) + sig2_e[d]
-            term1 = b_d**2 / sig2_d
-            info_sig += term1**2
-            term2 = ((b_d**2) * (resid_d**2)) / (sig2_d**2)
-            deriv_sig += term1 - term2
-        deriv_sig = -0.5 * deriv_sig
-        info_sig = 0.5 * info_sig
-    elif method == FitMethod.fh:  # Fay-Herriot approximation
-        for d in y.domains:
-            b_d = 1  # b_const[d][0]
-            x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
-            y_d = y.est[d]
-            resid_d = y_d - x_d @ beta
-            sig2_d = sig2_v * (b_d**2) + sig2_e[d]
-            deriv_sig += float((resid_d**2) / sig2_d)
-            info_sig += -float(((b_d**2) * (resid_d**2)) / (sig2_d**2))
-        deriv_sig = m - p - deriv_sig
-    elif method == FitMethod.reml:
-        b_const = 1
-        B = np.diag(np.ones(x.shape[0]))
-        x_mat = x.drop("__domain").to_numpy()
-        sig2_e_vec = np.array(list(sig2_e.values()))
-        v_inv = np.diag(1 / (sig2_e_vec + sig2_v * (b_const**2)))
-        x_vinv_x = np.transpose(x_mat) @ v_inv @ x_mat
-        x_xvinvx_x = x_mat @ np.linalg.inv(x_vinv_x) @ np.transpose(x_mat)
-        P = v_inv - v_inv @ x_xvinvx_x @ v_inv
-        Py = P @ y.to_numpy(keep_vars="est").flatten()
-        PB = P @ B
-        term1 = -0.5 * np.trace(PB)
-        term2 = 0.5 * (np.transpose(Py) @ B @ Py)
-        deriv_sig = term1 + term2
-        info_sig = 0.5 * np.trace(PB @ PB)
-    else:
-        raise ValueError("Fitting method not available")
+    for d in y.domains:
+        b_d = 1  # b_const[d][0]
+        x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
+        y_d = y.est[d]
+        resid_d = y_d - x_d @ beta
+        sig2_d = sig2_v * (b_d**2) + sig2_e[d]
+        deriv_sig += float((resid_d**2) / sig2_d)
+        info_sig += -float(((b_d**2) * (resid_d**2)) / (sig2_d**2))
+    deriv_sig = m - p - deriv_sig
 
     return deriv_sig, info_sig
+
+
+def _partial_derivatives_ml(
+    method: FitMethod,
+    y: DirectEst,
+    x: AuxVars,
+    sig2_e: dict,
+    sig2_v: Number,
+    intercept: bool,
+    beta: np.ndarray,
+) -> tuple[Number, Number]:
+    x = x.to_polars().drop(["__record_id"])
+
+    if intercept:
+        x0 = pl.Series("__intercept", np.ones(x.shape[0]))
+        x = x.insert_at_idx(0, x0)
+
+    m, p = x.shape
+    p = p - 1  # x has an extra column
+
+    deriv_sig = 0.0
+    info_sig = 0.0
+
+    for d in y.domains:
+        b_d = 1  # b_const[d][0]
+        x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
+        y_d = y.est[d]
+        resid_d = y_d - (x_d @ beta)[0]
+        sig2_d = sig2_v * (b_d**2) + sig2_e[d]
+        term1 = b_d**2 / sig2_d
+        info_sig += term1**2
+        term2 = ((b_d**2) * (resid_d**2)) / (sig2_d**2)
+        deriv_sig += term1 - term2
+    deriv_sig = -0.5 * deriv_sig
+    info_sig = 0.5 * info_sig
+
+    return deriv_sig, info_sig
+
+
+def _partial_derivatives_reml(
+    method: FitMethod,
+    y: DirectEst,
+    x: AuxVars,
+    sig2_e: dict,
+    sig2_v: Number,
+    intercept: bool,
+    beta: np.ndarray,
+) -> tuple[Number, Number]:
+    x = x.to_polars().drop(["__record_id"])
+
+    if intercept:
+        x0 = pl.Series("__intercept", np.ones(x.shape[0]))
+        x = x.insert_at_idx(0, x0)
+
+    m, p = x.shape
+    p = p - 1  # x has an extra column
+
+    deriv_sig = 0.0
+    info_sig = 0.0
+
+    b_const = 1
+    B = np.diag(np.ones(x.shape[0]))
+    x_mat = x.drop("__domain").to_numpy()
+    sig2_e_vec = np.array(list(sig2_e.values()))
+    v_inv = np.diag(1 / (sig2_e_vec + sig2_v * (b_const**2)))
+    x_vinv_x = np.transpose(x_mat) @ v_inv @ x_mat
+    x_xvinvx_x = x_mat @ np.linalg.inv(x_vinv_x) @ np.transpose(x_mat)
+    P = v_inv - v_inv @ x_xvinvx_x @ v_inv
+    Py = P @ y.to_numpy(keep_vars="est").flatten()
+    PB = P @ B
+    term1 = -0.5 * np.trace(PB)
+    term2 = 0.5 * (np.transpose(Py) @ B @ Py)
+    deriv_sig = term1 + term2
+    info_sig = 0.5 * np.trace(PB @ PB)
+
+    return deriv_sig, info_sig
+
+
+def _partial_derivatives(
+    method: FitMethod,
+    y: DirectEst,
+    x: AuxVars,
+    sig2_e: dict,
+    sig2_v: Number,
+    intercept: bool,
+    beta: np.ndarray,
+) -> tuple[Number, Number]:
+    match method:
+        case FitMethod.fh:
+            return _partial_derivatives_fh(
+                method=method,
+                y=y,
+                x=x,
+                sig2_e=sig2_e,
+                sig2_v=sig2_v,
+                intercept=intercept,
+                beta=beta,
+            )
+        case FitMethod.ml:
+            return _partial_derivatives_ml(
+                method=method,
+                y=y,
+                x=x,
+                sig2_e=sig2_e,
+                sig2_v=sig2_v,
+                intercept=intercept,
+                beta=beta,
+            )
+        case FitMethod.reml:
+            return _partial_derivatives_reml(
+                method=method,
+                y=y,
+                x=x,
+                sig2_e=sig2_e,
+                sig2_v=sig2_v,
+                intercept=intercept,
+                beta=beta,
+            )
+        case _:
+            raise ValueError("Fitting method not available")
 
 
 def _fixed_coefficients(
@@ -244,7 +313,6 @@ def _fixed_coefficients(
     sig2_e: dict,
     sig2_v: float,
     intercept: bool,
-    # b_const: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray]:
     y_vec = y.to_numpy(keep_vars="est").flatten()
     if intercept:
@@ -274,7 +342,7 @@ def _log_likelihood_fh(
     sig2_v: float,
     intercept: bool,
 ) -> Number:
-    pass
+    NotImplementedError
 
 
 def _log_likelihood_ml(
@@ -292,7 +360,6 @@ def _log_likelihood_ml(
     ll_term2 = 0
 
     x = x.to_polars().drop(["__record_id"])
-    breakpoint()
     if intercept:
         x0 = pl.Series("__intercept", np.ones(m))
         x = x.insert_at_idx(0, x0)
@@ -313,7 +380,26 @@ def _log_likelihood_reml(
     sig2_v: float,
     intercept: bool,
 ) -> Number:
-    pass
+    b_const = 1
+    sig2_e_vec = np.array(list(sig2_e.values()))
+    np.diag(sig2_v * (b_const**2) + sig2_e_vec)
+    v_inv = np.diag(1 / (sig2_v * (b_const**2) + sig2_e_vec))
+    x_mat = x.to_polars(drop_vars=["__record_id", "__domain"])
+    if intercept:
+        x0 = pl.Series("__intercept", np.ones(x_mat.shape[0]))
+        x_mat = x_mat.insert_at_idx(0, x0).to_numpy()
+
+    return (
+        _log_likelihood_ml(
+            method=method,
+            y=y,
+            x=x,
+            beta=beta,
+            sig2_e=sig2_e,
+            sig2_v=sig2_v,
+            intercept=intercept,
+        )
+    ) + -0.5 * np.log(np.linalg.det(np.transpose(x_mat) @ v_inv @ x_mat))
 
 
 def _log_likelihood(
@@ -325,35 +411,40 @@ def _log_likelihood(
     sig2_v: float,
     intercept: bool,
 ) -> Number:
-    # ll_term1 = np.log(np.array(list(sig2_e.values())) + sig2_v).sum()
-    ll_term2 = 0
-
-    x = x.to_polars().drop(["__record_id", "__domain"])
-
-    if intercept:
-        x0 = pl.Series("__intercept", np.ones(x.shape[0]))
-        x = x.insert_at_idx(0, x0)
-
-    m, p = x.shape
-
-    b_const = 1
-    sig2_e_vec = np.array(list(sig2_e.values()))
-    v = np.diag(sig2_v * (b_const**2) + sig2_e_vec)
-    v_inv = np.diag(1 / (sig2_v * (b_const**2) + sig2_e_vec))
-    x_mat = x.to_numpy()
-    y_vec = y.to_numpy(keep_vars="est").flatten()
-    res = y_vec - x_mat @ beta
-    ll_term1 = np.log(np.linalg.det(v))
-    ll_term2 = np.transpose(res) @ v_inv @ res
-    if method in (FitMethod.ml, FitMethod.fh):  # What is likelihood for FH
-        const = m * np.log(2 * np.pi)
-        loglike = -0.5 * (const + ll_term1 + ll_term2)
-    elif method == FitMethod.reml:
-        const = (m - p) * np.log(2 * np.pi)
-        ll_term3 = np.log(np.linalg.det(np.transpose(x_mat) @ v_inv @ x_mat))
-        loglike = -0.5 * (const + ll_term1 + ll_term2 + ll_term3)
-    else:
-        raise AssertionError("A fitting method must be specified.")
+    match method:
+        case FitMethod.fh:
+            loglike = _log_likelihood_fh(
+                method=method,
+                y=y,
+                x=x,
+                beta=beta,
+                sig2_e=sig2_e,
+                sig2_v=sig2_v,
+                intercept=intercept,
+            )
+        case FitMethod.ml:
+            loglike = _log_likelihood_ml(
+                method=method,
+                y=y,
+                x=x,
+                beta=beta,
+                sig2_e=sig2_e,
+                sig2_v=sig2_v,
+                intercept=intercept,
+            )
+        case FitMethod.reml:
+            # breakpoint()
+            loglike = _log_likelihood_reml(
+                method=method,
+                y=y,
+                x=x,
+                beta=beta,
+                sig2_e=sig2_e,
+                sig2_v=sig2_v,
+                intercept=intercept,
+            )
+        case _:
+            ValueError("Must choose a valid fitting method")
 
     return loglike
 
