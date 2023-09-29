@@ -17,9 +17,10 @@ from samplics.utils.formats import numpy_array
 
 @frozen
 class AuxVars:
-    #TODO: Add missing values functionality
-    auxdata: dict
+    # TODO: Add missing values functionality
+    x: dict
     nrecords: dict
+    record_id: dict | None
     domains: list | None
     uid: int = int(
         dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
@@ -28,67 +29,77 @@ class AuxVars:
 
     def __init__(
         self,
-        auxdata: DF | Array | Iterable[DF | Array] | None = None,
+        x: DF | Array | Iterable[DF | Array] | None = None,
         domain: Array | None = None,
         record_id: Array = None,
         **kwargs,
     ) -> None:
-        assert auxdata is not None or kwargs != {}
+        assert x is not None or kwargs != {}
 
-        if isinstance(auxdata, (DF, Array)):
-            aux_df = self.__from_df(auxdata)
-            if isinstance(auxdata, Array):
-                aux_df.columns = ["__aux_" + str(i) for i in range(aux_df.shape[1])]
-        elif isinstance(auxdata, Iterable):
-            for i, d in enumerate(auxdata):
+        if isinstance(x, (DF, Array)):
+            aux_df = self.__from_df(x)
+            if isinstance(x, Array):
+                aux_df.columns = ["__x_" + str(i) for i in range(aux_df.shape[1])]
+        elif isinstance(x, Iterable):
+            for i, d in enumerate(x):
                 assert isinstance(d, (DF, Array))
                 if i == 0:
                     aux_df = self.__from_df(d)
                     if isinstance(d, Array):
                         aux_df.columns = [
-                            "__aux_" + str(i) for i in range(aux_df.shape[1])
+                            "__x_" + str(i) for i in range(aux_df.shape[1])
                         ]
                 else:
                     d_df = self.__from_df(d)
                     if isinstance(d, Array):
-                        d_df.columns = ["__aux_" + str(i) for i in range(d_df.shape[1])]
+                        d_df.columns = ["__x_" + str(i) for i in range(d_df.shape[1])]
                     aux_df.hstack([d_df], in_place=True)
         else:
             aux_df = None
 
         if aux_df is None:
-            auxdata = pl.from_dict(kwargs)
+            x = pl.from_dict(kwargs)
         else:
-            auxdata = aux_df.hstack(pl.from_dict(kwargs))
+            x = aux_df.hstack(pl.from_dict(kwargs))
 
         __record_id = (
             numpy_array(record_id)
             if record_id is not None
-            else np.linspace(0, auxdata.shape[0] - 1, auxdata.shape[0]).astype(int)
+            else np.linspace(0, x.shape[0] - 1, x.shape[0]).astype(int)
         )
 
-        __domain = None
+        __domains = None
         if domain is not None:
             __domain = numpy_array(domain).tolist()
-            auxdata_dict = (
-                auxdata.insert_at_idx(0, pl.Series(__domain).alias("__domain"))
-                .insert_at_idx(0, pl.Series(__record_id).alias("__record_id"))
-                .partition_by("__domain", as_dict=True)
-            )
+            auxdata_dict = x.insert_at_idx(
+                0, pl.Series(__domain).alias("__domain")
+            ).partition_by("__domain", as_dict=True)
+
+            record_id_dict = pl.DataFrame(
+                [__domain, __record_id], schema=["__domain", "__record_id"]
+            ).partition_by("__domain", as_dict=True)
+
+            nrecords = {}
+            __domains = np.unique(__domain).tolist()
+            for d in __domains:
+                auxdata_dict[d] = auxdata_dict[d].drop("__domain")
+                record_id_dict[d] = record_id_dict[d].drop("__domain")
+                nrecords[d] = record_id_dict[d].shape[0]
+
         else:
-            auxdata_dict = auxdata.insert_at_idx(
+            auxdata_dict = x.insert_at_idx(0, pl.Series(record_id).alias("__record_id"))
+            record_id_dict = x.insert_at_idx(
                 0, pl.Series(record_id).alias("__record_id")
             )
 
         auxdata_dict = {
             k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict
         }
-        nrecords = {k: len(auxdata_dict[k]["__domain"]) for k in auxdata_dict}
+        record_id_dict = {
+            k: record_id_dict[k].to_dict(as_series=False) for k in record_id_dict
+        }
 
-        for k in auxdata_dict:
-            del auxdata_dict[k]["__domain"]
-
-        self.__attrs_init__(auxdata_dict, nrecords, __domain)
+        self.__attrs_init__(auxdata_dict, nrecords, record_id_dict, __domains)
 
     def __from_df(self, auxdata: DF | Array) -> pl.DataFrame | None:
         if isinstance(auxdata, pl.DataFrame):
@@ -117,11 +128,11 @@ class AuxVars:
         drop_vars: str | Iterable[str] | None = None,
     ):
         if self.domains is None:
-            auxdata = pl.from_dict(self.auxdata)
+            auxdata = pl.from_dict(self.x)
         else:
             auxdata = pl.concat(
                 [
-                    pl.from_dict(self.auxdata[d]).insert_at_idx(
+                    pl.from_dict(self.x[d]).insert_at_idx(
                         1,
                         pl.repeat(d, n=self.nrecords[d], eager=True).alias("__domain"),
                     )
@@ -146,6 +157,19 @@ class AuxVars:
         drop_vars: str | Iterable[str] | None = None,
     ):
         return self.to_polars(keep_vars=keep_vars, drop_vars=drop_vars).to_pandas()
+
+
+@frozen
+class AuxVarsMM:
+    # TODO: Add missing values functionality
+    x: dict
+    z: dict
+    nrecords: dict
+    domains: list | None
+    uid: int = int(
+        dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
+        + str(int(1e16 * rand.random()))
+    )
 
 
 class CovMat:
