@@ -197,25 +197,23 @@ def _partial_derivatives(
     if method == FitMethod.ml:
         for d in y.domains:
             b_d = 1  # b_const[d][0]
-            phi_d = sig2_e[d]
             x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
             y_d = y.est[d]
-            mu_d = (x_d @ beta)[0]
-            resid_d = y_d - mu_d
-            sig2_d = sig2_v * (b_d**2) + phi_d
+            resid_d = y_d - (x_d @ beta)[0]
+            sig2_d = sig2_v * (b_d**2) + sig2_e[d]
             term1 = b_d**2 / sig2_d
+            info_sig += term1**2
             term2 = ((b_d**2) * (resid_d**2)) / (sig2_d**2)
-            deriv_sig += -0.5 * (term1 - term2)
-            info_sig += 0.5 * (term1**2)
+            deriv_sig += term1 - term2
+        deriv_sig = -0.5 * deriv_sig
+        info_sig = 0.5 * info_sig
     elif method == FitMethod.fh:  # Fay-Herriot approximation
         for d in y.domains:
             b_d = 1  # b_const[d][0]
-            phi_d = sig2_e[d]
             x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
             y_d = y.est[d]
-            mu_d = x_d @ beta
-            resid_d = y_d - mu_d
-            sig2_d = sig2_v * (b_d**2) + phi_d
+            resid_d = y_d - x_d @ beta
+            sig2_d = sig2_v * (b_d**2) + sig2_e[d]
             deriv_sig += float((resid_d**2) / sig2_d)
             info_sig += -float(((b_d**2) * (resid_d**2)) / (sig2_d**2))
         deriv_sig = m - p - deriv_sig
@@ -259,15 +257,27 @@ def _fixed_coefficients(
     b_const = 1
     sig2_e_vec = np.array(list(sig2_e.values()))
     v_inv = np.diag(1 / (sig2_v * (b_const**2) + sig2_e_vec))
-    x_v_X_inv = np.linalg.inv(np.transpose(x_mat) @ v_inv @ x_mat)
-    x_v_x_inv_x = x_v_X_inv @ np.transpose(x_mat) @ v_inv
+    x_v_X_inv = np.linalg.pinv(np.transpose(x_mat) @ v_inv @ x_mat)
+    x_v_x_inv_x = x_v_X_inv @ (np.transpose(x_mat) @ v_inv)
     beta_hat = x_v_x_inv_x @ y_vec
     beta_cov = np.transpose(x_mat) @ v_inv @ x_mat
 
     return beta_hat.ravel(), np.linalg.inv(beta_cov)
 
 
-def _log_likelihood(
+def _log_likelihood_fh(
+    method: FitMethod,
+    y: np.ndarray,
+    x: np.ndarray,
+    beta: np.ndarray,
+    sig2_e: dict,
+    sig2_v: float,
+    intercept: bool,
+) -> Number:
+    pass
+
+
+def _log_likelihood_ml(
     method: FitMethod,
     y: np.ndarray,
     x: np.ndarray,
@@ -280,7 +290,6 @@ def _log_likelihood(
     const = m * np.log(2 * np.pi)
     ll_term1 = np.log(np.array(list(sig2_e.values())) + sig2_v).sum()
     ll_term2 = 0
-    ll_term3 = 0
 
     x = x.to_polars().drop(["__record_id"])
     breakpoint()
@@ -288,16 +297,60 @@ def _log_likelihood(
         x0 = pl.Series("__intercept", np.ones(m))
         x = x.insert_at_idx(0, x0)
 
+    for d in y.domains:
+        x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
+        ll_term2 += ((y.est[d] - x_d @ beta)[0] ** 2) / (sig2_e[d] + sig2_v)
+
+    return -0.5 * (const + ll_term1 + ll_term2)
+
+
+def _log_likelihood_reml(
+    method: FitMethod,
+    y: np.ndarray,
+    x: np.ndarray,
+    beta: np.ndarray,
+    sig2_e: dict,
+    sig2_v: float,
+    intercept: bool,
+) -> Number:
+    pass
+
+
+def _log_likelihood(
+    method: FitMethod,
+    y: np.ndarray,
+    x: np.ndarray,
+    beta: np.ndarray,
+    sig2_e: dict,
+    sig2_v: float,
+    intercept: bool,
+) -> Number:
+    # ll_term1 = np.log(np.array(list(sig2_e.values())) + sig2_v).sum()
+    ll_term2 = 0
+
+    x = x.to_polars().drop(["__record_id", "__domain"])
+
+    if intercept:
+        x0 = pl.Series("__intercept", np.ones(x.shape[0]))
+        x = x.insert_at_idx(0, x0)
+
+    m, p = x.shape
+
+    b_const = 1
+    sig2_e_vec = np.array(list(sig2_e.values()))
+    v = np.diag(sig2_v * (b_const**2) + sig2_e_vec)
+    v_inv = np.diag(1 / (sig2_v * (b_const**2) + sig2_e_vec))
+    x_mat = x.to_numpy()
+    y_vec = y.to_numpy(keep_vars="est").flatten()
+    res = y_vec - x_mat @ beta
+    ll_term1 = np.log(np.linalg.det(v))
+    ll_term2 = np.transpose(res) @ v_inv @ res
     if method in (FitMethod.ml, FitMethod.fh):  # What is likelihood for FH
-        for d in y.domains:
-            x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
-            ll_term2 += ((y.est[d] - x_d @ beta)[0] ** 2) / (sig2_e[d] + sig2_v)
+        const = m * np.log(2 * np.pi)
         loglike = -0.5 * (const + ll_term1 + ll_term2)
     elif method == FitMethod.reml:
-        for d in y.domains:
-            x_d = x.filter(pl.col("__domain") == d).drop("__domain").to_numpy()
-            ll_term2 += ((y.est[d] - x_d @ beta)[0] ** 2) / (sig2_e[d] + sig2_v)
-            ll_term3 += np.log((x_d @ np.transpose(x_d))[0] ** 2 / (sig2_e[d] + sig2_v))
+        const = (m - p) * np.log(2 * np.pi)
+        ll_term3 = np.log(np.linalg.det(np.transpose(x_mat) @ v_inv @ x_mat))
         loglike = -0.5 * (const + ll_term1 + ll_term2 + ll_term3)
     else:
         raise AssertionError("A fitting method must be specified.")
@@ -364,26 +417,26 @@ def _eblup_estimates(
     m = len(yhat)
     b_const_vec = np.array(list(b_const.values()))
     v_i = np.array(list(sigma2_e.values())) + sigma2_v * (b_const_vec**2)
-    V_inv = np.diag(1 / v_i)
+    v_inv = np.diag(1 / v_i)
     G = np.diag(np.ones(m) * sigma2_v)
     Z = np.diag(b_const_vec)
-    b = (G @ np.transpose(Z)) @ V_inv
+    b = (G @ np.transpose(Z)) @ v_inv
 
     if intercept:
-        X = np.insert(
+        x = np.insert(
             auxvars.to_numpy(drop_vars=["__record_id", "__domain"]), 0, 1, axis=1
         )  # add the intercept
     else:
-        X = auxvars.to_numpy(drop_vars=["__record_id", "__domain"])
+        x = auxvars.to_numpy(drop_vars=["__record_id", "__domain"])
 
-    d = np.transpose(X - np.transpose(b) @ X)
-    x_vinv_x = np.matmul(np.matmul(np.transpose(X), V_inv), X)
+    d = np.transpose(x - np.transpose(b) @ x)
+    x_vinv_x = np.transpose(x) @ v_inv @ x
 
-    g2_term = np.linalg.inv(x_vinv_x)
+    g2_term = np.linalg.pinv(x_vinv_x)
 
-    b_term_ml1 = np.linalg.inv(x_vinv_x)
+    b_term_ml1 = g2_term  # np.linalg.inv(x_vinv_x)
     b_term_ml2_diag = (b_const_vec**2) / (v_i**2)
-    b_term_ml2 = np.matmul(np.matmul(np.transpose(X), np.diag(b_term_ml2_diag)), X)
+    b_term_ml2 = np.matmul(np.matmul(np.transpose(x), np.diag(b_term_ml2_diag)), x)
     b_term_ml = float(np.trace(np.matmul(b_term_ml1, b_term_ml2)))
 
     estimates = {}  # np.zeros(m) * np.nan
