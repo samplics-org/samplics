@@ -92,7 +92,8 @@ def fit_eblup(
         },
         goodness={
             "AIC": -2 * log_llike + 2 * (p + 1),
-            "BIC": 2 * log_llike + math.log(m) * (p + 1),
+            "BIC": -2 * log_llike + math.log(m) * (p + 1),
+            "KIC": -2 * log_llike + 3 * (p + 1),
         },
     )
 
@@ -559,12 +560,11 @@ def _eblup_estimates(
     for d in area:
         b_d = b_const[d]
         phi_d = sigma2_e[d]
-        del auxvars.auxdata[d]["__record_id"]
 
         if intercept:
-            X_d = np.insert(pl.from_dict(auxvars.auxdata[d]).to_numpy(), 0, 1, axis=1)
+            X_d = np.insert(pl.from_dict(auxvars.x[d]).to_numpy(), 0, 1, axis=1)
         else:
-            X_d = pl.from_dict(auxvars.auxdata[d]).to_numpy()
+            X_d = pl.from_dict(auxvars.x[d]).to_numpy()
 
         yhat_d = yhat[d]
         mu_d = X_d @ beta

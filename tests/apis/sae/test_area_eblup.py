@@ -49,7 +49,7 @@ auxvars = AuxVars(x=x, domain=area)
 fit_ml = fit_eblup(y=yhat, x=auxvars, method=FitMethod.ml)
 fit_reml = fit_eblup(y=yhat, x=auxvars, method=FitMethod.reml)
 # fit_fh = fit_eblup(y=yhat, x=auxvars, method=FitMethod.fh)
-breakpoint()
+# breakpoint()
 
 # Predict the small area estimates
 est_milk_reml = predict_eblup(x=auxvars, fit_eblup=fit_reml, y=yhat, mse=Mse.taylor)
