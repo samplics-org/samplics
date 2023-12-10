@@ -1,27 +1,27 @@
 """EBLUP for the unit level model.
 
-This module implements the basic EBLUP unit level model. The functionalities are organized in 
-classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*. 
-Linear Mixed Models (LMM) are the core underlying statistical framework used to model the 
-hierarchical nature of the small area estimation (SAE) techniques implemented in this module, 
+This module implements the basic EBLUP unit level model. The functionalities are organized in
+classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*.
+Linear Mixed Models (LMM) are the core underlying statistical framework used to model the
+hierarchical nature of the small area estimation (SAE) techniques implemented in this module,
 see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more details on LMM.
 
-The *EblupUnitModel* class implements the model developed by Battese, G.E., Harter, R.M., and 
-Fuller, W.A. (1988) [#bhf1988]_. The model parameters can fitted using restricted maximum 
-likelihood (REML) and maximum likelihood (ML). The normality assumption of the errors is not 
-necessary to predict the point estimates but is required for the taylor MSE estimation. The 
-predictions takes into account sampling rates. A bootstrap MSE estimation method is also implemted 
-for this class. 
+The *EblupUnitModel* class implements the model developed by Battese, G.E., Harter, R.M., and
+Fuller, W.A. (1988) [#bhf1988]_. The model parameters can fitted using restricted maximum
+likelihood (REML) and maximum likelihood (ML). The normality assumption of the errors is not
+necessary to predict the point estimates but is required for the taylor MSE estimation. The
+predictions takes into account sampling rates. A bootstrap MSE estimation method is also implemted
+for this class.
 
-For a comprehensive review of the small area estimation models and its applications, 
+For a comprehensive review of the small area estimation models and its applications,
 see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 
-.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*, 
+.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*,
    New York: John Wiley & Sons, Inc.
-.. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for 
-   prediction of county crop areas using survey and satellite data, *Journal of the American 
+.. [#bhf1988] Battese, G.E., Harter, R.M., and Fuller, W.A. (1988). An error-components model for
+   prediction of county crop areas using survey and satellite data, *Journal of the American
    Statistical Association*, **83**, 28-36.
-.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
+.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*,
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import warnings
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -38,7 +38,7 @@ import statsmodels.api as sm
 from samplics.sae.sae_core_functions import area_stats
 from samplics.utils.basic_functions import sumby
 from samplics.utils.formats import dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number, StringNumber
+from samplics.utils.types import Array, DictStrNum, Number
 
 
 class EblupUnitModel:
@@ -190,7 +190,11 @@ class EblupUnitModel:
         g3_afactor = (1 / afactor**2) * (1 / (sigma2u + sigma2e / afactor) ** 3)
         g3 = (
             g3_afactor
-            * ((sigma2e**2) * i_ee + (sigma2u**2) * i_vv - 2 * (sigma2e * sigma2u) * (-i_ve))
+            * (
+                (sigma2e**2) * i_ee
+                + (sigma2u**2) * i_vv
+                - 2 * (sigma2e * sigma2u) * (-i_ve)
+            )
             / i_determinant
         )
 
@@ -263,11 +267,11 @@ class EblupUnitModel:
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
         basic_fit = basic_model.fit(reml=reml, full_output=True, **fit_kwargs)
 
+
         self.error_std = basic_fit.scale**0.5
         self.fixed_effects = basic_fit.fe_params
-
         self.fe_std = basic_fit.bse_fe
-        self.re_std = float(basic_fit.cov_re) ** 0.5
+        self.re_std = basic_fit.cov_re[0][0] ** 0.5
         self.convergence["achieved"] = basic_fit.converged
         self.convergence["iterations"] = len(basic_fit.hist[0]["allvecs"]) - 1
 
@@ -280,7 +284,9 @@ class EblupUnitModel:
                 + np.log(nb_obs - self.fixed_effects.shape[0]) * nb_variance_params
             )
         elif self.method == "ML":
-            aic = -2 * basic_fit.llf + 2 * (self.fixed_effects.shape[0] + nb_variance_params)
+            aic = -2 * basic_fit.llf + 2 * (
+                self.fixed_effects.shape[0] + nb_variance_params
+            )
             bic = -2 * basic_fit.llf + np.log(nb_obs) * (
                 self.fixed_effects.shape[0] + nb_variance_params
             )
@@ -290,7 +296,6 @@ class EblupUnitModel:
         self.goodness["loglike"] = basic_fit.llf
         self.goodness["AIC"] = aic
         self.goodness["BIC"] = bic
-
         self.ys_mean, Xs_mean, gamma, samp_size = area_stats(
             ys,
             Xs,
@@ -373,7 +378,8 @@ class EblupUnitModel:
                 samp_rate[d] = 0
             if d in self.areas_list:
                 area_est[d] = (
-                    mu[d] + (samp_rate[d] + (1 - samp_rate[d]) * self.gamma[d]) * resid[d]
+                    mu[d]
+                    + (samp_rate[d] + (1 - samp_rate[d]) * self.gamma[d]) * resid[d]
                 )
             else:
                 area_est[d] = mu[d]
@@ -381,7 +387,11 @@ class EblupUnitModel:
         self.samp_rate = samp_rate
         self.area_est = area_est
 
-        A_ps = np.diag(np.zeros(Xp_mean.shape[1])) if Xp_mean.ndim >= 2 else np.asarray([0])
+        A_ps = (
+            np.diag(np.zeros(Xp_mean.shape[1]))
+            if Xp_mean.ndim >= 2
+            else np.asarray([0])
+        )
 
         ps_area_list = self.areap[ps]
         for d in ps_area_list:
@@ -389,9 +399,9 @@ class EblupUnitModel:
             n_ps_d = np.sum(areadps)
             X_ps_d = Xs[areadps]
             scale_ps_d = self.scales[areadps]
-            V_ps_d = (self.error_std**2) * np.diag(scale_ps_d) + (self.re_std**2) * np.ones(
-                [n_ps_d, n_ps_d]
-            )
+            V_ps_d = (self.error_std**2) * np.diag(scale_ps_d) + (
+                self.re_std**2
+            ) * np.ones([n_ps_d, n_ps_d])
             A_ps = A_ps + np.transpose(X_ps_d) @ np.linalg.inv(V_ps_d) @ X_ps_d
 
         ps_area_indices = np.isin(self.areas_list, ps_area_list)
@@ -500,7 +510,7 @@ class EblupUnitModel:
                 boot_fit = boot_model.fit(reml=reml, **fit_kwargs)
             boot_fe = boot_fit.fe_params
             boot_error_std = boot_fit.scale**0.5
-            boot_re_std = float(boot_fit.cov_re) ** 0.5
+            boot_re_std = boot_fit.cov_re[0][0] ** 0.5
             boot_ys_mean, boot_Xs_mean, boot_gamma, _ = area_stats(
                 y_ps_boot[b, :],
                 X_ps,
@@ -519,13 +529,16 @@ class EblupUnitModel:
                 if b in steps:
                     i += 1
                     print(
-                        f"\r[%-{bar_length-1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i),
+                        f"\r[%-{bar_length-1}s] %d%%"
+                        % ("=" * i, 2 + (100 / bar_length) * i),
                         end="",
                     )
         if show_progress:
             print("\n")
 
-        self.area_mse_boot = dict(zip(ps_area_list, np.asarray(np.mean(boot_mse, axis=0))))
+        self.area_mse_boot = dict(
+            zip(ps_area_list, np.asarray(np.mean(boot_mse, axis=0)))
+        )
 
         # TODO: nonnegligeable sampling fractions, section 7.2.4, Rao and Molina (2015)
 

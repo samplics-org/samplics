@@ -195,7 +195,13 @@ def load_birth():
 
 
 def load_county_crop():
-    colnames = ["county_id", "corn_area", "soybeans_area", "corn_pixel", "soybeans_pixel"]
+    colnames = [
+        "county_id",
+        "corn_area",
+        "soybeans_area",
+        "corn_pixel",
+        "soybeans_pixel",
+    ]
     name = "County Crop Sample"
     description = "The County Crop Areas sample data."
     design = {}

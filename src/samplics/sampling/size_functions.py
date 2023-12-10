@@ -1,4 +1,4 @@
-"""Sample size calculation module 
+"""Sample size calculation module
 This module compiles the core functions for calculating power and sample size
 """
 
@@ -53,7 +53,12 @@ def _ss_for_proportion_wald(
         )
     else:
         return math.ceil(
-            (1 / resp_rate) * deff_c * z_value**2 * target * (1 - target) / half_ci**2
+            (1 / resp_rate)
+            * deff_c
+            * z_value**2
+            * target
+            * (1 - target)
+            / half_ci**2
         )
 
 
@@ -196,11 +201,19 @@ def calculate_ss_fleiss_prop(
 
     if strat:
         return _ss_for_proportion_fleiss_stratified(
-            target=target, half_ci=half_ci, deff_c=deff_c, resp_rate=resp_rate, alpha=alpha
+            target=target,
+            half_ci=half_ci,
+            deff_c=deff_c,
+            resp_rate=resp_rate,
+            alpha=alpha,
         )
     else:
         return _ss_for_proportion_fleiss(
-            target=target, half_ci=half_ci, deff_c=deff_c, resp_rate=resp_rate, alpha=alpha
+            target=target,
+            half_ci=half_ci,
+            deff_c=deff_c,
+            resp_rate=resp_rate,
+            alpha=alpha,
         )
 
 
@@ -233,7 +246,9 @@ def _ss_for_mean_wald(
             / ((pop_size - 1) * half_ci**2 + z_value**2 * sigma**2)
         )
     else:
-        return math.ceil((1 / resp_rate) * deff_c * z_value**2 * sigma**2 / half_ci**2)
+        return math.ceil(
+            (1 / resp_rate) * deff_c * z_value**2 * sigma**2 / half_ci**2
+        )
 
 
 def _ss_for_mean_wald_stratified(
@@ -312,7 +327,9 @@ def _calculate_ss_wald_mean_one_sample(
         z_beta = normal().ppf(power)
 
     return math.ceil(
-        (1 / resp_rate) * deff_c * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
+        (1 / resp_rate)
+        * deff_c
+        * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
     )
 
 

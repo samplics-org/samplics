@@ -3,6 +3,7 @@ import pandas as pd
 
 from samplics.sae.eblup_area_model import EblupAreaModel
 
+
 # R SAE package datasets
 milk = pd.read_csv("./tests/sae/milk.csv")
 
@@ -26,7 +27,7 @@ fh_model_reml.fit(
 fh_model_reml.predict(X=X, area=area, intercept=False)
 
 def test_fay_herriot_REML_convergence():
-    assert fh_model_reml.convergence["achieved"] is True
+    assert fh_model_reml.convergence["achieved"]
     assert fh_model_reml.convergence["iterations"] == 5
     assert fh_model_reml.convergence["precision"] <= 1e-4
 
@@ -183,9 +184,8 @@ fh_model_ml.predict(
     area=area,
 )
 
-
 def test_fay_herriot_ML_convergence():
-    assert fh_model_ml.convergence["achieved"] is True
+    assert fh_model_ml.convergence["achieved"]
     assert fh_model_ml.convergence["iterations"] == 5
     assert fh_model_ml.convergence["precision"] <= 1e-4
 
@@ -342,7 +342,7 @@ fh_model_fh.predict(X=X, area=area, intercept=True)
 
 
 def test_fay_herriot_FH_convergence():
-    assert fh_model_fh.convergence["achieved"] is True
+    assert fh_model_fh.convergence["achieved"]
     assert fh_model_fh.convergence["iterations"] == 6
     assert fh_model_fh.convergence["precision"] <= 1e-4
 
@@ -473,7 +473,7 @@ euslic_pop.columns = euslic_pop.columns.str.lower()
 X = euslic_pop[["cash", "self_empl"]]
 X.insert(0, "intercept", 1)
 
-# REML method
+# ML method
 euslic_fh_model_ml = EblupAreaModel(method="ML")
 euslic_fh_model_ml.fit(
     yhat=euslic_samp["mean"],

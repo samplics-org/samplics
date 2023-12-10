@@ -114,7 +114,7 @@ def test_goodness_of_fit_bhf_reml():
 
 
 def test_convergence_bhf_reml():
-    assert eblup_bhf_reml.convergence["achieved"] == True
+    assert eblup_bhf_reml.convergence["achieved"] is True
     assert eblup_bhf_reml.convergence["iterations"] == 4
 
 
@@ -205,7 +205,9 @@ def test_bhf_reml_to_dataframe_not_default():
         col_names=["parameter", "small_area", "modelled_estimate", "taylor_mse"]
     )
     assert df.shape[1] == 4
-    assert (df.columns == ["parameter", "small_area", "modelled_estimate", "taylor_mse"]).all()
+    assert (
+        df.columns == ["parameter", "small_area", "modelled_estimate", "taylor_mse"]
+    ).all()
 
 
 # Bootstrap with REML
@@ -223,7 +225,9 @@ df1_reml = eblup_bhf_reml_boot.to_dataframe()
 
 def test_bhf_reml_to_dataframe_boot_default():
     assert df1_reml.shape[1] == 5
-    assert (df1_reml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]).all()
+    assert (
+        df1_reml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]
+    ).all()
 
 
 df2_reml = eblup_bhf_reml_boot.to_dataframe(
@@ -377,7 +381,7 @@ def test_goodness_of_fit_bhf_ml():
 
 
 def test_convergence_bhf_ml():
-    assert eblup_bhf_ml.convergence["achieved"] == True
+    assert eblup_bhf_ml.convergence["achieved"] is True
     assert eblup_bhf_ml.convergence["iterations"] == 3
 
 
@@ -471,7 +475,9 @@ df1_ml = eblup_bhf_ml_boot.to_dataframe()
 
 def test_bhf_ml_to_dataframe_boot_default():
     assert df1_ml.shape[1] == 5
-    assert (df1_ml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]).all()
+    assert (
+        df1_ml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]
+    ).all()
 
 
 df2_ml = eblup_bhf_ml_boot.to_dataframe(

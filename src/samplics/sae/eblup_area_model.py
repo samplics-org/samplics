@@ -1,16 +1,16 @@
 """EBLUP Area Model
 
-The module implements the basic EBLUP area level model initially developed by Fay, R.E. and 
-Herriot, R.A. (1979) [#fh1979]_ and explicitly (mathematically) formulated in Rao, J.N.K. and 
-Molina, I. (2015) [#rm2015]_. The functionalities are organized in one class *EblupAreaModel* with 
-two main methods: *fit()* and *predict()*. The unit level standard error is assume known and the 
-model only estimate the fixed effects and the standard error of the random effects. The model 
-parameters can be fitted using restricted maximum likelihood (REML), maximum likelihood (ML) or 
-Fay-Herriot (FH). The method *predict()* provides both the mean and the MSE estimates at the area 
+The module implements the basic EBLUP area level model initially developed by Fay, R.E. and
+Herriot, R.A. (1979) [#fh1979]_ and explicitly (mathematically) formulated in Rao, J.N.K. and
+Molina, I. (2015) [#rm2015]_. The functionalities are organized in one class *EblupAreaModel* with
+two main methods: *fit()* and *predict()*. The unit level standard error is assume known and the
+model only estimate the fixed effects and the standard error of the random effects. The model
+parameters can be fitted using restricted maximum likelihood (REML), maximum likelihood (ML) or
+Fay-Herriot (FH). The method *predict()* provides both the mean and the MSE estimates at the area
 level.
 
 .. [#fh1979] Fay, R.E. and Herriot, R.A. (1979), Estimation of Income from Small Places: An
-   Application of James-Stein Procedures to Census Data. *Journal of the American Statistical 
+   Application of James-Stein Procedures to Census Data. *Journal of the American Statistical
    Association*, **74**, 269-277.
 """
 
@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import math
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -185,8 +185,8 @@ class EblupAreaModel:
                 mu_d = np.matmul(X_d, beta)
                 resid_d = yhat_d - mu_d
                 sigma2_d = sigma2_v * (b_d**2) + phi_d
-                term1 = float(b_d**2 / sigma2_d)
-                term2 = float(((b_d**2) * (resid_d**2)) / (sigma2_d**2))
+                term1 = (b_d**2 / sigma2_d)[0]
+                term2 = (((b_d**2) * (resid_d**2)) / (sigma2_d**2))
                 deriv_sigma += -0.5 * (term1 - term2)
                 info_sigma += 0.5 * (term1**2)
         elif self.method == "REML":
@@ -199,10 +199,10 @@ class EblupAreaModel:
             P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
             P_B = np.matmul(P, B)
             P_B_P = np.matmul(P_B, P)
-            term1 = float(np.trace(P_B))
+            term1 = np.trace(P_B)
             term2 = np.matmul(np.matmul(np.transpose(yhat), P_B_P), yhat)
             deriv_sigma = -0.5 * (term1 - term2)
-            info_sigma = 0.5 * float(np.trace(np.matmul(P_B_P, B)))
+            info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
         elif self.method == "FH":  # Fay-Herriot approximation
             beta, beta_cov = self._fixed_coefficients(
                 area=area,
@@ -220,13 +220,13 @@ class EblupAreaModel:
                 mu_d = np.dot(X_d, beta)
                 resid_d = yhat_d - mu_d
                 sigma2_d = sigma2_v * (b_d**2) + phi_d
-                deriv_sigma += float((resid_d**2) / sigma2_d)
-                info_sigma += -float(((b_d**2) * (resid_d**2)) / (sigma2_d**2))
+                deriv_sigma += ((resid_d**2) / sigma2_d)[0]
+                info_sigma += -(((b_d**2) * (resid_d**2)) / (sigma2_d**2))[0]
             m = yhat.size
             p = X.shape[1]
             deriv_sigma = m - p - deriv_sigma
 
-        return float(deriv_sigma), float(info_sigma)
+        return deriv_sigma, info_sigma
 
     def _iterative_fisher_scoring(
         self,
@@ -257,10 +257,16 @@ class EblupAreaModel:
                 b_const=b_const,
             )
             sigma2_v += deriv_sigma / info_sigma
-            tolerance = abs((sigma2_v - sigma2_v_previous)/sigma2_v_previous)
+            tolerance = abs((sigma2_v - sigma2_v_previous) / sigma2_v_previous)
             iterations += 1
 
-        return float(max(sigma2_v, 0)), 1 / info_sigma, iterations, tolerance, tolerance <= tol
+        return (
+            max(sigma2_v, 0),
+            1 / info_sigma,
+            iterations,
+            tolerance,
+            tolerance <= tol,
+        )
 
     def _eb_estimates(
         self,
@@ -332,7 +338,7 @@ class EblupAreaModel:
             estimates[area == d] = gamma_d * yhat_d + (1 - gamma_d) * mu_d
             g1[area == d] = gamma_d * phi_d
             g2_term_d = np.matmul(np.matmul(X_d, g2_term), np.transpose(X_d))
-            g2[area == d] = ((1 - gamma_d) ** 2) * float(g2_term_d)
+            g2[area == d] = ((1 - gamma_d) ** 2) * g2_term_d[0]
             g3[area == d] = ((1 - gamma_d) ** 2) * g3_scale / variance_d
             g3_star[area == d] = (g3[area == d] / variance_d) * (resid_d**2)
             g1_partial[area == d] = (b_d**2) * ((1 - gamma_d) ** 2) * b_sigma2_v

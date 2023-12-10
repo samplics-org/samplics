@@ -1,15 +1,13 @@
+import numpy as np
 import pytest
 
-import numpy as np
-import pandas as pd
-
-from samplics.utils.hadamard import *
+from samplics.utils.hadamard import hadamard
 
 
 def test_hadarmard_2():
     had_mat2 = hadamard(2)
     test2 = had_mat2 == np.array([[1, 1], [1, -1]])
-    assert test2.all() == True
+    assert test2.all()
 
 
 @pytest.mark.parametrize("n", [12, 20, 24, 28])

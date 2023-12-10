@@ -1,24 +1,24 @@
 """EB  for the unit level model.
 
 This module implements the basic EB unit level model. The functionalities are organized in
-classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*. 
+classes. Each class has three main methods: *fit()*, *predict()* and *bootstrap_mse()*.
 Linear Mixed Models (LMM) are the core underlying statistical framework used to model the hierarchical nature of the small area estimation (SAE) techniques implemented in this module, see McCulloch, C.E. and Searle, S.R. (2001) [#ms2001]_ for more details on LMM.
 
 The *EbUnitModel* class implements the model developed by Molina, I. and Rao, J.N.K. (2010)
-[#mr2010]_. So far, only the basic approach requiring the normal distribution of the errors is 
-implemented. This approach allows estimating complex indicators such as poverty indices and 
-other nonlinear paramaters. The class fits the model parameters using REML or ML. To predict the 
-area level indicators estimates, a Monte Carlo (MC) approach is used. MSE estimation is achieved 
-using a bootstrap procedure.  
+[#mr2010]_. So far, only the basic approach requiring the normal distribution of the errors is
+implemented. This approach allows estimating complex indicators such as poverty indices and
+other nonlinear paramaters. The class fits the model parameters using REML or ML. To predict the
+area level indicators estimates, a Monte Carlo (MC) approach is used. MSE estimation is achieved
+using a bootstrap procedure.
 
-For a comprehensive review of the small area estimation models and its applications, 
+For a comprehensive review of the small area estimation models and its applications,
 see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 
-.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*, 
+.. [#ms2001] McCulloch, C.E.and Searle, S.R. (2001), *Generalized, Linear, Mixed Models*,
    New York: John Wiley & Sons, Inc.
-.. [#mr2010] Molina, , I. and Rao, J.N.K. (2010), Small Area Estimation of Poverty Indicators, 
+.. [#mr2010] Molina, , I. and Rao, J.N.K. (2010), Small Area Estimation of Poverty Indicators,
    *Canadian Journal of Statistics*, **38**, 369-385.
-.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*, 
+.. [#rm2015] Rao, J.N.K. and Molina, I. (2015), *Small area estimation, 2nd edn.*,
    John Wiley & Sons, Hoboken, New Jersey.
 """
 
@@ -110,14 +110,16 @@ class EbUnitModel:
         boxcox: Optional[Number] = None,
         constant: Optional[Number] = None,
     ):
-
         # Setting
         self.method: str = method.upper()
         if self.method not in ("REML", "ML"):
             raise AssertionError("Value provided for method is not valid!")
         self.indicator: Callable[..., Any]
         self.number_samples: int
-        self.boxcox: dict[str, Optional[Number]] = {"lambda": boxcox, "constant": constant}
+        self.boxcox: dict[str, Optional[Number]] = {
+            "lambda": boxcox,
+            "constant": constant,
+        }
 
         # Sample data
         self.scales: np.ndarray
@@ -209,7 +211,14 @@ class EbUnitModel:
             method=self.method,
         )
         eblup_ul.fit(
-            ys_transformed, Xs, areas, samp_weight, scales, intercept, tol=tol, maxiter=maxiter
+            ys_transformed,
+            Xs,
+            areas,
+            samp_weight,
+            scales,
+            intercept,
+            tol=tol,
+            maxiter=maxiter,
         )
 
         self.scales = eblup_ul.scales
@@ -250,7 +259,6 @@ class EbUnitModel:
         show_progress: bool,
         **kwargs: Any,
     ) -> np.ndarray:
-
         if intercept:
             if self.Xs_mean.ndim == 1:
                 n = self.Xs_mean.shape[0]
@@ -583,8 +591,8 @@ class EbUnitModel:
                     **fit_kwargs,
                 )
 
-            gammaboot = float(boot_fit.cov_re) / (
-                float(boot_fit.cov_re) + boot_fit.scale * (1 / aboot_factor)
+            gammaboot = boot_fit.cov_re[0] / (
+                boot_fit.cov_re[0] + boot_fit.scale * (1 / aboot_factor)
             )
 
             eta_samp_boot[b, :] = self._predict_indicator(
@@ -598,7 +606,7 @@ class EbUnitModel:
                 boot_fit.fe_params,
                 gammaboot,
                 boot_fit.scale,
-                float(boot_fit.cov_re),
+                boot_fit.cov_re[0],
                 scale_r,
                 intercept,
                 max_array_length,

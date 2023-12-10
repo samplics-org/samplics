@@ -4,4 +4,13 @@ from samplics.sae.eblup_unit_model import EblupUnitModel
 from samplics.sae.robust_unit_model import EllUnitModel
 
 
-__all__ = ["EblupAreaModel", "EblupUnitModel", "EbUnitModel", "EllUnitModel"]
+__all__ = [
+    "EblupAreaModel",
+    "EblupUnitModel",
+    "EblupEst",
+    "EblupFit",
+    "EbUnitModel",
+    "EbEst",
+    "EbFit",
+    "EllUnitModel",
+]

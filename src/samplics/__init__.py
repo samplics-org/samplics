@@ -15,7 +15,12 @@ from samplics.datasets.datasets import (
 )
 from samplics.estimation import ReplicateEstimator, TaylorEstimator
 from samplics.regression import SurveyGLM
-from samplics.sae import EblupAreaModel, EblupUnitModel, EbUnitModel, EllUnitModel
+from samplics.sae import (
+    EblupAreaModel,
+    EblupUnitModel,
+    EbUnitModel,
+    EllUnitModel,
+)
 from samplics.sampling import (
     SampleSelection,
     SampleSize,
@@ -32,13 +37,24 @@ from samplics.sampling import (
     power_for_one_mean,
     power_for_one_proportion,
 )
+from samplics.types import (
+    AuxVars,
+    DirectEst,
+    EbEst,
+    EbFit,
+    EblupEst,
+    EblupFit,
+    FitMethod,
+    GlmmFitStats,
+    Mse,
+)
 from samplics.utils import (
     CertaintyError,
+    DimensionError,
     MethodError,
     PopParam,
     ProbError,
     SamplicsError,
-    DimensionError,
     SelectMethod,
     SinglePSUError,
     SinglePSUEst,
@@ -52,18 +68,27 @@ from samplics.weighting import ReplicateWeight, SampleWeight
 __all__ = [
     "allocate",
     "array_to_dict",
+    "AuxVars",
     "calculate_power",
     "calculate_power_prop",
     "calculate_ss_fleiss_prop",
     "calculate_ss_wald_prop",
     "calculate_ss_wald_mean",
     "CrossTabulation",
+    "DirectEst",
     "Tabulation",
     "Ttest",
     "EblupAreaModel",
     "EblupUnitModel",
+    "EblupEst",
+    "EblupFit",
     "EbUnitModel",
+    "EbEst",
+    "EbFit",
     "EllUnitModel",
+    "FitMethod",
+    "fit_eblup",
+    "GlmmFitStats",
     "load_auto",
     "load_birth",
     "load_county_crop",
@@ -99,6 +124,7 @@ __all__ = [
     "CertaintyError",
     "DimensionError",
     "MethodError",
+    "Mse",
     "ProbError",
     "SinglePSUError",
 ]

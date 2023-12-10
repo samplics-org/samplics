@@ -1,10 +1,10 @@
 """Sample weighting module
 
-*SampleWeight* is the main class in this module which implements weight adjustments to account for 
-nonresponse, calibrate to auxiliary information, normalize weights, and trim extreme weights. Valliant, R. and Dever, J. A. (2018) [#vd2018]_ provides a step-by-step guide on calculating 
-sample weights. 
+*SampleWeight* is the main class in this module which implements weight adjustments to account for
+nonresponse, calibrate to auxiliary information, normalize weights, and trim extreme weights. Valliant, R. and Dever, J. A. (2018) [#vd2018]_ provides a step-by-step guide on calculating
+sample weights.
 
-.. [#vd2018] Valliant, R. and Dever, J. A. (2018), *Survey Weights: A Step-by-Step Guide to       
+.. [#vd2018] Valliant, R. and Dever, J. A. (2018), *Survey Weights: A Step-by-Step Guide to
    Calculation*, Stata Press.
 """
 
@@ -16,7 +16,13 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils import checks, formats
-from samplics.utils.types import Array, DictStrFloat, DictStrInt, DictStrNum, Number, StringNumber
+from samplics.utils.types import (
+    Array,
+    DictStrInt,
+    DictStrNum,
+    Number,
+    StringNumber,
+)
 
 
 class SampleWeight:
@@ -126,7 +132,10 @@ class SampleWeight:
         resp_status = formats.numpy_array(resp_status)
         checks.assert_response_status(resp_status, resp_dict)
 
-        if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any() and resp_dict is not None:
+        if (
+            not np.isin(resp_status, ("in", "rr", "nr", "uk")).any()
+            and resp_dict is not None
+        ):
             resp_code = np.repeat("  ", resp_status.size).astype(str)
             resp_code[resp_status == resp_dict["in"]] = "in"
             resp_code[resp_status == resp_dict["rr"]] = "rr"
@@ -153,15 +162,17 @@ class SampleWeight:
         uk_weights_sum = float(np.sum(samp_weight[uk_sample]))
 
         if unknown_to_inelig:
-            adj_uk = (in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum) / (
-                in_weights_sum + rr_weights_sum + nr_weights_sum
-            )
+            adj_uk = (
+                in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum
+            ) / (in_weights_sum + rr_weights_sum + nr_weights_sum)
             adj_rr = (rr_weights_sum + nr_weights_sum) / rr_weights_sum
         else:
             adj_uk = 1
             adj_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
 
-        adj_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 1 by default
+        adj_factor = np.zeros(
+            samp_weight.size
+        )  # unknown and nonresponse will get 1 by default
         adj_factor[rr_sample] = adj_rr * adj_uk
         adj_factor[in_sample] = adj_uk
 
@@ -302,9 +313,13 @@ class SampleWeight:
         else:
             if control is None:
                 self.control = int(np.sum(samp_weight.size))
-                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, self.control)
+                norm_weight, self.adj_factor = self._norm_adjustment(
+                    samp_weight, self.control
+                )
             elif isinstance(control, (int, float)):
-                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, control)
+                norm_weight, self.adj_factor = self._norm_adjustment(
+                    samp_weight, control
+                )
                 self.control = control
 
         self.adj_method = "normalization"
@@ -486,7 +501,9 @@ class SampleWeight:
         if x.shape == (x.size,):
             adj_factor = _core_vector(x, core_factor)
         else:
-            adj_factor = np.apply_along_axis(_core_vector, axis=1, arr=x, core_factor=core_factor)
+            adj_factor = np.apply_along_axis(
+                _core_vector, axis=1, arr=x, core_factor=core_factor
+            )
 
         return adj_factor
 
@@ -594,7 +611,9 @@ class SampleWeight:
                         x_control=np.array(control_d_values),
                         scale=scale_d,
                     )
-                    adj_factor[domain == d] = 1 + self._calib_wgt(x_d, core_factor_d) / scale_d
+                    adj_factor[domain == d] = (
+                        1 + self._calib_wgt(x_d, core_factor_d) / scale_d
+                    )
 
         if additive:
             calib_weight = np.transpose(np.transpose(adj_factor) * samp_weight)

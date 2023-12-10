@@ -1,13 +1,13 @@
 """Replicate weights module.
 
-The module has one main class called *ReplicateWeight* which implements three replication 
-techniques: Bootstrap, Jackknife, and balanced repeated replication (BRR). For reference, 
-users can consultant Efron, B. and Tibshirani, R.J. (1994) [#et1994]_, Valliant, R. and 
-Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more details. 
+The module has one main class called *ReplicateWeight* which implements three replication
+techniques: Bootstrap, Jackknife, and balanced repeated replication (BRR). For reference,
+users can consultant Efron, B. and Tibshirani, R.J. (1994) [#et1994]_, Valliant, R. and
+Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more details.
 
-.. [#et1994] Efron, B. and Tibshirani, R.J. (1994), *An Introduction to the Boostrap*, 
+.. [#et1994] Efron, B. and Tibshirani, R.J. (1994), *An Introduction to the Boostrap*,
    Chapman & Hall/CRC.
-.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*, 
+.. [#w2007] Wolter, K.M. (2007), *Introduction to Variance Estimate, 2nd edn.*,
    Springer-Verlag New York, Inc
 """
 
@@ -175,7 +175,9 @@ class ReplicateWeight:
         return boot_coefs
 
     # BRR methods
-    def _brr_nb_reps(self, psu: np.ndarray, stratum: Optional[np.ndarray] = None) -> None:
+    def _brr_nb_reps(
+        self, psu: np.ndarray, stratum: Optional[np.ndarray] = None
+    ) -> None:
 
         if stratum is None:
             self.nb_psus = np.unique(psu).size
@@ -184,7 +186,9 @@ class ReplicateWeight:
             self.nb_psus = np.unique(np.array(list(zip(stratum, psu))), axis=0).shape[0]
             self.nb_strata = np.unique(stratum).size
             if 2 * self.nb_strata != self.nb_psus:
-                raise AssertionError("Number of psus must be twice the number of strata!")
+                raise AssertionError(
+                    "Number of psus must be twice the number of strata!"
+                )
 
         if self.nb_reps < self.nb_strata:
             self.nb_reps = self.nb_strata
@@ -197,11 +201,15 @@ class ReplicateWeight:
             if math.pow(2, nb_reps_log2) != self.nb_reps:
                 self.nb_reps = int(math.pow(2, nb_reps_log2))
 
-    def _brr_replicates(self, psu: np.ndarray, stratum: Optional[np.ndarray]) -> np.ndarray:
+    def _brr_replicates(
+        self, psu: np.ndarray, stratum: Optional[np.ndarray]
+    ) -> np.ndarray:
         """Creates the brr replicate structure"""
 
         if not (0 <= self.fay_coef < 1):
-            raise ValueError("The Fay coefficient must be greater or equal to 0 and lower than 1.")
+            raise ValueError(
+                "The Fay coefficient must be greater or equal to 0 and lower than 1."
+            )
         self._brr_nb_reps(psu, stratum)
 
         self.rep_coefs = list(
@@ -239,7 +247,9 @@ class ReplicateWeight:
 
         return np.asarray(jk_coefs)
 
-    def _jkn_replicates(self, psu: np.ndarray, stratum: Optional[np.ndarray]) -> np.ndarray:
+    def _jkn_replicates(
+        self, psu: np.ndarray, stratum: Optional[np.ndarray]
+    ) -> np.ndarray:
 
         self.rep_coefs = ((self.nb_reps - 1) / self.nb_reps) * np.ones(self.nb_reps)
 
@@ -319,7 +329,9 @@ class ReplicateWeight:
             strata = np.repeat(range(1, psus.size // 2 + 1), 2)
             stratum_psu = pd.DataFrame({str_varname: strata, psu_varname: psus})
             psu_pd = pd.DataFrame({psu_varname: psu})
-            stratum_psu = pd.merge(psu_pd, stratum_psu, on=psu_varname, how="left", sort=False)
+            stratum_psu = pd.merge(
+                psu_pd, stratum_psu, on=psu_varname, how="left", sort=False
+            )
             stratum_psu = stratum_psu[[str_varname, psu_varname]]
             key = [str_varname, psu_varname]
         else:
@@ -353,7 +365,9 @@ class ReplicateWeight:
 
         if not rep_coefs:
             rep_cols = [col for col in full_sample if col.startswith(rep_prefix)]
-            full_sample[rep_cols] = full_sample[rep_cols].mul(samp_weight.values, axis=0)
+            full_sample[rep_cols] = full_sample[rep_cols].mul(
+                samp_weight.values, axis=0
+            )
 
         return full_sample
 

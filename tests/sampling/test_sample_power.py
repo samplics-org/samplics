@@ -6,13 +6,28 @@ from samplics.sampling import power_for_one_mean, power_for_one_proportion
 # FOR ONE PROPORTION - WITH ARCSIN transformation
 def test_power_for_one_prop_two_sided_number():
     power1 = power_for_one_proportion(
-        samp_size=107, prop_0=0.2, prop_1=0.1, arcsin=True, testing_type="two-sided", alpha=0.05
+        samp_size=107,
+        prop_0=0.2,
+        prop_1=0.1,
+        arcsin=True,
+        testing_type="two-sided",
+        alpha=0.05,
     )
     power2 = power_for_one_proportion(
-        samp_size=25, prop_0=0.3, prop_1=0.7, arcsin=True, testing_type="two-sided", alpha=0.10
+        samp_size=25,
+        prop_0=0.3,
+        prop_1=0.7,
+        arcsin=True,
+        testing_type="two-sided",
+        alpha=0.10,
     )
     power3 = power_for_one_proportion(
-        samp_size=500, prop_0=0.95, prop_1=0.99, arcsin=True, testing_type="two-sided", alpha=0.07
+        samp_size=500,
+        prop_0=0.95,
+        prop_1=0.99,
+        arcsin=True,
+        testing_type="two-sided",
+        alpha=0.07,
     )
     power4 = power_for_one_proportion(
         samp_size=50,
@@ -111,13 +126,28 @@ def test_power_for_one_prop_greater_number():
 # FOR ONE PROPORTION - WITHOUT ARCSIN transformation
 def test_power_for_one_prop_two_sided_number_no_arcsin():
     power1 = power_for_one_proportion(
-        samp_size=107, prop_0=0.2, prop_1=0.1, arcsin=False, testing_type="two-sided", alpha=0.05
+        samp_size=107,
+        prop_0=0.2,
+        prop_1=0.1,
+        arcsin=False,
+        testing_type="two-sided",
+        alpha=0.05,
     )
     power2 = power_for_one_proportion(
-        samp_size=25, prop_0=0.3, prop_1=0.7, arcsin=False, testing_type="two-sided", alpha=0.10
+        samp_size=25,
+        prop_0=0.3,
+        prop_1=0.7,
+        arcsin=False,
+        testing_type="two-sided",
+        alpha=0.10,
     )
     power3 = power_for_one_proportion(
-        samp_size=500, prop_0=0.95, prop_1=0.99, arcsin=False, testing_type="two-sided", alpha=0.07
+        samp_size=500,
+        prop_0=0.95,
+        prop_1=0.99,
+        arcsin=False,
+        testing_type="two-sided",
+        alpha=0.07,
     )
     power4 = power_for_one_proportion(
         samp_size=50,
@@ -238,13 +268,28 @@ def test_power_for_one_prop_greater_number_no_arcsin():
 
 def test_power_for_one_mean_two_sided_number():
     power1 = power_for_one_mean(
-        samp_size=18, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
+        samp_size=18,
+        mean_0=50,
+        mean_1=52,
+        sigma=3,
+        testing_type="two-sided",
+        alpha=0.05,
     )
     power2 = power_for_one_mean(
-        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.05
+        samp_size=25,
+        mean_0=50,
+        mean_1=52,
+        sigma=3,
+        testing_type="two-sided",
+        alpha=0.05,
     )
     power3 = power_for_one_mean(
-        samp_size=25, mean_0=50, mean_1=52, sigma=3, testing_type="two-sided", alpha=0.01
+        samp_size=25,
+        mean_0=50,
+        mean_1=52,
+        sigma=3,
+        testing_type="two-sided",
+        alpha=0.01,
     )
 
     assert np.isclose(power1, 0.807, atol=0.001)

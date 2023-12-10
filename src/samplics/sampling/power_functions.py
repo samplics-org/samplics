@@ -1,4 +1,4 @@
-"""Sample size calculation module 
+"""Sample size calculation module
 This module compiles the core functions for calculating power and sample size
 """
 
@@ -29,16 +29,24 @@ def calculate_power_prop(
 
     z_value = normal().ppf(1 - alpha / 2)
 
-    if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(samp_size, dict):
+    if (
+        isinstance(prop_0, dict)
+        and isinstance(prop_1, dict)
+        and isinstance(samp_size, dict)
+    ):
         if two_sides:
             powerr: dict = {}
             for s in prop_0:
-                z = (prop_1[s] - prop_0[s]) / math.sqrt(prop_1[s] * (1 - prop_1[s]) / samp_size[s])
+                z = (prop_1[s] - prop_0[s]) / math.sqrt(
+                    prop_1[s] * (1 - prop_1[s]) / samp_size[s]
+                )
                 powerr[s] = normal().cdf(z - z_value) + normal().cdf(-z - z_value)
         else:
             powerr: dict = {}
             for s in prop_0:
-                z = (prop_1[s] - prop_0[s]) / math.sqrt(prop_1[s] * (1 - prop_1[s]) / samp_size[s])
+                z = (prop_1[s] - prop_0[s]) / math.sqrt(
+                    prop_1[s] * (1 - prop_1[s]) / samp_size[s]
+                )
                 powerr[s] = normal().cdf(z - z_value) + normal().cdf(-z - z_value)
     elif (
         isinstance(prop_0, (int, float))
@@ -91,15 +99,21 @@ def calculate_power(
     alpha: float,
 ):
 
-    if isinstance(delta, dict) and isinstance(sigma, dict) and isinstance(samp_size, dict):
+    if (
+        isinstance(delta, dict)
+        and isinstance(sigma, dict)
+        and isinstance(samp_size, dict)
+    ):
         if two_sides:
             return {
                 s: 1
                 - normal().cdf(
-                    normal().ppf(1 - alpha / 2) - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
+                    normal().ppf(1 - alpha / 2)
+                    - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
                 )
                 + normal().cdf(
-                    -normal().ppf(1 - alpha / 2) - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
+                    -normal().ppf(1 - alpha / 2)
+                    - delta[s] / (sigma[s] / math.sqrt(samp_size[s]))
                 )
                 for s in delta
             }
@@ -119,7 +133,8 @@ def calculate_power(
                     normal().ppf(1 - alpha / 2) - delta / (sigma / math.sqrt(samp_size))
                 )
                 + normal().cdf(
-                    -normal().ppf(1 - alpha / 2) - delta / (sigma / math.sqrt(samp_size))
+                    -normal().ppf(1 - alpha / 2)
+                    - delta / (sigma / math.sqrt(samp_size))
                 )
             )
         else:
@@ -149,7 +164,8 @@ def calculate_power(
                 )
             else:
                 power[k] = 1 - normal().cdf(
-                    normal().ppf(1 - alpha) - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
+                    normal().ppf(1 - alpha)
+                    - delta[k] / (sigma[k] / math.sqrt(samp_size[k]))
                 )
             return power
 
@@ -170,20 +186,35 @@ def power_for_one_proportion(
     assert_proportions(prop_0=prop_0, prop_1=prop_1, alpha=alpha)
 
     if isinstance(alpha, (int, float)):
-        z_value = normal().ppf(1 - alpha / 2) if type == "two-sided" else normal().ppf(1 - alpha)
+        z_value = (
+            normal().ppf(1 - alpha / 2)
+            if type == "two-sided"
+            else normal().ppf(1 - alpha)
+        )
     if isinstance(alpha, (np.ndarray, pd.Series, list, tuple)):
         alpha = numpy_array(alpha)
-        z_value = normal().ppf(1 - alpha / 2) if type == "two-sided" else normal().ppf(1 - alpha)
+        z_value = (
+            normal().ppf(1 - alpha / 2)
+            if type == "two-sided"
+            else normal().ppf(1 - alpha)
+        )
 
-    if isinstance(prop_0, dict) and isinstance(prop_1, dict) and isinstance(samp_size, dict):
+    if (
+        isinstance(prop_0, dict)
+        and isinstance(prop_1, dict)
+        and isinstance(samp_size, dict)
+    ):
         power: dict = {}
         for s in prop_0:
             if arcsin:
                 z = (
-                    2 * math.asin(math.sqrt(prop_1[s])) - 2 * math.asin(math.sqrt(prop_0[s]))
+                    2 * math.asin(math.sqrt(prop_1[s]))
+                    - 2 * math.asin(math.sqrt(prop_0[s]))
                 ) * math.sqrt(samp_size[s])
             else:
-                z = (prop_1[s] - prop_0[s]) / math.sqrt(prop_1[s] * (1 - prop_1[s]) / samp_size[s])
+                z = (prop_1[s] - prop_0[s]) / math.sqrt(
+                    prop_1[s] * (1 - prop_1[s]) / samp_size[s]
+                )
 
             if isinstance(alpha, dict):
                 z_value = (
@@ -204,9 +235,9 @@ def power_for_one_proportion(
         and isinstance(samp_size, (int, float))
     ):
         if arcsin:
-            z = (2 * math.asin(math.sqrt(prop_1)) - 2 * math.asin(math.sqrt(prop_0))) * math.sqrt(
-                samp_size
-            )
+            z = (
+                2 * math.asin(math.sqrt(prop_1)) - 2 * math.asin(math.sqrt(prop_0))
+            ) * math.sqrt(samp_size)
         else:
             z = (prop_1 - prop_0) / math.sqrt(prop_1 * (1 - prop_1) / samp_size)
 
@@ -227,9 +258,9 @@ def power_for_one_proportion(
 
         for s in prop_0:
             if arcsin:
-                z = (2 * np.arcsin(np.sqrt(prop_1)) - 2 * np.arcsin(np.sqrt(prop_0))) * np.sqrt(
-                    samp_size
-                )
+                z = (
+                    2 * np.arcsin(np.sqrt(prop_1)) - 2 * np.arcsin(np.sqrt(prop_0))
+                ) * np.sqrt(samp_size)
             else:
                 z = (prop_1 - prop_0) / np.sqrt(prop_1 * (1 - prop_1) / samp_size)
 
@@ -292,11 +323,13 @@ def power_for_one_mean(
             }
         elif type == "greater":
             return normal().cdf(
-                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
         else:
             return normal().cdf(
-                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
     elif (
         isinstance(mean_0, (int, float))
@@ -306,15 +339,18 @@ def power_for_one_mean(
     ):
         if type == "two-sided":
             return normal().cdf(
-                abs(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha / 2)
+                abs(mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha / 2)
             )
         elif type == "greater":
             return normal().cdf(
-                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                (mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
         else:
             return normal().cdf(
-                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size)) - normal().ppf(1 - alpha)
+                -(mean_0 - mean_1) / (sigma / math.sqrt(samp_size))
+                - normal().ppf(1 - alpha)
             )
 
     elif (

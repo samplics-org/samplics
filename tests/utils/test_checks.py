@@ -1,7 +1,6 @@
-import pytest
-
 import numpy as np
 import pandas as pd
+import pytest
 
 from samplics.utils.checks import (
     assert_brr_number_psus,
@@ -70,8 +69,12 @@ def test_in_range_np_pd_successes(x1, x2):
 def test_in_range_for_np_pd_fails():
     assert not assert_in_range(low=11, high=23, x=np.array([20, 17, 111, 20, 23]))
     assert not assert_in_range(low=11, high=23, x=pd.Series([20, -107, 11, 20, 23]))
-    assert not assert_in_range(low=-101, high=0, x=np.array([-2, -17, -11, -20, 0.0023]))
-    assert not assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11.0001, 20, 23]))
+    assert not assert_in_range(
+        low=-101, high=0, x=np.array([-2, -17, -11, -20, 0.0023])
+    )
+    assert not assert_in_range(
+        low=-11, high=23, x=pd.Series([-10, 17, -11.0001, 20, 23])
+    )
 
 
 def test_in_range_for_lists_successes():
@@ -83,8 +86,12 @@ def test_in_range_for_lists_successes():
 def test_in_range_for_lists_fails():
     assert not assert_in_range(low=11, high=23, x=np.array([20, 17, 111, 20, 23]))
     assert not assert_in_range(low=11, high=23, x=pd.Series([20, -107, 11, 20, 23]))
-    assert not assert_in_range(low=-101, high=0, x=np.array([-2, -17, -11, -20, 0.0023]))
-    assert not assert_in_range(low=-11, high=23, x=pd.Series([-10, 17, -11.0001, 20, 23]))
+    assert not assert_in_range(
+        low=-101, high=0, x=np.array([-2, -17, -11, -20, 0.0023])
+    )
+    assert not assert_in_range(
+        low=-11, high=23, x=pd.Series([-10, 17, -11.0001, 20, 23])
+    )
 
 
 @pytest.mark.parametrize(
@@ -122,7 +129,9 @@ def test_assert_proportions_for_numbers_fails(x):
     assert assert_proportions(x=x)
 
 
-@pytest.mark.xfail(strict=True, reason="At least one number in the lists is not between 0 and 1")
+@pytest.mark.xfail(
+    strict=True, reason="At least one number in the lists is not between 0 and 1"
+)
 @pytest.mark.parametrize("x", [[-0.0, 0.1, 0, 3], [-0.00001], [-1.000001, -1.1]])
 def test_assert_proportions_for_list_fails(x):
     assert assert_proportions(x=x)
@@ -132,17 +141,20 @@ def test_assert_proportions_for_list_fails(x):
     strict=True, reason="At least one number in the numpy arrays is not between 0 and 1"
 )
 @pytest.mark.parametrize(
-    "x", [np.array([-0.0, 0.1, 0, 3]), np.array([-0.00001]), np.array([-1.000001, -1.1])]
+    "x",
+    [np.array([-0.0, 0.1, 0, 3]), np.array([-0.00001]), np.array([-1.000001, -1.1])],
 )
 def test_assert_proportions_for_numpy_arrays_fails(x):
     assert assert_proportions(x=x)
 
 
 @pytest.mark.xfail(
-    strict=True, reason="At least one number in the pandas series is not between 0 and 1"
+    strict=True,
+    reason="At least one number in the pandas series is not between 0 and 1",
 )
 @pytest.mark.parametrize(
-    "x", [pd.Series([-0.0, 0.1, 0, 3]), pd.Series([-0.00001]), pd.Series([-1.000001, -1.1])]
+    "x",
+    [pd.Series([-0.0, 0.1, 0, 3]), pd.Series([-0.00001]), pd.Series([-1.000001, -1.1])],
 )
 def test_assert_proportions_for_pandas_Series_fails(x):
     assert assert_proportions(x=x) is None
@@ -151,7 +163,9 @@ def test_assert_proportions_for_pandas_Series_fails(x):
 @pytest.mark.xfail(
     strict=True, reason="At least one number in the dictionaries is not between 0 and 1"
 )
-@pytest.mark.parametrize("x", [{"one": 0.1, "two": 1.1}, {"one": -1, 3: 0.5}, {1: -0.1, 2: 1}])
+@pytest.mark.parametrize(
+    "x", [{"one": 0.1, "two": 1.1}, {"one": -1, 3: 0.5}, {1: -0.1, 2: 1}]
+)
 def test_assert_proportions_for_dicts_fails(x):
     assert assert_proportions(x=x) is None
 
@@ -211,7 +225,9 @@ def test_assert_response_status21():
     assert assert_response_status("in", {"iN": 1}) is None
     assert assert_response_status("nr", {"in": "ineligible"}) is None
     assert assert_response_status("nr", {"in": 1}) is None
-    assert assert_response_status("nr", {"in": "ineligible", "nr": "nonresponse"}) is None
+    assert (
+        assert_response_status("nr", {"in": "ineligible", "nr": "nonresponse"}) is None
+    )
 
 
 @pytest.mark.xfail(strict=True, reason="Not in the standard dictionary")
@@ -220,7 +236,9 @@ def test_assert_response_status22():
     assert assert_response_status("in", {"in2": 1}) is None
     assert assert_response_status("nr", {"ineligible": "ineligible"}) is None
     assert assert_response_status("nr", {"Nonresp": 1}) is None
-    assert assert_response_status("nr", {"nr2": "ineligible", "nr": "nonresponse"}) is None
+    assert (
+        assert_response_status("nr", {"nr2": "ineligible", "nr": "nonresponse"}) is None
+    )
 
 
 def test_assert_brr_number_psus_sucesses():

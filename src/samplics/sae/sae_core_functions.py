@@ -1,14 +1,14 @@
-"""Core functions for fitting the small area models. 
+"""Core functions for fitting the small area models.
 
 Functions:
-   | *area_stats()* computes a several aggregates at the area level. 
-   | *fixed_coefficients()* computes the fixed effects of the regression models. 
-   | *covariance()* computes the covariance matrix of the linear mixed model. 
-   | *inverse_covariance()* computes the inverse of the covariance matrix.  
+   | *area_stats()* computes a several aggregates at the area level.
+   | *fixed_coefficients()* computes the fixed effects of the regression models.
+   | *covariance()* computes the covariance matrix of the linear mixed model.
+   | *inverse_covariance()* computes the inverse of the covariance matrix.
    | *log_det_covariance()* computes the logarithm of the determinant of the covariance matrix.
-   | *log_likelihood()* computes the log-likelihood of the linear mixed model. 
-   | *partial_Derivatives()* computes the partial derivatives and the information matrix. 
-   | *iterative_fisher_scoring()* implements the Fisher scoring algorithm. 
+   | *log_likelihood()* computes the log-likelihood of the linear mixed model.
+   | *partial_Derivatives()* computes the partial derivatives and the information matrix.
+   | *iterative_fisher_scoring()* implements the Fisher scoring algorithm.
 """
 
 from typing import Any, Dict, Optional, Tuple
@@ -59,7 +59,7 @@ def area_stats(
         y_mean[k] = np.sum(yw_d) / np.sum(aw_factor_d)
         Xw_d = X[sample_d, :] * aw_factor_d[:, None]
         X_mean[k, :] = np.sum(Xw_d, axis=0) / np.sum(aw_factor_d)
-        gamma[k] = (re_std**2) / (re_std**2 + (error_std**2) * delta_d)
+        gamma[k] = re_std**2 / (re_std**2 + (error_std**2) * delta_d)
         samp_size[k] = np.sum(sample_d)
 
     return y_mean, X_mean, gamma, samp_size.astype(int)
@@ -92,7 +92,6 @@ def fixed_coefficients(
     x_v_X_inv = np.linalg.inv(np.matmul(np.matmul(X_T, V_inv), X))
     x_v_x_inv_x = np.matmul(np.matmul(x_v_X_inv, X_T), V_inv)
     beta_hat = np.matmul(x_v_x_inv_x, y)
-
     # beta_hat_cov = np.matmul(np.matmul(np.transpose(X), V_inv), X)
     return np.asarray(beta_hat.ravel())  # , np.linalg.inv(beta_hat_cov)
 
