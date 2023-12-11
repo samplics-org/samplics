@@ -22,10 +22,7 @@ class AuxVars:
     nrecords: dict
     record_id: dict | None
     domains: list | None
-    uid: int = int(
-        dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
-        + str(int(1e16 * rand.random()))
-    )
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S") + str(int(1e16 * rand.random())))
 
     def __init__(
         self,
@@ -46,9 +43,7 @@ class AuxVars:
                 if i == 0:
                     aux_df = self.__from_df(d)
                     if isinstance(d, Array):
-                        aux_df.columns = [
-                            "__x_" + str(i) for i in range(aux_df.shape[1])
-                        ]
+                        aux_df.columns = ["__x_" + str(i) for i in range(aux_df.shape[1])]
                 else:
                     d_df = self.__from_df(d)
                     if isinstance(d, Array):
@@ -63,21 +58,19 @@ class AuxVars:
             x = aux_df.hstack(pl.from_dict(kwargs))
 
         __record_id = (
-            numpy_array(record_id)
-            if record_id is not None
-            else np.linspace(0, x.shape[0] - 1, x.shape[0]).astype(int)
+            numpy_array(record_id) if record_id is not None else np.linspace(0, x.shape[0] - 1, x.shape[0]).astype(int)
         )
 
         __domains = None
         if domain is not None:
             __domain = numpy_array(domain).tolist()
-            auxdata_dict = x.insert_at_idx(
-                0, pl.Series(__domain).alias("__domain")
-            ).partition_by("__domain", as_dict=True)
+            auxdata_dict = x.insert_at_idx(0, pl.Series(__domain).alias("__domain")).partition_by(
+                "__domain", as_dict=True
+            )
 
-            record_id_dict = pl.DataFrame(
-                [__domain, __record_id], schema=["__domain", "__record_id"]
-            ).partition_by("__domain", as_dict=True)
+            record_id_dict = pl.DataFrame([__domain, __record_id], schema=["__domain", "__record_id"]).partition_by(
+                "__domain", as_dict=True
+            )
 
             nrecords = {}
             __domains = np.unique(__domain).tolist()
@@ -88,13 +81,9 @@ class AuxVars:
 
         else:
             auxdata_dict = x.insert_at_idx(0, pl.Series(record_id).alias("__record_id"))
-            record_id_dict = x.insert_at_idx(
-                0, pl.Series(record_id).alias("__record_id")
-            )
+            record_id_dict = x.insert_at_idx(0, pl.Series(record_id).alias("__record_id"))
 
-        auxdata_dict = {
-            k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict
-        }
+        auxdata_dict = {k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict}
         # record_id_dict = {
         #     k: record_id_dict[k].to_dict(as_series=False) for k in record_id_dict
         # }
@@ -128,9 +117,7 @@ class AuxVars:
         drop_vars: str | Iterable[str] | None = None,
     ):
         if self.domains is None:
-            auxdata = pl.from_dict(self.x).insert_at_idx(
-                0, pl.Series(self.record_id).alias("__record_id")
-            )
+            auxdata = pl.from_dict(self.x).insert_at_idx(0, pl.Series(self.record_id).alias("__record_id"))
         else:
             auxdata = pl.concat(
                 [
@@ -170,10 +157,7 @@ class AuxVarsMM:
     z: dict
     nrecords: dict
     domains: list | None
-    uid: int = int(
-        dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
-        + str(int(1e16 * rand.random()))
-    )
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S") + str(int(1e16 * rand.random())))
 
 
 class CovMat:
@@ -202,10 +186,7 @@ class DirectEst:
     ssize: dict | None = None
     psize: dict = None
     domains: list | None = None
-    uid: int = int(
-        dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")
-        + str(int(1e16 * rand.random()))
-    )
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S") + str(int(1e16 * rand.random())))
 
     def __init__(
         self,
@@ -246,9 +227,7 @@ class DirectEst:
     @property
     def cv(self):
         return {
-            key: self.stderr[key] / self.est[key]
-            if self.est[key] != 0
-            else float("inf") * self.stderr[key]
+            key: self.stderr[key] / self.est[key] if self.est[key] != 0 else float("inf") * self.stderr[key]
             for key in self.stderr
         }
 
@@ -312,9 +291,7 @@ class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
     log_llike: float
     convergence: dict
     goodness: dict
-    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
-        1e16 * rand.random()
-    )
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(1e16 * rand.random())
 
 
 @frozen
@@ -328,9 +305,7 @@ class EbFit:
     log_llike: float
     convergence: dict
     goodness: dict
-    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
-        1e16 * rand.random()
-    )
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(1e16 * rand.random())
 
 
 @frozen
@@ -341,9 +316,7 @@ class EblupEst:
     mse: dict | None = None
     mse_boot: dict | None = None
     mse_jkn: dict | None = None
-    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
-        1e16 * rand.random()
-    )
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(1e16 * rand.random())
 
     def __init__(
         self,
@@ -397,9 +370,7 @@ class EbEst:
     mse: dict | None = None
     mse_boot: dict | None = None
     mse_jkn: dict | None = None
-    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(
-        1e16 * rand.random()
-    )
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(1e16 * rand.random())
 
     @property
     def rse():

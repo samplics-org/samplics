@@ -3,7 +3,7 @@ authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
 description = "Select, weight and analyze complex sample data"
 license = "MIT"
 name = "samplics"
-version = "0.4.11"
+version = "0.5.dev0"
 
 readme = "README.md"
 
@@ -35,7 +35,7 @@ scipy = ">=1.7"
 statsmodels = ">=0.13" 
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.3"
+black = "^22.11"
 # certifi = "^2023.7.22"
 codecov = "^2.1"
 mypy = "^0.960"
@@ -120,8 +120,8 @@ line-length = 99
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.11.
-target-version =  "py311"
+# Assume Python 3.12.
+target-version =  "py312"
 
 [tool.ruff.pycodestyle]
 ignore-overlong-task-comments = true
