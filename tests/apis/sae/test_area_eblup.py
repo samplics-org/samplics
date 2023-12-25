@@ -1,5 +1,8 @@
 # import numpy as np
+import sys
+
 import polars as pl
+import pytest
 
 from samplics.apis.sae import fit_eblup, predict_eblup
 
@@ -56,4 +59,9 @@ est_milk_reml = predict_eblup(x=auxvars, fit_eblup=fit_reml, y=yhat, mse=Mse.tay
 
 # est_milk_reml.fit_stats.log_llike
 
-# breakpoint()
+breakpoint()
+
+
+@pytest.mark.skipif(sys.platform == "linux", reason="Skip dev version on Github (Linux)")
+def test_sae1():
+    assert 1 == 2
