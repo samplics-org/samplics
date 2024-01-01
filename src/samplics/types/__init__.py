@@ -9,7 +9,7 @@ from samplics.types.basic import (
     Series,
     StringNumber,
 )
-from samplics.types.data import AuxVars, DirectEst, EbEst, EbFit, EblupEst, EblupFit
+from samplics.types.containers import AuxVars, DirectEst, EbEst, EbFit, EblupEst, EblupFit
 from samplics.types.options import FitMethod, Mse
 from samplics.types.protocols import GlmmFitStats
 
