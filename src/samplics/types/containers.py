@@ -150,16 +150,6 @@ class AuxVars:
         return self.to_polars(keep_vars=keep_vars, drop_vars=drop_vars).to_pandas()
 
 
-@frozen
-class AuxVarsMM:
-    # TODO: Add missing values functionality
-    x: dict
-    z: dict
-    nrecords: dict
-    domains: list | None
-    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S") + str(int(1e16 * rand.random())))
-
-
 class CovMat:
     pass
 
@@ -365,7 +355,7 @@ class EblupEst:
 @frozen
 class EbEst:
     area: list
-    est: dict
+    pred: dict
     fit_stats: EbFit
     mse: dict | None = None
     mse_boot: dict | None = None

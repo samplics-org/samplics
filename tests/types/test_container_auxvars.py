@@ -3,7 +3,7 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from samplics.types.data import AuxVars
+from samplics.types.containers import AuxVars
 
 
 # Auxiliary variables

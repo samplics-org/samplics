@@ -1,4 +1,4 @@
-from samplics.types.data import DirectEst
+from samplics.types.containers import DirectEst
 
 
 # Direct Estimator
