@@ -1,4 +1,4 @@
-from samplics.apis.sae.area_eblup import _log_likelihood, fit_eblup, predict_eblup
+from samplics.apis.sae.area_eblup import _log_likelihood
 from samplics.types.errors import (
     CertaintyError,
     DimensionError,

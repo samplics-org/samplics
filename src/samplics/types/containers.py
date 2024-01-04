@@ -64,7 +64,7 @@ class AuxVars:
         __domains = None
         if domain is not None:
             __domain = numpy_array(domain).tolist()
-            auxdata_dict = x.insert_at_idx(0, pl.Series(__domain).alias("__domain")).partition_by(
+            auxdata_dict = x.insert_column(0, pl.Series(__domain).alias("__domain")).partition_by(
                 "__domain", as_dict=True
             )
 
