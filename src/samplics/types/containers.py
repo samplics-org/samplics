@@ -271,6 +271,20 @@ class DirectEst:
 
 
 @frozen
+class FitStats:  # MAYBE call this ModelStats or FitStats or ...
+    method: FitMethod
+    err_stderr: dict
+    fe_est: namedtuple  # fixed effects
+    fe_stderr: namedtuple
+    re_stderr: float
+    re_stderr_var: float
+    log_llike: float
+    convergence: dict
+    goodness: dict
+    uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S")) + int(1e16 * rand.random())
+
+
+@frozen
 class EblupFit:  # MAYBE call this ModelStats or FitStats or ...
     method: FitMethod
     err_stderr: dict

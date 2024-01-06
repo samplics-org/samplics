@@ -1,7 +1,4 @@
-from collections import namedtuple
 from typing import Protocol
-
-from samplics.types.options import FitMethod
 
 
 # NumpyArray = TypeVar("np.ndarray", bound=np.ndarray)
@@ -41,10 +38,10 @@ class ToDataFrame(Protocol):
         pass
 
 
-class GlmmFitStats(Protocol):
-    method: FitMethod
-    err_stderr: float | dict
-    fe_est: namedtuple  # fixed effects
-    fe_stderr: namedtuple
-    re_stderr: float
-    re_stderr_var: float
+# class FitStats(Protocol):
+#     method: FitMethod
+#     err_stderr: float | dict
+#     fe_est: namedtuple  # fixed effects
+#     fe_stderr: namedtuple
+#     re_stderr: float
+#     re_stderr_var: float

@@ -9,9 +9,19 @@ from samplics.types.basic import (
     Series,
     StringNumber,
 )
-from samplics.types.containers import AuxVars, DirectEst, EbEst, EbFit, EblupEst, EblupFit
+from samplics.types.containers import (
+    AuxVars,
+    DirectEst,
+    EbEst,
+    EbFit,
+    EblupEst,
+    EblupFit,
+    FitStats,
+)
 from samplics.types.options import FitMethod, Mse
-from samplics.types.protocols import GlmmFitStats
+
+
+# from samplics.types.protocols import GlmmFitStats
 
 
 __all__ = [
@@ -31,7 +41,8 @@ __all__ = [
     "EbUnitModel",
     "EbEst",
     "EbFit",
+    "FitStats",
     "FitMethod",
-    "GlmmFitStats",
+    # "GlmmFitStats",
     "Mse",
 ]
