@@ -4,7 +4,8 @@ import sys
 import polars as pl
 import pytest
 
-from samplics.apis.sae import _fit_eblup, _predict_eblup
+from samplics.apis import fit
+from samplics.apis.sae.area_eblup import _predict_eblup
 
 # from samplics.apis.sae import _log_likelihood, fit_eblup, predict_eblup
 from samplics.types import AuxVars, DirectEst, FitMethod, Mse
@@ -49,17 +50,17 @@ yhat = DirectEst(est=yhat, stderr=sigma_e, ssize=n, domain=area)
 auxvars = AuxVars(x=x, domain=area)
 
 # Fit the linear mixed model
-fit_ml = _fit_eblup(y=yhat, x=auxvars, method=FitMethod.ml)
-fit_reml = _fit_eblup(y=yhat, x=auxvars, method=FitMethod.reml)
+fit_ml = fit(y=yhat, x=auxvars, method=FitMethod.ml)
+fit_reml = fit(y=yhat, x=auxvars, method=FitMethod.reml)
 # fit_fh = fit_eblup(y=yhat, x=auxvars, method=FitMethod.fh)
 # breakpoint()
 
 # Predict the small area estimates
-est_milk_reml = _predict_eblup(x=auxvars, fit_eblup=fit_reml, y=yhat, mse=Mse.taylor)
+est_milk_reml = _predict_eblup(x=auxvars, fit_eblup=fit_reml, y=yhat)
 
 # est_milk_reml.fit_stats.log_llike
 
-breakpoint()
+# breakpoint()
 
 
 @pytest.mark.skipif(sys.platform == "linux", reason="Skip dev version on Github (Linux)")

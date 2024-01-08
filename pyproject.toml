@@ -86,6 +86,7 @@ addopts = "--ignore=tests/sae --ignore=tests/types"
 
 [tool.ruff]
 src = ["src", "tests"]
+# extend-exclude = ["tests"]
 
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = ["D", "E", "F", "W", "I001"]

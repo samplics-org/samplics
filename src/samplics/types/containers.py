@@ -19,7 +19,7 @@ from samplics.utils.formats import numpy_array
 class AuxVars:
     # TODO: Add missing values functionality
     x: dict
-    nrecords: dict
+    nrecords: dict | Number
     record_id: dict | None
     domains: list | None
     uid: int = int(dt.datetime.now(tz=dt.timezone.utc).strftime("%Y%m%d%H%M%S") + str(int(1e16 * rand.random())))
@@ -78,12 +78,12 @@ class AuxVars:
                 auxdata_dict[d] = auxdata_dict[d].drop("__domain")
                 record_id_dict[d] = record_id_dict[d]["__record_id"].to_list()
                 nrecords[d] = auxdata_dict[d].shape[0]
-
+            auxdata_dict = {k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict}
         else:
-            auxdata_dict = x.insert_at_idx(0, pl.Series(record_id).alias("__record_id"))
-            record_id_dict = x.insert_at_idx(0, pl.Series(record_id).alias("__record_id"))
+            nrecords = x.shape[0]
+            auxdata_dict = x.to_dict()
+            record_id_dict = pl.DataFrame([__record_id], schema=["__record_id"]).to_dict()
 
-        auxdata_dict = {k: auxdata_dict[k].to_dict(as_series=False) for k in auxdata_dict}
         # record_id_dict = {
         #     k: record_id_dict[k].to_dict(as_series=False) for k in record_id_dict
         # }

@@ -7,12 +7,12 @@ import math
 import numpy as np
 import polars as pl
 
-from samplics.types import Array, AuxVars, DirectEst, FitMethod, FitStats, Number
+from samplics.types import AuxVars, DepVars, FitMethod, FitStats, Number
 
 
 # Fitting a EBLUP model
 def _fit(
-    y: DirectEst | Array,
+    y: DepVars,
     x: AuxVars,
     method: FitMethod,
     intercept: bool = True,  # if True, it adds an intercept of 1
@@ -91,7 +91,7 @@ def _fit(
 def _iterative_fisher_scoring(
     method: FitMethod,
     # area: np.ndarray,
-    y: DirectEst,
+    y: DepVars,
     x: AuxVars,
     sig_e: dict,
     # b_const: np.ndarray,
@@ -146,7 +146,7 @@ def _iterative_fisher_scoring(
 
 def _partial_derivatives_fh(
     method: FitMethod,
-    y: DirectEst,
+    y: DepVars,
     x: AuxVars,
     sig2_e: dict,
     sig2_v: Number,
@@ -180,7 +180,7 @@ def _partial_derivatives_fh(
 
 def _partial_derivatives_ml(
     method: FitMethod,
-    y: DirectEst,
+    y: DepVars,
     x: AuxVars,
     sig2_e: dict,
     sig2_v: Number,
@@ -217,7 +217,7 @@ def _partial_derivatives_ml(
 
 def _partial_derivatives_reml(
     method: FitMethod,
-    y: DirectEst,
+    y: DepVars,
     x: AuxVars,
     sig2_e: dict,
     sig2_v: Number,
@@ -256,7 +256,7 @@ def _partial_derivatives_reml(
 
 def _partial_derivatives(
     method: FitMethod,
-    y: DirectEst,
+    y: DepVars,
     x: AuxVars,
     sig2_e: dict,
     sig2_v: Number,

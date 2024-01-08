@@ -13,7 +13,6 @@ from samplics.types import (
     EblupEst,
     FitMethod,
     FitStats,
-    Mse,
     Number,
 )
 
@@ -22,7 +21,6 @@ def _predict_eblup(
     x: AuxVars,
     fit_eblup: FitStats,
     y: DirectEst,
-    mse: Mse | list[Mse] | None = None,
     intercept: bool = True,  # if True, it adds an intercept of 1
     b_const: DictStrNum | Number = 1.0,
 ) -> EblupEst:

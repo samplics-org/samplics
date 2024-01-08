@@ -19,23 +19,19 @@ from samplics.types.containers import (
     FitStats,
 )
 from samplics.types.options import FitMethod, Mse
-
-
-# from samplics.types.protocols import GlmmFitStats
+from samplics.types.protocols import DepVars, IndepVars
 
 
 __all__ = [
-    "DF",
     "Array",
-    "Series",
-    "Number",
-    "StringNumber",
+    "AuxVars",
+    "DepVars",
+    "DF",
     "DictStrNum",
     "DictStrInt",
     "DictStrFloat",
     "DictStrBool",
     "DirectEst",
-    "AuxVars",
     "EblupEst",
     "EblupFit",
     "EbUnitModel",
@@ -43,6 +39,9 @@ __all__ = [
     "EbFit",
     "FitStats",
     "FitMethod",
-    # "GlmmFitStats",
+    "IndepVars",
     "Mse",
+    "Number",
+    "Series",
+    "StringNumber",
 ]

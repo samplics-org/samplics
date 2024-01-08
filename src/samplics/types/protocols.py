@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 
 # NumpyArray = TypeVar("np.ndarray", bound=np.ndarray)
@@ -6,36 +6,67 @@ from typing import Protocol
 # PolarsDF = TypeVar("pl.DataFrame", bound=pl.DataFrame)
 
 
+@runtime_checkable
 class Missing(Protocol):
-    pass
+    ...
 
 
+@runtime_checkable
 class DepVars(Protocol):
     # TODO: Add missing values functionality
     y: dict
 
+    @property
+    def nrecords():
+        ...
 
-# Design matrix X (fixed effect) in GLMM
-class IndepVarsX(Protocol):
+    @property
+    def nvars():
+        ...
+
+    def to_numpy():
+        ...
+
+    def to_polars():
+        ...
+
+    def to_pandas():
+        ...
+
+
+@runtime_checkable
+class IndepVars(Protocol):
     # TODO: Add missing values functionality
     x: dict
 
+    @property
+    def nrecords():
+        ...
 
-# Design matrix Z (random effect) in GLMM
-class IndepVarsZ(Protocol):
-    # TODO: Add missing values functionality
-    z: dict
+    @property
+    def nvars():
+        ...
 
-
-class ToDataFrame(Protocol):
     def to_numpy():
-        pass
+        ...
 
     def to_polars():
-        pass
+        ...
 
     def to_pandas():
-        pass
+        ...
+
+
+@runtime_checkable
+class ToDataFrame(Protocol):
+    def to_numpy():
+        ...
+
+    def to_polars():
+        ...
+
+    def to_pandas():
+        ...
 
 
 # class FitStats(Protocol):
