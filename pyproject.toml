@@ -3,7 +3,7 @@ authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
 description = "Select, weight and analyze complex sample data"
 license = "MIT"
 name = "samplics"
-version = "0.5.dev0"
+version = "0.4.11"
 
 readme = "README.md"
 
@@ -17,6 +17,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Development Status :: 4 - Beta",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering",
@@ -30,9 +31,6 @@ packages = [
 python = ">=3.10"
 attrs = "^23.1.0"
 matplotlib = ">=3.4" 
-# numpy = ">=1.21" 
-# polars[pandas] = ">=1.3" 
-# scipy = ">=1.7" 
 polars = {extras = ["numpy", "pandas"], version = "^0.20.2"}
 statsmodels = ">=0.13" 
 
@@ -80,7 +78,7 @@ exclude = '''
 # use_parentheses = true
 
 [tool.pytest.ini_options]
-addopts = "--ignore=tests/sae --ignore=tests/types"
+addopts = "--ignore=tests/apis --ignore=tests/sae --ignore=tests/types"
 # testpaths = ["tests"]
 
 

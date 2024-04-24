@@ -1,3 +1,5 @@
+from typing import Protocol
+
 import numpy as np
 import polars as pl
 
@@ -31,9 +33,6 @@ def test_fit():
     y_fit = fit(y=y_hat, x=x, method=FitMethod.reml)
 
     isinstance(y_fit, FitStats)
-
-
-from typing import Protocol
 
 
 class Animal(Protocol):
