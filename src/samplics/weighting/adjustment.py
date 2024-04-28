@@ -14,6 +14,7 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
+import polars as pl
 
 from samplics.utils import checks, formats
 from samplics.utils.types import (
@@ -125,17 +126,12 @@ class SampleWeight:
         return np.asarray(samp_weight * adj_factor), adj_factor
 
     @staticmethod
-    def _response(
-        resp_status: np.ndarray, resp_dict: Optional[dict[str, StringNumber]]
-    ) -> np.ndarray:
+    def _response(resp_status: np.ndarray, resp_dict: Optional[dict[str, StringNumber]]) -> np.ndarray:
 
         resp_status = formats.numpy_array(resp_status)
         checks.assert_response_status(resp_status, resp_dict)
 
-        if (
-            not np.isin(resp_status, ("in", "rr", "nr", "uk")).any()
-            and resp_dict is not None
-        ):
+        if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any() and resp_dict is not None:
             resp_code = np.repeat("  ", resp_status.size).astype(str)
             resp_code[resp_status == resp_dict["in"]] = "in"
             resp_code[resp_status == resp_dict["rr"]] = "rr"
@@ -162,17 +158,15 @@ class SampleWeight:
         uk_weights_sum = float(np.sum(samp_weight[uk_sample]))
 
         if unknown_to_inelig:
-            adj_uk = (
-                in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum
-            ) / (in_weights_sum + rr_weights_sum + nr_weights_sum)
+            adj_uk = (in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum) / (
+                in_weights_sum + rr_weights_sum + nr_weights_sum
+            )
             adj_rr = (rr_weights_sum + nr_weights_sum) / rr_weights_sum
         else:
             adj_uk = 1
             adj_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
 
-        adj_factor = np.zeros(
-            samp_weight.size
-        )  # unknown and nonresponse will get 1 by default
+        adj_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 1 by default
         adj_factor[rr_sample] = adj_rr * adj_uk
         adj_factor[in_sample] = adj_uk
 
@@ -225,7 +219,7 @@ class SampleWeight:
                 adj_class = pd.DataFrame(np.column_stack(adj_class))
             elif isinstance(adj_class, np.ndarray):
                 adj_class = pd.DataFrame(adj_class)
-            elif not isinstance(adj_class, (pd.Series, pd.DataFrame)):
+            elif not isinstance(adj_class, (pd.Series, pd.DataFrame, pl.Series, pl.DataFrame)):
                 raise AssertionError(
                     "adj_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
                 )
@@ -235,9 +229,7 @@ class SampleWeight:
             for c in np.unique(adj_array):
                 samp_weight_c = samp_weight[adj_array == c]
                 resp_code_c = resp_code[adj_array == c]
-                adj_factor_c, self.adj_factor[c] = self._adj_factor(
-                    samp_weight_c, resp_code_c, unknown_to_inelig
-                )
+                adj_factor_c, self.adj_factor[c] = self._adj_factor(samp_weight_c, resp_code_c, unknown_to_inelig)
                 adjusted_weight[adj_array == c] = adj_factor_c * samp_weight_c
 
         self.deff_weight = self.calculate_deff_weight(adjusted_weight)
@@ -292,7 +284,9 @@ class SampleWeight:
 
         if domain is not None:
             domain = formats.numpy_array(domain)
-            keys = np.unique(domain)
+            keys = np.unique(
+                pl.DataFrame(domain).filter(pl.col("column_0").is_not_null())["column_0"].to_numpy()
+            )  # NoneType and Object types are problematic for np.unique()
             levels: np.ndarray = np.zeros(keys.size) * np.nan
             self.adj_factor = {}
             self.control = {}
@@ -312,14 +306,10 @@ class SampleWeight:
                 self.control[key] = levels[k]
         else:
             if control is None:
-                self.control = int(np.sum(samp_weight.size))
-                norm_weight, self.adj_factor = self._norm_adjustment(
-                    samp_weight, self.control
-                )
+                self.control = np.sum(samp_weight.size)
+                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, self.control)
             elif isinstance(control, (int, float)):
-                norm_weight, self.adj_factor = self._norm_adjustment(
-                    samp_weight, control
-                )
+                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, control)
                 self.control = control
 
         self.adj_method = "normalization"
@@ -361,10 +351,7 @@ class SampleWeight:
                 raise ValueError("control dictionary keys do not match domain values.")
 
         if control is None and domain is not None:
-            if (
-                isinstance(factor, dict)
-                and (np.unique(domain) != np.unique(list(factor.keys()))).any()
-            ):
+            if isinstance(factor, dict) and (np.unique(domain) != np.unique(list(factor.keys()))).any():
                 raise ValueError("factor dictionary keys do not match domain values.")
 
             sum_weight = float(np.sum(samp_weight))
@@ -392,13 +379,34 @@ class SampleWeight:
     def rake(
         self,
         samp_weight: Array,
-        x: Union[np.ndarray, pd.DataFrame],
-        control: Union[DictStrNum, None] = None,
-        scale: Union[np.ndarray, Number] = 1,
-        domain: Optional[Array] = None,
+        control: DictStrNum,
+        margins: DictStrNum,
+        ll_bound: Optional[Union[DictStrNum, Number]] = None,
+        up_bound: Optional[Union[DictStrNum, Number]] = None,
+        tol: float = 1e-4,
     ) -> np.ndarray:
 
-        pass
+        # control_wgts = {}
+        # results_wgts = {}exit
+        # for margin in margins:
+        #     levels = (
+        #         pl.DataFrame(margins[margin]).filter(pl.col("column_0").is_not_null())["column_0"].unique().to_numpy()
+        #     )  # NoneType and Object types are problematic for np.unique()
+        #     ctls = np.zeros(levels.shape[0])
+        #     wgts = np.zeros(levels.shape[0])
+        #     for i, level in enumerate(levels):
+        #         ctls[i] = control[margin][level]
+        #         wgts[i] = np.add.reduce(samp_weight, where=np.array(margins[margin]) == level)
+
+        #     control_wgts[margin] = np.column_stack((levels, ctls))
+        #     results_wgts[margin] = np.column_stack((levels, wgts))
+
+        wgt_prev = samp_weight
+        for margin in margins:
+            wgt = self.normalize(samp_weight=wgt_prev, control=control[margin], domain=margins[margin])
+            wgt_prev = wgt
+
+        return wgt
 
     @staticmethod
     def _calib_covariates(
@@ -501,9 +509,7 @@ class SampleWeight:
         if x.shape == (x.size,):
             adj_factor = _core_vector(x, core_factor)
         else:
-            adj_factor = np.apply_along_axis(
-                _core_vector, axis=1, arr=x, core_factor=core_factor
-            )
+            adj_factor = np.apply_along_axis(_core_vector, axis=1, arr=x, core_factor=core_factor)
 
         return adj_factor
 
@@ -600,9 +606,7 @@ class SampleWeight:
                         x_control=np.array(control_d_values),
                         scale=scale,
                     )
-                    adj_factor[:, k] = (domain == d) + self._calib_wgt(
-                        aux_vars, core_factor_d
-                    ) / scale
+                    adj_factor[:, k] = (domain == d) + self._calib_wgt(aux_vars, core_factor_d) / scale
                 else:
                     core_factor_d = self._core_matrix(
                         samp_weight=samp_weight_d,
@@ -611,9 +615,7 @@ class SampleWeight:
                         x_control=np.array(control_d_values),
                         scale=scale_d,
                     )
-                    adj_factor[domain == d] = (
-                        1 + self._calib_wgt(x_d, core_factor_d) / scale_d
-                    )
+                    adj_factor[domain == d] = 1 + self._calib_wgt(x_d, core_factor_d) / scale_d
 
         if additive:
             calib_weight = np.transpose(np.transpose(adj_factor) * samp_weight)

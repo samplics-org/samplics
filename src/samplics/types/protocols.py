@@ -1,75 +1,69 @@
 from typing import Protocol, runtime_checkable
 
 
-# NumpyArray = TypeVar("np.ndarray", bound=np.ndarray)
-# PandasDF = TypeVar("pd.DataFrame", bound=pd.DataFrame)
-# PolarsDF = TypeVar("pl.DataFrame", bound=pl.DataFrame)
+@runtime_checkable
+class ToDataFramePrcl(Protocol):
+    def to_numpy(): ...
+
+    def to_polars(): ...
+
+    def to_pandas(): ...
 
 
 @runtime_checkable
-class Missing(Protocol):
-    ...
+class SamplePrcl(Protocol):
+
+    def estimate(): ...
+    def adjust(): ...
 
 
 @runtime_checkable
-class DepVars(Protocol):
+class FramePrcl(Protocol):
+
+    def select(): ...
+
+
+@runtime_checkable
+class Missing(Protocol): ...
+
+
+@runtime_checkable
+class DepVarsPrcl(Protocol):
     # TODO: Add missing values functionality
     y: dict
 
     @property
-    def nrecords():
-        ...
+    def nrecords(): ...
 
     @property
-    def nvars():
-        ...
+    def nvars(): ...
 
-    def to_numpy():
-        ...
+    def to_numpy(): ...
 
-    def to_polars():
-        ...
+    def to_polars(): ...
 
-    def to_pandas():
-        ...
+    def to_pandas(): ...
 
 
 @runtime_checkable
-class IndepVars(Protocol):
+class IndepVarsPrcl(Protocol):
     # TODO: Add missing values functionality
     x: dict
 
     @property
-    def nrecords():
-        ...
+    def nrecords(): ...
 
     @property
-    def nvars():
-        ...
+    def nvars(): ...
 
-    def to_numpy():
-        ...
+    def to_numpy(): ...
 
-    def to_polars():
-        ...
+    def to_polars(): ...
 
-    def to_pandas():
-        ...
+    def to_pandas(): ...
 
 
-@runtime_checkable
-class ToDataFrame(Protocol):
-    def to_numpy():
-        ...
-
-    def to_polars():
-        ...
-
-    def to_pandas():
-        ...
-
-
-# class FitStats(Protocol):
+# class FitStatsPrcl(Protocol):
 #     method: FitMethod
 #     err_stderr: float | dict
 #     fe_est: namedtuple  # fixed effects

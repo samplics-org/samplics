@@ -1,3 +1,4 @@
+from samplics.apis import Frame, Sample
 from samplics.categorical import CrossTabulation, Tabulation, Ttest
 from samplics.datasets.datasets import (
     load_auto,
@@ -37,17 +38,17 @@ from samplics.sampling import (
     power_for_one_mean,
     power_for_one_proportion,
 )
-from samplics.types import (
-    AuxVars,
-    DirectEst,
-    EbEst,
-    EbFit,
-    EblupEst,
-    EblupFit,
-    FitMethod,
-    FitStats,
-    Mse,
-)
+# from samplics.types import (
+#     AuxVars,
+#     DirectEst,
+#     EbEst,
+#     EbFit,
+#     EblupEst,
+#     EblupFit,
+#     FitMethod,
+#     FitStats,
+#     Mse,
+# )
 from samplics.utils import (
     CertaintyError,
     DimensionError,
@@ -68,27 +69,27 @@ from samplics.weighting import ReplicateWeight, SampleWeight
 __all__ = [
     "allocate",
     "array_to_dict",
-    "AuxVars",
+    # "AuxVars",
     "calculate_power",
     "calculate_power_prop",
     "calculate_ss_fleiss_prop",
     "calculate_ss_wald_prop",
     "calculate_ss_wald_mean",
     "CrossTabulation",
-    "DirectEst",
+    # "DirectEst",
     "Tabulation",
     "Ttest",
     "EblupAreaModel",
     "EblupUnitModel",
-    "EblupEst",
-    "EblupFit",
+    # "EblupEst",
+    # "EblupFit",
     "EbUnitModel",
-    "EbEst",
-    "EbFit",
+    # "EbEst",
+    # "EbFit",
     "EllUnitModel",
-    "FitMethod",
+    # "FitMethod",
     "fit_eblup",
-    "FitStats",
+    # "FitStats",
     "load_auto",
     "load_birth",
     "load_county_crop",
@@ -124,9 +125,12 @@ __all__ = [
     "CertaintyError",
     "DimensionError",
     "MethodError",
-    "Mse",
+    # "Mse",
     "ProbError",
     "SinglePSUError",
+    # Objects from APIs sub-package
+    "Frame",
+    "Sample",
 ]
 
 __version__ = "0.4.11"
