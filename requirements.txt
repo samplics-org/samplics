@@ -1,4 +1,4 @@
-black==23.12.1
+black==24.4.2
 certifi==2024.2.2
 charset-normalizer==3.3.2
 click==8.1.7
@@ -30,7 +30,7 @@ python-dateutil==2.9.0.post0
 pytz==2024.1
 requests==2.31.0
 ruff==0.4.2
--e git+ssh://git@github.com/samplics-org/samplics.git@77b96313dd33f507be4b347c68cbaba32268b94c#egg=samplics
+-e git+ssh://git@github.com/samplics-org/samplics.git@37ed06303ec84c958046903115826234984f99b8#egg=samplics
 scipy==1.13.0
 six==1.16.0
 statsmodels==0.14.2
