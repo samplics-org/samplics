@@ -25,4 +25,4 @@ DictStrBool = Dict[StringNumber, bool]
 
 # TypeVar definitions
 
-DataFrame = TypeVar("DataFrame", bound=[pd.DataFrame, pl.DataFrame])
+DataFrame = TypeVar("DataFrame", bound=pd.DataFrame | pl.DataFrame)
