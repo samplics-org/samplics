@@ -4,6 +4,76 @@ import polars as pl
 from samplics.weighting import SampleWeight
 
 
+# synthetic data for testing
+
+wgt = np.random.uniform(0, 1, 1000)
+resp = np.random.choice([0, 1], p=(0.3, 0.7), size=1000)
+
+
+def test_nr_adjust_incomplete_classes1():
+    resp_map = dict({"nr": 0, "rr": 1})
+    sample_synth = SampleWeight()
+    samp_synth_wgt = sample_synth.adjust(
+        samp_weight=wgt,
+        adj_class=None,
+        resp_status=resp,
+        resp_dict=resp_map,
+        unknown_to_inelig=False,
+    )
+
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 1]), np.sum(wgt))
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 0]), 0)
+
+
+def test_nr_adjust_incomplete_classes2():
+    resp_map = dict({"nr": 0, "rr": 1, "in": 2})
+    sample_synth = SampleWeight()
+    samp_synth_wgt = sample_synth.adjust(
+        samp_weight=wgt,
+        adj_class=None,
+        resp_status=resp,
+        resp_dict=resp_map,
+        unknown_to_inelig=False,
+    )
+
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 1]), np.sum(wgt))
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 0]), 0)
+
+
+def test_nr_adjust_incomplete_classes3():
+    resp_map = dict({"nr": 0, "rr": 1, "in": 2})
+    resp = np.random.choice([0, 1, 2], p=(0.2, 0.7, 0.1), size=1000)
+    sample_synth = SampleWeight()
+    samp_synth_wgt = sample_synth.adjust(
+        samp_weight=wgt,
+        adj_class=None,
+        resp_status=resp,
+        resp_dict=resp_map,
+        unknown_to_inelig=True,
+    )
+
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 1]) + np.sum(samp_synth_wgt[resp == 2]), np.sum(wgt))
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 0]), 0)
+
+
+def test_nr_adjust_complete_classes():
+    resp_map = dict({"nr": 0, "rr": 1, "in": 2, "uk": 3})
+    resp = np.random.choice([0, 1, 2, 3], p=(0.2, 0.5, 0.1, 0.2), size=1000)
+    sample_synth = SampleWeight()
+    samp_synth_wgt = sample_synth.adjust(
+        samp_weight=wgt,
+        adj_class=None,
+        resp_status=resp,
+        resp_dict=resp_map,
+        unknown_to_inelig=True,
+    )
+
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 1]) + np.sum(samp_synth_wgt[resp == 2]), np.sum(wgt))
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 0]), 0)
+    assert np.isclose(np.sum(samp_synth_wgt[resp == 3]), 0)
+
+
+# real data for testing
 income_sample = pl.read_csv("./tests/weighting/synthetic_income_data.csv")
 
 

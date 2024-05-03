@@ -132,12 +132,21 @@ class SampleWeight:
         checks.assert_response_status(resp_status, resp_dict)
 
         if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any() and resp_dict is not None:
+            if "rr" not in resp_dict:
+                raise ValueError("The response dictionary must contain the key 'rr'!")
+
             resp_code = np.repeat("  ", resp_status.size).astype(str)
-            resp_code[resp_status == resp_dict["in"]] = "in"
             resp_code[resp_status == resp_dict["rr"]] = "rr"
-            resp_code[resp_status == resp_dict["nr"]] = "nr"
-            resp_code[resp_status == resp_dict["uk"]] = "uk"
+            if "in" in resp_dict:
+                resp_code[resp_status == resp_dict["in"]] = "in"
+            if "nr" in resp_dict:
+                resp_code[resp_status == resp_dict["nr"]] = "nr"
+            if "uk" in resp_dict:
+                resp_code[resp_status == resp_dict["uk"]] = "uk"
         else:
+            if not sum(resp_status == resp_dict["rr"]) > 0:
+                raise ValueError("The response dictionary must contain the key 'rr'!")
+
             resp_code = resp_status
 
         return resp_code
@@ -147,10 +156,12 @@ class SampleWeight:
         samp_weight: np.ndarray, resp_code: np.ndarray, unknown_to_inelig: bool
     ) -> tuple[np.ndarray, Number]:
 
-        in_sample = resp_code == "in"  # ineligible
         rr_sample = resp_code == "rr"  # respondent
+        in_sample = resp_code == "in"  # ineligible
         nr_sample = resp_code == "nr"  # nonrespondent
         uk_sample = resp_code == "uk"  # unknown
+
+        # breakpoint()
 
         in_weights_sum = float(np.sum(samp_weight[in_sample]))
         rr_weights_sum = float(np.sum(samp_weight[rr_sample]))
@@ -166,7 +177,7 @@ class SampleWeight:
             adj_uk = 1
             adj_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
 
-        adj_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 1 by default
+        adj_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 0 by default
         adj_factor[rr_sample] = adj_rr * adj_uk
         adj_factor[in_sample] = adj_uk
 
