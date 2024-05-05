@@ -4,6 +4,40 @@ import polars as pl
 from samplics.weighting import SampleWeight
 
 
+# stata example
+
+# nhis_sam = pl.read_csv("~/Downloads/nhis_sam.csv").with_columns(
+#     pl.when(pl.col("hisp") == 4).then(pl.lit(3)).otherwise(pl.col("hisp")).alias("hisp")
+# )
+
+# age_grp = {
+#     "<18": 5991,
+#     "18-24": 2014,
+#     "25-44": 6124,
+#     "45-64": 5011,
+#     "65+": 2448,
+# }
+# hisp_race = {1: 5031, 2: 12637, 3: 3920}
+# control = {"age_grp": age_grp, "hisp": hisp_race}
+
+# # breakpoint()
+
+# ll = 0.8
+# ul = 1.2
+
+# margins = {
+#     "age_grp": nhis_sam["age_grp"].to_list(),
+#     "hisp": nhis_sam["hisp"].to_list(),
+# }
+
+# nhis_sam_rk = SampleWeight()
+
+# nhis_sam = nhis_sam.with_columns(
+#     rake_wt_2=nhis_sam_rk.rake(
+#         samp_weight=nhis_sam["wt"], control=control, margins=margins, display_iter=True, tol=1e-6
+#     )
+# ).with_columns(diff=pl.col("rake_wt_2") - pl.col("rake_wt"))
+
 # synthetic data for testing
 
 wgt = np.random.uniform(0, 1, 1000)
@@ -275,9 +309,12 @@ margins = {
 
 sample_wgt_rk_not_bound = SampleWeight()
 
-rk_wgt_not_bound = sample_wgt_rk_not_bound.rake(
-    samp_weight=income_sample2["design_wgt"], control=control, margins=margins,  display_iter=True
-)
+# rk_wgt_not_bound = sample_wgt_rk_not_bound.rake(
+#     samp_weight=income_sample2["design_wgt"], control=control, margins=margins, display_iter=True, tol=1e-4
+# )
+
+
+
 # breakpoint()
 
 # age_grp = {"<18": 21588, age}
