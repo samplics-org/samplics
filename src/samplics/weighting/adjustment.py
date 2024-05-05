@@ -390,32 +390,91 @@ class SampleWeight:
     def rake(
         self,
         samp_weight: Array,
-        control: DictStrNum,
         margins: DictStrNum,
+        control: Optional[DictStrNum] = None,
+        factor: Optional[DictStrNum] = None,
         ll_bound: Optional[Union[DictStrNum, Number]] = None,
         up_bound: Optional[Union[DictStrNum, Number]] = None,
         tol: float = 1e-4,
+        max_iter: int = 100,
+        display_iter: bool = False,
     ) -> np.ndarray:
 
-        # control_wgts = {}
-        # results_wgts = {}exit
-        # for margin in margins:
-        #     levels = (
-        #         pl.DataFrame(margins[margin]).filter(pl.col("column_0").is_not_null())["column_0"].unique().to_numpy()
-        #     )  # NoneType and Object types are problematic for np.unique()
-        #     ctls = np.zeros(levels.shape[0])
-        #     wgts = np.zeros(levels.shape[0])
-        #     for i, level in enumerate(levels):
-        #         ctls[i] = control[margin][level]
-        #         wgts[i] = np.add.reduce(samp_weight, where=np.array(margins[margin]) == level)
+        samp_weight = formats.numpy_array(samp_weight)
 
-        #     control_wgts[margin] = np.column_stack((levels, ctls))
-        #     results_wgts[margin] = np.column_stack((levels, wgts))
+        obs_tol = tol + 1
+        iter = 0
 
-        wgt_prev = samp_weight
-        for margin in margins:
-            wgt = self.normalize(samp_weight=wgt_prev, control=control[margin], domain=margins[margin])
-            wgt_prev = wgt
+        converged = False
+        bounded = True
+
+        while not (converged and bounded) and iter < max_iter:
+            if display_iter:
+                print(f"\nIteration {iter + 1}")
+
+            if iter == 0:
+                wgt_prev = samp_weight
+
+            for margin in margins:
+                domain = formats.numpy_array(margins[margin])
+                if control is not None:
+                    wgt = self.poststratify(samp_weight=wgt_prev, control=control[margin], domain=domain)
+                elif factor is not None:
+                    wgt = self.poststratify(samp_weight=wgt_prev, factor=factor[margin], domain=domain)
+                else:
+                    raise AssertionError("control or factor must be specified!")
+
+                wgt_prev = wgt
+
+            sum_wgt = {}
+            for margin in margins:
+                domain = formats.numpy_array(margins[margin])
+                sum_wgt_domain = {}
+                for d in control[margin]:
+                    sum_wgt_domain[d] = np.sum(wgt[domain == d])
+                sum_wgt[margin] = sum_wgt_domain
+
+            # diff = {}
+            max_diff = 0
+            for margin in margins:
+                if display_iter:
+                    print(f"  Margin: {margin}")
+
+                diff_margin = {}
+                for d in control[margin]:
+                    diff_margin[d] = np.abs(control[margin][d] - sum_wgt[margin][d])
+                    if display_iter:
+                        print(f"    Difference for '{d}': {diff_margin[d]}")
+
+                # diff[margin] = diff_margin
+                max_diff = max(max_diff, max(diff_margin.values()))
+
+            obs_tol = max_diff
+
+            if obs_tol <= tol:
+                converged = True
+
+                if ll_bound is not None or up_bound is not None:
+                    wgt_ratios = wgt / samp_weight
+                    min_ratio = np.min(wgt_ratios)
+                    max_ratio = np.max(wgt_ratios)
+
+                    if (
+                        (
+                            ll_bound is not None
+                            and up_bound is not None
+                            and (ll_bound <= min_ratio and max_ratio <= up_bound)
+                        )
+                        or (ll_bound is not None and ll_bound <= min_ratio)
+                        or (up_bound is not None and up_bound >= max_ratio)
+                    ):
+                        bounded = True
+                    else:
+                        bounded = False
+                else:
+                    bounded = True
+
+            iter += 1
 
         return wgt
 

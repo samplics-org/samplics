@@ -266,14 +266,18 @@ educ_grp = {"0. Primary": 240_000, "1. High-School": 1_600_000, "2. University":
 inc_grp = {"low": 600_000, "middle": 1_400_000, "high": 640_000}
 control = {"educ_level": educ_grp, "income_level": inc_grp}
 
+income_sample2 = income_sample.filter(pl.col("educ_level").is_not_null(), pl.col("income_level").is_not_null())
+
 margins = {
-    "educ_level": income_sample.filter(pl.col("design_wgt").is_not_null())["educ_level"].to_list(),
-    "income_level": income_sample.filter(pl.col("design_wgt").is_not_null())["income_level"].to_list(),
+    "educ_level": income_sample2["educ_level"].to_list(),
+    "income_level": income_sample2["income_level"].to_list(),
 }
 
 sample_wgt_rk_not_bound = SampleWeight()
 
-rk_wgt_not_bound = sample_wgt_rk_not_bound.rake(samp_weight=design_wgt, control=control, margins=margins)
+rk_wgt_not_bound = sample_wgt_rk_not_bound.rake(
+    samp_weight=income_sample2["design_wgt"], control=control, margins=margins,  display_iter=True
+)
 # breakpoint()
 
 # age_grp = {"<18": 21588, age}
