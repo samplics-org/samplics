@@ -30,8 +30,10 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.10"
 # attrs = "^23.1.0"
+numpy = ">=1.21"
+pandas = ">=2.1"
 matplotlib = ">=3.4" 
-polars = {extras = ["numpy", "pandas"], version = "^0.20.2"}
+polars = ">=0.20.29"
 statsmodels = ">=0.13" 
 
 [tool.poetry.group.dev.dependencies]
@@ -42,6 +44,7 @@ mypy = ">=1.8"
 pytest = ">=7.4"
 pytest-cov = ">=4.1"
 ruff = ">=0.1.9"
+jupyterlab = "^4.2.1"
 
 [tool.black]
 exclude = '''
