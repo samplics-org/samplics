@@ -305,7 +305,7 @@ class Tabulation:
             var_df["lower_ci"] = list(self.lower_ci[var].values())
             var_df["upper_ci"] = list(self.upper_ci[var].values())
             var_df.sort_values(by=["variable", "category"], inplace=True)
-            oneway_df = oneway_df.append(var_df)
+            oneway_df = pd.concat((oneway_df,var_df))
 
         return oneway_df
 

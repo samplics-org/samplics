@@ -78,6 +78,8 @@ def assert_response_status(
         raise AssertionError(
             "The response status must only contains values in ('in', 'rr', 'nr', 'uk') or the mapping should be provided using response_dict parameter"
         )
+    elif "rr" not in response_status and response_dict is None:
+        raise AssertionError("The response status must at least contains rr!")
     elif isinstance(response_dict, dict):
         # resp_keys = list(response_dict.keys())
         resp_keys = [x.lower() for x in response_dict]

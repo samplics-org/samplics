@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.361">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -57,7 +57,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -82,7 +82,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -91,24 +97,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 <link rel="stylesheet" href="../public/styles.css">
 <meta property="og:title" content="Samplics Documentation - Sample Weight Adjustments">
-<meta property="og:description" content="">
-<meta property="og:site-name" content="Samplics Documentation">
+<meta property="og:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
+<meta property="og:site_name" content="Samplics Documentation">
 <meta name="twitter:title" content="Samplics Documentation - Sample Weight Adjustments">
-<meta name="twitter:description" content="">
+<meta name="twitter:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
 <meta name="twitter:site" content="@MamadouSDiallo">
 <meta name="twitter:card" content="summary">
 </head>
@@ -117,9 +151,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
     </a>
@@ -134,46 +168,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../index.html" rel="" target="" aria-current="page">
- <span class="menu-text">Overview</span></a>
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Overview</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../pages/tutorial.html" rel="" target="">
- <span class="menu-text">Tutorial</span></a>
+    <a class="nav-link" href="../pages/tutorial.html"> 
+<span class="menu-text">Tutorial</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/MamadouSDiallo" rel="" target=""><i class="bi bi-twitter" role="img" aria-label="Twitter">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo"> <i class="bi bi-twitter" role="img" aria-label="Twitter">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/samplics-org/samplics" rel="" target=""><i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/weight.html">Weighting</a></li><li class="breadcrumb-item"><a href="../pages/weight_adj.html">Sample Weight Adjustments</a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/weight.html">Weighting</a></li><li class="breadcrumb-item"><a href="../pages/weight_adj.html">Sample Weight Adjustments</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -393,7 +427,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -415,7 +449,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/weight.html">Weighting</a></li><li class="breadcrumb-item"><a href="../pages/weight_adj.html">Sample Weight Adjustments</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Sample Weight Adjustments</h1>
 </div>
@@ -430,7 +464,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <p>The objective of this tutorial is to familiarize ourselves with <em>SampleWeight</em> the <em>samplics</em> class for adjusting sample weights. In practice, it is necessary to adjust base or design sample weights obtained directly from the random sample mechanism. These adjustments are done to correct for nonresponse, reduce effects of extreme/large weights, better align with known auxiliary information, and more. Specifically in this tutorial, we will:</p>
 <ul>
@@ -440,7 +476,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>learn how to use the method <em>normalize()</em> to ensure that the sample weights sum to known constants.</li>
 </ul>
 <p>To run the code in this notebook, we will use the dataset that was developed in the previous tutorial on sample selection.</p>
-<div class="cell" data-execution_count="1">
+<div id="8c28129b" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -450,7 +486,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="design-base-weight" class="level1">
 <h1>Design (base) weight</h1>
 <p>The design weight is the inverse of the overall probability of selection which is the product of the first and second probabilities of selection.</p>
-<div class="cell" data-execution_count="2">
+<div id="fe630a2d" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load PSU sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>psu_sample_dict <span class="op">=</span> load_psu_sample()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_sample_dict[<span class="st">"data"</span>]</span>
@@ -471,6 +507,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>full_sample.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
+<div>
 <div>
 
 
@@ -644,8 +681,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</div>
 <p>For the purposes of this illustration of handling non-response, we first need to incorporate some household non-response into our example. That is, we simulate the non-response status and store it in the variable <em>response_status</em>. The variable <em>response_status</em> has four possible values: <em>ineligible</em> which indicates that the sampling unit is not eligible for the survey, <em>respondent</em> which indicates that the sampling unit responded to the survey, <em>non-respondent</em> which indicates that the sampling unit did not respond to the survey, and <em>unknown</em> means that we are not able to infer the status of the sampling unit i.e.&nbsp;we do not know whether the sampling unit is eligible or not to the survey.</p>
-<div class="cell" data-execution_count="3">
+<div id="0d4e6014" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">7</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"response_status"</span>] <span class="op">=</span> np.random.choice(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"ineligible"</span>, <span class="st">"respondent"</span>, <span class="st">"non-respondent"</span>, <span class="st">"unknown"</span>], </span>
@@ -657,6 +695,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"design_weight"</span>, <span class="st">"response_status"</span>]</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ].head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
+<div>
 <div>
 
 
@@ -782,13 +821,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</div>
 <section id="nonresponse-adjustment" class="level2">
 <h2 class="anchored" data-anchor-id="nonresponse-adjustment">Nonresponse adjustment</h2>
 <p>In general, the sample weights are adjusted to redistribute the sample weights of all eligible units for which there is no sufficient response (unit level nonresponse) to the sampling units that sufficiently responded to the survey. This adjustment is done within adjustment classes or domains. Note that the determination of the response categories (unit response, item response, ineligible, etc.) is outside of the scope of this tutorial.</p>
 <p>Also, the weights of the sampling units with unknown eligibility are redistributed to the rest of the sampling units. In general, ineligible sampling units receive weights from the sampling units with unknown eligibility since eligible sampling units can be part of the unknown pool.</p>
 <p>The method <em>adjust()</em> has a boolean parameter <em>unknown_to_inelig</em> which controls how the sample weights of the unknown is redistributed. By default, <em>adjust()</em> redistribute the sample weights of the sampling units of the unknown to the ineligibles (<em>unknown_to_inelig=True</em>). If we do not wish to redistribute the sample weights of the unknowns to the ineligibles then we just set the flag to False (<em>unknown_to_inelig=Fasle</em>).</p>
 <p>In the snippet of code below, we adjust the weight within clusters that is we use clusters as our adjustment classes. Note that we run the nonresponse adjustment twice, the first time with <em>unknown_to_inelig=True</em> (<em>nr_weight</em>) and the second time with the flag equal to False (<em>nr_weight2</em>). With <em>unknown_to_inelig=True</em>, the ineligible received part of the sample weights from the unknowns. Hence, the sample weights for the respondent is less than when the flag is False. With <em>unknown_to_inelig=Fasle</em>, the ineligible did Not receive any weights from the unknowns. Hence, the sample weights for the ineligible units remain the same before and after adjustment. In a real survey, the statistician may decide on the best non-response strategy based on the available information.</p>
-<div class="cell" data-execution_count="4">
+<div id="506ccc7f" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>status_mapping <span class="op">=</span> {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"in"</span>: <span class="st">"ineligible"</span>, </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rr"</span>: <span class="st">"respondent"</span>, </span>
@@ -820,6 +860,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nr_weight2"</span></span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    ]].drop_duplicates().head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
+<div>
 <div>
 
 
@@ -977,6 +1018,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -992,7 +1034,7 @@ Important
 </div>
 <p>In the call above, if we omit the parameter <em>response_dict</em>, then the run would fail with an assertion error message. The current error message is the following: <strong>The response status must only contains values in (‘in’, ‘rr’, ‘nr’, ‘uk’) or the mapping should be provided using response_dict parameter</strong>. For the call to run without using <em>response_dict</em>, it is necessary that the response status takes only values in the standard codes i.e.&nbsp;(“in”, “rr”, “nr”, “uk”). The variable associated with <em>response_status</em> can contain any code but a mapping is necessary when the response variable is not constructed using the standard codes.</p>
 <p>To further illustrate the mapping of response status, let’s assume that we have response_status2 which has the values 100 for ineligible, 200 for non-respondent, 300 for respondent, and 999 for unknown.</p>
-<div class="cell" data-execution_count="5">
+<div id="69371886" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>response_status2 <span class="op">=</span> np.repeat(<span class="dv">100</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>response_status2[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"non-respondent"</span>] <span class="op">=</span> <span class="dv">200</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>response_status2[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"respondent"</span>] <span class="op">=</span> <span class="dv">300</span></span>
@@ -1000,6 +1042,7 @@ Important
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>pd.crosstab(response_status2, full_sample[<span class="st">"response_status"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
+<div>
 <div>
 
 
@@ -1055,8 +1098,9 @@ Important
 </div>
 </div>
 </div>
+</div>
 <p>To use <em>response_status2</em>, we need to map the values 100, 200, 300 and 999 to “in”, “rr”, “nr”, and “uk”. This mapping is done below using the Python dictionary <em>status_mapping2</em>. Using <em>status_mapping2</em> in the function call <em>adjust()</em> will lead to the same adjustment as in the previous run i.e.&nbsp;<em>nr_weight</em> and <em>nr_weight3</em> contain the same adjusted weights.</p>
-<div class="cell" data-execution_count="6">
+<div id="411b805a" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>status_mapping2 <span class="op">=</span> {<span class="st">"in"</span>: <span class="dv">100</span>, <span class="st">"nr"</span>: <span class="dv">200</span>, <span class="st">"rr"</span>: <span class="dv">300</span>, <span class="st">"uk"</span>: <span class="dv">999</span>}</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"nr_weight3"</span>] <span class="op">=</span> SampleWeight().adjust(</span>
@@ -1070,6 +1114,7 @@ Important
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"response_status"</span>, <span class="st">"nr_weight"</span>, <span class="st">"nr_weight3"</span>]</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    ].drop_duplicates().head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
+<div>
 <div>
 
 
@@ -1131,8 +1176,9 @@ Important
 </div>
 </div>
 </div>
+</div>
 <p>If the response status variable only takes values “in”, “nr”, “rr” and “uk”, then it is not necessary to provide the mapping dictionary to the function i.e.&nbsp;<em>resp_dict</em> can be omitted from the function call <em>adjust()</em>.</p>
-<div class="cell" data-execution_count="7">
+<div id="5710f0cf" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>response_status3 <span class="op">=</span> np.repeat(<span class="st">"in"</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>response_status3[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"non-respondent"</span>] <span class="op">=</span> <span class="st">"nr"</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>response_status3[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"respondent"</span>] <span class="op">=</span> <span class="st">"rr"</span></span>
@@ -1148,6 +1194,7 @@ Important
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"response_status"</span>, <span class="st">"nr_weight"</span>, <span class="st">"nr_weight4"</span>]</span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    ].drop_duplicates().head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
+<div>
 <div>
 
 
@@ -1209,7 +1256,8 @@ Important
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="8">
+</div>
+<div id="ee916c91" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Just dropping a couple of variables </span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># not needed for the rest of the tutorial</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>full_sample.drop(</span>
@@ -1243,7 +1291,7 @@ Warning
 </div>
 <p>Let’s assume that we have a reliable external source e.g.&nbsp;a recent census that provides the number of households by region. The external source has the following control data: 3700 households for East, 1500 for North, 2800 for South and 6500 for West.</p>
 <p>We use the method <em>poststratify()</em> to ensure that the poststratified sample weights (<em>ps_weight</em>) sum to the know control totals by region. Note that the control totals are provided using the Python dictionary <em>census_households</em>.</p>
-<div class="cell" data-execution_count="9">
+<div id="c57c6434" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>census_households <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">3700</span>, <span class="st">"North"</span>: <span class="dv">1500</span>, <span class="st">"South"</span>: <span class="dv">2800</span>, <span class="st">"West"</span>: <span class="dv">6500</span>}</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_weight"</span>] <span class="op">=</span> SampleWeight().poststratify(</span>
@@ -1254,6 +1302,7 @@ Warning
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>full_sample.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
+<div>
 <div>
 
 
@@ -1427,14 +1476,16 @@ Warning
 </div>
 </div>
 </div>
+</div>
 <p>The snippet of code below shows that the poststratified sample weights sum to the expected control totals that is 3700 households for East, 1500 for North, 2800 for South and 6500 for West.</p>
-<div class="cell" data-execution_count="10">
+<div id="370e20bd" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights <span class="op">=</span> full_sample[</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"ps_weight"</span>]</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    ].groupby(<span class="st">"region"</span>).<span class="bu">sum</span>()</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>sum_of_weights.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>sum_of_weights.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
+<div>
 <div>
 
 
@@ -1478,13 +1529,15 @@ Warning
 </div>
 </div>
 </div>
+</div>
 <p>The crosstable below shows that only one adjustment factor was calculated and applied per adjustment class or region.</p>
-<div class="cell" data-execution_count="11">
+<div id="b9e8b170" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_adj_fct"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(full_sample[<span class="st">"ps_weight"</span>] <span class="op">/</span> full_sample[<span class="st">"nr_weight"</span>], <span class="dv">12</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>pd.crosstab(full_sample[<span class="st">"ps_adj_fct"</span>], full_sample[<span class="st">"region"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
+<div>
 <div>
 
 
@@ -1540,9 +1593,10 @@ Warning
 </div>
 </div>
 </div>
+</div>
 <p>In some surveys, there is interest in keeping relative distribution of strata to some known distribution. For example, WHO EPI vaccination surveys often postratify sample weights to ensure that relative sizes of strata reflect offcial statistics e.g.&nbsp;census data. In most cases, the strata are based on some administrative divisions.</p>
 <p>For example, assume that according to census data that East contains 25% of the households, North contains 10%, South contains 20% and West contains 45%. We can poststratify using the snippet of code below.</p>
-<div class="cell" data-execution_count="12">
+<div id="a91ee6e4" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>known_ratios <span class="op">=</span> {<span class="st">"East"</span>: <span class="fl">0.25</span>, <span class="st">"North"</span>: <span class="fl">0.10</span>, <span class="st">"South"</span>: <span class="fl">0.20</span>, <span class="st">"West"</span>: <span class="fl">0.45</span>}</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_weight2"</span>] <span class="op">=</span> SampleWeight().poststratify(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
@@ -1552,6 +1606,7 @@ Warning
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>full_sample.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
+<div>
 <div>
 
 
@@ -1637,7 +1692,8 @@ Warning
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="13">
+</div>
+<div id="96e7bc98" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights2 <span class="op">=</span> full_sample[</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"ps_weight2"</span>]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    ].groupby(<span class="st">"region"</span>).<span class="bu">sum</span>()</span>
@@ -1646,6 +1702,7 @@ Warning
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    sum_of_weights2[<span class="st">"ps_weight2"</span>] <span class="op">/</span> <span class="bu">sum</span>(sum_of_weights2[<span class="st">"ps_weight2"</span>])</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>sum_of_weights2.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
+<div>
 <div>
 
 
@@ -1691,6 +1748,7 @@ Warning
 </tbody>
 </table>
 
+</div>
 </div>
 </div>
 </div>
@@ -1827,7 +1885,7 @@ Warning
 </tbody>
 </table></li>
 </ul>
-<div class="cell" data-execution_count="14">
+<div id="f4f59818" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">150</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"education"</span>] <span class="op">=</span> np.random.choice(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"Low"</span>, <span class="st">"Medium"</span>, <span class="st">"High"</span>), </span>
@@ -1851,6 +1909,7 @@ Warning
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"under_five"</span></span>
 <span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    ]].head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
+<div>
 <div>
 
 
@@ -1924,9 +1983,10 @@ Warning
 </div>
 </div>
 </div>
+</div>
 <p>We now will calibrate the nonreponse weight (<em>nr_weight</em>) to ensure that the estimated number of households in poverty is equal to 4,700 and the estimated total number of children under five is 30,8500. The control numbers 4,700 and 30,800 are obtained from the table above.</p>
 <p>The class <em>SampleWeight()</em> uses the method <em>calibrate(samp_weight, aux_vars, control, domain, scale, bounded, modified)</em> to adjust the weight using the GREG approach. * The contol values must be stored in a python dictionnary i.e.&nbsp;totals = {“poverty”: 4700, “under_five”: 30800}. In this case, we have two numerical variables poverty with values in {0, 1} and under_five with values in {0, 1, 2, 3, 4, 5}. * <em>aux_vars</em> is the matrix of covariates.</p>
-<div class="cell" data-execution_count="15">
+<div id="7a1c148c" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>totals <span class="op">=</span> {<span class="st">"poverty"</span>: <span class="dv">4700</span>, <span class="st">"under_five"</span>: <span class="dv">30800</span>}</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"calib_weight"</span>] <span class="op">=</span> SampleWeight().calibrate(</span>
@@ -1935,6 +1995,7 @@ Warning
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>full_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"household"</span>, <span class="st">"nr_weight"</span>, <span class="st">"calib_weight"</span>]].head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
+<div>
 <div>
 
 
@@ -2076,8 +2137,9 @@ Warning
 </div>
 </div>
 </div>
+</div>
 <p>We can confirm that the estimated totals for the auxiliary variables are equal to their control values.</p>
-<div class="cell" data-execution_count="16">
+<div id="5c067064" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>poverty <span class="op">=</span> full_sample[<span class="st">"poverty"</span>]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>under_5 <span class="op">=</span> full_sample[<span class="st">"under_five"</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>nr_weight <span class="op">=</span> full_sample[<span class="st">"nr_weight"</span>]</span>
@@ -2106,7 +2168,7 @@ Total estimated number of children under 5 was
 </div>
 </div>
 <p>If we want to control by domain then we can do so using the parameter <em>domain</em> of <em>calibrate()</em>. First we need to update the python dictionary holding the control values. Now, those values have to be provided for each domain. Note that the dictionary is now a nested dictionary where the higher level keys hold the domain values i.e.&nbsp;East, North, South and West. Then the higher level values of the dictionary are the dictionaries providing mapping for the auxiliary variables and the corresponding control values.</p>
-<div class="cell" data-execution_count="17">
+<div id="68d84c9e" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"East"</span>: {<span class="st">"poverty"</span>: <span class="dv">1200</span>, <span class="st">"under_five"</span>: <span class="dv">6300</span>},</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"North"</span>: {<span class="st">"poverty"</span>: <span class="dv">200</span>, <span class="st">"under_five"</span>: <span class="dv">4000</span>},</span>
@@ -2129,6 +2191,7 @@ Total estimated number of children under 5 was
 <span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"calib_weight_d"</span></span>
 <span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    ]].head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
+<div>
 <div>
 
 
@@ -2286,8 +2349,9 @@ Total estimated number of children under 5 was
 </div>
 </div>
 </div>
+</div>
 <p>Note that the GREG domain estimates above do not have the additive property. That is the GREG domain estimates do not sum to the overal GREG estimate. To illustrate this, let’s assume that we want to estimate the number of households.</p>
-<div class="cell" data-execution_count="18">
+<div id="4343ce12" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The number of households using the overall GREG is: </span><span class="ch">\</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="ch">\</span></span>
@@ -2313,7 +2377,7 @@ Note
 <p>If the additive flag is set to <code>True</code>, the sum of the domain estimates will be equal to the GREG overal estimate.</p>
 </div>
 </div>
-<div class="cell" data-execution_count="19">
+<div id="6f287784" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"East"</span>: {<span class="st">"poverty"</span>: <span class="dv">1200</span>, <span class="st">"under_five"</span>: <span class="dv">6300</span>},</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"North"</span>: {<span class="st">"poverty"</span>: <span class="dv">200</span>, <span class="st">"under_five"</span>: <span class="dv">4000</span>},</span>
@@ -2329,7 +2393,7 @@ Note
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    additive<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="20">
+<div id="cba47712" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>under_5 <span class="op">=</span> np.array(full_sample[<span class="st">"under_five"</span>])</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Each column can be used to estimate a domain: </span><span class="ch">\</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3) <span class="op">*</span> under_5, axis<span class="op">=</span><span class="dv">1</span>)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2339,7 +2403,7 @@ Each column can be used to estimate a domain: [ 6300.  4000.  6500. 14000.]
 </code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="21">
+<div id="26e8fd82" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the overall GREG is: </span><span class="ch">\</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -2347,7 +2411,7 @@ Each column can be used to estimate a domain: [ 6300.  4000.  6500. 14000.]
 </code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="22">
+<div id="97bca6b7" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="ch">\</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight_d'</span>])<span class="sc">:.2f}</span><span class="ss"> (additive=False)</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -2355,7 +2419,7 @@ Each column can be used to estimate a domain: [ 6300.  4000.  6500. 14000.]
 </code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="23">
+<div id="47211c6e" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="ch">\</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3))<span class="sc">:.2f}</span><span class="ss"> (additive=True) </span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -2381,7 +2445,7 @@ Note
 <p><em>normalization</em> is mostly added here for completeness but it is sheldom to see sample weight normalize in large scale household surveys. One major downside of normalized weights is the Note that estimation of totals does not make sense with normalized weights.</p>
 </div>
 </div>
-<div class="cell" data-execution_count="24">
+<div id="679bb540" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    SampleWeight().normalize(samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>])</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>full_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>]].head(<span class="dv">25</span>)</span>
@@ -2392,7 +2456,7 @@ Note
 </div>
 </div>
 <p>When <em>normalize()</em> is called with only the parameter <em>sample_weight</em> then the sample weights are normalize to sum to the length of the sample weight vector.</p>
-<div class="cell" data-execution_count="25">
+<div id="aea47d9f" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight2"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    SampleWeight().normalize(</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
@@ -2404,7 +2468,7 @@ Note
 <pre><code>300.0</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="26">
+<div id="623537cc" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight3"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
@@ -2413,11 +2477,8 @@ Note
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/ld/zzh65kn12yn3sykchz7mcbw40000gn/T/ipykernel_9199/2566768256.py:6: FutureWarning: The default value of numeric_only in DataFrameGroupBy.sum is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
-  weight_sum = full_sample.groupby(["region"]).sum()</code></pre>
-</div>
 <div class="cell-output cell-output-display" data-execution_count="26">
+<div>
 <div>
 
 
@@ -2466,23 +2527,21 @@ Note
 </div>
 </div>
 </div>
-<div class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>norm_level <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">10</span>, <span class="st">"North"</span>: <span class="dv">20</span>, <span class="st">"South"</span>: <span class="dv">30</span>, <span class="st">"West"</span>: <span class="dv">50</span>}</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight4"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    control<span class="op">=</span>norm_level, </span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>, <span class="st">"norm_weight4"</span>,]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/ld/zzh65kn12yn3sykchz7mcbw40000gn/T/ipykernel_9199/2547399335.py:9: FutureWarning: The default value of numeric_only in DataFrameGroupBy.sum is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
-  weight_sum = full_sample.groupby(["region"]).sum()</code></pre>
 </div>
+<div id="55fd55a1" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>norm_level <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">10</span>, <span class="st">"North"</span>: <span class="dv">20</span>, <span class="st">"South"</span>: <span class="dv">30</span>, <span class="st">"West"</span>: <span class="dv">50</span>}</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight4"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    control<span class="op">=</span>norm_level, </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>, <span class="st">"norm_weight4"</span>,]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
+<div>
 <div>
 
 
@@ -2533,6 +2592,7 @@ Note
 </tbody>
 </table>
 
+</div>
 </div>
 </div>
 </div>
@@ -2621,10 +2681,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -2634,8 +2711,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -2647,7 +2733,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -2691,6 +2900,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -2716,6 +2926,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -2777,12 +3013,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../pages/weight.html" class="pagination-link">
+      <a href="../pages/weight.html" class="pagination-link" aria-label="Overview">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../pages/weight_replicates.html" class="pagination-link">
+      <a href="../pages/weight_replicates.html" class="pagination-link" aria-label="Replicate Weights">
         <span class="nav-page-text">Replicate Weights</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -2797,11 +3033,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </li>  
 </ul>
     </div>   
-    <div class="nav-footer-center">Samplics for Design and Analysis of Complex Survey Data</div>
+    <div class="nav-footer-center">
+<p>Samplics for Design and Analysis of Complex Survey Data</p>
+</div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
-    <a class="nav-link" href="../index.html">Back to Home</a>
+    <a class="nav-link" href="../index.html">
+<p>Back to Home</p>
+</a>
   </li>  
     <li class="nav-item compact">
     <a class="nav-link" href="https://twitter.com/MamadouSDiallo">
@@ -2819,6 +3059,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+
 
 
 

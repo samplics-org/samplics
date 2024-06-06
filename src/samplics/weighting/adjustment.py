@@ -144,9 +144,6 @@ class SampleWeight:
             if "uk" in resp_dict:
                 resp_code[resp_status == resp_dict["uk"]] = "uk"
         else:
-            if not sum(resp_status == resp_dict["rr"]) > 0:
-                raise ValueError("The response dictionary must contain the key 'rr'!")
-
             resp_code = resp_status
 
         return resp_code

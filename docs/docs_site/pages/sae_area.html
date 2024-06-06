@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.361">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -57,7 +57,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -82,7 +82,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -91,22 +97,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="../public/styles.css">
 <meta property="og:title" content="Samplics Documentation - Area Level Modeling">
-<meta property="og:description" content="">
-<meta property="og:site-name" content="Samplics Documentation">
+<meta property="og:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
+<meta property="og:site_name" content="Samplics Documentation">
 <meta name="twitter:title" content="Samplics Documentation - Area Level Modeling">
-<meta name="twitter:description" content="">
+<meta name="twitter:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
 <meta name="twitter:site" content="@MamadouSDiallo">
 <meta name="twitter:card" content="summary">
 </head>
@@ -115,9 +122,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
     </a>
@@ -132,46 +139,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../index.html" rel="" target="" aria-current="page">
- <span class="menu-text">Overview</span></a>
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Overview</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../pages/tutorial.html" rel="" target="">
- <span class="menu-text">Tutorial</span></a>
+    <a class="nav-link" href="../pages/tutorial.html"> 
+<span class="menu-text">Tutorial</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/MamadouSDiallo" rel="" target=""><i class="bi bi-twitter" role="img" aria-label="Twitter">
+    <a class="nav-link" href="https://twitter.com/MamadouSDiallo"> <i class="bi bi-twitter" role="img" aria-label="Twitter">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/samplics-org/samplics" rel="" target=""><i class="bi bi-github" role="img" aria-label="GitHub">
+    <a class="nav-link" href="https://github.com/samplics-org/samplics"> <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/sae.html">Small Area Estimation</a></li><li class="breadcrumb-item"><a href="../pages/sae_area.html">Area Level Modeling</a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/sae.html">Small Area Estimation</a></li><li class="breadcrumb-item"><a href="../pages/sae_area.html">Area Level Modeling</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -391,7 +398,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -409,7 +416,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/sae.html">Small Area Estimation</a></li><li class="breadcrumb-item"><a href="../pages/sae_area.html">Area Level Modeling</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Area Level Modeling</h1>
 </div>
@@ -424,7 +431,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <section id="empirical-best-linear-unbiased-predictor-eblup" class="level1">
 <h1>Empirical best linear unbiased predictor (EBLUP)</h1>
@@ -434,11 +443,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="milk-expenditure-data">Milk Expenditure data</h2>
 <p>To illustrate the EblupAreaModel class, we will use the Milk Expenditure dataset used in Rao and Molina (2015). As mentioned in the book, this dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006). For the R users, this dataset is also used by the R package sae (https://cran.r-project.org/web/packages/sae/index.html).</p>
 <p>The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. The datasets has the following values: major area representing (major_area), small area (small_area), sample size (samp_size), direct survey estimates of average expenditure (direct_est), standard error of the direct estimate (std_error), and coefficient of variation of the direct estimates (coef_variance).</p>
-<div class="cell" data-execution_count="1">
+<div id="c02b77e0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_expenditure_milk</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sae <span class="im">import</span> EblupAreaModel</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="2">
+<div id="23913dba" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Expenditure on Milk sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>milk_exp_dict <span class="op">=</span> load_expenditure_milk()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>milk_exp <span class="op">=</span> milk_exp_dict[<span class="st">"data"</span>]</span>
@@ -451,6 +460,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="2">
+<div>
 <div>
 
 
@@ -608,12 +618,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="eblup-predictor" class="level2">
 <h2 class="anchored" data-anchor-id="eblup-predictor">EBLUP Predictor</h2>
 <p>As shown in the milk expenditure datasets, some of the coefficients of variation are not small which indicates unstability of the direct survey estimates. Hence, we can try to reduce the variability of the estimates by smoothing them through modeling. For illustration purpose, we will model the average expenditure on milk using the major areas as auxiliary variables.</p>
 <p>First, we use the method <code>fit()</code> to estimate the model parameters. The pandas’s method <code>get_dummies()</code> create a matrix with dummy values (0 and 1) from the categorical variable <em>major_area</em>.</p>
-<div class="cell" data-execution_count="3">
+<div id="708c771f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>area <span class="op">=</span> milk_exp[<span class="st">"small_area"</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>yhat <span class="op">=</span> milk_exp[<span class="st">"direct_est"</span>]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -627,7 +638,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    yhat<span class="op">=</span>yhat, X<span class="op">=</span>X, area<span class="op">=</span>area, error_std<span class="op">=</span>sigma_e, intercept<span class="op">=</span><span class="va">True</span>, tol<span class="op">=</span><span class="fl">1e-8</span>,</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="4">
+<div id="f470d771" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The estimated fixed effects are:"</span>) </span>
@@ -637,7 +648,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="5">
+<div id="7e984b83" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The estimated standard error of the area random effects is:"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.re_std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -645,7 +656,7 @@ array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 0.13619961367679143</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="6">
+<div id="477c7a14" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The convergence statistics are:"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.convergence)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -653,7 +664,7 @@ array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 {'achieved': True, 'iterations': 9, 'precision': 1.979926027448861e-09}</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="7">
+<div id="df63cdd2" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The goodness of fit statistics are:"</span>) </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.goodness)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -663,7 +674,7 @@ array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
  'loglike': -9.403474408989062}</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="8">
+<div id="32cea651" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fh_model_reml.predict(</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    X<span class="op">=</span>X, area<span class="op">=</span>area, intercept<span class="op">=</span><span class="va">True</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -716,7 +727,7 @@ array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 </div>
 </div>
 <p>We can use the utility method <code>to_dataframe()</code> to output the estimates as a pandas dataframe. The function provides the area, the estimate and its MSE estimates. We can use <em>col_names</em> to customize the name of the columns. For example, using <code>col_names = ["small_area", "eblup_estimate", "eblup_mse"]</code>. Otherwise, if col_names is not provided, “_area”, “_estimates” and “_mse” are used as defaults.</p>
-<div class="cell" data-execution_count="9">
+<div id="b7efe83e" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>milk_est_reml <span class="op">=</span> fh_model_reml.to_dataframe(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    col_names <span class="op">=</span> [<span class="st">"parameter"</span>, <span class="st">"small_area"</span>, <span class="st">"eblup_estimate"</span>, <span class="st">"eblup_mse"</span>]</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    )</span>
@@ -771,7 +782,7 @@ array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 </div>
 </div>
 <p>We could also fit the model parameters using the maximum likelihood (ML) method which will impact the MSE estimation as well. To estimate the area means using the ML methdo, we only need to set <em>method=“ML”</em> then run the prediction as follows.</p>
-<div class="cell" data-execution_count="10">
+<div id="00a44e07" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">## ML method</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fh_model_ml <span class="op">=</span> EblupAreaModel(method<span class="op">=</span><span class="st">"ML"</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>fh_model_ml.fit(</span>
@@ -792,53 +803,53 @@ array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>The dataframe version of the ML area level estimates:
    parameter  small_area  eblup_estimate  eblup_mse
-0       mean           1        1.016173   0.013580
-1       mean           2        1.043697   0.005513
-2       mean           3        1.062817   0.005851
-3       mean           4        0.775349   0.008735
-4       mean           5        0.855490   0.009775
-5       mean           6        0.973586   0.011841
-6       mean           7        1.047478   0.015934
-7       mean           8        1.095344   0.010822
-8       mean           9        1.205409   0.014346
-9       mean          10        1.181256   0.015036
-10      mean          11        0.803370   0.007911
-11      mean          12        1.196775   0.016405
-12      mean          13        1.196159   0.012771
-13      mean          14        0.991405   0.012335
-14      mean          15        1.186883   0.012192
-15      mean          16        1.159036   0.011877
-16      mean          17        1.223237   0.011041
-17      mean          18        1.275519   0.013805
-18      mean          19        1.232285   0.011214
-19      mean          20        1.230442   0.013214
-20      mean          21        1.098577   0.010138
-21      mean          22        1.192160   0.017194
-22      mean          23        1.127992   0.011468
-23      mean          24        1.219628   0.013742
-24      mean          25        1.193626   0.008251
-25      mean          26        0.759065   0.009345
-26      mean          27        0.761123   0.009345
-27      mean          28        0.731565   0.016390
-28      mean          29        0.766273   0.007942
-29      mean          30        0.619145   0.006222
-30      mean          31        0.762939   0.015404
-31      mean          32        0.786375   0.014656
-32      mean          33        0.767978   0.009165
-33      mean          34        0.614135   0.003947
-34      mean          35        0.701311   0.007942
-35      mean          36        0.755756   0.009782
-36      mean          37        0.540665   0.006532
-37      mean          38        0.741132   0.010286
-38      mean          39        0.752451   0.007347
-39      mean          40        0.766242   0.008613
-40      mean          41        0.746536   0.005598
-41      mean          42        0.797140   0.009345
-42      mean          43        0.684098   0.010037</code></pre>
+0       mean           1        1.016228   0.013559
+1       mean           2        1.043736   0.005507
+2       mean           3        1.062868   0.005844
+3       mean           4        0.775205   0.008724
+4       mean           5        0.855398   0.009761
+5       mean           6        0.973593   0.011823
+6       mean           7        1.047581   0.015908
+7       mean           8        1.095370   0.010806
+8       mean           9        1.205566   0.014324
+9       mean          10        1.181391   0.015012
+10      mean          11        0.803191   0.007901
+11      mean          12        1.196940   0.016378
+12      mean          13        1.196292   0.012752
+13      mean          14        0.991332   0.012316
+14      mean          15        1.186879   0.012174
+15      mean          16        1.159004   0.011859
+16      mean          17        1.223267   0.011025
+17      mean          18        1.275615   0.013783
+18      mean          19        1.232324   0.011197
+19      mean          20        1.230486   0.013193
+20      mean          21        1.098496   0.010124
+21      mean          22        1.192161   0.017163
+22      mean          23        1.127931   0.011450
+23      mean          24        1.219661   0.013719
+24      mean          25        1.193628   0.008241
+25      mean          26        0.759102   0.009332
+26      mean          27        0.761161   0.009332
+27      mean          28        0.731587   0.016359
+28      mean          29        0.766310   0.007931
+29      mean          30        0.619089   0.006215
+30      mean          31        0.763002   0.015376
+31      mean          32        0.786464   0.014629
+32      mean          33        0.768021   0.009153
+33      mean          34        0.614095   0.003944
+34      mean          35        0.701300   0.007931
+35      mean          36        0.755792   0.009768
+36      mean          37        0.540557   0.006525
+37      mean          38        0.741155   0.010271
+38      mean          39        0.752476   0.007338
+39      mean          40        0.766282   0.008601
+40      mean          41        0.746552   0.005592
+41      mean          42        0.797209   0.009332
+42      mean          43        0.684069   0.010022</code></pre>
 </div>
 </div>
 <p>Similar, we can use the Fay-Herriot method as follows</p>
-<div class="cell" data-execution_count="11">
+<div id="a8bed604" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">## FH method</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fh_model_fh <span class="op">=</span> EblupAreaModel(method<span class="op">=</span><span class="st">"FH"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>fh_model_fh.fit(</span>
@@ -987,10 +998,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1000,8 +1028,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1013,7 +1050,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1057,6 +1217,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1082,6 +1243,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1143,12 +1330,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../pages/sae.html" class="pagination-link">
+      <a href="../pages/sae.html" class="pagination-link" aria-label="Overview">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../pages/sae_unit.html" class="pagination-link">
+      <a href="../pages/sae_unit.html" class="pagination-link" aria-label="Unit Level Modeling">
         <span class="nav-page-text">Unit Level Modeling</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1163,11 +1350,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </li>  
 </ul>
     </div>   
-    <div class="nav-footer-center">Samplics for Design and Analysis of Complex Survey Data</div>
+    <div class="nav-footer-center">
+<p>Samplics for Design and Analysis of Complex Survey Data</p>
+</div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
-    <a class="nav-link" href="../index.html">Back to Home</a>
+    <a class="nav-link" href="../index.html">
+<p>Back to Home</p>
+</a>
   </li>  
     <li class="nav-item compact">
     <a class="nav-link" href="https://twitter.com/MamadouSDiallo">
@@ -1185,6 +1376,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+
 
 
 
