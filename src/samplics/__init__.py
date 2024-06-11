@@ -53,6 +53,7 @@ from samplics.sampling import (
 from samplics.utils import (
     CertaintyError,
     DimensionError,
+    FitMethod,
     MethodError,
     PopParam,
     ProbError,
@@ -89,7 +90,7 @@ __all__ = [
     # "EbEst",
     # "EbFit",
     "EllUnitModel",
-    # "FitMethod",
+    "FitMethod",
     "fit_eblup",
     # "FitStats",
     "load_auto",
@@ -136,4 +137,4 @@ __all__ = [
     "Sample",
 ]
 
-__version__ = "0.4.18"
+__version__ = "0.4.19"
