@@ -56,6 +56,7 @@ from samplics.utils import (
     MethodError,
     PopParam,
     ProbError,
+    RepMethod,
     SamplicsError,
     SelectMethod,
     SinglePSUError,
@@ -118,6 +119,7 @@ __all__ = [
     "SizeMethod",
     "SurveyGLM",
     "ReplicateWeight",
+    "RepMethod",
     "ReplicateEstimator",
     "TaylorEstimator",
     "transform",
@@ -134,4 +136,4 @@ __all__ = [
     "Sample",
 ]
 
-__version__ = "0.4.17"
+__version__ = "0.4.18"
