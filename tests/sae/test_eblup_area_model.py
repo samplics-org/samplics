@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.sae.eblup_area_model import EblupAreaModel
+from samplics.utils.types import FitMethod
 
 
 # R SAE package datasets
@@ -15,20 +16,20 @@ sigma_e = milk["SD"]
 
 
 # REML method
-fh_model_reml = EblupAreaModel(method="REML")
+fh_model_reml = EblupAreaModel(method=FitMethod.reml)
 fh_model_reml.fit(
     yhat=yhat,
     X=X,
     area=area,
     intercept=False,
     error_std=sigma_e,
-    tol=1e-4,
+    tol=1e-6,
 )
 fh_model_reml.predict(X=X, area=area, intercept=False)
 
 def test_fay_herriot_REML_convergence():
     assert fh_model_reml.convergence["achieved"]
-    assert fh_model_reml.convergence["iterations"] == 5
+    assert fh_model_reml.convergence["iterations"] == 7
     assert fh_model_reml.convergence["precision"] <= 1e-4
 
 
@@ -171,13 +172,13 @@ def test_fay_herriot_REML_mse():
 # ML method
 X = pd.get_dummies(milk["MajorArea"], drop_first=False)
 X = np.delete(X.to_numpy(), 0, axis=1)
-fh_model_ml = EblupAreaModel(method="ML")
+fh_model_ml = EblupAreaModel(method=FitMethod.ml)
 fh_model_ml.fit(
     yhat=yhat,
     X=X,
     area=area,
     error_std=sigma_e,
-    tol=1e-4,
+    tol=1e-6,
 )
 fh_model_ml.predict(
     X=X,
@@ -186,14 +187,14 @@ fh_model_ml.predict(
 
 def test_fay_herriot_ML_convergence():
     assert fh_model_ml.convergence["achieved"]
-    assert fh_model_ml.convergence["iterations"] == 5
+    assert fh_model_ml.convergence["iterations"] == 2
     assert fh_model_ml.convergence["precision"] <= 1e-4
 
 
 def test_fay_herriot_ML_goodness():
-    assert np.isclose(fh_model_ml.goodness["loglike"], 1.8170878153, atol=1e-4)
-    assert np.isclose(fh_model_ml.goodness["AIC"], 8.3658243692, atol=1e-4)
-    assert np.isclose(fh_model_ml.goodness["BIC"], 18.9327703651, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["loglike"], 1.8154478022829608, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["AIC"], 8.369104395434078, atol=1e-4)
+    assert np.isclose(fh_model_ml.goodness["BIC"], 18.936305089595454, atol=1e-4)
 
 
 def test_fay_herriot_ML_fixed_effect():
@@ -329,14 +330,14 @@ def test_fay_herriot_ML_mse():
 # FH method
 X = pd.get_dummies(milk["MajorArea"], drop_first=True)
 # X = np.delete(X.to_numpy(), 0, axis=1)
-fh_model_fh = EblupAreaModel(method="FH")
+fh_model_fh = EblupAreaModel(method=FitMethod.fh)
 fh_model_fh.fit(
     yhat=yhat,
     X=X,
     area=area,
     intercept=True,
     error_std=sigma_e,
-    tol=1e-4,
+    tol=1e-6,
 )
 fh_model_fh.predict(X=X, area=area, intercept=True)
 
@@ -474,14 +475,14 @@ X = euslic_pop[["cash", "self_empl"]]
 X.insert(0, "intercept", 1)
 
 # ML method
-euslic_fh_model_ml = EblupAreaModel(method="ML")
+euslic_fh_model_ml = EblupAreaModel(method=FitMethod.ml)
 euslic_fh_model_ml.fit(
     yhat=euslic_samp["mean"],
     X=X,
     area=euslic_pop["domain"],
     intercept=False,
     error_std=pow(euslic_samp["var_mean"], 1 / 2),
-    tol=1e-4,
+    tol=1e-6,
 )
 
 euslic_fh_model_ml.predict(

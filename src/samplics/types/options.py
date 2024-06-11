@@ -1,12 +1,15 @@
 from enum import Enum, unique
 
 
-@unique
-class FitMethod(Enum):
-    fh = "FH"
-    ml = "ML"
-    reml = "REML"
 
+
+@unique
+class FitMethod:
+    ols= "OLS"
+    wls= "WLS"
+    fh = "FH"
+    ml= "ML"
+    reml= "REML"
 
 @unique
 class Mse(Enum):

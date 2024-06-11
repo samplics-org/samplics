@@ -3,7 +3,7 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from samplics.types import AuxVars, DirectEst, FitMethod
+from samplics.utils.types import AuxVars, DirectEst, FitMethod
 
 
 # FitMethod

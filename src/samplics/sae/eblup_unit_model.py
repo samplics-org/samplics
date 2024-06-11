@@ -38,7 +38,7 @@ import statsmodels.api as sm
 from samplics.sae.sae_core_functions import area_stats
 from samplics.utils.basic_functions import sumby
 from samplics.utils.formats import dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number
+from samplics.utils.types import Array, DictStrNum, Number, FitMethod
 
 
 class EblupUnitModel:
@@ -53,7 +53,7 @@ class EblupUnitModel:
     Setting attributes
         | method (str): the fitting method of the model parameters which can take the possible
         |   values restricted maximum likelihood (REML) or maximum likelihood (ML).
-        |   If not specified, "REML" is used as default.
+        |   If not specified, FitMethod.reml is used as default.
 
     Sample related attributes
         | ys (array): the output sample observations.
@@ -98,12 +98,12 @@ class EblupUnitModel:
 
     def __init__(
         self,
-        method: str = "REML",
+        method: FitMethod = FitMethod.reml,
     ):
         # Setting
-        self.method: str = method.upper()
-        if self.method not in ("REML", "ML"):
-            raise AssertionError("Value provided for method is not valid!")
+        self.method = method
+        if self.method not in (FitMethod.reml, FitMethod.ml):
+            raise AssertionError("Method must be 'REML' or 'ML'!")
 
         # Sample data
         self.scales: np.ndarray
@@ -257,7 +257,7 @@ class EblupUnitModel:
 
         self.afactors = dict(zip(self.areas_list, sumby(areas, scales)))
 
-        reml = True if self.method == "REML" else False
+        reml = True if self.method == FitMethod.reml else False
         basic_model = sm.MixedLM(ys, Xs, areas)
         fit_kwargs = {
             "tol": tol,
@@ -277,13 +277,13 @@ class EblupUnitModel:
 
         nb_obs = ys.shape[0]
         nb_variance_params = basic_fit.cov_re.shape[0] + 1
-        if self.method == "REML":  # page 111 - Rao and Molina (2015)
+        if self.method == FitMethod.reml:  # page 111 - Rao and Molina (2015)
             aic = -2 * basic_fit.llf + 2 * nb_variance_params
             bic = (
                 -2 * basic_fit.llf
                 + np.log(nb_obs - self.fixed_effects.shape[0]) * nb_variance_params
             )
-        elif self.method == "ML":
+        elif self.method == FitMethod.ml:
             aic = -2 * basic_fit.llf + 2 * (
                 self.fixed_effects.shape[0] + nb_variance_params
             )
@@ -500,7 +500,7 @@ class EblupUnitModel:
             # "pgtol": tol,
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
-        reml = True if self.method == "REML" else False
+        reml = True if self.method == FitMethod.reml else False
 
         boot_mse = np.zeros((number_reps, nb_areas))
         print(f"Running the {number_reps} bootstrap iterations")

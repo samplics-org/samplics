@@ -1,4 +1,4 @@
-from samplics.apis import Frame, Sample
+# from samplics.apis import Frame, Sample
 from samplics.categorical import CrossTabulation, Tabulation, Ttest
 from samplics.datasets.datasets import (
     load_auto,

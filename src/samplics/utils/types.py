@@ -22,6 +22,15 @@ DictStrFloat = Dict[StringNumber, float]
 DictStrBool = Dict[StringNumber, bool]
 
 
+
+@unique
+class FitMethod(Enum):
+    ols= "OLS"
+    wls= "WLS"
+    fh = "FH"
+    ml= "ML"
+    reml= "REML"
+
 # Population parameters
 @unique
 class PopParam(Enum):

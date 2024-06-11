@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.formats import dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number
+from samplics.utils.types import Array, DictStrNum, Number, FitMethod
 
 
 class EblupAreaModel:
@@ -40,7 +40,7 @@ class EblupAreaModel:
     Setting attributes
         | method (str): the fitting method of the model parameters which can take the possible
         |   values restricted maximum likelihood (REML), maximum likelihood (ML), and
-        |   Fay-Herriot (FH). If not specified, "REML" is used as default.
+        |   Fay-Herriot (FH). If not specified, FitMethod.reml is used as default.
 
     Sample related attributes
         | yhat (array): the survey output area level estimates. This is also referred to as the
@@ -74,11 +74,11 @@ class EblupAreaModel:
         |   estimates and the taylor MSE estimate.
     """
 
-    def __init__(self, method: str = "REML") -> None:
-        if method.upper() not in ("FH", "ML", "REML"):
-            raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'.")
+    def __init__(self, method: FitMethod = FitMethod.reml) -> None:
+        if method not in (FitMethod.fh, FitMethod.ml, FitMethod.reml):
+            raise AssertionError("Parameter method must be 'FH', 'ML, or 'REML'!")
         else:
-            self.method = method.upper()
+            self.method = method
 
         # Sample data
         self.yhat: np.ndarray
@@ -143,11 +143,11 @@ class EblupAreaModel:
         ll_term1 = np.log(np.linalg.det(V))
         V_inv = np.linalg.inv(V)
         resid_term = y - np.dot(X, beta)
-        if self.method in ("ML", "FH"):  # Whta is likelihood for FH
+        if self.method in (FitMethod.ml, FitMethod.fh):  # Whta is likelihood for FH
             resid_var = np.dot(np.transpose(resid_term), V_inv)
             ll_term2 = np.dot(resid_var, resid_term)
             loglike = -0.5 * (const + ll_term1 + ll_term2)
-        elif self.method == "REML":
+        elif self.method == FitMethod.reml:
             xT_vinv_x = np.dot(np.dot(np.transpose(X), V_inv), X)
             ll_term2 = np.log(np.linalg.det(xT_vinv_x))
             ll_term3 = np.dot(np.dot(y, V_inv), resid_term)
@@ -168,7 +168,7 @@ class EblupAreaModel:
     ) -> tuple[Number, Number]:
         deriv_sigma = 0.0
         info_sigma = 0.0
-        if self.method == "ML":
+        if self.method == FitMethod.ml:
             beta, beta_cov = self._fixed_coefficients(
                 area=area,
                 yhat=yhat,
@@ -189,7 +189,7 @@ class EblupAreaModel:
                 term2 = (((b_d**2) * (resid_d**2)) / (sigma2_d**2))
                 deriv_sigma += -0.5 * (term1 - term2)
                 info_sigma += 0.5 * (term1**2)
-        elif self.method == "REML":
+        elif self.method == FitMethod.reml:
             B = np.diag(b_const**2)
             v_i = sigma2_e + sigma2_v * (b_const**2)
             V = np.diag(v_i)
@@ -203,7 +203,7 @@ class EblupAreaModel:
             term2 = np.matmul(np.matmul(np.transpose(yhat), P_B_P), yhat)
             deriv_sigma = -0.5 * (term1 - term2)
             info_sigma = 0.5 * np.trace(np.matmul(P_B_P, B))
-        elif self.method == "FH":  # Fay-Herriot approximation
+        elif self.method == FitMethod.fh:  # Fay-Herriot approximation
             beta, beta_cov = self._fixed_coefficients(
                 area=area,
                 yhat=yhat,
@@ -314,12 +314,12 @@ class EblupAreaModel:
 
         sum_inv_vi2 = np.sum(1 / (v_i**2))
         b_sigma2_v = 0.0
-        if self.method == "REML":
+        if self.method == FitMethod.reml:
             g3_scale = 2.0 / sum_inv_vi2
-        elif self.method == "ML":
+        elif self.method == FitMethod.ml:
             b_sigma2_v = -(1.0 / 2.0 * sigma2_v_cov) * b_term_ml
             g3_scale = 2.0 / sum_inv_vi2
-        elif self.method == "FH":
+        elif self.method == FitMethod.fh:
             sum_vi = np.sum((1 / v_i))
             b_sigma2_v = 2.0 * (m * sum_inv_vi2 - sum_vi**2) / (sum_vi**3)
             g3_scale = 2.0 * m / sum_vi**2
@@ -346,11 +346,11 @@ class EblupAreaModel:
         mse = 0
         mse1_area_specific = 0
         mse2_area_specific = 0
-        if self.method == "REML":
+        if self.method == FitMethod.reml:
             mse = g1 + g2 + 2 * g3
             mse1_area_specific = g1 + g2 + 2 * g3_star
             mse2_area_specific = g1 + g2 + g3 + g3_star
-        elif self.method in ("ML", "FH"):
+        elif self.method in (FitMethod.ml, FitMethod.fh):
             mse = g1 - g1_partial + g2 + 2 * g3
             mse1_area_specific = g1 - g1_partial + g2 + 2 * g3_star
             mse2_area_specific = g1 - g1_partial + g2 + g3 + g3_star
