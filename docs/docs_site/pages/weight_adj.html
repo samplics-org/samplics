@@ -476,7 +476,7 @@ window.Quarto = {
 <li>learn how to use the method <em>normalize()</em> to ensure that the sample weights sum to known constants.</li>
 </ul>
 <p>To run the code in this notebook, we will use the dataset that was developed in the previous tutorial on sample selection.</p>
-<div id="4959fc17" class="cell" data-execution_count="1">
+<div id="b2a1d125" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -486,7 +486,7 @@ window.Quarto = {
 <section id="design-base-weight" class="level1">
 <h1>Design (base) weight</h1>
 <p>The design weight is the inverse of the overall probability of selection which is the product of the first and second probabilities of selection.</p>
-<div id="f21ef182" class="cell" data-execution_count="2">
+<div id="c6996601" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load PSU sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>psu_sample_dict <span class="op">=</span> load_psu_sample()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_sample_dict[<span class="st">"data"</span>]</span>
@@ -681,7 +681,7 @@ window.Quarto = {
 </div>
 </div>
 <p>For the purposes of this illustration of handling non-response, we first need to incorporate some household non-response into our example. That is, we simulate the non-response status and store it in the variable <em>response_status</em>. The variable <em>response_status</em> has four possible values: <em>ineligible</em> which indicates that the sampling unit is not eligible for the survey, <em>respondent</em> which indicates that the sampling unit responded to the survey, <em>non-respondent</em> which indicates that the sampling unit did not respond to the survey, and <em>unknown</em> means that we are not able to infer the status of the sampling unit i.e.&nbsp;we do not know whether the sampling unit is eligible or not to the survey.</p>
-<div id="effe3d0e" class="cell" data-execution_count="3">
+<div id="9cd2f6f6" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">7</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"response_status"</span>] <span class="op">=</span> np.random.choice(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"ineligible"</span>, <span class="st">"respondent"</span>, <span class="st">"non-respondent"</span>, <span class="st">"unknown"</span>], </span>
@@ -824,7 +824,7 @@ window.Quarto = {
 <p>Also, the weights of the sampling units with unknown eligibility are redistributed to the rest of the sampling units. In general, ineligible sampling units receive weights from the sampling units with unknown eligibility since eligible sampling units can be part of the unknown pool.</p>
 <p>The method <em>adjust()</em> has a boolean parameter <em>unknown_to_inelig</em> which controls how the sample weights of the unknown is redistributed. By default, <em>adjust()</em> redistribute the sample weights of the sampling units of the unknown to the ineligibles (<em>unknown_to_inelig=True</em>). If we do not wish to redistribute the sample weights of the unknowns to the ineligibles then we just set the flag to False (<em>unknown_to_inelig=Fasle</em>).</p>
 <p>In the snippet of code below, we adjust the weight within clusters that is we use clusters as our adjustment classes. Note that we run the nonresponse adjustment twice, the first time with <em>unknown_to_inelig=True</em> (<em>nr_weight</em>) and the second time with the flag equal to False (<em>nr_weight2</em>). With <em>unknown_to_inelig=True</em>, the ineligible received part of the sample weights from the unknowns. Hence, the sample weights for the respondent is less than when the flag is False. With <em>unknown_to_inelig=Fasle</em>, the ineligible did Not receive any weights from the unknowns. Hence, the sample weights for the ineligible units remain the same before and after adjustment. In a real survey, the statistician may decide on the best non-response strategy based on the available information.</p>
-<div id="6707d7fd" class="cell" data-execution_count="4">
+<div id="4eaa763d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>status_mapping <span class="op">=</span> {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"in"</span>: <span class="st">"ineligible"</span>, </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rr"</span>: <span class="st">"respondent"</span>, </span>
@@ -1028,7 +1028,7 @@ Important
 </div>
 <p>In the call above, if we omit the parameter <em>response_dict</em>, then the run would fail with an assertion error message. The current error message is the following: <strong>The response status must only contains values in (‘in’, ‘rr’, ‘nr’, ‘uk’) or the mapping should be provided using response_dict parameter</strong>. For the call to run without using <em>response_dict</em>, it is necessary that the response status takes only values in the standard codes i.e.&nbsp;(“in”, “rr”, “nr”, “uk”). The variable associated with <em>response_status</em> can contain any code but a mapping is necessary when the response variable is not constructed using the standard codes.</p>
 <p>To further illustrate the mapping of response status, let’s assume that we have response_status2 which has the values 100 for ineligible, 200 for non-respondent, 300 for respondent, and 999 for unknown.</p>
-<div id="ecaca245" class="cell" data-execution_count="5">
+<div id="49cd760d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>response_status2 <span class="op">=</span> np.repeat(<span class="dv">100</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>response_status2[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"non-respondent"</span>] <span class="op">=</span> <span class="dv">200</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>response_status2[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"respondent"</span>] <span class="op">=</span> <span class="dv">300</span></span>
@@ -1092,7 +1092,7 @@ Important
 </div>
 </div>
 <p>To use <em>response_status2</em>, we need to map the values 100, 200, 300 and 999 to “in”, “rr”, “nr”, and “uk”. This mapping is done below using the Python dictionary <em>status_mapping2</em>. Using <em>status_mapping2</em> in the function call <em>adjust()</em> will lead to the same adjustment as in the previous run i.e.&nbsp;<em>nr_weight</em> and <em>nr_weight3</em> contain the same adjusted weights.</p>
-<div id="5005ff4f" class="cell" data-execution_count="6">
+<div id="b1b4be22" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>status_mapping2 <span class="op">=</span> {<span class="st">"in"</span>: <span class="dv">100</span>, <span class="st">"nr"</span>: <span class="dv">200</span>, <span class="st">"rr"</span>: <span class="dv">300</span>, <span class="st">"uk"</span>: <span class="dv">999</span>}</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"nr_weight3"</span>] <span class="op">=</span> SampleWeight().adjust(</span>
@@ -1168,7 +1168,7 @@ Important
 </div>
 </div>
 <p>If the response status variable only takes values “in”, “nr”, “rr” and “uk”, then it is not necessary to provide the mapping dictionary to the function i.e.&nbsp;<em>resp_dict</em> can be omitted from the function call <em>adjust()</em>.</p>
-<div id="2e7d66ad" class="cell" data-execution_count="7">
+<div id="83562394" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>response_status3 <span class="op">=</span> np.repeat(<span class="st">"in"</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>response_status3[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"non-respondent"</span>] <span class="op">=</span> <span class="st">"nr"</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>response_status3[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"respondent"</span>] <span class="op">=</span> <span class="st">"rr"</span></span>
@@ -1245,7 +1245,7 @@ Important
 </div>
 </div>
 </div>
-<div id="f1510bb5" class="cell" data-execution_count="8">
+<div id="4bd40914" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Just dropping a couple of variables </span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># not needed for the rest of the tutorial</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>full_sample.drop(</span>
@@ -1279,7 +1279,7 @@ Warning
 </div>
 <p>Let’s assume that we have a reliable external source e.g.&nbsp;a recent census that provides the number of households by region. The external source has the following control data: 3700 households for East, 1500 for North, 2800 for South and 6500 for West.</p>
 <p>We use the method <em>poststratify()</em> to ensure that the poststratified sample weights (<em>ps_weight</em>) sum to the know control totals by region. Note that the control totals are provided using the Python dictionary <em>census_households</em>.</p>
-<div id="aba37c1a" class="cell" data-execution_count="9">
+<div id="bbdf2375" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>census_households <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">3700</span>, <span class="st">"North"</span>: <span class="dv">1500</span>, <span class="st">"South"</span>: <span class="dv">2800</span>, <span class="st">"West"</span>: <span class="dv">6500</span>}</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_weight"</span>] <span class="op">=</span> SampleWeight().poststratify(</span>
@@ -1464,7 +1464,7 @@ Warning
 </div>
 </div>
 <p>The snippet of code below shows that the poststratified sample weights sum to the expected control totals that is 3700 households for East, 1500 for North, 2800 for South and 6500 for West.</p>
-<div id="411c845a" class="cell" data-execution_count="10">
+<div id="1ad5026b" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights <span class="op">=</span> full_sample[</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"ps_weight"</span>]</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    ].groupby(<span class="st">"region"</span>).<span class="bu">sum</span>()</span>
@@ -1515,7 +1515,7 @@ Warning
 </div>
 </div>
 <p>The crosstable below shows that only one adjustment factor was calculated and applied per adjustment class or region.</p>
-<div id="a5186677" class="cell" data-execution_count="11">
+<div id="676fd4e8" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_adj_fct"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(full_sample[<span class="st">"ps_weight"</span>] <span class="op">/</span> full_sample[<span class="st">"nr_weight"</span>], <span class="dv">12</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1578,7 +1578,7 @@ Warning
 </div>
 <p>In some surveys, there is interest in keeping relative distribution of strata to some known distribution. For example, WHO EPI vaccination surveys often postratify sample weights to ensure that relative sizes of strata reflect offcial statistics e.g.&nbsp;census data. In most cases, the strata are based on some administrative divisions.</p>
 <p>For example, assume that according to census data that East contains 25% of the households, North contains 10%, South contains 20% and West contains 45%. We can poststratify using the snippet of code below.</p>
-<div id="5db5dd00" class="cell" data-execution_count="12">
+<div id="5e7d5ac1" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>known_ratios <span class="op">=</span> {<span class="st">"East"</span>: <span class="fl">0.25</span>, <span class="st">"North"</span>: <span class="fl">0.10</span>, <span class="st">"South"</span>: <span class="fl">0.20</span>, <span class="st">"West"</span>: <span class="fl">0.45</span>}</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_weight2"</span>] <span class="op">=</span> SampleWeight().poststratify(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
@@ -1673,7 +1673,7 @@ Warning
 </div>
 </div>
 </div>
-<div id="281dacc7" class="cell" data-execution_count="13">
+<div id="1bc57a21" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights2 <span class="op">=</span> full_sample[</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"ps_weight2"</span>]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    ].groupby(<span class="st">"region"</span>).<span class="bu">sum</span>()</span>
@@ -1863,7 +1863,7 @@ Warning
 </tbody>
 </table></li>
 </ul>
-<div id="52e76960" class="cell" data-execution_count="14">
+<div id="ccefdc69" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">150</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"education"</span>] <span class="op">=</span> np.random.choice(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"Low"</span>, <span class="st">"Medium"</span>, <span class="st">"High"</span>), </span>
@@ -1962,7 +1962,7 @@ Warning
 </div>
 <p>We now will calibrate the nonreponse weight (<em>nr_weight</em>) to ensure that the estimated number of households in poverty is equal to 4,700 and the estimated total number of children under five is 30,8500. The control numbers 4,700 and 30,800 are obtained from the table above.</p>
 <p>The class <em>SampleWeight()</em> uses the method <em>calibrate(samp_weight, aux_vars, control, domain, scale, bounded, modified)</em> to adjust the weight using the GREG approach. * The contol values must be stored in a python dictionnary i.e.&nbsp;totals = {“poverty”: 4700, “under_five”: 30800}. In this case, we have two numerical variables poverty with values in {0, 1} and under_five with values in {0, 1, 2, 3, 4, 5}. * <em>aux_vars</em> is the matrix of covariates.</p>
-<div id="d8c1ad4e" class="cell" data-execution_count="15">
+<div id="ddda9c38" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>totals <span class="op">=</span> {<span class="st">"poverty"</span>: <span class="dv">4700</span>, <span class="st">"under_five"</span>: <span class="dv">30800</span>}</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"calib_weight"</span>] <span class="op">=</span> SampleWeight().calibrate(</span>
@@ -2113,7 +2113,7 @@ Warning
 </div>
 </div>
 <p>We can confirm that the estimated totals for the auxiliary variables are equal to their control values.</p>
-<div id="f945ac3f" class="cell" data-execution_count="16">
+<div id="14483ad9" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>poverty <span class="op">=</span> full_sample[<span class="st">"poverty"</span>]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>under_5 <span class="op">=</span> full_sample[<span class="st">"under_five"</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>nr_weight <span class="op">=</span> full_sample[<span class="st">"nr_weight"</span>]</span>
@@ -2142,7 +2142,7 @@ Total estimated number of children under 5 was
 </div>
 </div>
 <p>If we want to control by domain then we can do so using the parameter <em>domain</em> of <em>calibrate()</em>. First we need to update the python dictionary holding the control values. Now, those values have to be provided for each domain. Note that the dictionary is now a nested dictionary where the higher level keys hold the domain values i.e.&nbsp;East, North, South and West. Then the higher level values of the dictionary are the dictionaries providing mapping for the auxiliary variables and the corresponding control values.</p>
-<div id="433045b6" class="cell" data-execution_count="17">
+<div id="09aba9d1" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"East"</span>: {<span class="st">"poverty"</span>: <span class="dv">1200</span>, <span class="st">"under_five"</span>: <span class="dv">6300</span>},</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"North"</span>: {<span class="st">"poverty"</span>: <span class="dv">200</span>, <span class="st">"under_five"</span>: <span class="dv">4000</span>},</span>
@@ -2323,7 +2323,7 @@ Total estimated number of children under 5 was
 </div>
 </div>
 <p>Note that the GREG domain estimates above do not have the additive property. That is the GREG domain estimates do not sum to the overal GREG estimate. To illustrate this, let’s assume that we want to estimate the number of households.</p>
-<div id="7c8d6add" class="cell" data-execution_count="18">
+<div id="c256ddfb" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The number of households using the overall GREG is: </span><span class="ch">\</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="ch">\</span></span>
@@ -2349,7 +2349,7 @@ Note
 <p>If the additive flag is set to <code>True</code>, the sum of the domain estimates will be equal to the GREG overal estimate.</p>
 </div>
 </div>
-<div id="e807c0b6" class="cell" data-execution_count="19">
+<div id="c62e3aef" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"East"</span>: {<span class="st">"poverty"</span>: <span class="dv">1200</span>, <span class="st">"under_five"</span>: <span class="dv">6300</span>},</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"North"</span>: {<span class="st">"poverty"</span>: <span class="dv">200</span>, <span class="st">"under_five"</span>: <span class="dv">4000</span>},</span>
@@ -2365,7 +2365,7 @@ Note
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    additive<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="d6e5fe85" class="cell" data-execution_count="20">
+<div id="0c0ffdb7" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>under_5 <span class="op">=</span> np.array(full_sample[<span class="st">"under_five"</span>])</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Each column can be used to estimate a domain: </span><span class="ch">\</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3) <span class="op">*</span> under_5, axis<span class="op">=</span><span class="dv">1</span>)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2375,7 +2375,7 @@ Each column can be used to estimate a domain: [ 6300.  4000.  6500. 14000.]
 </code></pre>
 </div>
 </div>
-<div id="330bf1bf" class="cell" data-execution_count="21">
+<div id="0996b61a" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the overall GREG is: </span><span class="ch">\</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -2383,7 +2383,7 @@ Each column can be used to estimate a domain: [ 6300.  4000.  6500. 14000.]
 </code></pre>
 </div>
 </div>
-<div id="b4182ded" class="cell" data-execution_count="22">
+<div id="63b9d996" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="ch">\</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight_d'</span>])<span class="sc">:.2f}</span><span class="ss"> (additive=False)</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -2391,7 +2391,7 @@ Each column can be used to estimate a domain: [ 6300.  4000.  6500. 14000.]
 </code></pre>
 </div>
 </div>
-<div id="9bd06c86" class="cell" data-execution_count="23">
+<div id="bed97c38" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="ch">\</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3))<span class="sc">:.2f}</span><span class="ss"> (additive=True) </span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -2417,7 +2417,7 @@ Note
 <p><em>normalization</em> is mostly added here for completeness but it is sheldom to see sample weight normalize in large scale household surveys. One major downside of normalized weights is the Note that estimation of totals does not make sense with normalized weights.</p>
 </div>
 </div>
-<div id="ba6c2ad9" class="cell" data-execution_count="24">
+<div id="e1966479" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    SampleWeight().normalize(samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>])</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>full_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>]].head(<span class="dv">25</span>)</span>
@@ -2428,7 +2428,7 @@ Note
 </div>
 </div>
 <p>When <em>normalize()</em> is called with only the parameter <em>sample_weight</em> then the sample weights are normalize to sum to the length of the sample weight vector.</p>
-<div id="9f928d36" class="cell" data-execution_count="25">
+<div id="c309f66a" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight2"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    SampleWeight().normalize(</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
@@ -2440,7 +2440,7 @@ Note
 <pre><code>300.0</code></pre>
 </div>
 </div>
-<div id="1eb8c4a0" class="cell" data-execution_count="26">
+<div id="d05b5746" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight3"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
@@ -2498,7 +2498,7 @@ Note
 </div>
 </div>
 </div>
-<div id="d5ff9a9e" class="cell" data-execution_count="27">
+<div id="060d7c77" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>norm_level <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">10</span>, <span class="st">"North"</span>: <span class="dv">20</span>, <span class="st">"South"</span>: <span class="dv">30</span>, <span class="st">"West"</span>: <span class="dv">50</span>}</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight4"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
