@@ -433,16 +433,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>In this tutorial, we will explore samplics’ APIs for creating design-based tabulations. There are two main python classes for tabulation i.e.&nbsp;<code>Tabulation()</code> for one-way tables and <code>CrossTabulation()</code> for two-way tables.</p>
-<div id="568d710e" class="cell" data-execution_count="1">
+<div id="8c8af296" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_birth, load_nhanes2</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.categorical <span class="im">import</span> Tabulation, CrossTabulation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.categorical <span class="im">import</span> Tabulation, CrossTabulation</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.utils.types <span class="im">import</span> PopParam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="one-way-tabulation" class="level1">
 <h1>One-way tabulation</h1>
 <p>The birth dataset has four variables: region, agecat, birthcat, and pop. The variables agecat and birthcat are categirical. By default, pandas read them as numerical, because they are coded with numerical values. We use <code>dtype="string"</code> or <code>dtype="category"</code> to ensure that pandas codes the variables as categorical responses.</p>
-<div id="5fdef636" class="cell" data-execution_count="2">
+<div id="2435becf" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Birth sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>birth_dict <span class="op">=</span> load_birth()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>birth <span class="op">=</span> birth_dict[<span class="st">"data"</span>].astype(</span>
@@ -581,8 +583,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>When requesting a table, the user can set <code>param="count"</code> which results in a tabulation with counts in the cells while <code>param="proportion</code> leads to cells with proportions. The expression <code>Tabulation("count")</code> instantiates the class <code>Tabulation()</code> which has a method <code>tabulate()</code> to produce the table.</p>
-<div id="419cc089" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span><span class="st">"count"</span>)</span>
+<div id="031f92a8" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(birth_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -594,16 +596,16 @@ Tabulation of birthcat
  Number of observations: 923
  Degrees of freedom: 922.00
 
- variable category  count  stderror   lower_ci   upper_ci
-birthcat      1.0  240.0 13.333695 213.832087 266.167913
-birthcat      2.0  450.0 15.193974 420.181215 479.818785
-birthcat      3.0  233.0 13.204959 207.084737 258.915263
+ variable category  PopParam.count  stderror   lower_ci   upper_ci
+birthcat      1.0           240.0 13.333695 213.832087 266.167913
+birthcat      2.0           450.0 15.193974 420.181215 479.818785
+birthcat      3.0           233.0 13.204959 207.084737 258.915263
 </code></pre>
 </div>
 </div>
 <p>When <code>remove_nan=False</code>, the numpy and pandas special values NaNs, respectively np.nan and NaN, are treated as valid categories and added to the tables as shown below</p>
-<div id="6e8bc39a" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span><span class="st">"count"</span>)</span>
+<div id="6bf59116" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(birth_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -615,16 +617,16 @@ Tabulation of birthcat
  Number of observations: 956
  Degrees of freedom: 955.00
 
- variable category  count  stderror   lower_ci   upper_ci
-birthcat      1.0  240.0 13.414066 213.675550 266.324450
-birthcat      2.0  450.0 15.441157 419.697485 480.302515
-birthcat      3.0  233.0 13.281448 206.935807 259.064193
-birthcat      nan   33.0  5.647499  21.917060  44.082940
+ variable category  PopParam.count  stderror   lower_ci   upper_ci
+birthcat      1.0           240.0 13.414066 213.675550 266.324450
+birthcat      2.0           450.0 15.441157 419.697485 480.302515
+birthcat      3.0           233.0 13.281448 206.935807 259.064193
+birthcat      nan            33.0  5.647499  21.917060  44.082940
 </code></pre>
 </div>
 </div>
 <p>The data associated with the tabulation are stored in nested python dictionaries. The higher level key is the variable name and the inner keys are the response categories. Each of the last four columns shown above are stored in separated dictionaries. Two of those dictionaries for the counts and standard errors shown below.</p>
-<div id="2fc4da5f" class="cell" data-execution_count="5">
+<div id="be33e51d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count.point_est)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -643,8 +645,8 @@ The designed-based standard errors are:
 </div>
 </div>
 <p>Sometimes, the user may want to run multiple one-way tables of several variables. In this case, the user can provide the data as a two-dimensional dataframe where each column represents one categorical variable. In this situation, each categorical variable is tabulated individually then combined into Python dictionaries.</p>
-<div id="c31026e9" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>birth_count2 <span class="op">=</span> Tabulation(param<span class="op">=</span><span class="st">"count"</span>)</span>
+<div id="508c4258" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>birth_count2 <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>birth_count2.tabulate(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    birth[[<span class="st">"region"</span>, <span class="st">"agecat"</span>, <span class="st">"birthcat"</span>]], </span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span></span>
@@ -659,22 +661,22 @@ Tabulation of region
  Number of observations: 923
  Degrees of freedom: 922.00
 
- variable category  count  stderror   lower_ci   upper_ci
-  region        1  166.0 11.718335 143.003340 188.996660
-  region        2  284.0 14.136507 256.257795 311.742205
-  region        3  250.0 13.594733 223.321002 276.678998
-  region        4  256.0 13.698320 229.117716 282.882284
-  agecat        1  507.0 15.439224 476.701278 537.298722
-  agecat        2  316.0 14.552307 287.441809 344.558191
-  agecat        3  133.0 10.705921 111.990152 154.009848
-birthcat      1.0  240.0 13.333695 213.832087 266.167913
-birthcat      2.0  450.0 15.193974 420.181215 479.818785
-birthcat      3.0  233.0 13.204959 207.084737 258.915263
+ variable category  PopParam.count  stderror   lower_ci   upper_ci
+  region        1           166.0 11.718335 143.003340 188.996660
+  region        2           284.0 14.136507 256.257795 311.742205
+  region        3           250.0 13.594733 223.321002 276.678998
+  region        4           256.0 13.698320 229.117716 282.882284
+  agecat        1           507.0 15.439224 476.701278 537.298722
+  agecat        2           316.0 14.552307 287.441809 344.558191
+  agecat        3           133.0 10.705921 111.990152 154.009848
+birthcat      1.0           240.0 13.333695 213.832087 266.167913
+birthcat      2.0           450.0 15.193974 420.181215 479.818785
+birthcat      3.0           233.0 13.204959 207.084737 258.915263
 </code></pre>
 </div>
 </div>
 <p>Two of the associated Python dictionaries are shown below. The structure of the inner dictionaries remain the same but additional key-value pairs are added to represent the several categorical variables.</p>
-<div id="ee5847aa" class="cell" data-execution_count="7">
+<div id="d406dc6e" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count2.point_est)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -701,12 +703,12 @@ The designed-based standard errors are:
 </div>
 </div>
 <p>In the example above, we used pandas series and dataframes with labelled variables. In some situations, the user may want to tabulate numpy arrays, lists or tuples without variable names atrribute from the data. For these situations, the <code>varnames</code> parameter provides a way to assign names for the categorical variables. Even when the variables have labels, users can leverage <code>varnames</code> to rename the categorical variables.</p>
-<div id="a97efdf7" class="cell" data-execution_count="8">
+<div id="1e228a87" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>region_no_name <span class="op">=</span> birth[<span class="st">"region"</span>].to_numpy()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>agecat_no_name <span class="op">=</span> birth[<span class="st">"agecat"</span>].to_numpy()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>birthcat_no_name <span class="op">=</span> birth[<span class="st">"birthcat"</span>].to_numpy()</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name <span class="op">=</span> Tabulation(param<span class="op">=</span><span class="st">"proportion"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name.tabulate(</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>[region_no_name, agecat_no_name, birthcat_no_name],</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    varnames<span class="op">=</span>[<span class="st">"Region"</span>, <span class="st">"AgeGroup"</span>, <span class="st">"BirthType"</span>],</span>
@@ -722,23 +724,23 @@ Tabulation of Region
  Number of observations: 923
  Degrees of freedom: 922.00
 
-  variable category  proportion  stderror  lower_ci  upper_ci
-   Region        1    0.173640  0.012258  0.150883  0.199025
-   Region        2    0.297071  0.014787  0.268892  0.326883
-   Region        3    0.261506  0.014220  0.234574  0.290357
-   Region        4    0.267782  0.014329  0.240614  0.296819
- AgeGroup        1    0.530335  0.016150  0.498562  0.561864
- AgeGroup        2    0.330544  0.015222  0.301383  0.361068
- AgeGroup        3    0.139121  0.011199  0.118564  0.162586
-BirthType      1.0    0.260022  0.014446  0.232687  0.289357
-BirthType      2.0    0.487541  0.016462  0.455331  0.519854
-BirthType      3.0    0.252438  0.014307  0.225406  0.281533
+  variable category  PopParam.prop  stderror  lower_ci  upper_ci
+   Region        1       0.173640  0.012258  0.150883  0.199025
+   Region        2       0.297071  0.014787  0.268892  0.326883
+   Region        3       0.261506  0.014220  0.234574  0.290357
+   Region        4       0.267782  0.014329  0.240614  0.296819
+ AgeGroup        1       0.530335  0.016150  0.498562  0.561864
+ AgeGroup        2       0.330544  0.015222  0.301383  0.361068
+ AgeGroup        3       0.139121  0.011199  0.118564  0.162586
+BirthType      1.0       0.260022  0.014446  0.232687  0.289357
+BirthType      2.0       0.487541  0.016462  0.455331  0.519854
+BirthType      3.0       0.252438  0.014307  0.225406  0.281533
 </code></pre>
 </div>
 </div>
 <p>If the user does not specify <code>varnames</code>, the <code>tabulate()</code> creates generic variables names <code>var_1</code>, <code>var_2</code>, etc.</p>
-<div id="12e51f1a" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2 <span class="op">=</span> Tabulation(param<span class="op">=</span><span class="st">"proportion"</span>)</span>
+<div id="843452b2" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2 <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2.tabulate(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>[region_no_name, agecat_no_name, birthcat_no_name], </span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    remove_nan<span class="op">=</span><span class="va">True</span></span>
@@ -753,22 +755,22 @@ Tabulation of var_1
  Number of observations: 923
  Degrees of freedom: 922.00
 
- variable category  proportion  stderror  lower_ci  upper_ci
-   var_1        1    0.173640  0.012258  0.150883  0.199025
-   var_1        2    0.297071  0.014787  0.268892  0.326883
-   var_1        3    0.261506  0.014220  0.234574  0.290357
-   var_1        4    0.267782  0.014329  0.240614  0.296819
-   var_2        1    0.530335  0.016150  0.498562  0.561864
-   var_2        2    0.330544  0.015222  0.301383  0.361068
-   var_2        3    0.139121  0.011199  0.118564  0.162586
-   var_3      1.0    0.260022  0.014446  0.232687  0.289357
-   var_3      2.0    0.487541  0.016462  0.455331  0.519854
-   var_3      3.0    0.252438  0.014307  0.225406  0.281533
+ variable category  PopParam.prop  stderror  lower_ci  upper_ci
+   var_1        1       0.173640  0.012258  0.150883  0.199025
+   var_1        2       0.297071  0.014787  0.268892  0.326883
+   var_1        3       0.261506  0.014220  0.234574  0.290357
+   var_1        4       0.267782  0.014329  0.240614  0.296819
+   var_2        1       0.530335  0.016150  0.498562  0.561864
+   var_2        2       0.330544  0.015222  0.301383  0.361068
+   var_2        3       0.139121  0.011199  0.118564  0.162586
+   var_3      1.0       0.260022  0.014446  0.232687  0.289357
+   var_3      2.0       0.487541  0.016462  0.455331  0.519854
+   var_3      3.0       0.252438  0.014307  0.225406  0.281533
 </code></pre>
 </div>
 </div>
 <p>If the data was collected from a complex survey sample, the user may provide the sample design information to derive design-based statistics for the tabulation.</p>
-<div id="57881b47" class="cell" data-execution_count="10">
+<div id="b74a9e5f" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Nhanes sample data</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>nhanes2_dict <span class="op">=</span> load_nhanes2()</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>nhanes2 <span class="op">=</span> nhanes2_dict[<span class="st">"data"</span>]</span>
@@ -777,7 +779,7 @@ Tabulation of var_1
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>psu <span class="op">=</span> nhanes2[<span class="st">"psuid"</span>]</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>weight <span class="op">=</span> nhanes2[<span class="st">"finalwgt"</span>]</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>diabetes_nhanes <span class="op">=</span> Tabulation(<span class="st">"proportion"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>diabetes_nhanes <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>diabetes_nhanes.tabulate(</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>nhanes2[[<span class="st">"race"</span>, <span class="st">"diabetes"</span>]],</span>
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>weight,</span>
@@ -795,12 +797,12 @@ Tabulation of race
  Number of observations: 10335
  Degrees of freedom: 31.00
 
- variable  category  proportion  stderror  lower_ci  upper_ci
-    race       1.0    0.879016  0.016722  0.840568  0.909194
-    race       2.0    0.095615  0.012778  0.072541  0.125039
-    race       3.0    0.025369  0.010554  0.010781  0.058528
-diabetes       0.0    0.965715  0.001820  0.961803  0.969238
-diabetes       1.0    0.034285  0.001820  0.030762  0.038197
+ variable  category  PopParam.prop  stderror  lower_ci  upper_ci
+    race       1.0       0.879016  0.016722  0.840568  0.909194
+    race       2.0       0.095615  0.012778  0.072541  0.125039
+    race       3.0       0.025369  0.010554  0.010781  0.058528
+diabetes       0.0       0.965715  0.001820  0.961803  0.969238
+diabetes       1.0       0.034285  0.001820  0.030762  0.038197
 </code></pre>
 </div>
 </div>
@@ -808,8 +810,8 @@ diabetes       1.0    0.034285  0.001820  0.030762  0.038197
 <section id="two-way-tabulation-cross-tabulation" class="level1">
 <h1>Two-way tabulation (cross-tabulation)</h1>
 <p>Cross-tabulation of two categorical variables is achieved by using the class <code>CrossTabulation()</code>. As above, cross-tabulation is possible for counts and proportions using <code>CrossTabulation(param="count")</code> and <code>CrossTabulation(param="proportion")</code>, respectively. The Python script below creates a design-based cross-tabulation of race by diabetes status. The sample design information is optional; when not provided, a simple random sample (srs) is assumed.</p>
-<div id="713f32d1" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(<span class="st">"proportion"</span>)</span>
+<div id="b211db0a" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>nhanes2[[<span class="st">"race"</span>, <span class="st">"diabetes"</span>]],</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>weight,</span>
@@ -827,13 +829,13 @@ Cross-tabulation of race and diabetes
  Number of observations: 10335
  Degrees of freedom: 31.00
 
- race diabetes  proportion  stderror  lower_ci  upper_ci
-   1      0.0    0.850866  0.015850  0.815577  0.880392
-   1      1.0    0.028123  0.001938  0.024430  0.032357
-   2      0.0    0.089991  0.012171  0.068062  0.118090
-   2      1.0    0.005646  0.000847  0.004157  0.007663
-   3      0.0    0.024858  0.010188  0.010702  0.056669
-   3      1.0    0.000516  0.000387  0.000112  0.002383
+ race diabetes  PopParam.prop  stderror  lower_ci  upper_ci
+   1      0.0       0.850866  0.015850  0.815577  0.880392
+   1      1.0       0.028123  0.001938  0.024430  0.032357
+   2      0.0       0.089991  0.012171  0.068062  0.118090
+   2      1.0       0.005646  0.000847  0.004157  0.007663
+   3      0.0       0.024858  0.010188  0.010702  0.056669
+   3      1.0       0.000516  0.000387  0.000112  0.002383
 
 Pearson (with Rao-Scott adjustment):
     Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
@@ -846,11 +848,11 @@ Pearson (with Rao-Scott adjustment):
 </div>
 </div>
 <p>In addition to pandas dataframe, the categorical variables may be provided as an numpy array, list or tuple. In the examples below, the categorical variables are provided as a tuple <code>vars=(rage, diabetes)</code>. In this case, <code>race</code> and <code>diabetes</code> are numpy arrays and do not have a name attribute. The parameter <code>varnames</code> allows the user to name the categorical variables. If varnames is not specified then `<code>var_1</code> and <code>var_2</code> are used as variables names.</p>
-<div id="8e5fe0c3" class="cell" data-execution_count="12">
+<div id="ab3367e3" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>race <span class="op">=</span> nhanes2[<span class="st">"race"</span>].to_numpy()</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>diabetes <span class="op">=</span> nhanes2[<span class="st">"diabetes"</span>].to_numpy()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(<span class="st">"proportion"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>(race, diabetes),</span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>weight,</span>
@@ -868,13 +870,13 @@ Cross-tabulation of var_1 and var_2
  Number of observations: 10335
  Degrees of freedom: 31.00
 
- var_1 var_2  proportion  stderror  lower_ci  upper_ci
-  1.0   0.0    0.850866  0.015850  0.815577  0.880392
-  1.0   1.0    0.028123  0.001938  0.024430  0.032357
-  2.0   0.0    0.089991  0.012171  0.068062  0.118090
-  2.0   1.0    0.005646  0.000847  0.004157  0.007663
-  3.0   0.0    0.024858  0.010188  0.010702  0.056669
-  3.0   1.0    0.000516  0.000387  0.000112  0.002383
+ var_1 var_2  PopParam.prop  stderror  lower_ci  upper_ci
+  1.0   0.0       0.850866  0.015850  0.815577  0.880392
+  1.0   1.0       0.028123  0.001938  0.024430  0.032357
+  2.0   0.0       0.089991  0.012171  0.068062  0.118090
+  2.0   1.0       0.005646  0.000847  0.004157  0.007663
+  3.0   0.0       0.024858  0.010188  0.010702  0.056669
+  3.0   1.0       0.000516  0.000387  0.000112  0.002383
 
 Pearson (with Rao-Scott adjustment):
     Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
@@ -887,8 +889,8 @@ Pearson (with Rao-Scott adjustment):
 </div>
 </div>
 <p>Same as the above example with variables names specified by <code>varnames=["Race", DiabetesStatus"]</code></p>
-<div id="c325c582" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(<span class="st">"proportion"</span>)</span>
+<div id="fee50450" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>(race, diabetes),</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    varnames<span class="op">=</span>[<span class="st">"Race"</span>, <span class="st">"DiabetesStatus"</span>],</span>
@@ -907,13 +909,13 @@ Cross-tabulation of Race and DiabetesStatus
  Number of observations: 10335
  Degrees of freedom: 31.00
 
- Race DiabetesStatus  proportion  stderror  lower_ci  upper_ci
- 1.0            0.0    0.850866  0.015850  0.815577  0.880392
- 1.0            1.0    0.028123  0.001938  0.024430  0.032357
- 2.0            0.0    0.089991  0.012171  0.068062  0.118090
- 2.0            1.0    0.005646  0.000847  0.004157  0.007663
- 3.0            0.0    0.024858  0.010188  0.010702  0.056669
- 3.0            1.0    0.000516  0.000387  0.000112  0.002383
+ Race DiabetesStatus  PopParam.prop  stderror  lower_ci  upper_ci
+ 1.0            0.0       0.850866  0.015850  0.815577  0.880392
+ 1.0            1.0       0.028123  0.001938  0.024430  0.032357
+ 2.0            0.0       0.089991  0.012171  0.068062  0.118090
+ 2.0            1.0       0.005646  0.000847  0.004157  0.007663
+ 3.0            0.0       0.024858  0.010188  0.010702  0.056669
+ 3.0            1.0       0.000516  0.000387  0.000112  0.002383
 
 Pearson (with Rao-Scott adjustment):
     Unadjusted - chi2(2): 21.2661 with p-value of 0.0000

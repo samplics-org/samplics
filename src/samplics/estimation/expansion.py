@@ -73,7 +73,7 @@ class _SurveyEstimator:
         self.as_factor: bool = False  # whether to treat outcome as factor.
 
     def __str__(self) -> Any:
-        print(f"SAMPLICS - Estimation of {self.param.title()}\n")
+        print(f"SAMPLICS - Estimation of {self.param.value}\n")
         print(f"Number of strata: {self.nb_strata}")
         print(f"Number of psus: {self.nb_psus}")
         print(f"Degree of freedom: {self.degree_of_freedom}\n")

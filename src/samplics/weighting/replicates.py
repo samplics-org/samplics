@@ -22,7 +22,7 @@ import pandas as pd
 
 from samplics.utils import checks, formats
 from samplics.utils import hadamard as hdd
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, Number, RepMethod
 
 
 class ReplicateWeight:
@@ -48,19 +48,19 @@ class ReplicateWeight:
 
     def __init__(
         self,
-        method: str,
+        method: RepMethod,
         strat: bool = True,
         nb_reps: int = 500,
         fay_coef: float = 0.0,
         rand_seed: Optional[int] = None,
     ):
 
-        self.method = method.lower()
+        self.method = method
         self.strat = strat
-        if self.method == "bootstrap":
+        if self.method == RepMethod.bootstrap:
             self.nb_reps = nb_reps
             self.rep_coefs = list((1 / nb_reps) * np.ones(nb_reps))
-        elif self.method == "brr":
+        elif self.method == RepMethod.brr:
             self.nb_reps = 0
             self.fay_coef = fay_coef
 
@@ -86,13 +86,13 @@ class ReplicateWeight:
 
     def _rep_prefix(self, prefix: Optional[str]) -> str:
 
-        if self.method == "jackknife" and prefix is None:
+        if self.method == RepMethod.jackknife and prefix is None:
             rep_prefix = "_jk_wgt_"
-        elif self.method == "bootstrap" and prefix is None:
+        elif self.method == RepMethod.bootstrap and prefix is None:
             rep_prefix = "_boot_wgt_"
-        elif self.method == "brr" and prefix is None:
+        elif self.method == RepMethod.brr and prefix is None:
             rep_prefix = "_brr_wgt_"
-        elif self.method == "brr" and self.fay_coef > 0 and prefix is None:
+        elif self.method == RepMethod.brr and self.fay_coef > 0 and prefix is None:
             rep_prefix = "_fay_wgt_"
         elif prefix is None:
             rep_prefix = "_rep_wgt_"
@@ -322,7 +322,7 @@ class ReplicateWeight:
             stratum_psu = pd.DataFrame({str_varname: stratum, psu_varname: psu})
             stratum_psu.sort_values(by=str_varname, inplace=True)
             key = [str_varname, psu_varname]
-        elif self.method == "brr":
+        elif self.method == RepMethod.brr:
             _, str_index = np.unique(psu, return_index=True)
             checks.assert_brr_number_psus(str_index)
             psus = psu[np.sort(str_index)]
@@ -340,12 +340,12 @@ class ReplicateWeight:
 
         psus_ids = stratum_psu.drop_duplicates()
 
-        if self.method == "jackknife":
+        if self.method == RepMethod.jackknife:
             self.nb_reps = psus_ids.shape[0]
             _rep_data = self._jkn_replicates(psu, stratum)
-        elif self.method == "bootstrap":
+        elif self.method == RepMethod.bootstrap:
             _rep_data = self._boot_replicates(psu, stratum)
-        elif self.method == "brr":
+        elif self.method == RepMethod.brr:
             _rep_data = self._brr_replicates(psu, stratum)
             self.rep_coefs = list(
                 (1 / self.nb_reps * pow(1 - self.fay_coef, 2)) * np.ones(self.nb_reps)

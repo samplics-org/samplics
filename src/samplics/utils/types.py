@@ -32,6 +32,13 @@ class PopParam(Enum):
     ratio = "Ratio"
 
 
+@unique
+class RepMethod(Enum):
+    jackknife  = "Jackknife"
+    bootstrap = "Bootstrap"
+    brr = "BRR"
+    
+
 # Methods for sample size
 @unique
 class SizeMethod(Enum):

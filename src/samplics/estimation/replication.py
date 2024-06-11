@@ -9,7 +9,7 @@ from scipy.stats import t as student
 
 from samplics.estimation.expansion import _SurveyEstimator
 from samplics.utils.formats import numpy_array, remove_nans
-from samplics.utils.types import Array, Number, PopParam
+from samplics.utils.types import Array, Number, PopParam, RepMethod
 
 
 TypeRepEst = TypeVar("TypeRepEst", bound="ReplicateEstimator")
@@ -56,24 +56,24 @@ class ReplicateEstimator(_SurveyEstimator):
         rand_seed: Optional[int] = None,
     ) -> None:
 
-        if method.lower() not in ("bootstrap", "brr", "jackknife"):
-            raise ValueError("method must be 'bootstrap', 'brr', or 'jackknife'")
+        if method not in (RepMethod.bootstrap, RepMethod.brr, RepMethod.jackknife):
+            raise ValueError("Method must be 'bootstrap', 'brr', or 'jackknife'!")
 
         super().__init__(param, alpha, rand_seed)
-        self.method = method.lower()
+        self.method = method
         self.conservative = False
         self.degree_of_freedom: Optional[int] = None
         self.nb_reps: Optional[int] = None
         self.rep_coefs: Optional[Union[np.ndarray, Number]] = None
-        if method == "brr" and fay_coef is not None:
+        if method == RepMethod.brr and fay_coef is not None:
             self.fay_coef = fay_coef
-        elif method == "brr":
+        elif method == RepMethod.brr:
             self.fay_coef = 0
         if rep_weight_cls is not None:
             self.nb_reps = rep_weight_cls.nb_reps
             self.rep_coefs = rep_weight_cls.rep_coefs
             self.degree_of_freedom = rep_weight_cls.degree_of_freedom
-            self.fay_coef = rep_weight_cls.fay_coef if self.method == "brr" else None
+            self.fay_coef = rep_weight_cls.fay_coef if self.method == RepMethod.brr else None
 
     def _rep_point(
         self, y: np.ndarray, rep_weights: np.ndarray, x: Optional[np.ndarray]
@@ -114,13 +114,13 @@ class ReplicateEstimator(_SurveyEstimator):
                 self.rep_coefs = rep_coefs
             elif isinstance(rep_coefs, (int, float)):
                 self.rep_coefs = rep_coefs
-        elif self.nb_reps is not None and self.method == "bootstrap":
+        elif self.nb_reps is not None and self.method == RepMethod.bootstrap:
             self.rep_coefs = (1 / self.nb_reps) * np.ones(self.nb_reps)
-        elif self.nb_reps is not None and self.method == "brr":
+        elif self.nb_reps is not None and self.method == RepMethod.brr:
             self.rep_coefs = (1 / (self.nb_reps * pow(1 - self.fay_coef, 2))) * np.ones(
                 self.nb_reps
             )
-        elif self.nb_reps is not None and self.method == "jackknife":
+        elif self.nb_reps is not None and self.method == RepMethod.jackknife:
             self.rep_coefs = ((self.nb_reps - 1) / self.nb_reps) * np.ones(self.nb_reps)
 
     def _variance(
@@ -135,7 +135,7 @@ class ReplicateEstimator(_SurveyEstimator):
 
         variance = 0.0
         rep_estimates = self._rep_point(y, rep_weights, x)
-        if self.method == "jackknife":  # page 155 (4.2.3 and 4.2.5) - Wolter(2003)
+        if self.method == RepMethod.jackknife:  # page 155 (4.2.3 and 4.2.5) - Wolter(2003)
             jk_factor = np.array(1 / (1 - rep_coefs))
             pseudo_estimates = jk_factor * estimate - (jk_factor - 1) * rep_estimates
             if conservative:
@@ -510,7 +510,7 @@ class ReplicateEstimator(_SurveyEstimator):
             remove_nan=remove_nan,
         )
 
-        if self.method == "brr" and self.degree_of_freedom is None:
+        if self.method == RepMethod.brr and self.degree_of_freedom is None:
             self.degree_of_freedom = int(self.nb_reps / 2)
         elif self.degree_of_freedom is None:
             self.degree_of_freedom = int(self.nb_reps) - 1

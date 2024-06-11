@@ -8,7 +8,7 @@ from samplics.utils.errors import (
     SinglePSUError,
 )
 from samplics.utils.formats import array_to_dict
-from samplics.utils.types import PopParam, SelectMethod, SinglePSUEst, SizeMethod
+from samplics.utils.types import PopParam, SelectMethod, SinglePSUEst, SizeMethod, RepMethod
 
 
 __all__ = [
@@ -21,6 +21,7 @@ __all__ = [
     "SamplicsError",
     "CertaintyError",
     "DimensionError",
+    "RepMethod",
     "SinglePSUError",
     "ProbError",
     "MethodError",
