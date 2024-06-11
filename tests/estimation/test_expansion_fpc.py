@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.estimation import TaylorEstimator
+from samplics.utils.types import PopParam
 
 
 one_stage_fpc = pd.read_csv("./tests/estimation/one_stage_fpc.csv")
@@ -21,7 +22,7 @@ fpc_psu = 1 - 5 / 44
 fpc_no_psu = 1 - 21 / 44
 
 """Taylor Approximation WITHOUT Stratification for TOTAL"""
-svy_total_without_str = TaylorEstimator("total")
+svy_total_without_str = TaylorEstimator(PopParam.total)
 
 
 def test_total_estimator_without_str():
@@ -42,7 +43,7 @@ def test_total_estimator_without_str_nor_psu():
     assert np.isclose(svy_total_without_str.upper_ci, 993.188)
 
 
-svy_total_without_str_domain = TaylorEstimator("total")
+svy_total_without_str_domain = TaylorEstimator(PopParam.total)
 
 
 def test_total_estimator_without_str_domain():
@@ -74,7 +75,7 @@ def test_total_estimator_without_str_nor_psu_domain():
 
 
 """Taylor Approximation WITH Stratification for TOTAL"""
-svy_total_with_str = TaylorEstimator("total")
+svy_total_with_str = TaylorEstimator(PopParam.total)
 
 
 def test_total_estimator_with_str():
@@ -95,7 +96,7 @@ def test_total_estimator_with_str_without_psu():
     assert np.isclose(svy_total_with_str.upper_ci, 960.0334)
 
 
-svy_total_with_str_domain = TaylorEstimator("total")
+svy_total_with_str_domain = TaylorEstimator(PopParam.total)
 
 
 def test_total_estimator_with_str_domain():
@@ -129,7 +130,7 @@ def test_total_estimator_with_str_without_psu_domain():
 
 
 """Taylor Approximation WITHOUT Stratification for MEAN"""
-svy_mean_without_str = TaylorEstimator("mean")
+svy_mean_without_str = TaylorEstimator(PopParam.mean)
 
 
 def test_mean_estimator_without_str():
@@ -150,7 +151,7 @@ def test_mean_estimator_without_str_nor_psu():
     assert np.isclose(svy_mean_without_str.upper_ci, 11.56712)
 
 
-svy_mean_without_str_domain = TaylorEstimator("mean")
+svy_mean_without_str_domain = TaylorEstimator(PopParam.mean)
 
 
 def test_mean_estimator_without_str_domain():
@@ -180,7 +181,7 @@ def test_mean_estimator_without_str_nor_psu_domain():
 
 
 """Taylor Approximation WITH Stratification for MEAN"""
-svy_mean_with_str = TaylorEstimator("mean")
+svy_mean_with_str = TaylorEstimator(PopParam.mean)
 
 
 def test_mean_estimator_with_str():
@@ -201,7 +202,7 @@ def test_mean_estimator_with_str_without_psu():
     assert np.isclose(svy_mean_with_str.upper_ci, 11.56667)
 
 
-svy_mean_with_str_domain = TaylorEstimator("mean")
+svy_mean_with_str_domain = TaylorEstimator(PopParam.mean)
 
 
 def test_mean_estimator_with_str_domain():
@@ -235,7 +236,7 @@ def test_mean_estimator_with_str_nor_psu_domain():
 
 
 """Taylor Approximation WITHOUT Stratification for RATIO"""
-svy_ratio_without_str = TaylorEstimator("ratio")
+svy_ratio_without_str = TaylorEstimator(PopParam.ratio)
 
 
 def test_ratio_estimator_without_str():
@@ -256,7 +257,7 @@ def test_ratio_estimator_without_str_nor_psu():
     assert np.isclose(svy_ratio_without_str.upper_ci, 1.904166)
 
 
-svy_ratio_without_str_domain = TaylorEstimator("ratio")
+svy_ratio_without_str_domain = TaylorEstimator(PopParam.ratio)
 
 
 def test_ratio_estimator_without_str_domain():
@@ -288,7 +289,7 @@ def test_ratio_estimator_without_str_nor_psu_domain():
 
 
 # """Taylor Approximation WITH Stratification for RATIO"""
-svy_ratio_with_str = TaylorEstimator("ratio")
+svy_ratio_with_str = TaylorEstimator(PopParam.ratio)
 
 
 def test_ratio_estimator_with_str():
@@ -311,7 +312,7 @@ def test_ratio_estimator_with_str_without_psu():
     assert np.isclose(svy_ratio_with_str.upper_ci, 1.904162)
 
 
-svy_ratio_with_str_domain = TaylorEstimator("ratio")
+svy_ratio_with_str_domain = TaylorEstimator(PopParam.ratio)
 
 
 def test_ratio_estimator_with_str_domain():
@@ -345,7 +346,7 @@ def test_ratio_estimator_with_str_nor_psu_domain():
 
 
 """Taylor Approximation WITHOUT Stratification for PROPORTION"""
-svy_prop_without_str = TaylorEstimator("proportion")
+svy_prop_without_str = TaylorEstimator(PopParam.prop)
 
 
 def test_prop_estimator_without_str():
@@ -374,7 +375,7 @@ def test_prop_estimator_without_str_nor_psu():
     assert np.isclose(svy_prop_without_str.upper_ci[1.0], 0.8127049)
 
 
-svy_prop_without_str_domain = TaylorEstimator("proportion")
+svy_prop_without_str_domain = TaylorEstimator(PopParam.prop)
 
 
 def test_prop_estimator_without_str_domain():
@@ -420,7 +421,7 @@ def test_prop_estimator_without_str_nor_psu_domain():
 
 
 """Taylor Approximation WITH Stratification for PROPORTION"""
-svy_prop_with_str = TaylorEstimator("proportion")
+svy_prop_with_str = TaylorEstimator(PopParam.prop)
 
 
 def test_prop_estimator_with_str():
@@ -449,7 +450,7 @@ def test_prop_estimator_with_str_without_psu():
     assert np.isclose(svy_prop_with_str.upper_ci[1.0], 0.8153989)
 
 
-svy_prop_with_str_domain = TaylorEstimator("proportion")
+svy_prop_with_str_domain = TaylorEstimator(PopParam.prop)
 
 
 def test_prop_estimator_with_str_domain():

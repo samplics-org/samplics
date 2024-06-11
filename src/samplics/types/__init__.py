@@ -19,7 +19,7 @@ from samplics.types.containers import (
     # FitStats,
     SampleDesign,
 )
-from samplics.types.options import FitMethod, Mse
+from samplics.types.options import FitMethod, Mse, PopParam, SelectMethod, SinglePSUEst
 from samplics.types.protocols import (
     DepVarsPrcl,
     FramePrcl,
@@ -50,9 +50,12 @@ __all__ = [
     "IndepVarsPrcl",
     "Mse",
     "Number",
+    "PopParam",
     "SampleDesign",
     "SamplePrcl",
+    "SelectMethod",
     "Series",
+    "SinglePSUEst",
     "StringNumber",
     "ToDataFramePrcl",
 ]

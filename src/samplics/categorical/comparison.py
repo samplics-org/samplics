@@ -19,7 +19,7 @@ from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
 from samplics.utils.formats import numpy_array
-from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber
+from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber, PopParam
 
 
 class Ttest:
@@ -124,7 +124,7 @@ class Ttest:
         strata_comb: Optional[dict[Array, Array]] = None,
     ) -> None:
 
-        one_sample = TaylorEstimator(param="mean", alpha=self.alpha)
+        one_sample = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
         one_sample.estimate(
             y=y,
             samp_weight=samp_weight,
@@ -280,7 +280,7 @@ class Ttest:
         strata_comb: Optional[dict[Array, Array]] = None,
     ) -> None:
 
-        two_samples_unpaired = TaylorEstimator(param="mean", alpha=self.alpha)
+        two_samples_unpaired = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
         two_samples_unpaired.estimate(
             y=y,
             by=group,
@@ -353,7 +353,7 @@ class Ttest:
                 strata_comb=strata_comb,
             )
         elif self.samp_type == "one-sample" and group is not None:
-            one_sample = TaylorEstimator(param="mean", alpha=self.alpha)
+            one_sample = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
             one_sample.estimate(
                 y=_y,
                 domain=_group,
@@ -389,7 +389,7 @@ class Ttest:
                 strata_comb=strata_comb,
             )
 
-            two_samples_unpaired = TaylorEstimator(param="mean", alpha=self.alpha)
+            two_samples_unpaired = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
             two_samples_unpaired.estimate(
                 y=_y,
                 by=_group,
@@ -437,7 +437,7 @@ class Ttest:
             return pd.DataFrame(
                 data={
                     "Nb. Obs": [self.stats["number_obs"]],
-                    "Mean": [self.point_est],
+                    PopParam.mean: [self.point_est],
                     "Std. Error": [self.stderror],
                     "Std. Dev.": [self.stddev],
                     "Lower CI": [self.lower_ci],
@@ -450,7 +450,7 @@ class Ttest:
                 data={
                     "Group": groups,
                     "Nb. Obs": list(self.stats["number_obs"].values()),
-                    "Mean": list(self.point_est.values()),
+                    PopParam.mean: list(self.point_est.values()),
                     "Std. Error": list(self.stderror.values()),
                     "Std. Dev.": list(self.stddev.values()),
                     "Lower CI": list(self.lower_ci.values()),

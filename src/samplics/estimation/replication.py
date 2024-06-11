@@ -9,7 +9,7 @@ from scipy.stats import t as student
 
 from samplics.estimation.expansion import _SurveyEstimator
 from samplics.utils.formats import numpy_array, remove_nans
-from samplics.utils.types import Array, Number
+from samplics.utils.types import Array, Number, PopParam
 
 
 TypeRepEst = TypeVar("TypeRepEst", bound="ReplicateEstimator")
@@ -78,13 +78,13 @@ class ReplicateEstimator(_SurveyEstimator):
     def _rep_point(
         self, y: np.ndarray, rep_weights: np.ndarray, x: Optional[np.ndarray]
     ) -> np.ndarray:
-        if self.param in ("proportion", "mean"):
+        if self.param in (PopParam.prop, PopParam.mean):
             return np.asarray(
                 np.sum(rep_weights * y[:, None], axis=0) / np.sum(rep_weights, axis=0)
             )
-        elif self.param == "total":
+        elif self.param == PopParam.total:
             return np.asarray(np.sum(rep_weights * y[:, None], axis=0))
-        elif self.param == "ratio" and x is not None:
+        elif self.param == PopParam.ratio and x is not None:
             return np.asarray(
                 np.sum(rep_weights * y[:, None], axis=0)
                 / np.sum(rep_weights * x[:, None], axis=0)
@@ -176,7 +176,7 @@ class ReplicateEstimator(_SurveyEstimator):
     ) -> Any:
 
         if remove_nan:
-            if self.param == "ratio" and x is not None:
+            if self.param == PopParam.ratio and x is not None:
                 excluded_units = np.isnan(y) | np.isnan(x)
             else:
                 excluded_units = np.isnan(y)
@@ -185,14 +185,14 @@ class ReplicateEstimator(_SurveyEstimator):
             )
             rep_weights = rep_weights[~excluded_units, :]
 
-        if self.param == "proportion":
+        if self.param == PopParam.prop:
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
             y_dummies = y_dummies.values
 
         bias: Any
         if domain is None:
-            if self.param == "proportion" and categories is not None:
+            if self.param == PopParam.prop and categories is not None:
                 cat_dict = dict()
                 for k in range(categories.size):
                     cat_dict_k = dict(
@@ -210,11 +210,11 @@ class ReplicateEstimator(_SurveyEstimator):
             for d in np.unique(domain):
                 samp_weight_d = samp_weight * (domain == d)
                 rep_weights_d = rep_weights * (domain == d)[:, None]
-                if self.param == "ratio":
+                if self.param == PopParam.ratio:
                     x_d = x * (domain == d)
                 else:
                     x_d = x
-                if self.param == "proportion":
+                if self.param == PopParam.prop:
                     y_dummies_d = y_dummies * (domain == d)[:, None]
                     cat_dict = dict()
                     for k in range(categories.size):
@@ -248,13 +248,13 @@ class ReplicateEstimator(_SurveyEstimator):
         remove_nan: bool = False,
     ) -> Any:
 
-        if self.param == "proportion":
+        if self.param == PopParam.prop:
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
             y_dummies = y_dummies.values
 
         if domain.shape in ((), (0,)):
-            if self.param == "proportion":
+            if self.param == PopParam.prop:
                 estimate_k: dict
                 cat_dict = dict()
                 for k in range(categories.size):
@@ -291,11 +291,11 @@ class ReplicateEstimator(_SurveyEstimator):
             for d in np.unique(domain):
                 samp_weight_d = samp_weight * (domain == d)
                 rep_weights_d = rep_weights * (domain == d)[:, None]
-                if self.param == "ratio":
+                if self.param == PopParam.ratio:
                     x_d = x * (domain == d)
                 else:
                     x_d = x
-                if self.param == "proportion" and categories is not None:
+                if self.param == PopParam.prop and categories is not None:
                     y_dummies_d = np.asarray(y_dummies * (domain == d)[:, None])
                     cat_dict = dict()
                     for k in range(categories.size):
@@ -332,7 +332,7 @@ class ReplicateEstimator(_SurveyEstimator):
                         estimate=estimate_d,
                         conservative=conservative,
                     )
-            if self.param == "proportion":
+            if self.param == PopParam.prop:
                 return variance_else1
             else:
                 return variance_else2
@@ -348,7 +348,7 @@ class ReplicateEstimator(_SurveyEstimator):
         lower_ci = {}
         upper_ci = {}
         if self.domains.shape in ((), (0,)):
-            if param == "proportion":
+            if param == PopParam.prop:
                 for level in variance:
                     point_est = estimate[level]
                     std_est = pow(variance[level], 0.5)
@@ -370,7 +370,7 @@ class ReplicateEstimator(_SurveyEstimator):
             lower_ci_else2 = {}
             upper_ci_else2 = {}
             for key in variance:
-                if param == "proportion":
+                if param == PopParam.prop:
                     lower_ci_k = {}
                     upper_ci_k = {}
                     for level in variance[key]:
@@ -392,7 +392,7 @@ class ReplicateEstimator(_SurveyEstimator):
                         variance[key], 0.5
                     )
 
-            if self.param == "proportion":
+            if self.param == PopParam.prop:
                 return lower_ci_else1, upper_ci_else1
             else:
                 return lower_ci_else2, upper_ci_else2
@@ -405,7 +405,7 @@ class ReplicateEstimator(_SurveyEstimator):
     ) -> Any:  # Any := Union[dict[StringNumber, DictStrNum], DictStrNum, Number]
 
         if self.domains.shape in ((), (0,)):
-            if param == "proportion":
+            if param == PopParam.prop:
                 coef_var = {}
                 for level in variance:
                     coef_var[level] = pow(variance[level], 0.5) / estimate[level]
@@ -414,7 +414,7 @@ class ReplicateEstimator(_SurveyEstimator):
         else:
             coef_var = {}
             for key in variance:
-                if param == "proportion":
+                if param == PopParam.prop:
                     coef_var_k = {}
                     for level in variance[key]:
                         coef_var_k[level] = (
@@ -457,7 +457,7 @@ class ReplicateEstimator(_SurveyEstimator):
             TypeRepEst: [description]
         """
 
-        if self.param == "ratio" and x is None:
+        if self.param == PopParam.ratio and x is None:
             raise AssertionError("x must be provided for ratio estimation.")
 
         _y = numpy_array(y)
@@ -523,14 +523,14 @@ class ReplicateEstimator(_SurveyEstimator):
         self.coef_var = self._get_coefvar(self.param, self.point_est, self.variance)
 
         if self.domains.shape in ((), (0,)):
-            if self.param == "proportion":
+            if self.param == PopParam.prop:
                 for level in self.variance:
                     self.stderror[level] = pow(self.variance[level], 0.5)
             elif isinstance(self.variance, (int, float)):
                 self.stderror = pow(self.variance, 0.5)
         else:
             for key in self.variance:
-                if self.param == "proportion":
+                if self.param == PopParam.prop:
                     stderror = {}
                     for level in self.variance[key]:
                         stderror[level] = pow(self.variance[key][level], 0.5)

@@ -25,9 +25,11 @@ DictStrBool = Dict[StringNumber, bool]
 # Population parameters
 @unique
 class PopParam(Enum):
+    count = "Count"
     mean = "Mean"
     total = "Total"
     prop = "Proportion"
+    ratio = "Ratio"
 
 
 # Methods for sample size

@@ -3,6 +3,7 @@ import pandas as pd
 import pytest
 
 from samplics.categorical import CrossTabulation
+from samplics.utils.types import PopParam
 
 
 # dummy
@@ -32,7 +33,7 @@ educ = np.concatenate(
 
 def test_unique_cell_0():
     dummy0 = pd.DataFrame({"f2": f2, "educ": educ})
-    crosstab_temp = CrossTabulation("proportion")
+    crosstab_temp = CrossTabulation(PopParam.prop)
     crosstab_temp.tabulate(vars=dummy0[["f2", "educ"]])
     # breakpoint()
 
@@ -60,7 +61,7 @@ df_dummy1 = pd.DataFrame.from_dict(dummy1)
 
 
 def test_unique_cell_1():
-    crosstab_temp1 = CrossTabulation("proportion")
+    crosstab_temp1 = CrossTabulation(PopParam.prop)
     crosstab_temp1.tabulate(
         vars=df_dummy1[["q1", "group"]],
         samp_weight=df_dummy1["nr_weight"],
@@ -90,7 +91,7 @@ df_dummy2 = pd.DataFrame.from_dict(dummy2)
 
 
 def test_empty_cells_2():
-    crosstab_temp2 = CrossTabulation("count")
+    crosstab_temp2 = CrossTabulation(PopParam.count)
     crosstab_temp2.tabulate(
         vars=df_dummy2[["q1", "group"]],
         samp_weight=1,
@@ -117,7 +118,7 @@ dummy3["weights"] = [1, 0.3, 8, 3, 0.7] * 91
 
 def test_empty_cells_3():
 
-    crosstab_temp3 = CrossTabulation("count")
+    crosstab_temp3 = CrossTabulation(PopParam.count)
     crosstab_temp3.tabulate(
         vars=dummy3[["Gender", "Nationality"]],
         samp_weight=dummy3["weights"],
@@ -152,7 +153,7 @@ df_dummy4 = pd.DataFrame.from_dict(dummy4)
 
 
 def test_empty_cells_4():
-    crosstab_temp4 = CrossTabulation("proportion")
+    crosstab_temp4 = CrossTabulation(PopParam.prop)
     crosstab_temp4.tabulate(
         vars=df_dummy4[["q1", "group"]],
         samp_weight=df_dummy4["nr_weight"],
@@ -184,7 +185,7 @@ def test_not_valid_parameter(param):
 
 @pytest.mark.xfail(strict=True, reason="2way tables needs two variables")
 def test_twoway_count_one_var_count():
-    tbl = CrossTabulation("count")
+    tbl = CrossTabulation(PopParam.count)
     tbl.tabulate(region, remove_nan=True)
 
 
@@ -192,13 +193,13 @@ def test_twoway_count_one_var_count():
     strict=True, reason="For now, the method will fail if there are missing values"
 )
 def test_for_missing_values_in_the_design_matrix():
-    tbl_prop = CrossTabulation("proportion")
+    tbl_prop = CrossTabulation(PopParam.prop)
     tbl_prop.tabulate(
         [region, birth_cat], varnames=["region", "birth_cat"], remove_nan=False
     )
 
 
-tbl_count = CrossTabulation("count")
+tbl_count = CrossTabulation(PopParam.count)
 tbl_count.tabulate(
     [age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True
 )
@@ -287,7 +288,7 @@ def test_twoway_count_design_info():
     assert tbl_count.design_info["degrees_of_freedom"] == 922
 
 
-tbl_prop = CrossTabulation("proportion")
+tbl_prop = CrossTabulation(PopParam.prop)
 tbl_prop.tabulate(
     [age_cat, birth_cat], varnames=["age_cat", "birth_cat"], remove_nan=True
 )
@@ -384,7 +385,7 @@ stratum = nhanes["SDMVSTRA"]
 psu = nhanes["SDMVPSU"]
 weight = nhanes["WTMEC2YR"]
 
-tbl1_nhanes = CrossTabulation("proportion")
+tbl1_nhanes = CrossTabulation(PopParam.prop)
 tbl1_nhanes.tabulate(
     vars=nhanes[["race", "HI_CHOL"]],
     samp_weight=weight,
@@ -470,7 +471,7 @@ def test_nhanes_twoway_prop_design_info():
     assert tbl1_nhanes.design_info["degrees_of_freedom"] == 16
 
 
-tbl2_nhanes = CrossTabulation("count")
+tbl2_nhanes = CrossTabulation(PopParam.count)
 tbl2_nhanes.tabulate(
     vars=nhanes[["race", "HI_CHOL"]],
     samp_weight=weight,

@@ -12,12 +12,13 @@ class FitMethod(Enum):
 class Mse(Enum):
     taylor = "Taylor"
     boot = "Boostrap"
-    jkn = "Jackniffe"
+    jkn = "Jackknife"
 
 
 # Population parameters
 @unique
 class PopParam(Enum):
+    count = "Count"
     mean = "Mean"
     total = "Total"
     prop = "Proportion"

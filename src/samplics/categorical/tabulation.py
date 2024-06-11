@@ -20,21 +20,21 @@ from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.errors import DimensionError
 from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, SinglePSUEst, StringNumber
+from samplics.utils.types import Array, Number, SinglePSUEst, StringNumber, PopParam
 
 
 class Tabulation:
     def __init__(
         self,
-        param: str = "count",
+        param: PopParam, 
         alpha: float = 0.05,
         ciprop_method: str = "logit",
     ) -> None:
 
-        if param.lower() in ("count", "proportion"):
-            self.param = param.lower()
-        else:
-            raise ValueError("parameter must be 'count' or 'proportion'")
+    
+        if not param in (PopParam.count, PopParam.prop):
+            raise ValueError("Parameter must be 'count' or 'proportion'!")
+        self.param = param
         self.type = "oneway"
         self.point_est: dict[str, dict[StringNumber, Number]] = {}
         self.stats: dict[str, dict[str, Number]] = {}
@@ -116,8 +116,8 @@ class Tabulation:
 
         var_of_ones = numpy_array(var_of_ones)
 
-        if self.param == "count":
-            tbl_est = TaylorEstimator(param="total", alpha=self.alpha)
+        if self.param == PopParam.count:
+            tbl_est = TaylorEstimator(param=PopParam.total, alpha=self.alpha)
             tbl_est.estimate(
                 y=var_of_ones,
                 samp_weight=samp_weight,
@@ -132,7 +132,7 @@ class Tabulation:
                 strata_comb=strata_comb,
                 remove_nan=False,
             )
-        elif self.param == "proportion":
+        elif self.param == PopParam.prop:
             tbl_est = TaylorEstimator(param=self.param, alpha=self.alpha)
             tbl_est.estimate(
                 y=var.to_numpy().ravel(),
@@ -236,13 +236,13 @@ class Tabulation:
                 remove_nan=remove_nan,
             )
             self.vars_levels[vars_names[0]] = var_levels
-            if self.param == "count":
+            if self.param == PopParam.count:
                 self.point_est[vars_names[0]] = tbl_est.point_est
                 self.stderror[vars_names[0]] = tbl_est.stderror
                 self.lower_ci[vars_names[0]] = tbl_est.lower_ci
                 self.upper_ci[vars_names[0]] = tbl_est.upper_ci
                 self.deff[vars_names[0]] = {}  # todo: tbl_est.deff
-            elif self.param == "proportion":
+            elif self.param == PopParam.prop:
                 self.point_est[vars_names[0]] = tbl_est.point_est
                 self.stderror[vars_names[0]] = tbl_est.stderror
                 self.lower_ci[vars_names[0]] = tbl_est.lower_ci
@@ -267,13 +267,13 @@ class Tabulation:
                     remove_nan=remove_nan,
                 )
                 self.vars_levels[vars_names[k]] = var_levels
-                if self.param == "count":
+                if self.param == PopParam.count:
                     self.point_est[vars_names[k]] = tbl_est.point_est
                     self.stderror[vars_names[k]] = tbl_est.stderror
                     self.lower_ci[vars_names[k]] = tbl_est.lower_ci
                     self.upper_ci[vars_names[k]] = tbl_est.upper_ci
                     self.deff[vars_names[k]] = {}  # todo: tbl_est.deff
-                elif self.param == "proportion":
+                elif self.param == PopParam.prop:
                     self.point_est[vars_names[k]] = tbl_est.point_est
                     self.stderror[vars_names[k]] = tbl_est.stderror
                     self.lower_ci[vars_names[k]] = tbl_est.lower_ci
@@ -327,15 +327,14 @@ class CrossTabulation:
 
     def __init__(
         self,
-        param: str = "count",
+        param: str = PopParam.count,
         alpha: float = 0.05,
         ciprop_method: str = "logit",
     ) -> None:
 
-        if param.lower() in ("count", "proportion"):
-            self.param = param.lower()
-        else:
-            raise ValueError("parameter must be 'count' or 'proportion'")
+        if not param in (PopParam.count, PopParam.prop):
+            raise ValueError("Parameter must be 'count' or 'proportion'!")
+        self.param = param
         self.type = "twoway"
         self.point_est: dict[str, dict[StringNumber, Number]] = {}
         self.stats: dict[str, dict[str, Number]] = {}
@@ -533,7 +532,7 @@ class CrossTabulation:
             func1d=concatenate_series_to_str, axis=1, arr=vars_levels
         )
 
-        tbl_est_prop = TaylorEstimator(param="mean", alpha=self.alpha)
+        tbl_est_prop = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
         tbl_est_prop.estimate(
             y=vars_for_oneway,
             samp_weight=samp_weight,
@@ -561,8 +560,8 @@ class CrossTabulation:
             # @ cell_est.reshape(1, cell_est.shape[0])
         ) / vars.shape[0]
 
-        if self.param == "count":
-            tbl_est_count = TaylorEstimator(param="total", alpha=self.alpha)
+        if self.param == PopParam.count:
+            tbl_est_count = TaylorEstimator(param=PopParam.total, alpha=self.alpha)
             tbl_est_count.estimate(
                 y=vars_for_oneway,
                 samp_weight=samp_weight,
@@ -656,7 +655,7 @@ class CrossTabulation:
 
         point_est_df = pd.DataFrame.from_dict(self.point_est, orient="index").values
 
-        if self.param == "count":
+        if self.param == PopParam.count:
             point_est_df = point_est_df / np.sum(point_est_df)
 
         point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ point_est_df.sum(
