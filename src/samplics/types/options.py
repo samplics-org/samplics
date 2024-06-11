@@ -21,6 +21,7 @@ class PopParam(Enum):
     mean = "Mean"
     total = "Total"
     prop = "Proportion"
+    ratio = "Ratio"
 
 
 # Methods for sample size

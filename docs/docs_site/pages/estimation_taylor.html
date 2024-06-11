@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -426,11 +426,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>Samplics’s class <em>TaylorEstimator</em> uses linearization methods to estimate the variance of population parameters.</p>
-<div id="0056fb05" class="cell" data-execution_count="1">
+<div id="30053ac5" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_nhanes2</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.estimation <span class="im">import</span> TaylorEstimator</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="b0415ae9" class="cell" data-execution_count="2">
+<div id="bea2c1ca" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Nhanes sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nhanes2_dict <span class="op">=</span> load_nhanes2()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>nhanes2 <span class="op">=</span> nhanes2_dict[<span class="st">"data"</span>]</span>
@@ -438,10 +438,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>nhanes2.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div>
-<div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -627,9 +626,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</div>
 <p>Using <em>samplics</em>, we can estimate the average level of zinc in the blood using the following</p>
-<div id="c6b54258" class="cell" data-execution_count="3">
+<div id="59d8baf0" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>zinc_mean_str <span class="op">=</span> TaylorEstimator(<span class="st">"mean"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>zinc_mean_str.estimate(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>nhanes2[<span class="st">"zinc"</span>],</span>
@@ -652,14 +650,13 @@ Degree of freedom: 31
 </div>
 </div>
 <p>The results of the estimation are stored in the dictionary <code>zinc_mean_str</code>. The users can covert the main estimation information into a pd.DataFrame by using the method <code>to_dataframe()</code>.</p>
-<div id="6b36b266" class="cell" data-execution_count="4">
+<div id="d47b764b" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>zinc_mean_str.to_dataframe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
-<div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -687,9 +684,8 @@ Degree of freedom: 31
 </div>
 </div>
 </div>
-</div>
 <p>The method <code>to_dataframe()</code> is more useful for domain estimation by producing a table where which row is a level of the domain of interest, as shown below.</p>
-<div id="688fa6a3" class="cell" data-execution_count="5">
+<div id="8c33d5e8" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>zinc_mean_by_race <span class="op">=</span> TaylorEstimator(<span class="st">"mean"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>zinc_mean_by_race.estimate(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>nhanes2[<span class="st">"zinc"</span>],</span>
@@ -703,10 +699,9 @@ Degree of freedom: 31
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>zinc_mean_by_race.to_dataframe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
-<div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -756,9 +751,8 @@ Degree of freedom: 31
 </div>
 </div>
 </div>
-</div>
 <p>Let’s remove the stratum parameter then we get</p>
-<div id="48b068de" class="cell" data-execution_count="6">
+<div id="b8d42eea" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>zinc_mean_nostr <span class="op">=</span> TaylorEstimator(<span class="st">"mean"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>zinc_mean_nostr.estimate(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>nhanes2[<span class="st">"zinc"</span>], </span>

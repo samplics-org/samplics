@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -436,28 +436,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><code>Samplics</code> is a python package for selecting, weighting and analyzing sample obtained from complex sampling design.</p>
 <section id="installation" class="level1">
 <h1>Installation</h1>
-<div id="ad440409" class="cell" data-execution_count="1">
+<div id="f853e8d7" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pip install samplics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>if both Python 2.x and python 3.x are installed on your computer, you may have to use:</p>
-<div id="b2db638e" class="cell" data-execution_count="2">
+<div id="d0051bfe" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pip3 install samplics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="dependencies" class="level1">
 <h1>Dependencies</h1>
-<p>Python versions 3.7.x or newer and the following packages:</p>
+<p>Python versions 3.10.x or newer and the following packages:</p>
 <ul>
 <li><a href="https://numpy.org/">numpy</a></li>
 <li><a href="https://pandas.pydata.org/">pandas</a></li>
-<li><a href="https://www.scipy.org/">scipy</a></li>
+<li><a href="https://docs.pola.rs/">polars</a></li>
+<li><a href="https://matplotlib.org/">matplotlib</a></li>
 <li><a href="https://www.statsmodels.org/stable/index.html">statsmodels</a></li>
 </ul>
 </section>
 <section id="usage" class="level1">
 <h1>Usage</h1>
 <p>To select a sample of primary sampling units using PPS method, we can use a code similar to:</p>
-<div id="3f1a43fa" class="cell" data-execution_count="3">
+<div id="13d434bf" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> samplics</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSelection</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -476,7 +477,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To adjust the design sample weight for nonresponse, we can use a code similar to:</p>
-<div id="0debac9e" class="cell" data-execution_count="4">
+<div id="747b0962" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> samplics</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.weighting <span class="im">import</span> SampleWeight</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -494,7 +495,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    resp_dict<span class="op">=</span>status_mapping</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="e1a6d9f1" class="cell" data-execution_count="5">
+<div id="5f36247e" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> samplics</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.estimation <span class="im">import</span> TaylorEstimator, ReplicateEstimator</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>

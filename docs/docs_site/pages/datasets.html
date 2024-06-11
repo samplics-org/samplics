@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -462,12 +462,12 @@ Tip
 <li><p><strong>Birth</strong>: This dataset represent a city data of categories of birth by age group. The dataset was obtained through the public stata API. Use <code>load_birth()</code> to load the dataset.</p></li>
 <li><p><strong>CountyCrop</strong> and <strong>CountryCropMeans</strong>: These datasets were used by <span class="citation" data-cites="battese1988">Battese, Harter, and Fuller (<a href="#ref-battese1988" role="doc-biblioref">1988</a>)</span> for their pioner paper on small area estimation. Use <code>load_county_crop()</code> and <code>load_county_crop_means()</code> to load the datasets.</p></li>
 <li><p><strong>ExpenditureMilk</strong>: The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. This dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006). Use <code>load_expenditure_milk()</code> to load the dataset.</p></li>
-<li><p><strong>Nhanes2</strong>, <strong>Nhanes2brr</strong>, and <strong>Nhanes2jk</strong>: these datasets were obtained from the NHANES <span class="citation" data-cites="mcdowell1981">(<a href="#ref-mcdowell1981" role="doc-biblioref">McDowell et al. 1981</a>)</span>_. As mentioned above, the datasets are only subsets of the full sample and do not represent the NHANES II study. This data is only useful for illustrating the syntax of <em>samplics</em>. These datasets should not be used to conduct any analysis of NHANES nor use the numbers for any statistical analysis. The original data was obtained through the public stata API. Use <em>load_nhanes2()</em>, <code>load_nhanes2brr()</code>, and <code>load_nhanes2jk()</code> to load the datasets.</p></li>
-<li><p><strong>Nmihs</strong>: The dataset is a subset of the National Maternal and Infant Health Survey (NMIHS) sample <span class="citation" data-cites="gonzalez1992">(<a href="#ref-gonzalez1992" role="doc-biblioref">Gonzalez Jr, N, and C 1992</a>)</span>. The dataset should not be used to conduct any analysis of NMIHS nor use the numbers for any statistical analysis. The original data was obtained through the public stata API. Use <em>load_nmihs()</em> to load the dataset.</p></li>
-<li><p><strong>PSUFrame</strong>, <strong>PSUSample</strong>, and <strong>SSUSample</strong>: these are simulated datasets to illustrate the selectionof primary and secondary sampling units. Use <code>load_psu_frame()</code>, <code>load_psu_sample()</code>, and <code>load_ssu_sample()</code> to load the datasets.</p></li>
+<li><p><strong>Nhanes2</strong>, <strong>Nhanes2brr</strong>, and <strong>Nhanes2jk</strong>: these datasets were obtained from the NHANES <span class="citation" data-cites="mcdowell1981">(<a href="#ref-mcdowell1981" role="doc-biblioref">McDowell et al. 1981</a>)</span>_. As mentioned above, the datasets are only subsets of the full sample and do not represent the NHANES II study. This data is only useful for illustrating the syntax of <em>samplics</em>. These datasets should not be used to conduct any analysis of NHANES nor use the numbers for any statistical analysis. The original data was obtained through the public stata API. Use <code>load_nhanes2()</code>, <code>load_nhanes2brr()</code>, and <code>load_nhanes2jk()</code> to load the datasets.</p></li>
+<li><p><strong>Nmihs</strong>: The dataset is a subset of the National Maternal and Infant Health Survey (NMIHS) sample <span class="citation" data-cites="gonzalez1992">(<a href="#ref-gonzalez1992" role="doc-biblioref">Gonzalez Jr, N, and C 1992</a>)</span>. The dataset should not be used to conduct any analysis of NMIHS nor use the numbers for any statistical analysis. The original data was obtained through the public stata API. Use <code>load_nmihs()</code> to load the dataset.</p></li>
+<li><p><strong>PSUFrame</strong>, <strong>PSUSample</strong>, and <strong>SSUSample</strong>: these are simulated datasets to illustrate the selection of primary and secondary sampling units. Use <code>load_psu_frame()</code>, <code>load_psu_sample()</code>, and <code>load_ssu_sample()</code> to load the datasets.</p></li>
 </ul>
 <p>Let’s assume we want to load the PSU frame, we could write the following code.</p>
-<div id="3e226e65" class="cell" data-execution_count="1">
+<div id="e348b141" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> samplics</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the appropriate class.</span></span>

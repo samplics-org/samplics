@@ -30,13 +30,13 @@ from samplics.utils.formats import (
     numpy_array,
     remove_nans,
 )
-from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber
+from samplics.utils.types import Array, Number, PopParam, Series, SinglePSUEst, StringNumber
 
 
 class _SurveyEstimator:
     """General approach for sample estimation of linear parameters."""
 
-    def __init__(self, param: str, alpha: float = 0.05, rand_seed: Optional[int] = None):
+    def __init__(self, param: PopParam, alpha: float = 0.05, rand_seed: Optional[int] = None):
         """Initializes the instance"""
 
         self.rand_seed: Optional[int]
@@ -46,10 +46,12 @@ class _SurveyEstimator:
         else:
             self.rand_seed = None
 
-        if param.lower() in ("proportion", "mean", "total", "ratio"):
-            self.param = param.lower()
-        else:
-            raise AssertionError("parameter must be 'proportion', 'mean', 'total' or 'ratio'")
+        self.param = param
+        # if param.lower() in ("proportion", "mean", "total", "ratio"):
+        #     self.param = param.lower()
+        # else:
+        #     raise AssertionError("parameter must be 'proportion', 'mean', 'total' or 'ratio'")
+
         self.alpha = alpha
 
         self.point_est: Any = {}  # Union[dict[StringNumber, DictStrNum], DictStrNum, Number]
@@ -75,7 +77,19 @@ class _SurveyEstimator:
         print(f"Number of strata: {self.nb_strata}")
         print(f"Number of psus: {self.nb_psus}")
         print(f"Degree of freedom: {self.degree_of_freedom}\n")
-        param = self.param.upper()
+
+        # param = self.param.upper()
+        if self.param == PopParam.prop:
+            param = "PROPORTION"
+        elif self.param == PopParam.mean:
+            param = "MEAN"
+        elif self.param == PopParam.total:
+            param = "TOTAL"
+        elif self.param == PopParam.ratio:
+            param = "RATIO"
+        else:
+            raise ValueError("Parameter not valid!")
+
         estimation = pd.DataFrame()
         if (
             isinstance(self.point_est, dict)
@@ -84,7 +98,7 @@ class _SurveyEstimator:
             and isinstance(self.upper_ci, dict)
             and isinstance(self.coef_var, dict)
         ):
-            if self.domains is not None and (self.param == "proportion" or self.as_factor):
+            if self.domains is not None and (self.param == PopParam.prop or self.as_factor):
                 domains = list()
                 levels = list()
                 point_est = list()
@@ -163,11 +177,11 @@ class _SurveyEstimator:
 
     def _get_point_d(self, y: np.ndarray, samp_weight: np.ndarray, x: np.ndarray) -> float:
 
-        if self.param in ("proportion", "mean"):
+        if self.param in (PopParam.prop, PopParam.mean):
             return float(np.sum(samp_weight * y) / np.sum(samp_weight))
-        elif self.param == "total":
+        elif self.param == PopParam.total:
             return float(np.sum(samp_weight * y))
-        elif self.param == "ratio" and x.shape not in ((), (0,)):
+        elif self.param == PopParam.ratio and x.shape not in ((), (0,)):
             return float(np.sum(samp_weight * y) / np.sum(samp_weight * x))
         else:
             raise ValueError("Parameter not valid!")
@@ -196,17 +210,17 @@ class _SurveyEstimator:
 
         """
 
-        if self.param == "ratio" and x.shape in ((), (0,)):
+        if self.param == PopParam.ratio and x.shape in ((), (0,)):
             raise AssertionError("Parameter x must be provided for ratio estimation.")
 
         # if remove_nan:
-        #     if self.param == "ratio" and x is not None:
+        #     if self.param == PopParam.ratio and x is not None:
         #         excluded_units = np.isnan(y) | np.isnan(x)
         #     else:
         #         excluded_units = np.isnan(y)
         #     y, samp_weight, x, domain = remove_nans(excluded_units, y, samp_weight, x, domain)
 
-        if self.param == "proportion" or as_factor:
+        if self.param == PopParam.prop or as_factor:
             y_dummies = pd.get_dummies(y)
             categories = y_dummies.columns
             y_dummies = y_dummies.values
@@ -215,7 +229,7 @@ class _SurveyEstimator:
             y_dummies = None
 
         if domain.shape in ((), (0,)):
-            if self.param == "proportion" or as_factor:
+            if self.param == PopParam.prop or as_factor:
                 cat_dict: dict[StringNumber, float] = {}
                 for k in range(categories.size):
                     y_k = y_dummies[:, k]
@@ -226,7 +240,7 @@ class _SurveyEstimator:
                 return self._get_point_d(y=y, samp_weight=samp_weight, x=x)
         else:
             domain_ids = np.unique(domain)
-            if self.param == "proportion" or as_factor:
+            if self.param == PopParam.prop or as_factor:
                 estimate1: dict[StringNumber, dict[StringNumber, float]] = {}
                 for d in domain_ids:
                     weight_d = samp_weight[domain == d]
@@ -243,7 +257,7 @@ class _SurveyEstimator:
                     weight_d = samp_weight[domain == d]
                     y_d = y[domain == d]
                     if x.shape not in ((), (0,)):
-                        x_d = x[domain == d] if self.param == "ratio" else None
+                        x_d = x[domain == d] if self.param == PopParam.ratio else None
                     else:
                         x_d = None
                     estimate2[d] = self._get_point_d(y=y_d, samp_weight=weight_d, x=x_d)
@@ -277,14 +291,14 @@ class TaylorEstimator(_SurveyEstimator):
 
     def __init__(
         self,
-        param: str,
+        param: PopParam,
         alpha: float = 0.05,
         rand_seed: Optional[int] = None,
         ciprop_method: Optional[str] = "logit",
     ) -> None:
         """Initializes the instance"""
         _SurveyEstimator.__init__(self, param)
-        if self.param == "proportion":
+        if self.param == PopParam.prop:
             self.ciprop_method = ciprop_method
         else:
             self.ciprop_method = None
@@ -299,15 +313,15 @@ class TaylorEstimator(_SurveyEstimator):
         ncols = 1 if len(y.shape) == 1 else y.shape[1]
         y = y.reshape(y.shape[0], ncols)
         y_weighted = y * samp_weight[:, None]  # .reshape(samp_weight.shape[0], 1)
-        if self.param in ("proportion", "mean"):
+        if self.param in (PopParam.prop, PopParam.mean):
             scale_weights = np.sum(samp_weight)
             location_weights = np.sum(y_weighted, axis=0) / scale_weights
             return np.asarray((y - location_weights) * samp_weight[:, None] / scale_weights)
-        elif self.param == "ratio":
+        elif self.param == PopParam.ratio:
             weighted_sum_x = np.sum(x * samp_weight)
             weighted_ratio = np.sum(y_weighted, axis=0) / weighted_sum_x
             return np.asarray(samp_weight[:, None] * (y - x[:, None] * weighted_ratio) / weighted_sum_x)
-        elif self.param == "total":
+        elif self.param == PopParam.total:
             return np.asarray(y_weighted)
         else:
             raise ValueError("parameter not valid!")
@@ -426,11 +440,11 @@ class TaylorEstimator(_SurveyEstimator):
         Union[dict[StringNumber, Any], np.ndarray],
     ]:
 
-        if self.param == "ratio" and x.shape in ((), (0,)):
+        if self.param == PopParam.ratio and x.shape in ((), (0,)):
             raise AssertionError("Parameter x must be provided for ratio estimation.")
 
         # if remove_nan:
-        #     if self.param == "ratio" and x is not None:
+        #     if self.param == PopParam.ratio and x is not None:
         #         excluded_units = np.isnan(y) | np.isnan(x)
         #     else:
         #         excluded_units = np.isnan(y)
@@ -438,7 +452,7 @@ class TaylorEstimator(_SurveyEstimator):
         #             excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
         #         )
 
-        if self.param == "proportion" or as_factor:
+        if self.param == PopParam.prop or as_factor:
             y_df = pd.get_dummies(y).astype(int)
             categories = list(y_df.columns)
             y = y_df.values
@@ -454,7 +468,7 @@ class TaylorEstimator(_SurveyEstimator):
                 fpc=fpc,
                 skipped_strata=skipped_strata,
             )  # new
-            if (self.param == "proportion" or as_factor) and isinstance(cov_score, np.ndarray):
+            if (self.param == PopParam.prop or as_factor) and isinstance(cov_score, np.ndarray):
                 variance1: dict[StringNumber, dict] = {}
                 covariance1: dict[StringNumber, dict] = {}
                 variance1 = dict(zip(categories, np.diag(cov_score)))
@@ -463,16 +477,16 @@ class TaylorEstimator(_SurveyEstimator):
                 return variance1, covariance1
             else:
                 # Todo: generalize for multiple Y variables
-                return cov_score[0,0], cov_score[0,0]
+                return cov_score[0, 0], cov_score[0, 0]
         else:
             domain = np.asarray(domain)
-            if self.param == "proportion" or as_factor:
+            if self.param == PopParam.prop or as_factor:
                 variance2: dict[StringNumber, dict] = {}
                 covariance2: dict[StringNumber, dict] = {}
                 for d in np.unique(domain):
                     domain_d = domain == d
                     weight_d = samp_weight * domain_d
-                    if self.param == "ratio":
+                    if self.param == PopParam.ratio:
                         x_d = x * domain_d
                     else:
                         x_d = x
@@ -498,7 +512,7 @@ class TaylorEstimator(_SurveyEstimator):
                 for d in np.unique(domain):
                     domain_d = domain == d
                     weight_d = samp_weight * domain_d
-                    if self.param == "ratio":
+                    if self.param == PopParam.ratio:
                         x_d = x * domain_d
                     else:
                         x_d = x
@@ -560,7 +574,7 @@ class TaylorEstimator(_SurveyEstimator):
 
         if domain.shape in ((), (0,)):
             if (
-                (self.param == "proportion" or as_factor and self.param == "mean")
+                (self.param == PopParam.prop or as_factor and self.param == PopParam.mean)
                 and isinstance(self.point_est, dict)
                 and isinstance(self.variance, dict)
             ):
@@ -617,7 +631,7 @@ class TaylorEstimator(_SurveyEstimator):
         elif isinstance(self.variance, dict):
             for key in self.variance:
                 if (
-                    (self.param == "proportion" or as_factor and self.param == "mean")
+                    (self.param == PopParam.prop or as_factor and self.param == PopParam.mean)
                     and isinstance(self.point_est, dict)
                     and isinstance(self.variance, dict)
                 ):
@@ -728,10 +742,10 @@ class TaylorEstimator(_SurveyEstimator):
         remove_nan: bool = False,
     ) -> None:
 
-        if as_factor and self.param not in ("mean", "total"):
+        if as_factor and self.param not in (PopParam.mean, PopParam.total):
             raise AssertionError("When as_factor is True, parameter must be mean or total!")
 
-        if self.param == "ratio" and x.shape in ((), (0,)):
+        if self.param == PopParam.ratio and x.shape in ((), (0,)):
             raise AssertionError("x must be provided for ratio estimation.")
 
         _y = numpy_array(y)
@@ -881,7 +895,7 @@ class TaylorEstimator(_SurveyEstimator):
         if self.point_est is None:
             raise AssertionError("No estimates yet. Must first run estimate().")
         elif col_names is None:
-            if self.param == "proportion" or self.as_factor:
+            if self.param == PopParam.prop or self.as_factor:
                 col_names = [
                     "_param",
                     "_domain",
