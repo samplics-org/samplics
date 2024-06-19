@@ -130,8 +130,9 @@ dmypy.json
 # .github
 
 #Extra
-/datasets
-reference_material
+issues/
+datasets/
+reference_material/
 notebooks/*
 presentations/*/
 *.ipynb_checkpoints/

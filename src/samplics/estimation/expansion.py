@@ -763,7 +763,8 @@ class TaylorEstimator(_SurveyEstimator):
             _samp_weight = samp_weight * np.ones(_y.shape[0])
 
         if remove_nan:
-            to_keep = remove_nans(_y.shape[0], _y, _x)
+            # to_keep = remove_nans(_y.shape[0], _y, _x)
+            to_keep = remove_nans(_y.shape[0], _y, _x, _domain, _by)
 
             _y = _y[to_keep] if _y.shape not in ((), (0,)) else _y
             _x = _x[to_keep] if _x.shape not in ((), (0,)) else _x
