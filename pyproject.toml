@@ -3,7 +3,7 @@ authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
 description = "Select, weight and analyze complex sample data"
 license = "MIT"
 name = "samplics"
-version = "0.4.21"
+version = "0.4.22"
 
 readme = "README.md"
 
@@ -33,7 +33,7 @@ python = ">=3.10"
 numpy = ">=2.0"
 pandas = ">=2.1"
 matplotlib = ">=3.4" 
-polars = {extras = ["pyarrow"], version = "^0.20.31"}
+polars = {extras = ["pyarrow"], version = "^1.1"}
 statsmodels = ">=0.13" 
 
 [tool.poetry.group.dev.dependencies]
