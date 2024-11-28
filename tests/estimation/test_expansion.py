@@ -145,7 +145,9 @@ svy_total_with_str_domain = TaylorEstimator(param=PopParam.total)
 
 
 def test_total_estimator_with_str_domain():
-    svy_total_with_str_domain.estimate(y, weight, stratum=stratum, psu=psu, domain=domain, remove_nan=True)
+    svy_total_with_str_domain.estimate(
+        y, weight, stratum=stratum, psu=psu, domain=domain, remove_nan=True
+    )
 
     assert np.isclose(svy_total_with_str_domain.point_est["d1"], 759.8535)
     assert np.isclose(svy_total_with_str_domain.point_est["d2"], 2335.8145)
@@ -271,7 +273,9 @@ svy_mean_with_str_domain = TaylorEstimator(param=PopParam.mean)
 
 
 def test_mean_estimator_with_str_domain():
-    svy_mean_with_str_domain.estimate(y, weight, psu=psu, stratum=stratum, domain=domain, remove_nan=True)
+    svy_mean_with_str_domain.estimate(
+        y, weight, psu=psu, stratum=stratum, domain=domain, remove_nan=True
+    )
 
     assert np.isclose(svy_mean_with_str_domain.point_est["d1"], 0.8311598)
     assert np.isclose(svy_mean_with_str_domain.point_est["d2"], 0.797226)
@@ -397,7 +401,9 @@ svy_ratio_with_str_domain = TaylorEstimator(param=PopParam.ratio)
 
 
 def test_ratio_estimator_with_str_domain():
-    svy_ratio_with_str_domain.estimate(y, weight, x, psu=psu, stratum=stratum, domain=domain, remove_nan=True)
+    svy_ratio_with_str_domain.estimate(
+        y, weight, x, psu=psu, stratum=stratum, domain=domain, remove_nan=True
+    )
 
     assert np.isclose(svy_ratio_with_str_domain.point_est["d1"], 0.7134861)
     assert np.isclose(svy_ratio_with_str_domain.point_est["d2"], 0.7006851)
@@ -414,7 +420,9 @@ def test_ratio_estimator_with_str_domain():
 
 
 def test_ratio_estimator_with_str_nor_psu_domain():
-    svy_ratio_with_str_domain.estimate(y, weight, x, stratum=stratum, domain=domain, remove_nan=True)
+    svy_ratio_with_str_domain.estimate(
+        y, weight, x, stratum=stratum, domain=domain, remove_nan=True
+    )
 
     assert np.isclose(svy_ratio_with_str_domain.point_est["d1"], 0.7134861)
     assert np.isclose(svy_ratio_with_str_domain.point_est["d2"], 0.7006851)
@@ -573,7 +581,9 @@ svy_prop_with_str_domain = TaylorEstimator(param=PopParam.prop)
 
 
 def test_prop_estimator_with_str_domain():
-    svy_prop_with_str_domain.estimate(y, weight, psu=psu, stratum=stratum, domain=domain, remove_nan=True)
+    svy_prop_with_str_domain.estimate(
+        y, weight, psu=psu, stratum=stratum, domain=domain, remove_nan=True
+    )
 
     assert np.isclose(svy_prop_with_str_domain.point_est["d1"][0.0], 0.1688402)
     assert np.isclose(svy_prop_with_str_domain.point_est["d1"][1.0], 0.8311598)
@@ -664,7 +674,9 @@ svy_factor_mean_without_str_domain = TaylorEstimator(param=PopParam.mean)
 
 
 def test_factor_mean_estimator_without_str_domain():
-    svy_factor_mean_without_str_domain.estimate(y, weight, psu=psu, domain=domain, as_factor=True, remove_nan=True)
+    svy_factor_mean_without_str_domain.estimate(
+        y, weight, psu=psu, domain=domain, as_factor=True, remove_nan=True
+    )
 
     assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][0.0], 0.1688402)
     assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][1.0], 0.8311598)
@@ -693,7 +705,9 @@ def test_factor_mean_estimator_without_str_domain():
 
 
 def test_factor_mean_estimator_without_str_nor_psu_domain():
-    svy_factor_mean_without_str_domain.estimate(y, weight, domain=domain, as_factor=True, remove_nan=True)
+    svy_factor_mean_without_str_domain.estimate(
+        y, weight, domain=domain, as_factor=True, remove_nan=True
+    )
 
     assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][0.0], 0.1688402)
     assert np.isclose(svy_factor_mean_without_str_domain.point_est["d1"][1.0], 0.8311598)
@@ -726,7 +740,9 @@ svy_factor_mean_with_str = TaylorEstimator(param=PopParam.mean)
 
 
 def test_factor_mean_estimator_with_str():
-    svy_factor_mean_with_str.estimate(y, weight, stratum=stratum, psu=psu, as_factor=True, remove_nan=True)
+    svy_factor_mean_with_str.estimate(
+        y, weight, stratum=stratum, psu=psu, as_factor=True, remove_nan=True
+    )
 
     assert np.isclose(svy_factor_mean_with_str.point_est[0.0], 0.186_377_5)
     assert np.isclose(svy_factor_mean_with_str.point_est[1.0], 0.813_622_5)

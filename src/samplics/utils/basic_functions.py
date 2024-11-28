@@ -26,7 +26,6 @@ from samplics.utils.types import Array, Number
 def set_variables_names(
     vars: Array, varnames: Optional[Union[str, list[str]]], prefix: str
 ) -> Union[str, list[str]]:
-
     if varnames is None:
         if isinstance(vars, pd.DataFrame):
             return list(vars.columns)
@@ -37,9 +36,7 @@ def set_variables_names(
                 if len(vars.shape) == 2:
                     return [prefix + "_" + str(k) for k in range(1, vars.shape[1] + 1)]
                 else:
-                    return [
-                        prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)
-                    ]
+                    return [prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)]
             elif isinstance(vars, (tuple, list)):
                 return [prefix + "_" + str(k) for k in range(1, len(vars) + 1)]
             else:
@@ -134,7 +131,6 @@ def transform(
 
 
 def skewness(y: Array, type: int = 1) -> float:
-
     if type not in (1, 2, 3):
         raise AssertionError("Parameter type must be 1, 2 or 3.")
 
@@ -154,7 +150,6 @@ def skewness(y: Array, type: int = 1) -> float:
 
 
 def kurtosis(y: Array, type: int = 1) -> float:
-
     if type not in (1, 2, 3):
         raise AssertionError("Parameter type must be 1, 2 or 3.")
 

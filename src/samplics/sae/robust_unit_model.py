@@ -107,7 +107,6 @@ class EllUnitModel:
         constant: Optional[Number] = None,
         indicator: Optional[Any] = None,
     ):
-
         # Setting
         self.method: str = method.upper()
         if self.method not in ("REML", "ML", "MOM"):
@@ -198,9 +197,7 @@ class EllUnitModel:
                 boxcox=self.boxcox["lambda"],
                 constant=self.boxcox["constant"],
             )
-            eb_ul.fit(
-                ys, Xs, areas, samp_weight, scales, False, tol=tol, maxiter=maxiter
-            )
+            eb_ul.fit(ys, Xs, areas, samp_weight, scales, False, tol=tol, maxiter=maxiter)
             self.scales = eb_ul.scales
             self.afactors = eb_ul.afactors
             self.ys = eb_ul.ys
@@ -234,9 +231,7 @@ class EllUnitModel:
             self.Xs = Xs
             self.areas = areas
             self.areas_list = np.unique(areas)
-            self.afactors = dict(
-                zip(self.areas_list, basic_functions.sumby(areas, scales))
-            )
+            self.afactors = dict(zip(self.areas_list, basic_functions.sumby(areas, scales)))
             self.ys_mean, self.Xs_mean, _, samp_size = area_stats(
                 ys, Xs, areas, 0, 1, self.afactors, samp_weight
             )
@@ -256,7 +251,6 @@ class EllUnitModel:
         show_progress: bool,
         **kwargs: Any,
     ) -> tuple[np.ndarray, np.ndarray]:
-
         areas = np.unique(area)
         nb_areas = len(areas)
         if show_progress:
@@ -279,9 +273,7 @@ class EllUnitModel:
                 if j == number_cycles:
                     cycle_size = last_cycle_size
                 re_effects = np.random.normal(scale=sigma2u**0.5, size=cycle_size)
-                errors = np.random.normal(
-                    scale=scale_d * (sigma2e**0.5), size=(cycle_size, N_d)
-                )
+                errors = np.random.normal(scale=scale_d * (sigma2e**0.5), size=(cycle_size, N_d))
                 y_d_j = mu_d[None, :] + re_effects[:, None] + errors
                 if j == 0:
                     y_d = y_d_j
@@ -324,7 +316,6 @@ class EllUnitModel:
         show_progress: bool,
         **kwargs: Any,
     ) -> tuple[np.ndarray, np.ndarray]:
-
         areas = np.unique(area)
         nb_areas = len(areas)
         if show_progress:
@@ -340,9 +331,7 @@ class EllUnitModel:
             if i == 0:
                 unit_errors = total_residuals_d - area_effects[i]
             else:
-                unit_errors = np.append(
-                    unit_errors, total_residuals_d - area_effects[i]
-                )
+                unit_errors = np.append(unit_errors, total_residuals_d - area_effects[i])
 
         eta = np.zeros((number_samples, nb_areas)) * np.nan
         for i, d in enumerate(areas):

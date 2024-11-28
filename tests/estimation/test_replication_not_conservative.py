@@ -22,9 +22,7 @@ rep_wgt_jkn = rep_wgt_jkn.values
 
 def test_jkn_mean():
     jkn_mean = ReplicateEstimator(RepMethod.jackknife, PopParam.mean)
-    jkn_mean.estimate(
-        y_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True
-    )
+    jkn_mean.estimate(y_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True)
     jkn_var = jkn_mean.variance
     jkn_stderr = pow(jkn_var, 0.5)
     assert np.isclose(jkn_stderr, 0.2320822, atol=1e-7)
@@ -91,9 +89,7 @@ def test_jkn_total_d():
 
 def test_jkn_prop():
     jkn_prop = ReplicateEstimator(RepMethod.jackknife, PopParam.prop)
-    jkn_prop.estimate(
-        z_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True
-    )
+    jkn_prop.estimate(z_jkn, sample_wgt_jkn, rep_wgt_jkn, conservative=False, remove_nan=True)
     jkn_var = jkn_prop.variance
     jkn_stderr_1 = pow(jkn_var[1], 0.5)
     jkn_stderr_2 = pow(jkn_var[2], 0.5)
@@ -195,9 +191,7 @@ rep_wgt_brr = rep_wgt_brr.values
 
 def test_brr_mean():
     brr_mean = ReplicateEstimator(RepMethod.brr, PopParam.mean)
-    brr_mean.estimate(
-        y_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True
-    )
+    brr_mean.estimate(y_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True)
     brr_var = brr_mean.variance
     brr_stderr = pow(brr_var, 0.5)
     assert np.isclose(brr_stderr, 0.1656454, atol=1e-7)
@@ -263,9 +257,7 @@ def test_brr_total_d():
 
 def test_brr_prop():
     brr_prop = ReplicateEstimator(RepMethod.brr, PopParam.prop)
-    brr_prop.estimate(
-        z_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True
-    )
+    brr_prop.estimate(z_brr, sample_wgt_brr, rep_wgt_brr, conservative=False, remove_nan=True)
     brr_var = brr_prop.variance
     brr_stderr_0 = pow(brr_var[0.0], 0.5)
     brr_stderr_1 = pow(brr_var[1.0], 0.5)
@@ -358,9 +350,7 @@ rep_wgt_fay = rep_wgt_fay.values
 
 def test_fay_mean():
     fay_mean = ReplicateEstimator(RepMethod.brr, PopParam.mean, fay_coef=fay_coef)
-    fay_mean.estimate(
-        y_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True
-    )
+    fay_mean.estimate(y_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True)
     fay_var = fay_mean.variance
     fay_stderr = pow(fay_var, 0.5)
     assert np.isclose(fay_stderr, 0.1655723, atol=1e-6)
@@ -424,9 +414,7 @@ def test_fay_total_d():
 
 def test_fay_prop():
     fay_prop = ReplicateEstimator(RepMethod.brr, PopParam.prop, fay_coef=fay_coef)
-    fay_prop.estimate(
-        z_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True
-    )
+    fay_prop.estimate(z_fay, sample_wgt_fay, rep_wgt_fay, conservative=False, remove_nan=True)
     fay_var = fay_prop.variance
     fay_stderr_0 = pow(fay_var[0.0], 0.5)
     fay_stderr_1 = pow(fay_var[1.0], 0.5)

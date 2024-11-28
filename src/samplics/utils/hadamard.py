@@ -24,7 +24,6 @@ from scipy.linalg import hadamard as hdd
 
 
 def hadamard(n: int) -> np.ndarray:
-
     n_log2 = int(math.log(n, 2))
     if math.pow(2, n_log2) == n:
         return np.asarray(hdd(n))
@@ -36,7 +35,6 @@ def hadamard(n: int) -> np.ndarray:
 
 
 def _hadamard2() -> np.ndarray:
-
     hadamard2 = np.ones((2, 2))
     hadamard2[1, 1] = -1
 
@@ -44,7 +42,6 @@ def _hadamard2() -> np.ndarray:
 
 
 def _hadamard12() -> np.ndarray:
-
     hadamard12 = np.ones((12, 12))
 
     for c in [1, 3, 7, 8, 9, 11]:
@@ -74,7 +71,6 @@ def _hadamard12() -> np.ndarray:
 
 
 def _hadamard20() -> np.ndarray:
-
     hadamard20 = np.ones((20, 20))
 
     row = np.array([1, 3, 4, 9, 11, 13, 14, 15, 16, 19])
@@ -90,7 +86,6 @@ def _hadamard20() -> np.ndarray:
 
 
 def _hadamard24() -> np.ndarray:
-
     hadamard24 = np.ones((24, 24))
 
     row1_c1 = np.array([1, 3, 7, 8, 9, 11])
@@ -134,7 +129,6 @@ def _hadamard24() -> np.ndarray:
 
 
 def _hadamard28() -> np.ndarray:
-
     hadamard28 = np.ones((28, 28))
 
     hadamard28[0, 1] = -1

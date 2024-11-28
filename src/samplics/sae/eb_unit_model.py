@@ -300,9 +300,7 @@ class EbUnitModel:
                     scale=(sigma2u * (1 - self.gamma[d])) ** 0.5,
                     size=cycle_size,
                 )
-                errors = np.random.normal(
-                    scale=scale_dr * (sigma2e**0.5), size=(cycle_size, N_dr)
-                )
+                errors = np.random.normal(scale=scale_dr * (sigma2e**0.5), size=(cycle_size, N_dr))
                 y_dr_j = mu_dr[None, :] + mu_bias_dr + re_effects[:, None] + errors
                 if j == 0:
                     y_dr = y_dr_j

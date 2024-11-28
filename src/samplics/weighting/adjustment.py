@@ -55,7 +55,6 @@ class SampleWeight:
     """
 
     def __init__(self) -> None:
-
         self.adj_method: str = ""
         self.nb_units: Union[DictStrInt, int] = {}
         self.deff_weight: Union[DictStrNum, Number] = {}
@@ -119,15 +118,15 @@ class SampleWeight:
         samp_weight: np.ndarray,
         control: Number,
     ) -> tuple[np.ndarray, Number]:
-
         sum_weights = np.sum(samp_weight)
         adj_factor = float(control / sum_weights)
 
         return np.asarray(samp_weight * adj_factor), adj_factor
 
     @staticmethod
-    def _response(resp_status: np.ndarray, resp_dict: Optional[dict[str, StringNumber]]) -> np.ndarray:
-
+    def _response(
+        resp_status: np.ndarray, resp_dict: Optional[dict[str, StringNumber]]
+    ) -> np.ndarray:
         resp_status = formats.numpy_array(resp_status)
         checks.assert_response_status(resp_status, resp_dict)
 
@@ -152,7 +151,6 @@ class SampleWeight:
     def _adj_factor(
         samp_weight: np.ndarray, resp_code: np.ndarray, unknown_to_inelig: bool
     ) -> tuple[np.ndarray, Number]:
-
         rr_sample = resp_code == "rr"  # respondent
         in_sample = resp_code == "in"  # ineligible
         nr_sample = resp_code == "nr"  # nonrespondent
@@ -237,7 +235,9 @@ class SampleWeight:
             for c in np.unique(adj_array):
                 samp_weight_c = samp_weight[adj_array == c]
                 resp_code_c = resp_code[adj_array == c]
-                adj_factor_c, self.adj_factor[c] = self._adj_factor(samp_weight_c, resp_code_c, unknown_to_inelig)
+                adj_factor_c, self.adj_factor[c] = self._adj_factor(
+                    samp_weight_c, resp_code_c, unknown_to_inelig
+                )
                 adjusted_weight[adj_array == c] = adj_factor_c * samp_weight_c
 
         self.deff_weight = self.calculate_deff_weight(adjusted_weight)
@@ -253,7 +253,6 @@ class SampleWeight:
         x_control: np.ndarray,
         scale: np.ndarray,
     ) -> np.ndarray:
-
         v_inv_d = np.diag(samp_weight / scale)
         core_matrix = np.dot(np.matmul(np.transpose(x), v_inv_d), x)
         if x.shape == (x.size,):
@@ -293,7 +292,9 @@ class SampleWeight:
         if domain is not None:
             domain = formats.numpy_array(domain)
             keys = np.unique(
-                pl.DataFrame(domain).filter(pl.col("column_0").is_not_null())["column_0"].to_numpy()
+                pl.DataFrame(domain)
+                .filter(pl.col("column_0").is_not_null())["column_0"]
+                .to_numpy()
             )  # NoneType and Object types are problematic for np.unique()
             levels: np.ndarray = np.zeros(keys.size) * np.nan
             self.adj_factor = {}
@@ -360,7 +361,10 @@ class SampleWeight:
                 raise ValueError("control dictionary keys do not match domain values.")
 
         if control is None and domain is not None:
-            if isinstance(factor, dict) and (np.unique(domain) != np.unique(list(factor.keys()))).any():
+            if (
+                isinstance(factor, dict)
+                and (np.unique(domain) != np.unique(list(factor.keys()))).any()
+            ):
                 raise ValueError("factor dictionary keys do not match domain values.")
 
             sum_weight = float(np.sum(samp_weight))
@@ -398,7 +402,6 @@ class SampleWeight:
         max_iter: int = 100,
         display_iter: bool = False,
     ) -> np.ndarray:
-
         samp_weight = formats.numpy_array(samp_weight)
 
         obs_tol = tol + 1
@@ -418,9 +421,13 @@ class SampleWeight:
             for margin in margins:
                 domain = formats.numpy_array(margins[margin])
                 if control is not None:
-                    rk_wgt = self.poststratify(samp_weight=rk_wgt, control=control[margin], domain=domain)
+                    rk_wgt = self.poststratify(
+                        samp_weight=rk_wgt, control=control[margin], domain=domain
+                    )
                 elif factor is not None:
-                    rk_wgt = self.poststratify(samp_weight=rk_wgt, factor=factor[margin], domain=domain)
+                    rk_wgt = self.poststratify(
+                        samp_weight=rk_wgt, factor=factor[margin], domain=domain
+                    )
                 else:
                     raise AssertionError("control or factor must be specified!")
 
@@ -446,11 +453,18 @@ class SampleWeight:
                 diff_margin = {}
                 diff_ctrl_margin = {}
                 for d in control[margin]:
-                    diff_margin[d] = np.abs(sum_wgt[margin][d] - sum_prev_wgt[margin][d]) / sum_prev_wgt[margin][d]
-                    diff_ctrl_margin[d] = np.abs(sum_wgt[margin][d] - control[margin][d]) / control[margin][d]
+                    diff_margin[d] = (
+                        np.abs(sum_wgt[margin][d] - sum_prev_wgt[margin][d])
+                        / sum_prev_wgt[margin][d]
+                    )
+                    diff_ctrl_margin[d] = (
+                        np.abs(sum_wgt[margin][d] - control[margin][d]) / control[margin][d]
+                    )
                     if display_iter:
                         print(f"    Difference against previous value for '{d}': {diff_margin[d]}")
-                        print(f"    Difference against control value for '{d}': {diff_ctrl_margin[d]}")
+                        print(
+                            f"    Difference against control value for '{d}': {diff_ctrl_margin[d]}"
+                        )
 
                 # diff[margin] = diff_margin
                 max_diff = max(max_diff, max(diff_margin.values()))
@@ -495,7 +509,6 @@ class SampleWeight:
         x_cat: Optional[list[str]] = None,
         x_cont: Optional[list[str]] = None,
     ) -> tuple[np.ndarray, DictStrNum]:
-
         if not isinstance(data, pd.DataFrame) or data is None:
             raise ValueError("data must be a pandas dataframe.")
 
@@ -687,7 +700,9 @@ class SampleWeight:
                         x_control=np.array(control_d_values),
                         scale=scale,
                     )
-                    adj_factor[:, k] = (domain == d) + self._calib_wgt(aux_vars, core_factor_d) / scale
+                    adj_factor[:, k] = (domain == d) + self._calib_wgt(
+                        aux_vars, core_factor_d
+                    ) / scale
                 else:
                     core_factor_d = self._core_matrix(
                         samp_weight=samp_weight_d,
@@ -710,5 +725,4 @@ class SampleWeight:
     def trim(
         self,
     ) -> np.ndarray:
-
         pass

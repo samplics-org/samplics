@@ -27,6 +27,7 @@ fh_model_reml.fit(
 )
 fh_model_reml.predict(X=X, area=area, intercept=False)
 
+
 def test_fay_herriot_REML_convergence():
     assert fh_model_reml.convergence["achieved"]
     assert fh_model_reml.convergence["iterations"] == 7
@@ -184,6 +185,7 @@ fh_model_ml.predict(
     X=X,
     area=area,
 )
+
 
 def test_fay_herriot_ML_convergence():
     assert fh_model_ml.convergence["achieved"]
@@ -495,7 +497,7 @@ euslic_fh_model_ml.predict(
 def test_euslic_fay_herriot_reml_fixed_effect():
     assert np.isclose(
         euslic_fh_model_ml.fixed_effects,
-        np.array([3070.512910,        1.059385, 1.745637]),
+        np.array([3070.512910, 1.059385, 1.745637]),
         atol=1e-4,
     ).all()
     assert np.isclose(

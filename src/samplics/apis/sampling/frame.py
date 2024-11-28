@@ -29,7 +29,6 @@ class Frame(FramePrcl):
         self.schema = schema
 
     def select(self, method: SelectMethod, design: SampleDesign) -> Sample:
-
         match method:
             case SelectMethod.grs:
                 self.data["samp"], self.data["hits"] = -_grs_select(

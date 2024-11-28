@@ -113,24 +113,18 @@ def test_size_nat_wald_df3():
         sigma=2,
     )
     size_df = size_mean_nat.to_dataframe()
-    assert (
-        size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]
-    ).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_wald_df3_with_resp_rate():
     size_mean_nat.calculate(half_ci=1, target=1, sigma=2, resp_rate=0.3)
     size_df = size_mean_nat.to_dataframe()
-    assert (
-        size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]
-    ).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_wald_df4():
     size_mean_nat.calculate(half_ci=1, target=1, sigma=2, deff=1.5)
-    size_df = size_mean_nat.to_dataframe(
-        ["param", "mean", "sigma", "half_ci", "samp_size"]
-    )
+    size_df = size_mean_nat.to_dataframe(["param", "mean", "sigma", "half_ci", "samp_size"])
     assert (size_df.columns == ["param", "mean", "sigma", "half_ci", "samp_size"]).all()
 
 
@@ -170,9 +164,7 @@ def test_size_mean_str_wald_size1_with_resp_rate1():
 
 
 def test_size_mean_str_wald_size1_with_resp_rate2():
-    size_str_mean_wald.calculate(
-        half_ci=half_ci, target=1, sigma=2, resp_rate=resp_rate
-    )
+    size_str_mean_wald.calculate(half_ci=half_ci, target=1, sigma=2, resp_rate=resp_rate)
     assert size_str_mean_wald.samp_size["stratum1"] == 20
     assert size_str_mean_wald.samp_size["stratum2"] == 52
     assert size_str_mean_wald.samp_size["stratum3"] == 4
@@ -192,9 +184,7 @@ def test_size_mean_str_wald_size2():
 
 
 def test_size_mean_str_wald_size2_with_resp_rate1():
-    size_str_mean_wald.calculate(
-        half_ci=half_ci, target=2, sigma=2, deff=deff, resp_rate=0.5
-    )
+    size_str_mean_wald.calculate(half_ci=half_ci, target=2, sigma=2, deff=deff, resp_rate=0.5)
     assert size_str_mean_wald.samp_size["stratum1"] == 31
     assert size_str_mean_wald.samp_size["stratum2"] == 40
     assert size_str_mean_wald.samp_size["stratum3"] == 11
@@ -226,9 +216,7 @@ def test_size_str_mean_wald_size3():
 
 
 def test_size_str_mean_wald_size3_with_resp_rate1():
-    size_str_mean_wald.calculate(
-        half_ci=half_ci, target=1, sigma=sigma, deff=deff, resp_rate=0.7
-    )
+    size_str_mean_wald.calculate(half_ci=half_ci, target=1, sigma=sigma, deff=deff, resp_rate=0.7)
     assert size_str_mean_wald.samp_size["stratum1"] == 22
     assert size_str_mean_wald.samp_size["stratum2"] == 8
     assert size_str_mean_wald.samp_size["stratum3"] == 46
@@ -257,9 +245,7 @@ def test_size_str_mean_wald_size4():
 
 
 def test_size_str_mean_wald_size4_with_resp_rate():
-    size_str_mean_wald.calculate(
-        half_ci=half_ci, target=2, sigma=sigma, deff=2, resp_rate=0.6
-    )
+    size_str_mean_wald.calculate(half_ci=half_ci, target=2, sigma=sigma, deff=2, resp_rate=0.6)
     assert size_str_mean_wald.samp_size["stratum1"] == 52
     assert size_str_mean_wald.samp_size["stratum2"] == 13
     assert size_str_mean_wald.samp_size["stratum3"] == 36
@@ -270,39 +256,29 @@ def test_size_mean_str_wald_df1():
     size_df = size_str_mean_wald.to_dataframe()
     assert size_df.shape[0] == 3
     assert (
-        size_df.columns
-        == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
 def test_size_mean_str_wald_df1_with_resp_rate():
-    size_str_mean_wald.calculate(
-        half_ci=half_ci, target=1, sigma=sigma, deff=2, resp_rate=1
-    )
+    size_str_mean_wald.calculate(half_ci=half_ci, target=1, sigma=sigma, deff=2, resp_rate=1)
     size_df = size_str_mean_wald.to_dataframe()
     assert size_df.shape[0] == 3
     assert (
-        size_df.columns
-        == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
 def test_size_mean_str_wald_df2():
     size_str_mean_wald.calculate(half_ci=half_ci, target=1, sigma=sigma, deff=2)
-    size_df = size_str_mean_wald.to_dataframe(
-        ["param", "str", "mean", "sigma", "E", "size"]
-    )
+    size_df = size_str_mean_wald.to_dataframe(["param", "str", "mean", "sigma", "E", "size"])
     assert size_df.shape[0] == 3
     assert (size_df.columns == ["param", "str", "mean", "sigma", "E", "size"]).all()
 
 
 def test_size_mean_str_wald_df2_with_resp_rate():
-    size_str_mean_wald.calculate(
-        half_ci=half_ci, target=1, sigma=sigma, deff=2, resp_rate=0.65
-    )
-    size_df = size_str_mean_wald.to_dataframe(
-        ["param", "str", "mean", "sigma", "E", "size"]
-    )
+    size_str_mean_wald.calculate(half_ci=half_ci, target=1, sigma=sigma, deff=2, resp_rate=0.65)
+    size_df = size_str_mean_wald.to_dataframe(["param", "str", "mean", "sigma", "E", "size"])
     assert size_df.shape[0] == 3
     assert (size_df.columns == ["param", "str", "mean", "sigma", "E", "size"]).all()
 
@@ -349,9 +325,7 @@ def test_size_mean_str_wald_fpc2():
 
 
 def test_size_mean_str_wald_fpc2_with_resp_rate1():
-    size_str_mean_wald_fpc.calculate(
-        half_ci=half_ci2, sigma=sigma2, pop_size=1000, resp_rate=0.45
-    )
+    size_str_mean_wald_fpc.calculate(half_ci=half_ci2, sigma=sigma2, pop_size=1000, resp_rate=0.45)
     assert size_str_mean_wald_fpc.samp_size["stratum1"] == 138
     assert size_str_mean_wald_fpc.samp_size["stratum2"] == 138
     assert size_str_mean_wald_fpc.samp_size["stratum3"] == 138

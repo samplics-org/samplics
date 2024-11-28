@@ -7,6 +7,7 @@ Functions:
     | *assert_response_status()* checks that the response values are in ("in", "rr", "nr", "uk").
     | *assert_brr_number_psus()* checks that the number of psus is a multiple of 2.
 """
+
 from __future__ import annotations
 
 from typing import Iterable, Optional, Union
@@ -19,7 +20,6 @@ from samplics.utils.types import Array, Number, StringNumber
 
 
 def assert_probabilities(**kargs: Union[Number, Iterable]) -> None:
-
     err_msg = "Probabilities must be between 0 and 1, inclusively!"
     for k in kargs:
         if not assert_in_range(0, 1, x=kargs[k]):
@@ -27,7 +27,6 @@ def assert_probabilities(**kargs: Union[Number, Iterable]) -> None:
 
 
 def assert_proportions(**kargs: Union[Number, Iterable]) -> None:
-
     err_msg = "Proportions must be between 0 and 1, inclusively!"
     for k in kargs:
         if not assert_in_range(0, 1, x=kargs[k]):
@@ -71,10 +70,7 @@ def assert_response_status(
 ) -> None:
     if response_status is None:
         raise AssertionError("response_status is not provided")
-    elif (
-        not np.isin(response_status, ("in", "rr", "nr", "uk")).all()
-        and response_dict is None
-    ):
+    elif not np.isin(response_status, ("in", "rr", "nr", "uk")).all() and response_dict is None:
         raise AssertionError(
             "The response status must only contains values in ('in', 'rr', 'nr', 'uk') or the mapping should be provided using response_dict parameter"
         )
@@ -89,6 +85,4 @@ def assert_response_status(
 
 def assert_brr_number_psus(psu: np.ndarray) -> None:
     if psu.size % 2 != 0:
-        raise AssertionError(
-            "For the BRR method, the number of PSUs must be a multiple of two."
-        )
+        raise AssertionError("For the BRR method, the number of PSUs must be a multiple of two.")

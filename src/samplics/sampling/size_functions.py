@@ -25,7 +25,6 @@ def _ss_for_proportion_wald(
     resp_rate: Union[Number, Array],
     alpha: float,
 ) -> Union[Number, Array]:
-
     if isinstance(target, (np.ndarray, pd.Series, list, tuple)):
         target = numpy_array(target)
     if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
@@ -53,12 +52,7 @@ def _ss_for_proportion_wald(
         )
     else:
         return math.ceil(
-            (1 / resp_rate)
-            * deff_c
-            * z_value**2
-            * target
-            * (1 - target)
-            / half_ci**2
+            (1 / resp_rate) * deff_c * z_value**2 * target * (1 - target) / half_ci**2
         )
 
 
@@ -70,7 +64,6 @@ def _ss_for_proportion_wald_stratified(
     resp_rate: DictStrNum,
     alpha: DictStrNum,
 ) -> DictStrNum:
-
     samp_size: DictStrNum = {}
     for s in half_ci:
         pop_size_c = None if pop_size is None else pop_size[s]
@@ -95,7 +88,6 @@ def calculate_ss_wald_prop(
     alpha: Union[DictStrNum, Number, Array] = 0.05,
     strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
-
     if strat:
         return _ss_for_proportion_wald_stratified(
             target=target,
@@ -123,7 +115,6 @@ def _ss_for_proportion_fleiss(
     resp_rate: Union[Number, Array],
     alpha: Union[Number, Array],
 ) -> Union[Number, Array]:
-
     if isinstance(target, (np.ndarray, pd.Series, list, tuple)):
         target = numpy_array(target)
     if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
@@ -138,7 +129,6 @@ def _ss_for_proportion_fleiss(
     z_value = normal().ppf(1 - alpha / 2)
 
     def fleiss_factor(p: float, d: float) -> float:
-
         if 0 <= p < d or 1 - d < p <= 1:
             return 8 * d * (1 - 2 * d)
         elif d <= p < 0.3:
@@ -176,7 +166,6 @@ def _ss_for_proportion_fleiss_stratified(
     resp_rate: DictStrNum,
     alpha: DictStrNum,
 ) -> DictStrNum:
-
     samp_size: DictStrNum = {}
     for s in half_ci:
         samp_size[s] = _ss_for_proportion_fleiss(
@@ -198,7 +187,6 @@ def calculate_ss_fleiss_prop(
     alpha: Union[DictStrNum, Number, Array] = 0.05,
     strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
-
     if strat:
         return _ss_for_proportion_fleiss_stratified(
             target=target,
@@ -225,7 +213,6 @@ def _ss_for_mean_wald(
     resp_rate: Union[Number, Array],
     alpha: Union[Number, Array],
 ) -> Union[Number, Array]:
-
     if isinstance(half_ci, (np.ndarray, pd.Series, list, tuple)):
         half_ci = numpy_array(half_ci)
     if isinstance(sigma, (np.ndarray, pd.Series, list, tuple)):
@@ -246,9 +233,7 @@ def _ss_for_mean_wald(
             / ((pop_size - 1) * half_ci**2 + z_value**2 * sigma**2)
         )
     else:
-        return math.ceil(
-            (1 / resp_rate) * deff_c * z_value**2 * sigma**2 / half_ci**2
-        )
+        return math.ceil((1 / resp_rate) * deff_c * z_value**2 * sigma**2 / half_ci**2)
 
 
 def _ss_for_mean_wald_stratified(
@@ -259,7 +244,6 @@ def _ss_for_mean_wald_stratified(
     resp_rate: DictStrNum,
     alpha: DictStrNum,
 ) -> DictStrNum:
-
     samp_size: DictStrNum = {}
     for s in half_ci:
         pop_size_c = None if pop_size is None else pop_size[s]
@@ -284,7 +268,6 @@ def calculate_ss_wald_mean(
     alpha: Union[DictStrNum, Number, Array] = 0.05,
     strat: bool = False,
 ) -> Union[DictStrNum, Number, Array]:
-
     if strat:
         return _ss_for_mean_wald_stratified(
             half_ci=half_ci,
@@ -315,7 +298,6 @@ def _calculate_ss_wald_mean_one_sample(
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> Union[Array, Number]:
-
     if two_sides and delta == 0:
         z_alpha = normal().ppf(1 - alpha / 2)
         z_beta = normal().ppf(power)
@@ -327,9 +309,7 @@ def _calculate_ss_wald_mean_one_sample(
         z_beta = normal().ppf(power)
 
     return math.ceil(
-        (1 / resp_rate)
-        * deff_c
-        * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
+        (1 / resp_rate) * deff_c * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
     )
 
 
@@ -343,7 +323,6 @@ def _calculate_ss_wald_mean_one_sample_stratified(
     alpha: DictStrNum,
     power: DictStrNum,
 ) -> DictStrNum:
-
     samp_size: DictStrNum = {}
     for s in epsilon:
         samp_size[s] = _calculate_ss_wald_mean_one_sample(
@@ -370,7 +349,6 @@ def calculate_ss_wald_mean_one_sample(
     power: Union[DictStrNum, Number, Array],
     strat: bool = True,
 ) -> DictStrNum:
-
     if strat:
         return _calculate_ss_wald_mean_one_sample_stratified(
             two_sides=two_sides,
@@ -408,7 +386,6 @@ def _calculate_ss_wald_mean_two_samples(
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> tuple[Union[Array, Number], Union[Array, Number]]:
-
     if two_sides and delta == 0:
         z_alpha = normal().ppf(1 - alpha / 2)
         z_beta = normal().ppf(power)
@@ -446,7 +423,6 @@ def _calculate_ss_wald_mean_two_samples_stratified(
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> tuple[DictStrNum, DictStrNum]:
-
     samp_size_1: DictStrNum = {}
     samp_size_2: DictStrNum = {}
     for s in epsilon:
@@ -481,7 +457,6 @@ def calculate_ss_wald_mean_two_samples(
     power: Union[DictStrNum, Number, Array],
     strat: bool = True,
 ) -> DictStrNum:
-
     if strat:
         return _calculate_ss_wald_mean_two_samples_stratified(
             two_sides=two_sides,
@@ -524,7 +499,6 @@ def _calculate_ss_wald_prop_two_samples(
     alpha: Union[Array, Number],
     power: Union[Array, Number],
 ) -> tuple[Union[Array, Number], Union[Array, Number]]:
-
     if two_sides and delta == 0:
         z_alpha = normal().ppf(1 - alpha / 2)
         z_beta = normal().ppf(power)
@@ -558,7 +532,6 @@ def _calculate_ss_wald_prop_two_samples_stratified(
     alpha: DictStrNum,
     power: DictStrNum,
 ) -> DictStrNum:
-
     samp_size: DictStrNum = {}
     for s in epsilon:
         samp_size[s] = _calculate_ss_wald_prop_two_samples(
@@ -589,7 +562,6 @@ def calculate_ss_wald_prop_two_samples(
     power: Union[DictStrNum, Number, Array],
     strat: bool = True,
 ) -> DictStrNum:
-
     if strat:
         return _calculate_ss_wald_prop_two_samples_stratified(
             two_sides=two_sides,

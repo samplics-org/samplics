@@ -143,6 +143,10 @@ roadmap.md
 *.Rhistory
 *.docx
 
-# End of https://www.gitignore.io/api/python
 
 /.luarc.json
+
+# Temporary exclusions
+**/pkgs/
+
+# End of https://www.gitignore.io/api/python

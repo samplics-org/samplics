@@ -1,7 +1,4 @@
-"""EBLUP Area Model
-
-"""
-
+"""EBLUP Area Model"""
 
 import numpy as np
 import polars as pl
@@ -46,7 +43,9 @@ def _predict_eblup(
         b_const=b_const,
     )
 
-    return EblupEst(pred=est, fit_stats=fit_eblup, domain=None, mse=mse, mse_boot=None, mse_jkn=None)
+    return EblupEst(
+        pred=est, fit_stats=fit_eblup, domain=None, mse=mse, mse_boot=None, mse_jkn=None
+    )
 
 
 def _eblup_estimates(
@@ -60,7 +59,16 @@ def _eblup_estimates(
     sigma2_v_cov: Number,
     intercept: bool,
     b_const: dict,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,]:
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+]:
     m = len(yhat)
     b_const_vec = np.array(list(b_const.values()))
     v_i = np.array(list(sigma2_e.values())) + sigma2_v * (b_const_vec**2)
@@ -70,7 +78,9 @@ def _eblup_estimates(
     b = (G @ np.transpose(Z)) @ v_inv
 
     if intercept:
-        x = np.insert(auxvars.to_numpy(drop_vars=["__record_id", "__domain"]), 0, 1, axis=1)  # add the intercept
+        x = np.insert(
+            auxvars.to_numpy(drop_vars=["__record_id", "__domain"]), 0, 1, axis=1
+        )  # add the intercept
     else:
         x = auxvars.to_numpy(drop_vars=["__record_id", "__domain"])
 

@@ -12,14 +12,12 @@ class ToDataFramePrcl(Protocol):
 
 @runtime_checkable
 class SamplePrcl(Protocol):
-
     def estimate(): ...
     def adjust(): ...
 
 
 @runtime_checkable
 class FramePrcl(Protocol):
-
     def select(): ...
 
 

@@ -70,22 +70,6 @@ exclude = '''
 # line-length = 99
 # target-version = ["py310", "py311"]
 
-# [tool.isort]
-# atomic = true
-# filter_files = true
-# force_single_line = false
-# include_trailing_comma = true
-# known_first_party = "samplics"
-# known_pandas = ["pandas", "numpy", "scipy", "statsmodels"]
-# line_length = 99
-# lines_after_imports = 2
-# lines_between_types = 1
-# multi_line_output = 3
-# profile = "black"
-# sections = ["FUTURE", "STDLIB", "THIRDPARTY", "PANDAS", "FIRSTPARTY", "LOCALFOLDER"]
-# src_paths = ["src", "tests"]
-# use_parentheses = true
-
 [tool.pytest.ini_options]
 addopts = "--ignore=tests/apis --ignore=tests/sae --ignore=tests/types"
 # testpaths = ["tests"]
@@ -134,8 +118,8 @@ line-length = 99
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.12.
-target-version =  "py312"
+# Assume Python 3.13.
+target-version =  "py313"
 
 [tool.ruff.pycodestyle]
 ignore-overlong-task-comments = true

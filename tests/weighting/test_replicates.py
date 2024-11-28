@@ -4,9 +4,7 @@ from samplics.weighting import ReplicateWeight
 from samplics.utils import RepMethod
 
 
-test_data = pd.read_csv(
-    "./tests/weighting/small_data_for_testing_replicate_weights.csv"
-)
+test_data = pd.read_csv("./tests/weighting/small_data_for_testing_replicate_weights.csv")
 
 cluster_id = test_data["psu"].astype(str)
 stratum_id = test_data["stratum"].astype(str)

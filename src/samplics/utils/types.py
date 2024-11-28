@@ -1,5 +1,4 @@
-"""Provides the custom types used throughout the modules.
-"""
+"""Provides the custom types used throughout the modules."""
 
 from enum import Enum, unique
 from typing import Dict
@@ -22,14 +21,14 @@ DictStrFloat = Dict[StringNumber, float]
 DictStrBool = Dict[StringNumber, bool]
 
 
-
 @unique
 class FitMethod(Enum):
-    ols= "OLS"
-    wls= "WLS"
+    ols = "OLS"
+    wls = "WLS"
     fh = "FH"
-    ml= "ML"
-    reml= "REML"
+    ml = "ML"
+    reml = "REML"
+
 
 # Population parameters
 @unique
@@ -43,10 +42,10 @@ class PopParam(Enum):
 
 @unique
 class RepMethod(Enum):
-    jackknife  = "Jackknife"
+    jackknife = "Jackknife"
     bootstrap = "Bootstrap"
     brr = "BRR"
-    
+
 
 # Methods for sample size
 @unique

@@ -84,7 +84,6 @@ def test_power_for_one_prop_two_sided_dict():
 
 
 def test_power_for_one_prop_one_less_number():
-
     samp_size = np.array([75, 55, 37, 5])
     prop_0 = (0.2, 0.37, 0.95, 0.85)
     prop_1 = [0.1, 0.47, 0.99, 0.90]
@@ -104,7 +103,6 @@ def test_power_for_one_prop_one_less_number():
 
 
 def test_power_for_one_prop_greater_number():
-
     samp_size = {1: 75, 2: 55, 3: 37, 4: 5}
     prop_0 = {1: 0.2, 2: 0.37, 3: 0.95, 4: 0.85}
     prop_1 = {1: 0.1, 2: 0.47, 3: 0.99, 4: 0.90}
@@ -204,7 +202,6 @@ def test_power_for_one_prop_two_sided_dict_no_arcsin():
 
 
 def test_power_for_one_prop_one_less_number_no_arcsin():
-
     samp_size = np.array([75, 55, 37, 5])
     prop_0 = (0.2, 0.37, 0.95, 0.85)
     prop_1 = [0.1, 0.47, 0.99, 0.90]
@@ -224,7 +221,6 @@ def test_power_for_one_prop_one_less_number_no_arcsin():
 
 
 def test_power_for_one_prop_one_less_number_no_arcsin():
-
     samp_size = np.array([75, 55, 37, 5])
     prop_0 = (0.2, 0.37, 0.95, 0.85)
     prop_1 = [0.1, 0.47, 0.99, 0.90]
@@ -244,7 +240,6 @@ def test_power_for_one_prop_one_less_number_no_arcsin():
 
 
 def test_power_for_one_prop_greater_number_no_arcsin():
-
     samp_size = {1: 75, 2: 55, 3: 37, 4: 5}
     prop_0 = {1: 0.2, 2: 0.37, 3: 0.95, 4: 0.85}
     prop_1 = {1: 0.1, 2: 0.47, 3: 0.99, 4: 0.90}

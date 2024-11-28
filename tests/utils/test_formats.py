@@ -32,6 +32,7 @@ da = np.array([1, 2, 3, 4, 5])
 da2 = [1, 2, 3, 4, 5]
 # breakpoint()
 
+
 @pytest.mark.parametrize("input_data", [df, df2, ds, ds2, da, da2])
 def test_numpy_array(input_data):
     arr = numpy_array(input_data)

@@ -36,8 +36,7 @@ def test_fit():
 
 
 class Animal(Protocol):
-    def speak():
-        ...
+    def speak(): ...
 
 
 class Dog:

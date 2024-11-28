@@ -117,7 +117,6 @@ dummy3["weights"] = [1, 0.3, 8, 3, 0.7] * 91
 
 
 def test_empty_cells_3():
-
     crosstab_temp3 = CrossTabulation(PopParam.count)
     crosstab_temp3.tabulate(
         vars=dummy3[["Gender", "Nationality"]],

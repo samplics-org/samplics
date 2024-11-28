@@ -186,7 +186,7 @@ class EblupAreaModel:
                 resid_d = yhat_d - mu_d
                 sigma2_d = sigma2_v * (b_d**2) + phi_d
                 term1 = (b_d**2 / sigma2_d)[0]
-                term2 = (((b_d**2) * (resid_d**2)) / (sigma2_d**2))
+                term2 = ((b_d**2) * (resid_d**2)) / (sigma2_d**2)
                 deriv_sigma += -0.5 * (term1 - term2)
                 info_sigma += 0.5 * (term1**2)
         elif self.method == FitMethod.reml:

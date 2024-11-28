@@ -41,6 +41,7 @@ eb_bhf_reml.predict(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.4
 
 eb_bhf_reml.bootstrap_mse(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
+
 def test_eb_bhf_reml():
     assert eb_bhf_reml.method == "REML"
 
