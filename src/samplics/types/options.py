@@ -1,15 +1,14 @@
 from enum import Enum, unique
 
 
-
-
 @unique
-class FitMethod:
-    ols= "OLS"
-    wls= "WLS"
+class FitMethod(Enum):
+    ols = "OLS"
+    wls = "WLS"
     fh = "FH"
-    ml= "ML"
-    reml= "REML"
+    ml = "ML"
+    reml = "REML"
+
 
 @unique
 class Mse(Enum):
@@ -30,11 +29,11 @@ class PopParam(Enum):
 
 @unique
 class RepMethod(Enum):
-    jackknife  = "Jackknife"
+    jackknife = "Jackknife"
     bootstrap = "Bootstrap"
     brr = "BRR"
-    
-    
+
+
 # Methods for sample size
 @unique
 class SizeMethod(Enum):

@@ -15,25 +15,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
-        poetry-version: ["1.7.1"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v3
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Python Poetry
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: ${{ matrix.poetry-version }}
-      - name: View poetry --help
-        run: poetry --help
+          version: "latest"
+      - name: Print the installed uv version
+        run: echo "Installed uv version is ${{ steps.setup-uv.outputs.uv-version }}"
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m poetry add --lock pytest
-          python -m poetry install --no-dev
+          uv init
+          uv python install ${{ matrix.python-version }}
+          uv sync
       - name: Test with pytest
         run: |
-          python -m poetry run python -m pytest -v tests
+          uv run pytest -v tests

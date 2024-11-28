@@ -1,15 +1,15 @@
-[tool.poetry]
-authors = ["Mamadou S Diallo <msdiallo@samplics.org>"]
-description = "Select, weight and analyze complex sample data"
-license = "MIT"
+[project]
 name = "samplics"
 version = "0.4.22"
+# license = "MIT"
+description = "Select, weight and analyze complex sample data"
+
+authors = [{name="Mamadou S Diallo", email="msdiallo@samplics.org"}]
 
 readme = "README.md"
+requires-python = ">=3.10"
 
-documentation = "https://samplics-org.github.io/samplics/"
-homepage = "https://samplics-org.github.io/samplics//"
-repository = "https://github.com/survey-methods/samplics"
+
 
 keywords = ["sampling", "sample", "weighting", "estimation", "survey"]
 
@@ -23,28 +23,34 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 
-packages = [
-  {include = "samplics", from = "src"},
+# packages = [
+#   {include = "samplics", from = "src"},
+# ]
+
+dependencies = [
+    "numpy >=2.0",
+    "pandas >=2.1",
+    "matplotlib >=3.4",
+    "statsmodels >=0.13",
+    "polars[pyarrow]>=1.15.0",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.10"
-# attrs = "^23.1.0"
-numpy = ">=2.0"
-pandas = ">=2.1"
-matplotlib = ">=3.4" 
-polars = {extras = ["pyarrow"], version = "^1.1"}
-statsmodels = ">=0.13" 
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "mypy>=1.13.0",
+    "pytest>=8.3.3",
+    "pytest-cov>=4.1",
+    "ruff>=0.8.0",
+    "codecov>=2.1",
+]
 
-[tool.poetry.group.dev.dependencies]
-black = "^24.3"
-# certifi = "^2023.7.22"
-codecov = ">=2.1"
-mypy = ">=1.8"
-pytest = ">=7.4"
-pytest-cov = ">=4.1"
-ruff = ">=0.1.9"
-jupyterlab = "^4.2.1"
+
+[project.urls]
+repository = "https://github.com/survey-methods/samplics"
+documentation = "https://samplics-org.github.io/samplics/"
+homepage = "https://samplics-org.github.io/samplics//"
+
 
 [tool.black]
 exclude = '''
@@ -171,5 +177,5 @@ warn_unused_configs = true
 exclude = [".venv",  "tests"]
 
 [build-system]
-build-backend = "poetry.masonry.api"
-requires = ["poetry>=1.0.0"]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
