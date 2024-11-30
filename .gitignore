@@ -136,7 +136,7 @@ reference_material/
 notebooks/*
 presentations/*/
 *.ipynb_checkpoints/
-roadmap/*
+roadmap/
 roadmap.md
 
 #Other
