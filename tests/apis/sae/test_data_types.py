@@ -1,9 +1,4 @@
-import numpy as np
-import pandas as pd
-import polars as pl
-import pytest
-
-from samplics.utils.types import AuxVars, DirectEst, FitMethod
+from samplics.utils.types import DirectEst, FitMethod
 
 
 # FitMethod
@@ -51,7 +46,13 @@ class TestDirectEst1:
         )
         assert est.domains == ["one", "two", "three", "four", "five"]
         assert est.est == {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
-        assert est.stderr == {"one": 0.1, "two": 0.2, "three": 0.3, "four": 0.4, "five": 0.5}
+        assert est.stderr == {
+            "one": 0.1,
+            "two": 0.2,
+            "three": 0.3,
+            "four": 0.4,
+            "five": 0.5,
+        }
         assert est.ssize == {"one": 10, "two": 20, "three": 30, "four": 40, "five": 50}
 
     def test_direct_est2(self):
@@ -63,7 +64,13 @@ class TestDirectEst1:
         )
         assert est.domains == ["one", "two", "three", "four", "five"]
         assert est.est == {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
-        assert est.stderr == {"one": 0.1, "two": 0.2, "three": 0.3, "four": 0.4, "five": 0.5}
+        assert est.stderr == {
+            "one": 0.1,
+            "two": 0.2,
+            "three": 0.3,
+            "four": 0.4,
+            "five": 0.5,
+        }
         assert est.ssize == {"one": 10, "two": 20, "three": 30, "four": 40, "five": 50}
 
     def test_direct_est3(self):
@@ -75,7 +82,13 @@ class TestDirectEst1:
         )
         assert est.domains == ["one", "two", "three", "four", "five"]
         assert est.est == {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
-        assert est.stderr == {"one": 0.1, "two": 0.2, "three": 0.3, "four": 0.4, "five": 0.5}
+        assert est.stderr == {
+            "one": 0.1,
+            "two": 0.2,
+            "three": 0.3,
+            "four": 0.4,
+            "five": 0.5,
+        }
         assert est.ssize == {"one": 35, "two": 35, "three": 35, "four": 35, "five": 35}
 
     def test_directest_cv(self):
@@ -117,9 +130,15 @@ class TestDirectEst1:
 
         est_pl = est.to_polars()
         assert (est.domains == est_pl.select("__domain").to_numpy().flatten()).all()
-        assert est.est == dict(zip(est.domains, est_pl.select("est").to_numpy().flatten()))
-        assert est.stderr == dict(zip(est.domains, est_pl.select("stderr").to_numpy().flatten()))
-        assert est.ssize == dict(zip(est.domains, est_pl.select("ssize").to_numpy().flatten()))
+        assert est.est == dict(
+            zip(est.domains, est_pl.select("est").to_numpy().flatten())
+        )
+        assert est.stderr == dict(
+            zip(est.domains, est_pl.select("stderr").to_numpy().flatten())
+        )
+        assert est.ssize == dict(
+            zip(est.domains, est_pl.select("ssize").to_numpy().flatten())
+        )
 
     def test_directest_pandas(self):
         est = DirectEst(

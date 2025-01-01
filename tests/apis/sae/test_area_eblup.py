@@ -8,7 +8,7 @@ from samplics.apis import fit
 from samplics.apis.sae.area_eblup import _predict_eblup
 
 # from samplics.apis.sae import _log_likelihood, fit_eblup, predict_eblup
-from samplics.types import AuxVars, DirectEst, FitMethod, Mse
+from samplics.types import AuxVars, DirectEst, FitMethod
 
 
 # Import the datasets
@@ -63,6 +63,8 @@ est_milk_reml = _predict_eblup(x=auxvars, fit_eblup=fit_reml, y=yhat)
 # breakpoint()
 
 
-@pytest.mark.skipif(sys.platform == "linux", reason="Skip dev version on Github (Linux)")
+@pytest.mark.skipif(
+    sys.platform == "linux", reason="Skip dev version on Github (Linux)"
+)
 def test_sae1():
     assert 1 == 2

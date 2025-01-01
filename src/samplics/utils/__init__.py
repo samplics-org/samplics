@@ -9,12 +9,12 @@ from samplics.utils.errors import (
 )
 from samplics.utils.formats import array_to_dict
 from samplics.utils.types import (
+    FitMethod,
     PopParam,
+    RepMethod,
     SelectMethod,
     SinglePSUEst,
     SizeMethod,
-    RepMethod,
-    FitMethod,
 )
 
 

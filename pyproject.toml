@@ -1,6 +1,6 @@
 [project]
 name = "samplics"
-version = "0.4.22"
+version = "0.4.23"
 # license = "MIT"
 description = "Select, weight and analyze complex sample data"
 
@@ -78,7 +78,10 @@ addopts = "--ignore=tests/apis --ignore=tests/sae --ignore=tests/types"
 [tool.ruff]
 src = ["src", "tests"]
 # extend-exclude = ["tests"]
+line-length = 99
+target-version =  "py313"
 
+[tool.ruff.lint]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = ["D", "E", "F", "W", "I001"]
 ignore = ["D", "E501"] # for development we can ignore the docs
@@ -112,29 +115,21 @@ exclude = [
 ]
 per-file-ignores = {}
 
-# Same as Black.
-line-length = 99
-
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.13.
-target-version =  "py313"
-
-[tool.ruff.pycodestyle]
+[tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = true
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
-
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["samplics"]
 known-third-party = ["matplotlib", "numpy",  "pandas", "polars", "pydantic", "scipy", "statsmodels"]
 lines-after-imports = 2
 lines-between-types = 1
-
 
 [tool.mypy]
 ignore_missing_imports = true

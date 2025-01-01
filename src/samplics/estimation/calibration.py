@@ -12,7 +12,9 @@ from samplics.utils.types import Array, Number, Series, StringNumber
 class CalibrateEstimator:
     """Provides calibration based estimation"""
 
-    def __init__(self, param: str, alpha: float = 0.05, rand_seed: Optional[int] = None):
+    def __init__(
+        self, param: str, alpha: float = 0.05, rand_seed: Optional[int] = None
+    ):
         pass
 
     def estimate(

@@ -220,7 +220,7 @@ def test_power_for_one_prop_one_less_number_no_arcsin():
     assert np.isclose(power_less[3], 0.0218, atol=0.001)
 
 
-def test_power_for_one_prop_one_less_number_no_arcsin():
+def test_power_for_one_prop_one_less_number_no_arcsin2():
     samp_size = np.array([75, 55, 37, 5])
     prop_0 = (0.2, 0.37, 0.95, 0.85)
     prop_1 = [0.1, 0.47, 0.99, 0.90]

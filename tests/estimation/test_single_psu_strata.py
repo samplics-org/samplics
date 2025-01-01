@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from samplics.estimation import TaylorEstimator
-from samplics.utils.types import SinglePSUEst, PopParam
+from samplics.utils.types import PopParam, SinglePSUEst
 
 
 sample_data1 = pd.DataFrame.from_dict(

@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.formats import dict_to_dataframe, numpy_array
-from samplics.utils.types import Array, DictStrNum, Number, FitMethod
+from samplics.utils.types import Array, DictStrNum, FitMethod, Number
 
 
 class EblupAreaModel:
@@ -195,7 +195,9 @@ class EblupAreaModel:
             V = np.diag(v_i)
             v_inv = np.linalg.inv(V)
             x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
-            x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
+            x_xvinvx_x = np.matmul(
+                np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X)
+            )
             P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
             P_B = np.matmul(P, B)
             P_B_P = np.matmul(P_B, P)

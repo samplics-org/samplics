@@ -41,7 +41,9 @@ aux_dict["A4_&_B1"] = 55
 aux_dict["A4_&_B2"] = 165
 aux_dict["A4_&_B3"] = 125
 
-sample_cat["_calib_wgt"] = SampleWeight().calibrate(sample_cat["wgt"], aux_array, control=aux_dict)
+sample_cat["_calib_wgt"] = SampleWeight().calibrate(
+    sample_cat["wgt"], aux_array, control=aux_dict
+)
 sample_cat["_calib_adjust_fct"] = sample_cat["_calib_wgt"] / sample_cat["wgt"]
 # print(sample_cat.drop_duplicates())
 
@@ -311,7 +313,9 @@ aux_dict["A4"] = 345
 aux_dict["B"] = 3355
 
 
-sample_mix["_calib_wgt"] = SampleWeight().calibrate(sample_mix["wgt"], aux_array, control=aux_dict)
+sample_mix["_calib_wgt"] = SampleWeight().calibrate(
+    sample_mix["wgt"], aux_array, control=aux_dict
+)
 sample_mix["_calib_adjust_fct"] = sample_mix["_calib_wgt"] / sample_mix["wgt"]
 
 # print(sample_mix.drop_duplicates())

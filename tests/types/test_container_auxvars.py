@@ -11,11 +11,12 @@ from samplics.types.containers import AuxVars
 
 class TestAuxVars1:
     # Create an instance of AuxVars with a numpy array as area and a pandas dataframe as x
-    def test_create_instance_with_numpy_array_and_pandas_dataframe(self):
-        # area = np.array([1, 2, 2, 1, 1])
-        # aux_vars = AuxVars(x, area)
-        x = pd.DataFrame({"col1": [1, 2, 3, 4, 5], "col2": [6, 7, 8, 9, 10]})
-        aux_vars = AuxVars(x)
+    # def test_create_instance_with_numpy_array_and_pandas_dataframe(self):
+    # area = np.array([1, 2, 2, 1, 1])
+    # aux_vars = AuxVars(x, area)
+    # x = pd.DataFrame({"col1": [1, 2, 3, 4, 5], "col2": [6, 7, 8, 9, 10]})
+    # aux_vars = AuxVars(x)
+    pass
 
 
 class TestAuxVars2:

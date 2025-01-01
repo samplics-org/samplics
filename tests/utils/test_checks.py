@@ -91,11 +91,11 @@ def test_in_range_for_lists_fails():
     [
         {"one": 11, "two": 23, "three": 17},
         {"one": -11, "two": 23, "three": 17, 4: 0.23},
-        {3: 0.23},
+        {4: 0.23},
     ],
 )
-def test_in_range_for_dicts_successes():
-    assert assert_in_range(low=11, high=23, x=x)
+def test_in_range_for_dicts_successes1(x):
+    assert assert_in_range(low=-11, high=23, x=x)
 
 
 @pytest.mark.parametrize(
@@ -103,10 +103,10 @@ def test_in_range_for_dicts_successes():
     [
         {"one": 101, "two": 23, "three": 17},
         {"one": -11.0001, "two": 23, "three": 17, 3: 0.23},
-        {4: 0.23},
+        {3: 0.23},
     ],
 )
-def test_in_range_for_dicts_successes(x):
+def test_in_range_for_dicts_successes2(x):
     assert not assert_in_range(low=11, high=23, x=x)
 
 
@@ -127,9 +127,7 @@ def test_assert_proportions_for_list_fails(x):
     assert assert_proportions(x=x)
 
 
-@pytest.mark.xfail(
-    strict=True, reason="At least one number in the numpy arrays is not between 0 and 1"
-)
+@pytest.mark.xfail(strict=True, reason="At least one number in the numpy arrays is not between 0 and 1")
 @pytest.mark.parametrize(
     "x",
     [np.array([-0.0, 0.1, 0, 3]), np.array([-0.00001]), np.array([-1.000001, -1.1])],
@@ -150,9 +148,7 @@ def test_assert_proportions_for_pandas_Series_fails(x):
     assert assert_proportions(x=x) is None
 
 
-@pytest.mark.xfail(
-    strict=True, reason="At least one number in the dictionaries is not between 0 and 1"
-)
+@pytest.mark.xfail(strict=True, reason="At least one number in the dictionaries is not between 0 and 1")
 @pytest.mark.parametrize("x", [{"one": 0.1, "two": 1.1}, {"one": -1, 3: 0.5}, {1: -0.1, 2: 1}])
 def test_assert_proportions_for_dicts_fails(x):
     assert assert_proportions(x=x) is None
@@ -166,7 +162,7 @@ def test_assert_weights():
 
 
 @pytest.mark.xfail(strict=True, reason="Negative weights")
-def test_assert_weights():
+def test_assert_weights2():
     assert assert_weights([-1]) is None
     assert assert_weights([1, 12, 3, 5]) is None
     assert assert_weights(np.array([1, 2, 3, -5])) is None
@@ -181,7 +177,7 @@ def test_assert_not_unique():
 
 
 @pytest.mark.xfail(strict=True, reason="Duplicate values")
-def test_assert_not_unique():
+def test_assert_not_unique2():
     assert assert_not_unique([1, 3, 3, 5]) is None
     assert assert_not_unique(np.array([1, 2, 3, 5, 5])) is None
     assert assert_not_unique(pd.Series([1, 1, 2, 3, 5])) is None
@@ -192,7 +188,7 @@ def test_assert_response_status11():
 
 
 @pytest.mark.xfail(strict=True, reason="response status missing")
-def test_assert_response_status11():
+def test_assert_response_status12():
     assert assert_response_status("in", None) is None
     assert assert_response_status("nr", None) is None
     assert assert_response_status("uk", None) is None
@@ -205,7 +201,7 @@ def test_assert_response_status0():
 
 
 @pytest.mark.xfail(strict=True, reason="Not in the standard dictionary")
-def test_assert_response_status12():
+def test_assert_response_status13():
     assert assert_response_status("inn", None) is None
     assert assert_response_status("rRR", None) is None
     assert assert_response_status("nonresponse", None) is None

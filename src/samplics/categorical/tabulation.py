@@ -19,8 +19,8 @@ from scipy.stats import chi2, f
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.errors import DimensionError
-from samplics.utils.formats import concatenate_series_to_str, numpy_array, remove_nans
-from samplics.utils.types import Array, Number, SinglePSUEst, StringNumber, PopParam
+from samplics.utils.formats import numpy_array, remove_nans
+from samplics.utils.types import Array, Number, PopParam, SinglePSUEst, StringNumber
 
 
 class Tabulation:
@@ -30,7 +30,7 @@ class Tabulation:
         alpha: float = 0.05,
         ciprop_method: str = "logit",
     ) -> None:
-        if not param in (PopParam.count, PopParam.prop):
+        if param not in (PopParam.count, PopParam.prop):
             raise ValueError("Parameter must be 'count' or 'proportion'!")
         self.param = param
         self.type = "oneway"
@@ -89,9 +89,7 @@ class Tabulation:
                 to_keep = to_keep & remove_nans(var.values.ravel().shape[0], var.values.ravel())
             elif var.ndim == 2:  # DataFrame
                 for col in var.columns:
-                    to_keep = to_keep & remove_nans(
-                        var.values.ravel().shape[0], var[col].values.ravel()
-                    )
+                    to_keep = to_keep & remove_nans(var.values.ravel().shape[0], var[col].values.ravel())
             else:
                 raise DimensionError("The dimension must be 1 or 2.")
 
@@ -180,20 +178,12 @@ class Tabulation:
         vars_names = set_variables_names(vars, varnames, prefix)
 
         if len(vars_names) != nb_vars:
-            raise AssertionError(
-                "Length of varnames must be the same as the number of columns of vars"
-            )
+            raise AssertionError("Length of varnames must be the same as the number of columns of vars")
 
         _samp_weight = numpy_array(samp_weight)
 
-        _samp_weight = (
-            np.ones(vars_df.shape[0]) if _samp_weight.shape in ((), (0,)) else _samp_weight
-        )
-        _samp_weight = (
-            np.repeat(_samp_weight, vars_df.shape[0])
-            if _samp_weight.shape[0] == 1
-            else _samp_weight
-        )
+        _samp_weight = np.ones(vars_df.shape[0]) if _samp_weight.shape in ((), (0,)) else _samp_weight
+        _samp_weight = np.repeat(_samp_weight, vars_df.shape[0]) if _samp_weight.shape[0] == 1 else _samp_weight
         _stratum = numpy_array(stratum)
         _psu = numpy_array(psu)
         _ssu = numpy_array(ssu)
@@ -314,7 +304,7 @@ class CrossTabulation:
         alpha: float = 0.05,
         ciprop_method: str = "logit",
     ) -> None:
-        if not param in (PopParam.count, PopParam.prop):
+        if param not in (PopParam.count, PopParam.prop):
             raise ValueError("Parameter must be 'count' or 'proportion'!")
         self.param = param
         self.type = "twoway"
@@ -351,9 +341,7 @@ class CrossTabulation:
 
             pearson_unadj = f"Unadjusted - {chisq_dist}: {self.stats['Pearson-Unadj']['chisq_value']:.4f} with p-value of {self.stats['Pearson-Unadj']['p_value']:.4f}"
             pearson_adj = f"Adjusted - {f_dist}): {self.stats['Pearson-Adj']['f_value']:.4f}  with p-value of {self.stats['Pearson-Adj']['p_value']:.4f}"
-            pearson_test = (
-                f"Pearson (with Rao-Scott adjustment):\n\t{pearson_unadj}\n\t{pearson_adj}"
-            )
+            pearson_test = f"Pearson (with Rao-Scott adjustment):\n\t{pearson_unadj}\n\t{pearson_adj}"
 
             lr_unadj = f" Unadjusted - {chisq_dist}: {self.stats['LR-Unadj']['chisq_value']:.4f} with p-value of {self.stats['LR-Unadj']['p_value']:.4f}"
             lr_adj = f" Adjusted - {f_dist}): {self.stats['LR-Adj']['f_value']:.4f}  with p-value of {self.stats['LR-Adj']['p_value']:.4f}"
@@ -362,9 +350,7 @@ class CrossTabulation:
             return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n\n {self.to_dataframe().to_string(index=False)}\n\n{pearson_test}\n\n {lr_test}\n"
 
     # also mutates tbl_est
-    def _extract_estimates(
-        self, tbl_est, vars_levels
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def _extract_estimates(self, tbl_est, vars_levels) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         levels = list(tbl_est.point_est.keys())
         missing_levels = vars_levels[~np.isin(vars_levels, levels)]
         if missing_levels.shape[0] > 0:
@@ -449,9 +435,7 @@ class CrossTabulation:
             # vars_nans = vars.isna()
             # excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
             to_keep = remove_nans(vars.shape[0], vars.iloc[:, 0].values, vars.iloc[:, 1].values)
-            samp_weight = (
-                samp_weight[to_keep] if samp_weight.shape not in ((), (0,)) else samp_weight
-            )
+            samp_weight = samp_weight[to_keep] if samp_weight.shape not in ((), (0,)) else samp_weight
             stratum = stratum[to_keep] if stratum.shape not in ((), (0,)) else stratum
             psu = psu[to_keep] if psu.shape not in ((), (0,)) else psu
             ssu = ssu[to_keep] if ssu.shape not in ((), (0,)) else ssu
@@ -489,15 +473,13 @@ class CrossTabulation:
         # vars_dummies = np.delete(vars_dummies, obj=2, axis=1)
 
         if len(vars.shape) == 2:
-            vars_for_oneway = np.apply_along_axis(
-                func1d=concatenate_series_to_str, axis=1, arr=vars
-            )
+            # vars_for_oneway = np.apply_along_axis(func1d=concatenate_series_to_str, axis=1, arr=vars)
+            vars_for_oneway = vars.agg("__by__".join, axis=1).values
         else:
             vars_for_oneway = vars
 
-        vars_levels_concat = np.apply_along_axis(
-            func1d=concatenate_series_to_str, axis=1, arr=vars_levels
-        )
+        # vars_levels_concat = np.apply_along_axis(func1d=concatenate_series_to_str, axis=1, arr=vars_levels)
+        vars_levels_concat = vars_levels.agg("__by__".join, axis=1).values
 
         tbl_est_prop = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
         tbl_est_prop.estimate(
@@ -617,13 +599,9 @@ class CrossTabulation:
         if self.param == PopParam.count:
             point_est_df = point_est_df / np.sum(point_est_df)
 
-        point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ point_est_df.sum(
-            axis=0
-        ).reshape(1, ncols)
+        point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ point_est_df.sum(axis=0).reshape(1, ncols)
 
-        chisq_p = float(
-            vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null)
-        )
+        chisq_p = float(vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null))
 
         # valid indexes (i,j) correspond to n_ij > 0
         valid_indx = (point_est_df != 0) & (point_est_null != 0)

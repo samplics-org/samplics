@@ -19,13 +19,24 @@ from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
 from samplics.utils.formats import numpy_array
-from samplics.utils.types import Array, Number, Series, SinglePSUEst, StringNumber, PopParam
+from samplics.utils.types import (
+    Array,
+    Number,
+    PopParam,
+    Series,
+    SinglePSUEst,
+    StringNumber,
+)
 
 
 class Ttest:
-    def __init__(self, samp_type: str, paired: bool = False, alpha: float = 0.05) -> None:
+    def __init__(
+        self, samp_type: str, paired: bool = False, alpha: float = 0.05
+    ) -> None:
         if samp_type.lower() not in ("one-sample", "two-sample"):
-            raise ValueError("Parameter 'type' must be equal to 'one-sample', 'two-sample'!")
+            raise ValueError(
+                "Parameter 'type' must be equal to 'one-sample', 'two-sample'!"
+            )
         assert_probabilities(x=alpha)
 
         self.samp_type = samp_type.lower()
@@ -51,17 +62,27 @@ class Ttest:
             return "No table to display"
         else:
             tbl_head = f"Design-based {self.samp_type.title()} T-test"
-            if (self.samp_type == "one-sample" and self.group_names == []) or self.paired:
+            if (
+                self.samp_type == "one-sample" and self.group_names == []
+            ) or self.paired:
                 if self.samp_type == "one-sample":
-                    tbl_subhead1 = f" Null hypothesis (Ho): mean = {self.stats['known_mean']}"
+                    tbl_subhead1 = (
+                        f" Null hypothesis (Ho): mean = {self.stats['known_mean']}"
+                    )
                 else:
                     tbl_subhead1 = f" Null hypothesis (Ho): mean(Diff = {self.vars_names[0]} - {self.vars_names[1]}) = 0"
                 tbl_subhead2 = f" t statistics: {self.stats['t']:.4f}"
                 tbl_subhead3 = f" Degrees of freedom: {self.stats['df']:.2f}"
                 tbl_subhead4 = " Alternative hypothesis (Ha):"
-                tbl_subhead4a = f"  Prob(T < t) = {self.stats['p_value']['less_than']:.4f}"
-                tbl_subhead4b = f"  Prob(|T| > |t|) = {self.stats['p_value']['not_equal']:.4f}"
-                tbl_subhead4c = f"  Prob(T > t) = {self.stats['p_value']['greater_than']:.4f}"
+                tbl_subhead4a = (
+                    f"  Prob(T < t) = {self.stats['p_value']['less_than']:.4f}"
+                )
+                tbl_subhead4b = (
+                    f"  Prob(|T| > |t|) = {self.stats['p_value']['not_equal']:.4f}"
+                )
+                tbl_subhead4c = (
+                    f"  Prob(T > t) = {self.stats['p_value']['greater_than']:.4f}"
+                )
 
                 return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead3}\n{tbl_subhead4}\n{tbl_subhead4a}\n{tbl_subhead4b}\n{tbl_subhead4c} \n\n{self.to_dataframe().to_string(index=False)}\n"
 
@@ -71,30 +92,22 @@ class Ttest:
                 tbl_subhead1 = f" Null hypothesis (Ho): mean({self.group_names[0]}) = mean({self.group_names[1]}) "
                 tbl_subhead2 = " Equal variance assumption:"
                 tbl_subhead2a = f"  t statistics: {self.stats['t_eq_variance']:.4f}"
-                tbl_subhead2b = f"  Degrees of freedom: {self.stats['df_eq_variance']:.2f}"
+                tbl_subhead2b = (
+                    f"  Degrees of freedom: {self.stats['df_eq_variance']:.2f}"
+                )
                 tbl_subhead3 = "  Alternative hypothesis (Ha):"
-                tbl_subhead3a = (
-                    f"   Prob(T < t) = {self.stats['p_value_eq_variance']['less_than']:.4f}"
-                )
-                tbl_subhead3b = (
-                    f"   Prob(|T| > |t|) = {self.stats['p_value_eq_variance']['not_equal']:.4f}"
-                )
-                tbl_subhead3c = (
-                    f"   Prob(T > t) = {self.stats['p_value_eq_variance']['greater_than']:.4f}"
-                )
+                tbl_subhead3a = f"   Prob(T < t) = {self.stats['p_value_eq_variance']['less_than']:.4f}"
+                tbl_subhead3b = f"   Prob(|T| > |t|) = {self.stats['p_value_eq_variance']['not_equal']:.4f}"
+                tbl_subhead3c = f"   Prob(T > t) = {self.stats['p_value_eq_variance']['greater_than']:.4f}"
                 tbl_subhead4 = " Unequal variance assumption:"
                 tbl_subhead4a = f"  t statistics: {self.stats['t_uneq_variance']:.4f}"
-                tbl_subhead4b = f"  Degrees of freedom: {self.stats['df_uneq_variance']:.2f}"
+                tbl_subhead4b = (
+                    f"  Degrees of freedom: {self.stats['df_uneq_variance']:.2f}"
+                )
                 tbl_subhead5 = "  Alternative hypothesis (Ha):"
-                tbl_subhead5a = (
-                    f"   Prob(T < t) = {self.stats['p_value_uneq_variance']['less_than']:.4f}"
-                )
-                tbl_subhead5b = (
-                    f"   Prob(|T| > |t|) = {self.stats['p_value_uneq_variance']['not_equal']:.4f}"
-                )
-                tbl_subhead5c = (
-                    f"   Prob(T > t) = {self.stats['p_value_uneq_variance']['greater_than']:.4f}"
-                )
+                tbl_subhead5a = f"   Prob(T < t) = {self.stats['p_value_uneq_variance']['less_than']:.4f}"
+                tbl_subhead5b = f"   Prob(|T| > |t|) = {self.stats['p_value_uneq_variance']['not_equal']:.4f}"
+                tbl_subhead5c = f"   Prob(T > t) = {self.stats['p_value_uneq_variance']['greater_than']:.4f}"
 
                 return f"\n{tbl_head}\n{tbl_subhead1}\n{tbl_subhead2}\n{tbl_subhead2a}\n{tbl_subhead2b}\n{tbl_subhead3}\n{tbl_subhead3a}\n{tbl_subhead3b}\n{tbl_subhead3c}\n{tbl_subhead4}\n{tbl_subhead4a}\n{tbl_subhead4b}\n{tbl_subhead5}\n{tbl_subhead5a}\n{tbl_subhead5b}\n{tbl_subhead5c} \n\n{self.to_dataframe().to_string(index=False)}\n"
             else:
@@ -110,7 +123,9 @@ class Ttest:
         ssu: Array,
         fpc: Union[Dict, float] = 1,
         coef_var: bool = False,
-        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        single_psu: Union[
+            SinglePSUEst, dict[StringNumber, SinglePSUEst]
+        ] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
     ) -> None:
         one_sample = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
@@ -179,7 +194,10 @@ class Ttest:
 
         t_equal_variance = (mean_group1 - mean_group2) / (
             math.sqrt(
-                ((nb_obs_group1 - 1) * stddev_group1**2 + (nb_obs_group2 - 1) * stddev_group2**2)
+                (
+                    (nb_obs_group1 - 1) * stddev_group1**2
+                    + (nb_obs_group2 - 1) * stddev_group2**2
+                )
                 / (nb_obs_group1 + nb_obs_group2 - 2)
             )
             * math.sqrt(1 / nb_obs_group1 + 1 / nb_obs_group2)
@@ -199,10 +217,14 @@ class Ttest:
         )
 
         left_p_value_equal_variance = t.cdf(t_equal_variance, t_df_equal_variance)
-        both_p_value_equal_variance = 2 * t.cdf(-abs(t_equal_variance), t_df_equal_variance)
+        both_p_value_equal_variance = 2 * t.cdf(
+            -abs(t_equal_variance), t_df_equal_variance
+        )
 
         left_p_value_unequal_variance = t.cdf(t_unequal_variance, t_df_unequal_variance)
-        both_p_value_unequal_variance = 2 * t.cdf(-abs(t_unequal_variance), t_df_unequal_variance)
+        both_p_value_unequal_variance = 2 * t.cdf(
+            -abs(t_unequal_variance), t_df_unequal_variance
+        )
 
         stats = {
             "number_obs": {group1: nb_obs_group1, group2: nb_obs_group2},
@@ -255,7 +277,9 @@ class Ttest:
         ssu: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
         coef_var: bool = False,
-        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        single_psu: Union[
+            SinglePSUEst, dict[StringNumber, SinglePSUEst]
+        ] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
     ) -> None:
         two_samples_unpaired = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
@@ -285,7 +309,9 @@ class Ttest:
         ssu: Optional[Array] = None,
         fpc: Union[Dict, float] = 1,
         coef_var: bool = False,
-        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        single_psu: Union[
+            SinglePSUEst, dict[StringNumber, SinglePSUEst]
+        ] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> None:
@@ -294,7 +320,9 @@ class Ttest:
         if known_mean is None and group is None:
             raise AssertionError("Parameters 'known_mean' or 'group' must be provided!")
         if known_mean is not None and group is not None:
-            raise AssertionError("Only one parameter 'known_mean' or 'group' should be provided!")
+            raise AssertionError(
+                "Only one parameter 'known_mean' or 'group' should be provided!"
+            )
 
         if varnames is None:
             self.vars_names = set_variables_names(y, None, "var")
@@ -362,7 +390,9 @@ class Ttest:
                 strata_comb=strata_comb,
             )
 
-            two_samples_unpaired = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
+            two_samples_unpaired = TaylorEstimator(
+                param=PopParam.mean, alpha=self.alpha
+            )
             two_samples_unpaired.estimate(
                 y=_y,
                 by=_group,
