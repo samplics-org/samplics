@@ -12,7 +12,6 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-import polars as pl
 
 from patsy import dmatrix
 from scipy.stats import chi2, f
@@ -396,7 +395,7 @@ class CrossTabulation:
         if vars is None:
             raise AssertionError("vars need to be an array-like object")
         elif not isinstance(vars, (np.ndarray, pd.DataFrame)):
-            vars = pl.DataFrame(numpy_array(vars))
+            vars = numpy_array(vars)
 
         if samp_weight is None:
             samp_weight = np.ones(vars.shape[0])
@@ -416,51 +415,70 @@ class CrossTabulation:
 
         vars_names = set_variables_names(vars, varnames, prefix)
 
-        if isinstance(vars, (np.ndarray, pd.DataFrame)):
-            vars = pl.DataFrame(vars)
+        if isinstance(vars, np.ndarray):
+            vars = pd.DataFrame(vars)
 
         samp_weight = numpy_array(samp_weight)
         stratum = numpy_array(stratum)
         psu = numpy_array(psu)
         ssu = numpy_array(ssu)
 
-        # if samp_weight.shape != ():
-        #     positive_weights = samp_weight > 0
-        #     samp_weight = samp_weight[positive_weights]
-        #     vars = vars[positive_weights]
-        #     stratum = stratum[positive_weights] if stratum.shape != () else stratum
-        #     psu = psu[positive_weights] if psu.shape != () else psu
-        #     ssu = ssu[positive_weights] if ssu.shape != () else ssu
+        if samp_weight.shape != ():
+            positive_weights = samp_weight > 0
+            samp_weight = samp_weight[positive_weights]
+            vars = vars[positive_weights]
+            stratum = stratum[positive_weights] if stratum.shape != () else stratum
+            psu = psu[positive_weights] if psu.shape != () else psu
+            ssu = ssu[positive_weights] if ssu.shape != () else ssu
 
-        # if remove_nan:
-        #     to_keep = remove_nans(vars.shape[0], vars.iloc[:, 0].values, vars.iloc[:, 1].values)
-        #     samp_weight = samp_weight[to_keep] if samp_weight.shape not in ((), (0,)) else samp_weight
-        #     stratum = stratum[to_keep] if stratum.shape not in ((), (0,)) else stratum
-        #     psu = psu[to_keep] if psu.shape not in ((), (0,)) else psu
-        #     ssu = ssu[to_keep] if ssu.shape not in ((), (0,)) else ssu
-        #     vars = vars.loc[to_keep]
-        # else:
-        #     vars = vars.fillna("nan")
+        if remove_nan:
+            # vars_nans = vars.isna()
+            # excluded_units = vars_nans.iloc[:, 0] | vars_nans.iloc[:, 1]
+            to_keep = remove_nans(vars.shape[0], vars.iloc[:, 0].values, vars.iloc[:, 1].values)
+            samp_weight = samp_weight[to_keep] if samp_weight.shape not in ((), (0,)) else samp_weight
+            stratum = stratum[to_keep] if stratum.shape not in ((), (0,)) else stratum
+            psu = psu[to_keep] if psu.shape not in ((), (0,)) else psu
+            ssu = ssu[to_keep] if ssu.shape not in ((), (0,)) else ssu
+            vars = vars.loc[to_keep]
+            # samp_weight, stratum, psu, ssu = remove_nans(
+            #     excluded_units, samp_weight, stratum, psu, ssu
+            # )
+            # vars = vars.dropna()
+        else:
+            vars = vars.fillna("nan")
 
         vars.columns = vars_names
-        vars_levels = vars.unique()
+
+        # vars.reset_index(inplace=True, drop=True)
+        # # vars.sort_values(by=vars_names, inplace=True)
+        # samp_weight = samp_weight[vars.index]
+        # stratum = stratum[vars.index] if stratum.shape not in ((), (0,)) else None
+        # psu = psu[vars.index] if psu.shape not in ((), (0,)) else None
+        # ssu = ssu[vars.index] if ssu.shape not in ((), (0,)) else None
+
         vars_names_str = ["var_" + str(x) for x in vars_names]
+        two_way_full_model = _saturated_two_ways_model(vars_names_str)
+        # vars.sort_values(by=vars_names, inplace=True)
+        row_levels = vars[vars_names[0]].unique()
+        col_levels = vars[vars_names[1]].unique()
+
+        both_levels = [row_levels, col_levels]
+        vars_levels = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
         vars_levels.columns = vars_names_str
 
-        two_way_full_model = _saturated_two_ways_model(vars_names_str)
+        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels, NA_action="raise"))
 
-        vars_dummies = np.asarray(dmatrix(two_way_full_model, vars_levels.to_pandas(), NA_action="raise"))
+        # vars_dummies = np.delete(vars_dummies, obj=1, axis=0)
+        # vars_dummies = np.delete(vars_dummies, obj=2, axis=1)
 
         if len(vars.shape) == 2:
-            vars_for_oneway = vars.with_columns(
-                (pl.col(vars_names[0]) + "__by__" + pl.col(vars_names[1])).alias("__cross_vars__")
-            )["__cross_vars__"].to_numpy()
+            # vars_for_oneway = np.apply_along_axis(func1d=concatenate_series_to_str, axis=1, arr=vars)
+            vars_for_oneway = vars.agg("__by__".join, axis=1).values
         else:
-            vars_for_oneway = vars.to_series().to_numpy()
+            vars_for_oneway = vars
 
-        vars_levels_concat = vars_levels.with_columns(
-            (pl.col(vars_names_str[0]) + "__by__" + pl.col(vars_names_str[1])).alias("__cross_vars__")
-        )["__cross_vars__"].to_numpy()
+        # vars_levels_concat = np.apply_along_axis(func1d=concatenate_series_to_str, axis=1, arr=vars_levels)
+        vars_levels_concat = vars_levels.agg("__by__".join, axis=1).values
 
         tbl_est_prop = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
         tbl_est_prop.estimate(
@@ -490,26 +508,24 @@ class CrossTabulation:
             # @ cell_est.reshape(1, cell_est.shape[0])
         ) / vars.shape[0]
 
-        # if self.param == PopParam.count:
-        #     tbl_est_count = TaylorEstimator(param=PopParam.total, alpha=self.alpha)
-        #     tbl_est_count.estimate(
-        #         y=vars_for_oneway,
-        #         samp_weight=samp_weight,
-        #         stratum=stratum,
-        #         psu=psu,
-        #         ssu=ssu,
-        #         fpc=fpc,
-        #         coef_var=coef_var,
-        #         single_psu=single_psu,
-        #         strata_comb=strata_comb,
-        #         as_factor=True,
-        #     )
-        #     tbl_est = tbl_est_count
+        if self.param == PopParam.count:
+            tbl_est_count = TaylorEstimator(param=PopParam.total, alpha=self.alpha)
+            tbl_est_count.estimate(
+                y=vars_for_oneway,
+                samp_weight=samp_weight,
+                stratum=stratum,
+                psu=psu,
+                ssu=ssu,
+                fpc=fpc,
+                coef_var=coef_var,
+                single_psu=single_psu,
+                strata_comb=strata_comb,
+                as_factor=True,
+            )
+            tbl_est = tbl_est_count
 
-        row_labels = vars_levels[vars_names_str[0]].unique()
-        col_labels = vars_levels[vars_names_str[1]].unique()
-        nrows = row_labels.len()
-        ncols = col_labels.len()
+        nrows = row_levels.__len__()
+        ncols = col_levels.__len__()
         x1 = vars_dummies[:, 0 : (nrows - 1) + (ncols - 1) + 1]  # main_effects
         x2 = vars_dummies[:, (nrows - 1) + (ncols - 1) + 1 :]  # interactions
 
@@ -518,6 +534,7 @@ class CrossTabulation:
             x1 = x1[nonnull_rows]
             x2 = x2[nonnull_rows]
             zero_cols = np.sum(x2, axis=0).astype(bool)
+            breakpoint()
             x2 = x2[:, zero_cols]
             cov_prop_srs = cov_prop_srs[nonnull_rows][:, nonnull_rows]
             cov_prop = cov_prop[nonnull_rows][:, nonnull_rows]
@@ -529,102 +546,74 @@ class CrossTabulation:
         x1_t = np.transpose(x1)
         x2_tilde = x2 - x1 @ np.linalg.inv(x1_t @ cov_prop_srs @ x1) @ (x1_t @ cov_prop_srs @ x2)
 
+        breakpoint()
         delta_est = np.linalg.inv(np.transpose(x2_tilde) @ cov_prop_srs @ x2_tilde) @ (
             np.transpose(x2_tilde) @ cov_prop @ x2_tilde  # TODO: is it cov_prop_srs
         )
 
-        keys = list(tbl_est.point_est.keys())
-        for row in row_labels:
-            for col in col_labels:
-                key = f"{row}__by__{col}"
-                if key not in keys:
-                    tbl_est.point_est[key] = 0.0
-                    tbl_est.stderror[key] = 0.0
-                    tbl_est.lower_ci[key] = 0.0
-                    tbl_est.upper_ci[key] = 0.0
+        tbl_keys = list(tbl_est.point_est.keys())
+        cell_est = np.zeros(vars_levels.shape[0])
+        cell_stderror = np.zeros(vars_levels.shape[0])
+        cell_lower_ci = np.zeros(vars_levels.shape[0])
+        cell_upper_ci = np.zeros(vars_levels.shape[0])
 
-        tbl_df = (
-            pl.DataFrame(None)
-            .with_columns(
-                key=np.array(list(tbl_est.point_est.keys())),
-                point_est=np.array(list(tbl_est.point_est.values())),
-                stderror=np.array(list(tbl_est.stderror.values())),
-                lower_ci=np.array(list(tbl_est.lower_ci.values())),
-                upper_ci=np.array(list(tbl_est.upper_ci.values())),
-            )
-            .with_columns(pl.col("key").str.split("__by__"))
-            .with_columns(
-                pl.col("key").list.get(0).alias(vars_names_str[0]),
-                pl.col("key").list.get(1).alias(vars_names_str[1]),
-            )
-            .drop("key")
-        )
+        for k in range(vars_levels.shape[0]):
+            if vars_levels_concat[k] in tbl_keys:
+                cell_est[k] = tbl_est.point_est[vars_levels_concat[k]]
+                cell_stderror[k] = tbl_est.stderror[vars_levels_concat[k]]
+                cell_lower_ci[k] = tbl_est.lower_ci[vars_levels_concat[k]]
+                cell_upper_ci[k] = tbl_est.upper_ci[vars_levels_concat[k]]
 
-        poin_est_dict = tbl_df.select(vars_names_str + ["point_est"]).rows_by_key(key=vars_names_str[0])
-        stderror_dict = tbl_df.select(vars_names_str + ["stderror"]).rows_by_key(key=vars_names_str[0])
-        lower_ci_dict = tbl_df.select(vars_names_str + ["lower_ci"]).rows_by_key(key=vars_names_str[0])
-        upper_ci_dict = tbl_df.select(vars_names_str + ["upper_ci"]).rows_by_key(key=vars_names_str[0])
-
-        # If there are missing cells, we need to add them to the dictionaries
-
-        for var1 in poin_est_dict:
+        for r in range(nrows):
             point_est = {}
             stderror = {}
             lower_ci = {}
             upper_ci = {}
-            for k, var2 in enumerate(poin_est_dict[var1]):
-                point_est.update({var2[0]: var2[1]})
-                stderror.update({var2[0]: stderror_dict[var1][k][1]})
-                lower_ci.update({var2[0]: lower_ci_dict[var1][k][1]})
-                upper_ci.update({var2[0]: upper_ci_dict[var1][k][1]})
-            self.point_est[var1] = point_est
-            self.stderror[var1] = stderror
-            self.lower_ci[var1] = lower_ci
-            self.upper_ci[var1] = upper_ci
+            for c in range(ncols):
+                point_est.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_est[r * ncols + c],
+                    }
+                )
+                stderror.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_stderror[r * ncols + c],
+                    }
+                )
+                lower_ci.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_lower_ci[r * ncols + c],
+                    }
+                )
+                upper_ci.update(
+                    {
+                        vars_levels.iloc[r * ncols + c, 1]: cell_upper_ci[r * ncols + c],
+                    }
+                )
+            self.point_est.update({vars_levels.iloc[r * ncols, 0]: point_est})
+            self.stderror.update({vars_levels.iloc[r * ncols, 0]: stderror})
+            self.lower_ci.update({vars_levels.iloc[r * ncols, 0]: lower_ci})
+            self.upper_ci.update({vars_levels.iloc[r * ncols, 0]: upper_ci})
 
-        # if self.param == PopParam.count:
-        #     tbl_df = tbl_df.with_columns(
-        #         (pl.col("point_est") / pl.col("point_est").sum()).alias("point_est"),
-        #         (pl.col("stderror") / pl.col("point_est").sum()).alias("stderror"),
-        #         (pl.col("lower_ci") / pl.col("point_est").sum()).alias("lower_ci"),
-        #         (pl.col("upper_ci") / pl.col("point_est").sum()).alias("upper_ci"),
-        #     )
+        point_est_df = pd.DataFrame.from_dict(self.point_est, orient="index").values
 
-        tbl_df = (
-            tbl_df.join(
-                other=tbl_df.group_by(vars_names_str[0]).agg(pl.col("point_est").sum().alias("point_sum_var1")),
-                on=vars_names_str[0],
-                how="inner",
-            )
-            .join(
-                other=tbl_df.group_by(vars_names_str[1]).agg(pl.col("point_est").sum().alias("point_sum_var2")),
-                on=vars_names_str[1],
-                how="inner",
-            )
-            .with_columns(
-                point_est_null=pl.col("point_sum_var1") * pl.col("point_sum_var2") * pl.col("point_est").sum()
-            )
-            # .with_columns(
-            #     chisq_p=vars.shape[0]
-            #     * ((pl.col("point_est") - pl.col("point_est_null")) ** 2 / pl.col("point_est_null")).sum(),
-            #     chisq_lr=2
-            #     * vars.shape[0]
-            #     * (pl.col("point_est") * (pl.col("point_est") / pl.col("point_est_null")).log()).fill_nan(0).sum(),
-            #     trace_delta=np.trace(delta_est),
-            # )
-        )
+        if self.param == PopParam.count:
+            point_est_df = point_est_df / np.sum(point_est_df)
+
+        point_est_null = point_est_df.sum(axis=1).reshape(nrows, 1) @ point_est_df.sum(axis=0).reshape(1, ncols)
+
+        chisq_p = float(vars.shape[0] * np.sum((point_est_df - point_est_null) ** 2 / point_est_null))
+
+        # valid indexes (i,j) correspond to n_ij > 0
+        valid_indx = (point_est_df != 0) & (point_est_null != 0)
+
+        log_mat = np.zeros(point_est_null.shape)
+        log_mat[valid_indx] = np.log(point_est_df[valid_indx] / point_est_null[valid_indx])
+
+        chisq_lr = float(2 * vars.shape[0] * np.sum(point_est_df * log_mat))
 
         trace_delta = np.trace(delta_est)
 
-        chisq_p = (
-            vars.shape[0] * ((tbl_df["point_est"] - tbl_df["point_est_null"]) ** 2 / tbl_df["point_est_null"]).sum()
-        )
-        chisq_lr = (
-            2
-            * vars.shape[0]
-            * (tbl_df["point_est"] * (tbl_df["point_est"] / tbl_df["point_est_null"]).log()).fill_nan(0).sum()
-        )
-        trace_delta = np.trace(delta_est)
         if trace_delta != 0:
             f_p = float(chisq_p / trace_delta)
             f_lr = float(chisq_lr / trace_delta)
@@ -636,7 +625,6 @@ class CrossTabulation:
             df_num = 0  # np.nan
             df_den = 0  # np.nan
 
-        breakpoint()
         self.stats = {
             "Pearson-Unadj": {
                 "df": (nrows - 1) * (ncols - 1),
@@ -662,8 +650,8 @@ class CrossTabulation:
             },
         }
 
-        self.row_levels = row_labels.to_list()
-        self.col_levels = col_labels.to_list()
+        self.row_levels = list(row_levels)
+        self.col_levels = list(col_levels)
         self.vars_names = vars_names
         self.design_info = {
             "nb_strata": tbl_est.nb_strata,
