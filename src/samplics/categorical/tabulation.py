@@ -636,7 +636,6 @@ class CrossTabulation:
             df_num = 0  # np.nan
             df_den = 0  # np.nan
 
-        breakpoint()
         self.stats = {
             "Pearson-Unadj": {
                 "df": (nrows - 1) * (ncols - 1),

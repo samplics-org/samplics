@@ -4,28 +4,25 @@ version = "0.4.24"
 # license = "MIT"
 description = "Select, weight and analyze complex sample data"
 
-authors = [{name="Mamadou S Diallo", email="msdiallo@samplics.org"}]
+authors = [{ name = "Mamadou S Diallo", email = "msdiallo@samplics.org" }]
 
 readme = "README.md"
 requires-python = ">=3.10"
 
 
-
 keywords = ["sampling", "sample", "weighting", "estimation", "survey"]
 
 classifiers = [
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Development Status :: 4 - Beta",
-  "Operating System :: OS Independent",
-  "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Development Status :: 4 - Beta",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
 ]
 
-# packages = [
-#   {include = "samplics", from = "src"},
-# ]
+packages = [{ include = "samplics", from = "src" }]
 
 dependencies = [
     "numpy >=2.0",
@@ -79,15 +76,60 @@ addopts = "--ignore=tests/apis --ignore=tests/sae --ignore=tests/types"
 src = ["src", "tests"]
 # extend-exclude = ["tests"]
 line-length = 99
-target-version =  "py313"
+target-version = "py313"
 
 [tool.ruff.lint]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = ["D", "E", "F", "W", "I001"]
-ignore = ["D", "E501"] # for development we can ignore the docs
+ignore = ["D", "E501"]                # for development we can ignore the docs
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+fixable = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "I",
+    "N",
+    "Q",
+    "S",
+    "T",
+    "W",
+    "ANN",
+    "ARG",
+    "BLE",
+    "COM",
+    "DJ",
+    "DTZ",
+    "EM",
+    "ERA",
+    "EXE",
+    "FBT",
+    "ICN",
+    "INP",
+    "ISC",
+    "NPY",
+    "PD",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "RET",
+    "RSE",
+    "RUF",
+    "SIM",
+    "SLF",
+    "TCH",
+    "TID",
+    "TRY",
+    "UP",
+    "YTT",
+]
 unfixable = []
 
 # Exclude a variety of commonly ignored directories.
@@ -127,7 +169,15 @@ max-complexity = 10
 
 [tool.ruff.lint.isort]
 known-first-party = ["samplics"]
-known-third-party = ["matplotlib", "numpy",  "pandas", "polars", "pydantic", "scipy", "statsmodels"]
+known-third-party = [
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "polars",
+    "pydantic",
+    "scipy",
+    "statsmodels",
+]
 lines-after-imports = 2
 lines-between-types = 1
 
@@ -153,7 +203,7 @@ warn_unreachable = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
-exclude = [".venv",  "tests"]
+exclude = [".venv", "tests"]
 
 [build-system]
 requires = ["hatchling"]
