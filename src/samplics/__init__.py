@@ -1,6 +1,6 @@
 # from samplics.apis import Frame, Sample
 from samplics.categorical import CrossTabulation, Tabulation, Ttest
-from samplics.datasets.datasets import (
+from samplics.datasets import (
     load_auto,
     load_birth,
     load_county_crop,
@@ -143,4 +143,4 @@ __all__ = __pkgs__ + [
     "Sample",
 ]
 
-__version__ = "0.4.25"
+__version__ = "0.4.26"

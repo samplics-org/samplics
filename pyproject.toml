@@ -1,6 +1,6 @@
 [project]
 name = "samplics"
-version = "0.4.25"
+version = "0.4.26"
 # license = "MIT"
 description = "Select, weight and analyze complex sample data"
 
@@ -204,6 +204,10 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
 exclude = [".venv", "tests"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pkg*"]
 
 [build-system]
 requires = ["hatchling"]
