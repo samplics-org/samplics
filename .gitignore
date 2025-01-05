@@ -130,8 +130,8 @@ dmypy.json
 # .github
 
 #Extra
-issues/
-datasets/
+issues
+data/
 reference_material/
 notebooks/*
 presentations/*/

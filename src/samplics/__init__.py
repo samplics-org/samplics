@@ -38,18 +38,6 @@ from samplics.sampling import (
     power_for_one_mean,
     power_for_one_proportion,
 )
-
-# from samplics.types import (
-#     AuxVars,
-#     DirectEst,
-#     EbEst,
-#     EbFit,
-#     EblupEst,
-#     EblupFit,
-#     FitMethod,
-#     FitStats,
-#     Mse,
-# )
 from samplics.utils import (
     CertaintyError,
     DimensionError,
@@ -69,36 +57,22 @@ from samplics.utils import (
 from samplics.weighting import ReplicateWeight, SampleWeight
 
 
-# From pkgs
-
-
-__pkgs__ = []
-
-
-__all__ = __pkgs__ + [
+__all__ = [
     "allocate",
     "array_to_dict",
-    # "AuxVars",
     "calculate_power",
     "calculate_power_prop",
     "calculate_ss_fleiss_prop",
     "calculate_ss_wald_prop",
     "calculate_ss_wald_mean",
     "CrossTabulation",
-    # "DirectEst",
     "Tabulation",
     "Ttest",
     "EblupAreaModel",
     "EblupUnitModel",
-    # "EblupEst",
-    # "EblupFit",
     "EbUnitModel",
-    # "EbEst",
-    # "EbFit",
     "EllUnitModel",
     "FitMethod",
-    "fit_eblup",
-    # "FitStats",
     "load_auto",
     "load_birth",
     "load_county_crop",
@@ -130,17 +104,12 @@ __all__ = __pkgs__ + [
     "ReplicateEstimator",
     "TaylorEstimator",
     "transform",
-    # Custom exception classes
     "SamplicsError",
     "CertaintyError",
     "DimensionError",
     "MethodError",
-    # "Mse",
     "ProbError",
     "SinglePSUError",
-    # Objects from APIs sub-package
-    "Frame",
-    "Sample",
 ]
 
-__version__ = "0.4.27"
+__version__ = "0.4.29"

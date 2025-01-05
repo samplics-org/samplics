@@ -1,6 +1,6 @@
 [project]
 name = "samplics"
-version = "0.4.27"
+version = "0.4.29"
 # license = "MIT"
 description = "Select, weight and analyze complex sample data"
 
@@ -22,7 +22,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 
-packages = [{ include = "samplics", from = "src" }]
+# packages = [{ include = "samplics", from = "src" }]
 
 dependencies = [
     "numpy >=2.0",
@@ -210,7 +210,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
-packages = ["src/samplics"]
+sources = ["src"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/samplics"]
+sources = ["src"]
+
+# [[tool.uv.index]]
+# name = "testpypi"
+# url = "https://test.pypi.org/simple/"
+# publish-url = "https://test.pypi.org/legacy/"

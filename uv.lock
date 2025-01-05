@@ -913,7 +913,7 @@ wheels = [
 
 [[package]]
 name = "samplics"
-version = "0.4.26"
+version = "0.4.29"
 source = { editable = "." }
 dependencies = [
     { name = "matplotlib" },
