@@ -378,7 +378,8 @@ class TaylorEstimator(_SurveyEstimator):
             covariance = np.transpose(scores_psus_sums - scores_s_mean) @ (
                 scores_psus_sums - scores_s_mean
             )
-            covariance = (nb_psus_in_s / (nb_psus_in_s - 1)) * covariance
+            if (nb_psus_in_s - 1) != 0:
+                covariance = (nb_psus_in_s / (nb_psus_in_s - 1)) * covariance
         else:
             nb_obs = y_score_s.shape[0]
             y_score_s_mean = y_score_s.sum(axis=0) / nb_obs

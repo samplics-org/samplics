@@ -18,6 +18,7 @@ from typing import Optional, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import polars as pl
 
 from samplics.utils.formats import numpy_array
 from samplics.utils.types import Array, Number
@@ -290,13 +291,14 @@ def get_single_psu_strata(stratum: Array, psu: Array) -> Optional(np.ndarray):
     ):  # psu is None will not work because psu is an np.ndarray
         strata_ids, psu_counts = np.unique(stratum, return_counts=True)
     else:
-        strata_ids, psu_counts = np.unique(
-            np.unique((stratum, psu), axis=1)[0, :], return_counts=True
+        df = (
+            pl.DataFrame({"stratum": stratum, "psu": psu})
+            .group_by("stratum")
+            .agg(pl.col("psu").count())
+            .filter(pl.col("psu") == 1)
         )
-    # breakpoint()
 
-    single_psus = psu_counts == 1
-    if single_psus.sum() == 0:
-        return None
-    else:
-        return strata_ids[single_psus]
+        if df.shape[0] == 0:
+            return None
+        else:
+            return df["stratum"].to_numpy()

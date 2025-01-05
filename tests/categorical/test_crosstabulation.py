@@ -376,7 +376,9 @@ def test_twoway_prop_upper_ci():
 
 def test_twoway_prop_stats_pearson():
     assert np.isclose(tbl_prop.stats["Pearson-Unadj"]["df"], 4, atol=1e-2)
-    assert np.isclose(tbl_prop.stats["Pearson-Unadj"]["chisq_value"], 324.2777, atol=1e-4)
+    assert np.isclose(
+        tbl_prop.stats["Pearson-Unadj"]["chisq_value"], 324.2777, atol=1e-4
+    )
     assert np.isclose(tbl_prop.stats["Pearson-Unadj"]["p_value"], 0.0000, atol=1e-4)
 
     assert np.isclose(tbl_prop.stats["Pearson-Adj"]["df_num"], 4, atol=1e-2)
@@ -464,16 +466,20 @@ def test_nhanes_twoway_prop_upper_ci():
     assert np.isclose(tbl1_nhanes.upper_ci["4"]["0.0"], 0.0884, atol=1e-4)
     assert np.isclose(tbl1_nhanes.upper_ci["4"]["1.0"], 0.0122, atol=1e-4)
 
+
 @pytest.mark.skip("Not implemented yet")
 def test_nhanes_twoway_prop_stats_pearson():
     assert np.isclose(tbl1_nhanes.stats["Pearson-Unadj"]["df"], 3, atol=1e-4)
-    assert np.isclose(tbl1_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4)
+    assert np.isclose(
+        tbl1_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4
+    )
     assert np.isclose(tbl1_nhanes.stats["Pearson-Unadj"]["p_value"], 0.0007, atol=1e-4)
 
     assert np.isclose(tbl1_nhanes.stats["Pearson-Adj"]["df_num"], 1.9230, atol=1e-4)
     assert np.isclose(tbl1_nhanes.stats["Pearson-Adj"]["df_den"], 30.7676, atol=1e-4)
     assert np.isclose(tbl1_nhanes.stats["Pearson-Adj"]["f_value"], 3.1513, atol=1e-4)
     assert np.isclose(tbl1_nhanes.stats["Pearson-Adj"]["p_value"], 0.0587, atol=1e-4)
+
 
 @pytest.mark.skip("Not implemented yet")
 def test_nhanes_twoway_prop_stats_likelihood_ratio():
@@ -485,6 +491,7 @@ def test_nhanes_twoway_prop_stats_likelihood_ratio():
     assert np.isclose(tbl1_nhanes.stats["LR-Adj"]["df_den"], 30.7676, atol=1e-4)
     assert np.isclose(tbl1_nhanes.stats["LR-Adj"]["f_value"], 3.3354, atol=1e-4)
     assert np.isclose(tbl1_nhanes.stats["LR-Adj"]["p_value"], 0.0506, atol=1e-4)
+
 
 @pytest.mark.skip("Not implemented yet")
 def test_nhanes_twoway_prop_design_info():
@@ -547,16 +554,20 @@ def test_nhanes_twoway_count_upper_ci():
     assert np.isclose(tbl2_nhanes.upper_ci["4"]["0.0"], 21680685.20, atol=1e-2)
     assert np.isclose(tbl2_nhanes.upper_ci["4"]["1.0"], 2778196.39, atol=1e-2)
 
+
 @pytest.mark.skip("Not implemented yet")
 def test_nhanes_twoway_count_stats_pearson():
     assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["df"], 3, atol=1e-4)
-    assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4)
+    assert np.isclose(
+        tbl2_nhanes.stats["Pearson-Unadj"]["chisq_value"], 16.9728, atol=1e-4
+    )
     assert np.isclose(tbl2_nhanes.stats["Pearson-Unadj"]["p_value"], 0.0007, atol=1e-4)
 
     assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["df_num"], 1.9230, atol=1e-4)
     assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["df_den"], 30.7676, atol=1e-4)
     assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["f_value"], 3.1513, atol=1e-4)
     assert np.isclose(tbl2_nhanes.stats["Pearson-Adj"]["p_value"], 0.0587, atol=1e-4)
+
 
 @pytest.mark.skip("Not implemented yet")
 def test_nhanes_twoway_count_stats_likelihood_ratio():

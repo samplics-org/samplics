@@ -176,4 +176,5 @@ psu = np.array([1, 2, 1, 1, 2, 3, 1, 4, 2, 1, np.nan, 2, 3, np.nan])
 
 def test_single_psu():
     single_psu_strata = get_single_psu_strata(stratum=strat, psu=psu)
-    assert np.any(single_psu_strata == np.array([41, 55]))
+    assert single_psu_strata[0] == 41
+    assert single_psu_strata[1] == 55
