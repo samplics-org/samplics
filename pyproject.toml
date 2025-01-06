@@ -1,6 +1,6 @@
 [project]
 name = "samplics"
-version = "0.4.30"
+version = "0.4.31"
 # license = "MIT"
 description = "Select, weight and analyze complex sample data"
 
@@ -123,7 +123,7 @@ fixable = [
     "RET",
     "RSE",
     "RUF",
-    "SIM", 
+    "SIM",
     "SLF",
     "TCH",
     "TID",
@@ -136,7 +136,7 @@ fixable = [
 exclude = [
     ".bzr",
     ".direnv",
-    ".eggs", 
+    ".eggs",
     ".git",
     ".hg",
     ".mypy_cache",
