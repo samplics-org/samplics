@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Samplics Documentation - Replicate Weights</title>
+<title>Replicate Weights – Samplics Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-74c90939484fe00be8d5db7ece5ff9a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -138,10 +138,10 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../public/styles.css">
-<meta property="og:title" content="Samplics Documentation - Replicate Weights">
+<meta property="og:title" content="Replicate Weights – Samplics Documentation">
 <meta property="og:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
 <meta property="og:site_name" content="Samplics Documentation">
-<meta name="twitter:title" content="Samplics Documentation - Replicate Weights">
+<meta name="twitter:title" content="Replicate Weights – Samplics Documentation">
 <meta name="twitter:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
 <meta name="twitter:site" content="@MamadouSDiallo">
 <meta name="twitter:card" content="summary">
@@ -162,7 +162,7 @@ window.Quarto = {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -189,17 +189,17 @@ window.Quarto = {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/weight.html">Weighting</a></li><li class="breadcrumb-item"><a href="../pages/weight_replicates.html">Replicate Weights</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -212,9 +212,9 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Overview</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -235,9 +235,9 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Tutorial</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -256,9 +256,9 @@ window.Quarto = {
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Size Calculation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -279,9 +279,9 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
  <span class="menu-text">Selection</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -308,9 +308,9 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
  <span class="menu-text">Weighting</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -337,9 +337,9 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
  <span class="menu-text">Population Parameters Estimation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -366,9 +366,9 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
  <span class="menu-text">Categorical Data Analysis</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -395,9 +395,9 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
  <span class="menu-text">Small Area Estimation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -464,7 +464,7 @@ window.Quarto = {
 
 <p>Replicate weights are usually created for the purpose of variance (uncertainty) estimation. One common use case for replication-based methods is the estimation of non-linear parameters fow which Taylor-based approximation may not be accurate enough. Another use case is when the number of primary sampling units selected per stratum is small (low degree of freedom). Replicate weights are usually created for the purpose of variance (uncertainty)estimation. One common use case for replication-based methods is the estimation of non-linear parameters fow which Taylor-based approximation may not be accurate enough. Another use case is when the number of primary sampling units selected per stratum is small (low degree of freedom).</p>
 <p>In this tutorial, we will explore creating replicate weights using the class <em>ReplicateWeight</em>. Three replication methods have been implemented: balanced repeated replication (BRR) including the Fay-BRR, bootstrap and jackknife. The replicate method of interest is specified when initializing the class by using the parameter <em>method</em>. The parameter <em>method</em> takes the values “bootstrap”, “brr”, or “jackknife”. In this tutorial, we show how the API works for producing replicate weights.</p>
-<div id="06ec06b9" class="cell" data-execution_count="1">
+<div id="218ac8ec" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_psu_sample, load_ssu_sample</span>
@@ -473,7 +473,7 @@ window.Quarto = {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.utils.types <span class="im">import</span> RepMethod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We import the sample data…</p>
-<div id="270eb936" class="cell" data-execution_count="2">
+<div id="53684099" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load PSU sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>psu_sample_dict <span class="op">=</span> load_psu_sample()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_sample_dict[<span class="st">"data"</span>]</span>
@@ -669,7 +669,7 @@ window.Quarto = {
 <section id="balanced-repeated-replication-brr" class="level1">
 <h1>Balanced Repeated Replication (BRR)</h1>
 <p>The basic idea of BRR is to slip the sample in independent random groups. The groups are then threated as independent replicates of the the sample design. A special case is when the sample is split into two half samples in each stratum. This design is suitable to many survey designs where only two psus are selected by stratum. In practice, one of the psu is asigned to the first random group and the other psu is assign to the second group. The sample weights are double for one group (say the first one) and the sample weights in the other group are set to zero. To ensure that the replicates are independent, we use hadamard matrices to assign the random groups.</p>
-<div id="5c4af0a5" class="cell" data-execution_count="3">
+<div id="45a83da1" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>scipy.linalg.hadamard(<span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -685,7 +685,7 @@ window.Quarto = {
 </div>
 <p>In our example, we have 10 psus. If we do not have explicit stratification then <em>replicate()</em> will group the clusters into 5 strata (2 per stratum). In this case, the smallest number of replicates possible using the hadamard matrix is 8.</p>
 <p>The result below shows that <em>replicate()</em> created 5 strata by grouping clusters 7 and 10 in the first stratum, clusters 16 and 24 in the second stratum, and so on. We can achieve the same result by providing setting <em>strat=True</em> and providing the stratum variable to <em>replicate()</em>.</p>
-<div id="1c01fdef" class="cell" data-execution_count="4">
+<div id="2ea836c5" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>brr <span class="op">=</span> ReplicateWeight(method<span class="op">=</span>RepMethod.brr, strat<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>brr_wgt <span class="op">=</span> brr.replicate(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>], </span>
@@ -862,7 +862,7 @@ window.Quarto = {
 </div>
 </div>
 <p>An extension of BRR is the Fay’s method. In the Fay’s approach, instead of multiplying one half-sample by zero, we multiple the sampel weights by a factor <span class="math inline">\(\alpha\)</span> and the other halh-sample by <span class="math inline">\(2-\alpha\)</span>. We refer to <span class="math inline">\(\alpha\)</span> as the fay coefficient. Note that when <span class="math inline">\(\alpha=0\)</span> then teh Fay’s method reduces to BRR.</p>
-<div id="af480997" class="cell" data-execution_count="5">
+<div id="d27405fe" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fay <span class="op">=</span> ReplicateWeight(method<span class="op">=</span>RepMethod.brr, strat<span class="op">=</span><span class="va">False</span>, fay_coef<span class="op">=</span><span class="fl">0.3</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>fay_wgt <span class="op">=</span> fay.replicate(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>], </span>
@@ -1054,7 +1054,7 @@ Important
 <p>For any of the three methods, we can request the replicate coefficient instead of the replicate weights by using <em>rep_coefs=True</em>.</p>
 </div>
 </div>
-<div id="d9ecdf32" class="cell" data-execution_count="6">
+<div id="941f0be2" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#fay = ReplicateWeight(method="brr", strat=False, fay_coef=0.3)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fay_wgt <span class="op">=</span> fay.replicate(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>], </span>
@@ -1238,7 +1238,7 @@ Important
 <section id="bootstrap" class="level1">
 <h1>Bootstrap</h1>
 <p>For the bootstrap replicates, we need to provide the number of replicates. When the number of replicates is not provided, <em>ReplicateWeight</em> will default to 500. The bootstrap consists of selecting the same number of psus as in the sample but with replacement. The selection is independently repeated for each replicate.</p>
-<div id="b7b6376c" class="cell" data-execution_count="7">
+<div id="320d6196" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bootstrap <span class="op">=</span> ReplicateWeight(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>RepMethod.bootstrap, </span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    strat<span class="op">=</span><span class="va">False</span>, </span>
@@ -1286,217 +1286,217 @@ Important
 <td data-quarto-table-cell-role="th">0</td>
 <td>7</td>
 <td>46.166667</td>
-<td>0.000000</td>
+<td>102.592593</td>
 <td>51.296296</td>
 <td>0.000000</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>0.000000</td>
+<td>102.592593</td>
+<td>51.296296</td>
+<td>51.296296</td>
 <td>51.296296</td>
 <td>102.592593</td>
 <td>...</td>
 <td>0.000000</td>
-<td>0.000000</td>
-<td>51.296296</td>
-<td>153.888889</td>
 <td>102.592593</td>
 <td>51.296296</td>
 <td>0.000000</td>
-<td>51.296296</td>
 <td>0.000000</td>
-<td>51.296296</td>
+<td>102.592593</td>
+<td>102.592593</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>153.888889</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">15</td>
 <td>10</td>
 <td>50.783333</td>
-<td>112.851852</td>
-<td>169.277778</td>
-<td>56.425926</td>
 <td>0.000000</td>
 <td>0.000000</td>
 <td>56.425926</td>
+<td>56.425926</td>
+<td>56.425926</td>
+<td>56.425926</td>
 <td>0.000000</td>
-<td>0.000000</td>
+<td>56.425926</td>
 <td>...</td>
-<td>0.000000</td>
-<td>0.000000</td>
+<td>56.425926</td>
 <td>56.425926</td>
 <td>0.000000</td>
-<td>112.851852</td>
-<td>0.000000</td>
-<td>0.000000</td>
+<td>56.425926</td>
+<td>56.425926</td>
 <td>112.851852</td>
 <td>56.425926</td>
 <td>56.425926</td>
+<td>0.000000</td>
+<td>0.000000</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">30</td>
 <td>16</td>
 <td>62.149123</td>
-<td>69.054581</td>
-<td>69.054581</td>
-<td>69.054581</td>
 <td>138.109162</td>
 <td>138.109162</td>
+<td>69.054581</td>
 <td>138.109162</td>
+<td>69.054581</td>
+<td>69.054581</td>
 <td>0.000000</td>
-<td>69.054581</td>
+<td>0.000000</td>
 <td>...</td>
+<td>207.163743</td>
 <td>69.054581</td>
+<td>69.054581</td>
+<td>138.109162</td>
 <td>69.054581</td>
 <td>138.109162</td>
 <td>0.000000</td>
 <td>69.054581</td>
-<td>0.000000</td>
 <td>69.054581</td>
-<td>207.163743</td>
-<td>207.163743</td>
-<td>0.000000</td>
+<td>69.054581</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">45</td>
 <td>24</td>
 <td>58.940741</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>196.469136</td>
 <td>65.489712</td>
 <td>65.489712</td>
+<td>130.979424</td>
 <td>0.000000</td>
 <td>0.000000</td>
 <td>0.000000</td>
+<td>65.489712</td>
+<td>65.489712</td>
 <td>...</td>
 <td>0.000000</td>
 <td>65.489712</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>196.469136</td>
-<td>196.469136</td>
-<td>0.000000</td>
+<td>65.489712</td>
 <td>65.489712</td>
 <td>0.000000</td>
+<td>65.489712</td>
+<td>65.489712</td>
+<td>65.489712</td>
+<td>65.489712</td>
+<td>65.489712</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">60</td>
 <td>29</td>
 <td>65.702778</td>
-<td>146.006173</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>73.003086</td>
+<td>73.003086</td>
 <td>219.009259</td>
-<td>0.000000</td>
-<td>73.003086</td>
 <td>146.006173</td>
-<td>73.003086</td>
-<td>0.000000</td>
-<td>73.003086</td>
 <td>...</td>
-<td>73.003086</td>
 <td>146.006173</td>
+<td>73.003086</td>
+<td>0.000000</td>
+<td>0.000000</td>
 <td>146.006173</td>
+<td>73.003086</td>
+<td>73.003086</td>
 <td>0.000000</td>
 <td>73.003086</td>
 <td>0.000000</td>
-<td>0.000000</td>
-<td>73.003086</td>
-<td>73.003086</td>
-<td>73.003086</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">75</td>
 <td>34</td>
 <td>75.661566</td>
-<td>84.068407</td>
 <td>0.000000</td>
+<td>336.273629</td>
 <td>252.205222</td>
 <td>0.000000</td>
-<td>0.000000</td>
-<td>84.068407</td>
+<td>168.136814</td>
+<td>168.136814</td>
 <td>84.068407</td>
 <td>84.068407</td>
 <td>...</td>
 <td>84.068407</td>
-<td>0.000000</td>
 <td>168.136814</td>
 <td>84.068407</td>
-<td>84.068407</td>
+<td>168.136814</td>
 <td>0.000000</td>
 <td>84.068407</td>
+<td>84.068407</td>
+<td>84.068407</td>
+<td>84.068407</td>
 <td>0.000000</td>
-<td>84.068407</td>
-<td>84.068407</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">90</td>
 <td>45</td>
 <td>85.398025</td>
-<td>0.000000</td>
+<td>94.886694</td>
+<td>94.886694</td>
 <td>0.000000</td>
 <td>0.000000</td>
 <td>0.000000</td>
 <td>94.886694</td>
-<td>189.773388</td>
-<td>189.773388</td>
+<td>94.886694</td>
 <td>94.886694</td>
 <td>...</td>
 <td>94.886694</td>
+<td>0.000000</td>
 <td>189.773388</td>
+<td>94.886694</td>
+<td>284.660082</td>
 <td>0.000000</td>
 <td>94.886694</td>
 <td>0.000000</td>
-<td>94.886694</td>
 <td>0.000000</td>
-<td>94.886694</td>
-<td>0.000000</td>
-<td>0.000000</td>
+<td>189.773388</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">105</td>
 <td>52</td>
 <td>85.520635</td>
-<td>95.022928</td>
-<td>95.022928</td>
-<td>0.000000</td>
+<td>285.068783</td>
 <td>0.000000</td>
 <td>95.022928</td>
-<td>95.022928</td>
-<td>95.022928</td>
-<td>0.000000</td>
-<td>...</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>0.000000</td>
 <td>190.045855</td>
+<td>190.045855</td>
+<td>0.000000</td>
+<td>0.000000</td>
 <td>95.022928</td>
+<td>...</td>
 <td>95.022928</td>
 <td>0.000000</td>
 <td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>95.022928</td>
+<td>190.045855</td>
+<td>190.045855</td>
 <td>0.000000</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">120</td>
 <td>64</td>
 <td>218.893889</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>243.215432</td>
+<td>243.215432</td>
+<td>0.000000</td>
+<td>243.215432</td>
 <td>486.430864</td>
 <td>0.000000</td>
-<td>0.000000</td>
-<td>486.430864</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>729.646296</td>
-<td>486.430864</td>
 <td>...</td>
-<td>486.430864</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>729.646296</td>
 <td>486.430864</td>
 <td>243.215432</td>
-<td>486.430864</td>
+<td>0.000000</td>
 <td>0.000000</td>
 <td>486.430864</td>
-<td>243.215432</td>
-<td>243.215432</td>
-<td>243.215432</td>
-<td>729.646296</td>
+<td>486.430864</td>
+<td>0.000000</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">135</td>
@@ -1504,21 +1504,21 @@ Important
 <td>213.491667</td>
 <td>0.000000</td>
 <td>0.000000</td>
-<td>237.212963</td>
-<td>711.638889</td>
-<td>474.425926</td>
+<td>0.000000</td>
 <td>237.212963</td>
 <td>237.212963</td>
 <td>237.212963</td>
+<td>0.000000</td>
+<td>0.000000</td>
 <td>...</td>
-<td>711.638889</td>
-<td>237.212963</td>
-<td>0.000000</td>
-<td>474.425926</td>
 <td>0.000000</td>
 <td>237.212963</td>
-<td>474.425926</td>
 <td>0.000000</td>
+<td>0.000000</td>
+<td>237.212963</td>
+<td>0.000000</td>
+<td>237.212963</td>
+<td>237.212963</td>
 <td>237.212963</td>
 <td>474.425926</td>
 </tr>
@@ -1533,7 +1533,7 @@ Important
 <section id="jackknife" class="level1">
 <h1>Jackknife</h1>
 <p>Below, we illustrate the API for creating replicate weights using the jackknife method.</p>
-<div id="d87f9fe1" class="cell" data-execution_count="8">
+<div id="b8a5bf78" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>jackknife <span class="op">=</span> ReplicateWeight(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>RepMethod.jackknife, </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    strat<span class="op">=</span><span class="va">False</span></span>
@@ -1724,7 +1724,7 @@ Important
 </div>
 </div>
 <p>With stratification…</p>
-<div id="9b649c69" class="cell" data-execution_count="9">
+<div id="bae9507f" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>jackknife <span class="op">=</span> ReplicateWeight(method<span class="op">=</span>RepMethod.jackknife, strat<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>jkn_wgt <span class="op">=</span> jackknife.replicate(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>], </span>
@@ -1936,7 +1936,7 @@ Important
 <p>For any of the three methods, we can request the replicate coefficient instead of the replicate weights by using <em>rep_coefs=True</em>.</p>
 </div>
 </div>
-<div id="9738aa93" class="cell" data-execution_count="10">
+<div id="3c79f27e" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#jackknife = ReplicateWeight(method=RepMethod.jackknife, strat=True)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>jkn_wgt <span class="op">=</span> jackknife.replicate(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>], </span>
@@ -2176,18 +2176,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -2219,7 +2208,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -2227,7 +2236,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
@@ -2324,7 +2333,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

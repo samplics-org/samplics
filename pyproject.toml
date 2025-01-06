@@ -40,6 +40,7 @@ dev = [
     "pytest-cov>=4.1",
     "ruff>=0.8.0",
     "codecov>=2.1",
+    "jupyterlab>=4.3.4",
 ]
 
 
@@ -122,7 +123,7 @@ fixable = [
     "RET",
     "RSE",
     "RUF",
-    "SIM",
+    "SIM", 
     "SLF",
     "TCH",
     "TID",
@@ -130,13 +131,12 @@ fixable = [
     "UP",
     "YTT",
 ]
-unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
     ".direnv",
-    ".eggs",
+    ".eggs", 
     ".git",
     ".hg",
     ".mypy_cache",
@@ -162,7 +162,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = true
-
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10

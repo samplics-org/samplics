@@ -131,7 +131,7 @@ dmypy.json
 
 #Extra
 issues
-data/
+extra_data
 reference_material/
 notebooks/*
 presentations/*/

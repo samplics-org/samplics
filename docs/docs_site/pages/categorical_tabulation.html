@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Samplics Documentation - Tabulation</title>
+<title>Tabulation – Samplics Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-74c90939484fe00be8d5db7ece5ff9a7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -109,10 +109,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="../public/styles.css">
-<meta property="og:title" content="Samplics Documentation - Tabulation">
+<meta property="og:title" content="Tabulation – Samplics Documentation">
 <meta property="og:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
 <meta property="og:site_name" content="Samplics Documentation">
-<meta name="twitter:title" content="Samplics Documentation - Tabulation">
+<meta name="twitter:title" content="Tabulation – Samplics Documentation">
 <meta name="twitter:description" content="Documentation of the Python package Samplics for statistical design and analysis of complex samples">
 <meta name="twitter:site" content="@MamadouSDiallo">
 <meta name="twitter:card" content="summary">
@@ -133,7 +133,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -160,17 +160,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../pages/tutorial.html">Tutorial</a></li><li class="breadcrumb-item"><a href="../pages/categorical.html">Categorical Data Analysis</a></li><li class="breadcrumb-item"><a href="../pages/categorical_tabulation.html">Tabulation</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -183,9 +183,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">Overview</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -206,9 +206,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">Tutorial</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -227,9 +227,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
  <span class="menu-text">Size Calculation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -250,9 +250,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
  <span class="menu-text">Selection</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -279,9 +279,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
  <span class="menu-text">Weighting</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -308,9 +308,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
  <span class="menu-text">Population Parameters Estimation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -337,9 +337,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
  <span class="menu-text">Categorical Data Analysis</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -366,9 +366,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
  <span class="menu-text">Small Area Estimation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -433,7 +433,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>In this tutorial, we will explore samplics’ APIs for creating design-based tabulations. There are two main python classes for tabulation i.e.&nbsp;<code>Tabulation()</code> for one-way tables and <code>CrossTabulation()</code> for two-way tables.</p>
-<div id="ec7098d2" class="cell" data-execution_count="1">
+<div id="8aab33a5" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_birth, load_nhanes2</span>
@@ -444,7 +444,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="one-way-tabulation" class="level1">
 <h1>One-way tabulation</h1>
 <p>The birth dataset has four variables: region, agecat, birthcat, and pop. The variables agecat and birthcat are categirical. By default, pandas read them as numerical, because they are coded with numerical values. We use <code>dtype="string"</code> or <code>dtype="category"</code> to ensure that pandas codes the variables as categorical responses.</p>
-<div id="b654e413" class="cell" data-execution_count="2">
+<div id="3d16d7ce" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Birth sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>birth_dict <span class="op">=</span> load_birth()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>birth <span class="op">=</span> birth_dict[<span class="st">"data"</span>].astype(</span>
@@ -583,7 +583,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>When requesting a table, the user can set <code>param="count"</code> which results in a tabulation with counts in the cells while <code>param="proportion</code> leads to cells with proportions. The expression <code>Tabulation("count")</code> instantiates the class <code>Tabulation()</code> which has a method <code>tabulate()</code> to produce the table.</p>
-<div id="4aeaaa07" class="cell" data-execution_count="3">
+<div id="89cc6536" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -604,7 +604,7 @@ birthcat      3.0           233.0 13.204959 207.084737 258.915263
 </div>
 </div>
 <p>When <code>remove_nan=False</code>, the numpy and pandas special values NaNs, respectively np.nan and NaN, are treated as valid categories and added to the tables as shown below</p>
-<div id="9472df72" class="cell" data-execution_count="4">
+<div id="59150ad2" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -626,7 +626,7 @@ birthcat      nan            33.0  5.647499  21.917060  44.082940
 </div>
 </div>
 <p>The data associated with the tabulation are stored in nested python dictionaries. The higher level key is the variable name and the inner keys are the response categories. Each of the last four columns shown above are stored in separated dictionaries. Two of those dictionaries for the counts and standard errors shown below.</p>
-<div id="e6f05fab" class="cell" data-execution_count="5">
+<div id="6f7fc94f" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count.point_est)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -638,14 +638,14 @@ The designed-based estimated counts are:
 {'birthcat': {'1.0': 240.0, '2.0': 450.0, '3.0': 233.0, 'nan': 33.0}}
 
 The designed-based standard errors are:
-{'birthcat': {'1.0': 13.414066228212418,
-              '2.0': 15.441156672080245,
-              '3.0': 13.281447911984001,
-              'nan': 5.647498635475369}}</code></pre>
+{'birthcat': {'1.0': 13.414066228212423,
+              '2.0': 15.441156672080215,
+              '3.0': 13.281447911983973,
+              'nan': 5.647498635475388}}</code></pre>
 </div>
 </div>
 <p>Sometimes, the user may want to run multiple one-way tables of several variables. In this case, the user can provide the data as a two-dimensional dataframe where each column represents one categorical variable. In this situation, each categorical variable is tabulated individually then combined into Python dictionaries.</p>
-<div id="95d648da" class="cell" data-execution_count="6">
+<div id="b1f87537" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>birth_count2 <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>birth_count2.tabulate(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    birth[[<span class="st">"region"</span>, <span class="st">"agecat"</span>, <span class="st">"birthcat"</span>]], </span>
@@ -676,7 +676,7 @@ birthcat      3.0           233.0 13.204959 207.084737 258.915263
 </div>
 </div>
 <p>Two of the associated Python dictionaries are shown below. The structure of the inner dictionaries remain the same but additional key-value pairs are added to represent the several categorical variables.</p>
-<div id="772d26f1" class="cell" data-execution_count="7">
+<div id="a339c4c8" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count2.point_est)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -690,20 +690,20 @@ The designed-based estimated counts are:
  'region': {'1': 166.0, '2': 284.0, '3': 250.0, '4': 256.0}}
 
 The designed-based standard errors are:
-{'agecat': {'1': 15.439223863518952,
-            '2': 14.55230681053191,
-            '3': 10.705921442206721},
- 'birthcat': {'1.0': 13.333694861331516,
-              '2.0': 15.19397357414444,
-              '3.0': 13.20495864267966},
- 'region': {'1': 11.718334853030537,
-            '2': 14.13650726651876,
-            '3': 13.594732580183488,
-            '4': 13.698320300591277}}</code></pre>
+{'agecat': {'1': 15.439223863518956,
+            '2': 14.552306810531896,
+            '3': 10.705921442206717},
+ 'birthcat': {'1.0': 13.333694861331473,
+              '2.0': 15.193973574144477,
+              '3.0': 13.204958642679685},
+ 'region': {'1': 11.718334853030456,
+            '2': 14.136507266518636,
+            '3': 13.594732580183479,
+            '4': 13.698320300591291}}</code></pre>
 </div>
 </div>
 <p>In the example above, we used pandas series and dataframes with labelled variables. In some situations, the user may want to tabulate numpy arrays, lists or tuples without variable names atrribute from the data. For these situations, the <code>varnames</code> parameter provides a way to assign names for the categorical variables. Even when the variables have labels, users can leverage <code>varnames</code> to rename the categorical variables.</p>
-<div id="521947a1" class="cell" data-execution_count="8">
+<div id="45008a0f" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>region_no_name <span class="op">=</span> birth[<span class="st">"region"</span>].to_numpy()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>agecat_no_name <span class="op">=</span> birth[<span class="st">"agecat"</span>].to_numpy()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>birthcat_no_name <span class="op">=</span> birth[<span class="st">"birthcat"</span>].to_numpy()</span>
@@ -739,7 +739,7 @@ BirthType      3.0       0.252438  0.014307  0.225406  0.281533
 </div>
 </div>
 <p>If the user does not specify <code>varnames</code>, the <code>tabulate()</code> creates generic variables names <code>var_1</code>, <code>var_2</code>, etc.</p>
-<div id="03b773d1" class="cell" data-execution_count="9">
+<div id="83c9a87e" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2 <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2.tabulate(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>[region_no_name, agecat_no_name, birthcat_no_name], </span>
@@ -770,7 +770,7 @@ Tabulation of var_1
 </div>
 </div>
 <p>If the data was collected from a complex survey sample, the user may provide the sample design information to derive design-based statistics for the tabulation.</p>
-<div id="85bde345" class="cell" data-execution_count="10">
+<div id="e47ecf22" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Nhanes sample data</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>nhanes2_dict <span class="op">=</span> load_nhanes2()</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>nhanes2 <span class="op">=</span> nhanes2_dict[<span class="st">"data"</span>]</span>
@@ -810,7 +810,7 @@ diabetes       1.0       0.034285  0.001820  0.030762  0.038197
 <section id="two-way-tabulation-cross-tabulation" class="level1">
 <h1>Two-way tabulation (cross-tabulation)</h1>
 <p>Cross-tabulation of two categorical variables is achieved by using the class <code>CrossTabulation()</code>. As above, cross-tabulation is possible for counts and proportions using <code>CrossTabulation(param="count")</code> and <code>CrossTabulation(param="proportion")</code>, respectively. The Python script below creates a design-based cross-tabulation of race by diabetes status. The sample design information is optional; when not provided, a simple random sample (srs) is assumed.</p>
-<div id="5aece4e4" class="cell" data-execution_count="11">
+<div id="0eaa67a0" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>nhanes2[[<span class="st">"race"</span>, <span class="st">"diabetes"</span>]],</span>
@@ -839,16 +839,16 @@ Cross-tabulation of race and diabetes
 
 Pearson (with Rao-Scott adjustment):
     Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
-    Adjusted - F(1.52, 47.26): 14.9435  with p-value of 0.0000
+    Adjusted - F(1.87, 57.97): 23.4859  with p-value of 0.0000
 
   Likelihood ratio (with Rao-Scott adjustment):
      Unadjusted - chi2(2): 18.3925 with p-value of 0.0001
-     Adjusted - F(1.52, 47.26): 12.9242  with p-value of 0.0001
+     Adjusted - F(1.87, 57.97): 20.3123  with p-value of 0.0000
 </code></pre>
 </div>
 </div>
 <p>In addition to pandas dataframe, the categorical variables may be provided as an numpy array, list or tuple. In the examples below, the categorical variables are provided as a tuple <code>vars=(rage, diabetes)</code>. In this case, <code>race</code> and <code>diabetes</code> are numpy arrays and do not have a name attribute. The parameter <code>varnames</code> allows the user to name the categorical variables. If varnames is not specified then `<code>var_1</code> and <code>var_2</code> are used as variables names.</p>
-<div id="a08aef04" class="cell" data-execution_count="12">
+<div id="390932be" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>race <span class="op">=</span> nhanes2[<span class="st">"race"</span>].to_numpy()</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>diabetes <span class="op">=</span> nhanes2[<span class="st">"diabetes"</span>].to_numpy()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -864,32 +864,32 @@ Pearson (with Rao-Scott adjustment):
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(crosstab_nhanes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-Cross-tabulation of var_1 and var_2
+Cross-tabulation of __var1__ and __var2__
  Number of strata: 31
  Number of PSUs: 62
  Number of observations: 10335
  Degrees of freedom: 31.00
 
- var_1 var_2  PopParam.prop  stderror  lower_ci  upper_ci
-  1.0   0.0       0.850866  0.015850  0.815577  0.880392
-  1.0   1.0       0.028123  0.001938  0.024430  0.032357
-  2.0   0.0       0.089991  0.012171  0.068062  0.118090
-  2.0   1.0       0.005646  0.000847  0.004157  0.007663
-  3.0   0.0       0.024858  0.010188  0.010702  0.056669
-  3.0   1.0       0.000516  0.000387  0.000112  0.002383
+ __var1__ __var2__  PopParam.prop  stderror  lower_ci  upper_ci
+     1.0      0.0       0.850866  0.015850  0.815577  0.880392
+     1.0      1.0       0.028123  0.001938  0.024430  0.032357
+     2.0      0.0       0.089991  0.012171  0.068062  0.118090
+     2.0      1.0       0.005646  0.000847  0.004157  0.007663
+     3.0      0.0       0.024858  0.010188  0.010702  0.056669
+     3.0      1.0       0.000516  0.000387  0.000112  0.002383
 
 Pearson (with Rao-Scott adjustment):
     Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
-    Adjusted - F(1.52, 47.26): 14.9435  with p-value of 0.0000
+    Adjusted - F(1.87, 57.97): 23.4859  with p-value of 0.0000
 
   Likelihood ratio (with Rao-Scott adjustment):
      Unadjusted - chi2(2): 18.3925 with p-value of 0.0001
-     Adjusted - F(1.52, 47.26): 12.9242  with p-value of 0.0001
+     Adjusted - F(1.87, 57.97): 20.3123  with p-value of 0.0000
 </code></pre>
 </div>
 </div>
 <p>Same as the above example with variables names specified by <code>varnames=["Race", DiabetesStatus"]</code></p>
-<div id="326abc9f" class="cell" data-execution_count="13">
+<div id="3f2e9bdd" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>(race, diabetes),</span>
@@ -919,11 +919,11 @@ Cross-tabulation of Race and DiabetesStatus
 
 Pearson (with Rao-Scott adjustment):
     Unadjusted - chi2(2): 21.2661 with p-value of 0.0000
-    Adjusted - F(1.52, 47.26): 14.9435  with p-value of 0.0000
+    Adjusted - F(1.87, 57.97): 23.4859  with p-value of 0.0000
 
   Likelihood ratio (with Rao-Scott adjustment):
      Unadjusted - chi2(2): 18.3925 with p-value of 0.0001
-     Adjusted - F(1.52, 47.26): 12.9242  with p-value of 0.0001
+     Adjusted - F(1.87, 57.97): 20.3123  with p-value of 0.0000
 </code></pre>
 </div>
 </div>
@@ -967,18 +967,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1010,7 +999,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1018,7 +1027,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
@@ -1115,7 +1124,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
