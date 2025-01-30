@@ -608,15 +608,16 @@ class CrossTabulation:
         cell_est, cov_est, missing_levels = self._extract_estimates(
             tbl_est=tbl_est, vars_levels=np.unique(vars_for_oneway)
         )
-        cell_est_srs, cov_est_srs, _ = self._extract_estimates(
-            tbl_est=tbl_est_srs, vars_levels=np.unique(vars_for_oneway)
-        )
+        # cell_est_srs, _, _ = self._extract_estimates(
+        #     tbl_est=tbl_est_srs, vars_levels=np.unique(vars_for_oneway)
+        # )
 
-        cov_est_srs = cov_est_srs * ((df.shape[0] - 1) / df.shape[0])
+        cov_est_srs = (np.diag(cell_est) - cell_est.reshape((cell_est.shape[0], 1)) @ cell_est.reshape((1, cell_est.shape[0]))) / df.shape[0]
+
+        # cov_est_srs = cov_est_srs * ((df.shape[0] - 1) / df.shape[0])
 
         if self.param == PopParam.count:
             cell_est = cell_est / df["samp_weight"].sum()
-            cell_est_srs = cell_est_srs / df.shape[0]
             cov_est = cov_est / (df["samp_weight"].sum() ** 2)
             cov_est_srs = cov_est_srs / (df.shape[0] ** 2)
 
@@ -761,7 +762,7 @@ class CrossTabulation:
         if trace_delta != 0:
             f_p = float(chisq_p / trace_delta)
             f_lr = float(chisq_lr / trace_delta)
-            df_num = float((np.trace(delta_est) ** 2) / np.trace(delta_est @ delta_est))
+            df_num = float((trace_delta ** 2) / np.trace(delta_est @ delta_est))
             df_den = float((tbl_est.nb_psus - tbl_est.nb_strata) * df_num)
         else:
             f_p = 0  # np.nan

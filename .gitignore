@@ -138,6 +138,7 @@ presentations/*/
 *.ipynb_checkpoints/
 roadmap/
 roadmap.md
+specs/
 
 #Other
 *.Rhistory
