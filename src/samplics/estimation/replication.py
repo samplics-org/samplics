@@ -58,7 +58,7 @@ class ReplicateEstimator(_SurveyEstimator):
         if method not in (RepMethod.bootstrap, RepMethod.brr, RepMethod.jackknife):
             raise ValueError("Method must be 'bootstrap', 'brr', or 'jackknife'!")
 
-        super().__init__(param, alpha, rand_seed)
+        super().__init__(param=param, alpha=alpha, rand_seed=rand_seed)
         self.method = method
         self.conservative = False
         self.degree_of_freedom: Optional[int] = None

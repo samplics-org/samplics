@@ -322,7 +322,7 @@ class TaylorEstimator(_SurveyEstimator):
         ciprop_method: Optional[str] = "logit",
     ) -> None:
         """Initializes the instance"""
-        _SurveyEstimator.__init__(self, param)
+        super().__init__(param=param, alpha=alpha, rand_seed=rand_seed)
         if self.param == PopParam.prop:
             self.ciprop_method = ciprop_method
         else:
