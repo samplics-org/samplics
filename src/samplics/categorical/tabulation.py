@@ -517,48 +517,6 @@ class CrossTabulation:
                 pl.col(vars_names[1]).fill_null("__null__"),
             ).sort(vars_names)
 
-        # samp_weight = numpy_array(samp_weight)
-        # stratum = numpy_array(stratum)
-        # psu = numpy_array(psu)
-        # ssu = numpy_array(ssu)
-
-        # if samp_weight.shape != ():
-        #     positive_weights = samp_weight > 0
-        #     samp_weight = samp_weight[positive_weights]
-        #     vars = vars.filter(positive_weights)
-        #     stratum = stratum[positive_weights] if stratum.shape != () else stratum
-        #     psu = psu[positive_weights] if psu.shape != () else psu
-        #     ssu = ssu[positive_weights] if ssu.shape != () else ssu
-
-        # if remove_nan:
-        #     to_keep = remove_nans(
-        #         vars.shape[0],
-        #         vars[vars_names[0]].to_numpy(),
-        #         vars[vars_names[1]].to_numpy(),
-        #     )
-        #     samp_weight = (
-        #         samp_weight[to_keep]
-        #         if samp_weight.shape not in ((), (0,))
-        #         else samp_weight
-        #     )
-        #     stratum = stratum[to_keep] if stratum.shape not in ((), (0,)) else stratum
-        #     psu = psu[to_keep] if psu.shape not in ((), (0,)) else psu
-        #     ssu = ssu[to_keep] if ssu.shape not in ((), (0,)) else ssu
-        #     vars = vars.filter(to_keep)
-        #     vars = vars.with_columns(
-        #         pl.col(vars_names[0]).cast(pl.String),
-        #         pl.col(vars_names[1]).cast(pl.String),
-        #     )
-        # else:
-        #     vars = vars.with_columns(
-        #         pl.col(vars_names[0]).fill_null("__null__"),
-        #         pl.col(vars_names[1]).fill_null("__null__"),
-        #     )
-
-        # vars_levels = df.select(vars_names).unique()
-        # vars_names_str = ["var_" + str(x) for x in vars_names]
-        # vars_levels.columns = vars_names_str
-
         if len(df.shape) == 2:
             vars_for_oneway = (
                 df.select(vars_names)
@@ -572,21 +530,9 @@ class CrossTabulation:
         else:
             vars_for_oneway = df.to_series().to_numpy()
 
-        # vars_levels_concat = vars_levels.with_columns(
-        #     (pl.col(vars_names_str[0]) + "__by__" + pl.col(vars_names_str[1])).alias(
-        #         "__cross_vars__"
-        #     )
-        # )["__cross_vars__"].to_numpy()
+        param = PopParam.total if self.param == PopParam.count else PopParam.mean
 
-        if self.param == PopParam.count:
-            tbl_est = TaylorEstimator(param=PopParam.total, alpha=self.alpha)
-            tbl_est_srs = TaylorEstimator(param=PopParam.total, alpha=self.alpha)
-        elif self.param == PopParam.prop:
-            tbl_est = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
-            tbl_est_srs = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
-        else:
-            raise ValueError("parameter must be 'count' or 'proportion'")
-
+        tbl_est = TaylorEstimator(param=param, alpha=self.alpha)
         tbl_est.estimate(
             y=vars_for_oneway,
             samp_weight=df["samp_weight"],
@@ -599,27 +545,32 @@ class CrossTabulation:
             strata_comb=strata_comb,
             as_factor=True,
         )
-
-        tbl_est_srs.estimate(
-            y=vars_for_oneway,
-            as_factor=True,
-        )
-
-        cell_est, cov_est, missing_levels = self._extract_estimates(
-            tbl_est=tbl_est, vars_levels=np.unique(vars_for_oneway)
-        )
-        # cell_est_srs, _, _ = self._extract_estimates(
-        #     tbl_est=tbl_est_srs, vars_levels=np.unique(vars_for_oneway)
-        # )
+        if self.param == PopParam.count:
+            tbl_est_prop = TaylorEstimator(param=PopParam.mean, alpha=self.alpha)
+            tbl_est_prop.estimate(
+                y=vars_for_oneway,
+                samp_weight=df["samp_weight"],
+                stratum=df["stratum"].to_numpy(),
+                psu=df["psu"].to_numpy(),
+                ssu=None,
+                fpc=fpc,
+                coef_var=coef_var,
+                single_psu=single_psu,
+                strata_comb=strata_comb,
+                as_factor=True,
+            )
+            cell_est, cov_est, missing_levels = self._extract_estimates(
+                tbl_est=tbl_est_prop, vars_levels=np.unique(vars_for_oneway)
+            )
+        elif self.param == PopParam.prop:
+            cell_est, cov_est, missing_levels = self._extract_estimates(
+                tbl_est=tbl_est, vars_levels=np.unique(vars_for_oneway)
+            )
+        else:
+            raise ValueError("parameter must be 'count' or 'proportion'")
 
         cov_est_srs = (np.diag(cell_est) - cell_est.reshape((cell_est.shape[0], 1)) @ cell_est.reshape((1, cell_est.shape[0]))) / df.shape[0]
-
         # cov_est_srs = cov_est_srs * ((df.shape[0] - 1) / df.shape[0])
-
-        if self.param == PopParam.count:
-            cell_est = cell_est / df["samp_weight"].sum()
-            cov_est = cov_est / (df["samp_weight"].sum() ** 2)
-            cov_est_srs = cov_est_srs / (df.shape[0] ** 2)
 
         two_way_full_model = _saturated_two_ways_model(vars_names)
 
