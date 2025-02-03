@@ -9,6 +9,4 @@ def predict(
     intercept: bool = True,  # if True, it adds an intercept of 1
     b_const: DictStrNum | Number = 1.0,
 ):
-    return _predict_eblup(
-        x=x, fit_eblup=fit_stats, y=y, intercept=intercept, b_const=b_const
-    )
+    return _predict_eblup(x=x, fit_eblup=fit_stats, y=y, intercept=intercept, b_const=b_const)

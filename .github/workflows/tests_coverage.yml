@@ -8,35 +8,47 @@ on:
 
 jobs:
   code-coverage:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.13"]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3 
+
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
+
       - name: Print the installed uv version
         run: echo "Installed uv version is ${{ steps.setup-uv.outputs.uv-version }}"
-      - name: Install dependencies
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4  
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies with uv
         run: |
-          uv python install ${{ matrix.python-version }}
-          uv sync
-      - name: Running tests with coverage
+          uv venv .venv 
+          uv sync  
+
+      - name: Run tests with coverage
         run: |
-          uv run pytest -v --cov-report xml --cov=src/samplics tests
-          uv run codecov
+          uv run pytest --cov=src.samplics --cov-report=xml -v tests
+
+      - name: Install Codecov (if not installed)
+        run: |
+          uv run pip install codecov  
+
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4  
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          # files: ./coverage1.xml,./coverage2.xml
-          # directory: ./coverage/reports/
-          # flags: unittests
+          file: coverage.xml  
+          flags: unittests
           env_vars: OS,PYTHON
           name: codecov-umbrella
           fail_ci_if_error: true
-          # path_to_write_report: ./coverage/codecov_report.txt
           verbose: true

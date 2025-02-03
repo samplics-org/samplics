@@ -161,9 +161,7 @@ def test_nr_adjustment_without_adj_class():
 
 def test_in_adjustment_without_adj_class():
     ineligibles = response_code == np.repeat(0, response_code.size)
-    assert (
-        nr_wgt_without_adj_class[ineligibles] == design_wgt.to_numpy()[ineligibles]
-    ).all()
+    assert (nr_wgt_without_adj_class[ineligibles] == design_wgt.to_numpy()[ineligibles]).all()
 
 
 def test_uk_adjustment_without_adj_class():
@@ -173,13 +171,8 @@ def test_uk_adjustment_without_adj_class():
 
 def test_deff_weight_without_domain():
     mean_wgt = np.mean(nr_wgt_without_adj_class)
-    deff_weight = 1 + np.mean(
-        np.power(nr_wgt_without_adj_class - mean_wgt, 2) / mean_wgt**2
-    )
-    assert (
-        sample_wgt_nr_without.calculate_deff_weight(nr_wgt_without_adj_class)
-        == deff_weight
-    )
+    deff_weight = 1 + np.mean(np.power(nr_wgt_without_adj_class - mean_wgt, 2) / mean_wgt**2)
+    assert sample_wgt_nr_without.calculate_deff_weight(nr_wgt_without_adj_class) == deff_weight
     assert sample_wgt_nr_without.deff_weight == deff_weight
 
 
@@ -202,9 +195,7 @@ def test_nr_adjustment_with_adj_class():
 
 def test_in_adjustment_with_adj_class():
     ineligibles = response_code == np.repeat(0, response_code.size)
-    assert (
-        nr_wgt_with_adj_class[ineligibles] == design_wgt.to_numpy()[ineligibles]
-    ).all()
+    assert (nr_wgt_with_adj_class[ineligibles] == design_wgt.to_numpy()[ineligibles]).all()
 
 
 def test_uk_adjustment_with_adj_class():
@@ -213,9 +204,7 @@ def test_uk_adjustment_with_adj_class():
 
 
 def test_deff_weight_with_domain():
-    deff_weight_region = sample_wgt_nr_with.calculate_deff_weight(
-        nr_wgt_with_adj_class, region_id
-    )
+    deff_weight_region = sample_wgt_nr_with.calculate_deff_weight(nr_wgt_with_adj_class, region_id)
     for region in np.unique(region_id):
         nr_wgt_r = nr_wgt_with_adj_class[region_id == region]
         mean_wgt_r = np.mean(nr_wgt_r)
@@ -270,9 +259,7 @@ def test_norm_wgt_with_class1():
         assert np.isclose(np.sum(norm_wgt_wih_class_r), level1_with[region])
 
 
-norm_wgt_wih_class2 = sample_wgt_norm_with.normalize(
-    nr_wgt_without_adj_class, domain=region_id
-)
+norm_wgt_wih_class2 = sample_wgt_norm_with.normalize(nr_wgt_without_adj_class, domain=region_id)
 
 
 def test_norm_wgt_with_class2():
@@ -286,9 +273,7 @@ def test_norm_wgt_with_class2():
 control_without = 50000
 sample_wgt_ps_without = SampleWeight()
 
-ps_wgt_wihout_class = sample_wgt_ps_without.poststratify(
-    nr_wgt_without_adj_class, control_without
-)
+ps_wgt_wihout_class = sample_wgt_ps_without.poststratify(nr_wgt_without_adj_class, control_without)
 
 
 def test_ps_without_adj_method():

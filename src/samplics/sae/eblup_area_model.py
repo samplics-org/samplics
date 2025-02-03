@@ -111,7 +111,7 @@ class EblupAreaModel:
         fit["beta_coef"] = self.fixed_effects
         fit["beta_stderr"] = np.diag(self.fe_std)
 
-        return f"""\n\nFH Area Model - Best predictor,\n\nConvergence status: {self.convergence['achieved']}\nNumber of iterations: {self.convergence['iterations']}\nPrecision: {self.convergence['precision']}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_std**2}\n\n"""
+        return f"""\n\nFH Area Model - Best predictor,\n\nConvergence status: {self.convergence["achieved"]}\nNumber of iterations: {self.convergence["iterations"]}\nPrecision: {self.convergence["precision"]}\n\nGoodness of fit: {self.goodness}\n\nEstimation:\n{estimation}\n\nFixed effect:\n{fit}\n\nRandom effect variance:\n{self.re_std**2}\n\n"""
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -195,9 +195,7 @@ class EblupAreaModel:
             V = np.diag(v_i)
             v_inv = np.linalg.inv(V)
             x_vinv_x = np.matmul(np.matmul(np.transpose(X), v_inv), X)
-            x_xvinvx_x = np.matmul(
-                np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X)
-            )
+            x_xvinvx_x = np.matmul(np.matmul(X, np.linalg.inv(x_vinv_x)), np.transpose(X))
             P = v_inv - np.matmul(np.matmul(v_inv, x_xvinvx_x), v_inv)
             P_B = np.matmul(P, B)
             P_B_P = np.matmul(P_B, P)

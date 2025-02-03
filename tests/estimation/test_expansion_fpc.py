@@ -47,9 +47,7 @@ svy_total_without_str_domain = TaylorEstimator(PopParam.total)
 
 
 def test_total_estimator_without_str_domain():
-    svy_total_without_str_domain.estimate(
-        y, weight, psu=psu, fpc=fpc_psu, domain=domain
-    )
+    svy_total_without_str_domain.estimate(y, weight, psu=psu, fpc=fpc_psu, domain=domain)
 
     assert np.isclose(svy_total_without_str_domain.point_est[1], 528.52)
     assert np.isclose(svy_total_without_str_domain.point_est[2], 324.6)
@@ -261,9 +259,7 @@ svy_ratio_without_str_domain = TaylorEstimator(PopParam.ratio)
 
 
 def test_ratio_estimator_without_str_domain():
-    svy_ratio_without_str_domain.estimate(
-        y, weight, x, psu=psu, fpc=fpc_psu, domain=domain
-    )
+    svy_ratio_without_str_domain.estimate(y, weight, x, psu=psu, fpc=fpc_psu, domain=domain)
 
     assert np.isclose(svy_ratio_without_str_domain.point_est[1], 1.8950016)
     assert np.isclose(svy_ratio_without_str_domain.point_est[2], 1.887209)
@@ -293,9 +289,7 @@ svy_ratio_with_str = TaylorEstimator(PopParam.ratio)
 
 
 def test_ratio_estimator_with_str():
-    svy_ratio_with_str.estimate(
-        y, weight, x, stratum=stratum, psu=psu, fpc=fpc_dict_psu
-    )
+    svy_ratio_with_str.estimate(y, weight, x, stratum=stratum, psu=psu, fpc=fpc_dict_psu)
 
     assert np.isclose(svy_ratio_with_str.point_est, 1.892038)
     assert np.isclose(svy_ratio_with_str.stderror, 0.0072954)

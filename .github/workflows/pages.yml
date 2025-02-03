@@ -29,14 +29,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v4
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           # Upload entire repository
           path: "./docs/docs_site"
-      - name: Statics Docs from Quarto
+      - name: Deploy Static Docs from Quarto
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2

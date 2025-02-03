@@ -188,11 +188,7 @@ class EblupUnitModel:
         g3_afactor = (1 / afactor**2) * (1 / (sigma2u + sigma2e / afactor) ** 3)
         g3 = (
             g3_afactor
-            * (
-                (sigma2e**2) * i_ee
-                + (sigma2u**2) * i_vv
-                - 2 * (sigma2e * sigma2u) * (-i_ve)
-            )
+            * ((sigma2e**2) * i_ee + (sigma2u**2) * i_vv - 2 * (sigma2e * sigma2u) * (-i_ve))
             / i_determinant
         )
 
@@ -281,9 +277,7 @@ class EblupUnitModel:
                 + np.log(nb_obs - self.fixed_effects.shape[0]) * nb_variance_params
             )
         elif self.method == FitMethod.ml:
-            aic = -2 * basic_fit.llf + 2 * (
-                self.fixed_effects.shape[0] + nb_variance_params
-            )
+            aic = -2 * basic_fit.llf + 2 * (self.fixed_effects.shape[0] + nb_variance_params)
             bic = -2 * basic_fit.llf + np.log(nb_obs) * (
                 self.fixed_effects.shape[0] + nb_variance_params
             )
@@ -375,8 +369,7 @@ class EblupUnitModel:
                 samp_rate[d] = 0
             if d in self.areas_list:
                 area_est[d] = (
-                    mu[d]
-                    + (samp_rate[d] + (1 - samp_rate[d]) * self.gamma[d]) * resid[d]
+                    mu[d] + (samp_rate[d] + (1 - samp_rate[d]) * self.gamma[d]) * resid[d]
                 )
             else:
                 area_est[d] = mu[d]
@@ -384,11 +377,7 @@ class EblupUnitModel:
         self.samp_rate = samp_rate
         self.area_est = area_est
 
-        A_ps = (
-            np.diag(np.zeros(Xp_mean.shape[1]))
-            if Xp_mean.ndim >= 2
-            else np.asarray([0])
-        )
+        A_ps = np.diag(np.zeros(Xp_mean.shape[1])) if Xp_mean.ndim >= 2 else np.asarray([0])
 
         ps_area_list = self.areap[ps]
         for d in ps_area_list:
@@ -396,9 +385,9 @@ class EblupUnitModel:
             n_ps_d = np.sum(areadps)
             X_ps_d = Xs[areadps]
             scale_ps_d = self.scales[areadps]
-            V_ps_d = (self.error_std**2) * np.diag(scale_ps_d) + (
-                self.re_std**2
-            ) * np.ones([n_ps_d, n_ps_d])
+            V_ps_d = (self.error_std**2) * np.diag(scale_ps_d) + (self.re_std**2) * np.ones(
+                [n_ps_d, n_ps_d]
+            )
             A_ps = A_ps + np.transpose(X_ps_d) @ np.linalg.inv(V_ps_d) @ X_ps_d
 
         ps_area_indices = np.isin(self.areas_list, ps_area_list)
@@ -526,16 +515,13 @@ class EblupUnitModel:
                 if b in steps:
                     i += 1
                     print(
-                        f"\r[%-{bar_length-1}s] %d%%"
-                        % ("=" * i, 2 + (100 / bar_length) * i),
+                        f"\r[%-{bar_length - 1}s] %d%%" % ("=" * i, 2 + (100 / bar_length) * i),
                         end="",
                     )
         if show_progress:
             print("\n")
 
-        self.area_mse_boot = dict(
-            zip(ps_area_list, np.asarray(np.mean(boot_mse, axis=0)))
-        )
+        self.area_mse_boot = dict(zip(ps_area_list, np.asarray(np.mean(boot_mse, axis=0))))
 
         # TODO: nonnegligeable sampling fractions, section 7.2.4, Rao and Molina (2015)
 

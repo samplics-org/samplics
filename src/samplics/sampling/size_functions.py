@@ -309,9 +309,7 @@ def _calculate_ss_wald_mean_one_sample(
         z_beta = normal().ppf(power)
 
     return math.ceil(
-        (1 / resp_rate)
-        * deff_c
-        * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
+        (1 / resp_rate) * deff_c * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
     )
 
 

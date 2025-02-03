@@ -4,9 +4,7 @@ from samplics.utils import RepMethod
 from samplics.weighting import ReplicateWeight
 
 
-test_data = pd.read_csv(
-    "./tests/weighting/small_data_for_testing_replicate_weights.csv"
-)
+test_data = pd.read_csv("./tests/weighting/small_data_for_testing_replicate_weights.csv")
 
 cluster_id = test_data["psu"].astype(str)
 stratum_id = test_data["stratum"].astype(str)
@@ -15,18 +13,14 @@ sample_wgt = test_data["weight"]
 nb_reps = 5
 
 """Balanced Repeated Replicates (BRR) WITHOUT stratification"""
-no_str_brr = ReplicateWeight(
-    method=RepMethod.brr, strat=False, nb_reps=nb_reps, fay_coef=0.05
-)
+no_str_brr = ReplicateWeight(method=RepMethod.brr, strat=False, nb_reps=nb_reps, fay_coef=0.05)
 no_str_brr_wgt = no_str_brr.replicate(sample_wgt, cluster_id)
 
 # print(f"The BRR weights are: \n {no_str_brr_wgt.head(20)} \n")
 
 
 """Balanced Repeated Replicates (BRR) WITH stratification"""
-str_brr = ReplicateWeight(
-    method=RepMethod.brr, strat=True, nb_reps=nb_reps, fay_coef=0.05
-)
+str_brr = ReplicateWeight(method=RepMethod.brr, strat=True, nb_reps=nb_reps, fay_coef=0.05)
 str_brr_wgt = str_brr.replicate(sample_wgt, cluster_id, stratum_id)
 
 # print(f"The BRR weights are: \n {str_brr_wgt.head(20)} \n")

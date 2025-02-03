@@ -21,9 +21,7 @@ class SurveyGLM:
         self.beta: np.ndarray
 
     @staticmethod
-    def _residuals(
-        e: np.ndarray, psu: np.ndarray, nb_vars: Number
-    ) -> tuple(np.ndarray, Number):
+    def _residuals(e: np.ndarray, psu: np.ndarray, nb_vars: Number) -> tuple(np.ndarray, Number):
         psus = np.unique(psu)
         if psus.shape[0] == 1 and e.shape[0] == 1:
             raise AssertionError("Only one observation in the stratum")
@@ -88,9 +86,7 @@ class SurveyGLM:
             self.fpc = fpc_as_dict(_stratum, fpc)
         else:
             if np.unique(_stratum).tolist() != list(fpc.keys()):
-                raise AssertionError(
-                    "fpc dictionary keys must be the same as the strata!"
-                )
+                raise AssertionError("fpc dictionary keys must be the same as the strata!")
             else:
                 self.fpc = fpc
 

@@ -70,10 +70,7 @@ def assert_response_status(
 ) -> None:
     if response_status is None:
         raise AssertionError("response_status is not provided")
-    elif (
-        not np.isin(response_status, ("in", "rr", "nr", "uk")).all()
-        and response_dict is None
-    ):
+    elif not np.isin(response_status, ("in", "rr", "nr", "uk")).all() and response_dict is None:
         raise AssertionError(
             "The response status must only contains values in ('in', 'rr', 'nr', 'uk') or the mapping should be provided using response_dict parameter"
         )
@@ -88,6 +85,4 @@ def assert_response_status(
 
 def assert_brr_number_psus(psu: np.ndarray) -> None:
     if psu.size % 2 != 0:
-        raise AssertionError(
-            "For the BRR method, the number of PSUs must be a multiple of two."
-        )
+        raise AssertionError("For the BRR method, the number of PSUs must be a multiple of two.")

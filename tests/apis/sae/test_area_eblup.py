@@ -63,8 +63,6 @@ est_milk_reml = _predict_eblup(x=auxvars, fit_eblup=fit_reml, y=yhat)
 # breakpoint()
 
 
-@pytest.mark.skipif(
-    sys.platform == "linux", reason="Skip dev version on Github (Linux)"
-)
+@pytest.mark.skipif(sys.platform == "linux", reason="Skip dev version on Github (Linux)")
 def test_sae1():
     assert 1 == 2

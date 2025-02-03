@@ -205,9 +205,7 @@ def test_bhf_reml_to_dataframe_not_default():
         col_names=["parameter", "small_area", "modelled_estimate", "taylor_mse"]
     )
     assert df.shape[1] == 4
-    assert (
-        df.columns == ["parameter", "small_area", "modelled_estimate", "taylor_mse"]
-    ).all()
+    assert (df.columns == ["parameter", "small_area", "modelled_estimate", "taylor_mse"]).all()
 
 
 # Bootstrap with REML
@@ -225,9 +223,7 @@ df1_reml = eblup_bhf_reml_boot.to_dataframe()
 
 def test_bhf_reml_to_dataframe_boot_default():
     assert df1_reml.shape[1] == 5
-    assert (
-        df1_reml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]
-    ).all()
+    assert (df1_reml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]).all()
 
 
 df2_reml = eblup_bhf_reml_boot.to_dataframe(
@@ -475,9 +471,7 @@ df1_ml = eblup_bhf_ml_boot.to_dataframe()
 
 def test_bhf_ml_to_dataframe_boot_default():
     assert df1_ml.shape[1] == 5
-    assert (
-        df1_ml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]
-    ).all()
+    assert (df1_ml.columns == ["_parameter", "_area", "_estimate", "_mse", "_mse_boot"]).all()
 
 
 df2_ml = eblup_bhf_ml_boot.to_dataframe(

@@ -10,9 +10,7 @@ number_regions = 5
 number_strata = 10
 number_units = 5000
 
-units = (
-    np.linspace(0, number_units - 1, number_units, dtype="int16") + 10 * number_units
-)
+units = np.linspace(0, number_units - 1, number_units, dtype="int16") + 10 * number_units
 units = units.astype("str")
 
 sample = pd.DataFrame(units)
@@ -28,9 +26,7 @@ for i in range(number_units):
 
 area_type = pd.DataFrame(np.unique(sample["cluster_id"]))
 area_type.rename(columns={0: "cluster_id"}, inplace=True)
-area_type["area_type"] = np.random.choice(
-    ("urban", "rural"), area_type.shape[0], p=(0.4, 0.6)
-)
+area_type["area_type"] = np.random.choice(("urban", "rural"), area_type.shape[0], p=(0.4, 0.6))
 sample = pd.merge(sample, area_type, on="cluster_id")
 
 sample["response_status"] = np.random.choice(

@@ -14,7 +14,6 @@ def _load_dataset(
     design: dict,
     source: str,
 ) -> None:
-
     module_path = dirname(__file__)
     file_path = join(module_path, "data", file_name)
     df = pd.read_csv(file_path)
