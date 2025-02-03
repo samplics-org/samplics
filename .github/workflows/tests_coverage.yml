@@ -14,7 +14,7 @@ jobs:
         python-version: ["3.13"]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3 
+        uses: actions/checkout@v3
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v3
@@ -25,28 +25,28 @@ jobs:
         run: echo "Installed uv version is ${{ steps.setup-uv.outputs.uv-version }}"
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4  
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies with uv
         run: |
-          uv venv .venv 
-          uv sync  
+          uv venv .venv
+          uv sync
 
       - name: Run tests with coverage
         run: |
-          uv run pytest --cov=src.samplics --cov-report=xml -v tests
+          uv run pytest --cov=src.samplics --cov-report=xml:coverage/coverage.xml --cov-report=term -v tests
 
-      - name: Install Codecov (if not installed)
+      - name: Verify coverage report exists
         run: |
-          uv run pip install codecov  
+          ls -lh coverage/coverage.xml || echo "⚠️ Warning: coverage.xml not found!"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4  
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.xml  
+          file: coverage/coverage.xml 
           flags: unittests
           env_vars: OS,PYTHON
           name: codecov-umbrella
