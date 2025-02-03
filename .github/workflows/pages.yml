@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  pages: write 
+  pages: write
   id-token: write
 
 concurrency:
@@ -23,12 +23,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v4  
+
+      - name: "Debug: Check files before build"
+        run: ls -R ./docs || echo "❌ No docs directory found!"
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: ./docs/docs_site
+          path: ./docs/docs_site  
+          name: github-pages  
+
+      - name: "Debug: Verify uploaded artifact exists"
+        run: |
+          ls -lh ./docs/docs_site || echo "❌ Build output missing!"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        with:
+          artifact_name: github-pages  
