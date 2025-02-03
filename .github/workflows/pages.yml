@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write 
   id-token: write
 
@@ -25,15 +25,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v4
-      - name: Debug - Check files before build
-        run: ls -R ./docs || echo "❌ No docs directory found!"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
-      - name: Debug - Verify uploaded artifact exists
-        run: |
-          ls -lh ./docs || echo "❌ Build output missing!"
+          path: ./docs/docs_site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
