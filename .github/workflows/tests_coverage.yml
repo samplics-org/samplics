@@ -48,7 +48,6 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          source .venv/bin/activate
           uv run pytest --cov=src.samplics --cov-report=xml:coverage/coverage.xml --cov-report=term -v tests
 
       - name: Verify coverage report exists
