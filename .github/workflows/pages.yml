@@ -1,42 +1,42 @@
-# Simple workflow for deploying static content to GitHub Pages
 name: Docs
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches: [main]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v4
+      - name: Debug - Check files before build
+        run: ls -R ./docs || echo "❌ No docs directory found!"
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v2
         with:
-          # Upload entire repository
-          path: "./docs/docs_site"
-      - name: Deploy Static Docs from Quarto
+          path: ./docs/docs_site
+          name: github-pages
+      - name: Debug - Verify uploaded artifact exists
+        run: |
+          ls -lh ./docs/docs_site || echo "❌ Build output missing!"
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        with:
+          artifact_name: github-pages
