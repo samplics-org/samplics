@@ -465,7 +465,7 @@ window.Quarto = {
 
 <p>To select the second stage sample, we need the second stage frame which is the list of all the households in the 10 selected clusters (psus). DHS, PHIA, MICS and other large scale surveys visit the selected clusters and construct the list of all households in the selected clusters.</p>
 <p>Before starting the second stage selection, let us import the data from the first stage sampling information that is the first stage sample (psu_sample). For clarity, we explicitly import the packages and modules needed for this notebook.</p>
-<div id="ac4f701b" class="cell" data-execution_count="1">
+<div id="179be7a2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -476,7 +476,7 @@ window.Quarto = {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="op">=</span> pd.read_csv(<span class="st">"./psu_frame.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In this tutorial, we will simulate the second stage frame. For the simulation, assume that the psu frame was obtained from a previous census conducted several years before. We also assume that, the change in the number of households since the previous census follows a normal distribution with a mean equal to 5% higher than the census value and a variance of 0.15 times the number of households from the census. Under these assumptions, we generate the following second stage frame of households. Note that the frame is created only for the selected PSUs.</p>
-<div id="96d53474" class="cell" data-execution_count="2">
+<div id="49b203af" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a synthetic second stage frame</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>census_size <span class="op">=</span> psu_frame.loc[</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>, </span>
@@ -630,7 +630,7 @@ First 15 observations of the SSU frame
 </div>
 </div>
 </div>
-<div id="ac0d1f3c" class="cell" data-execution_count="3">
+<div id="b4f97878" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_frame.loc[psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ssu_counts <span class="op">=</span> ssu_frame.groupby(<span class="st">"cluster"</span>).count()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ssu_counts.drop(columns<span class="op">=</span><span class="st">"region"</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
@@ -742,7 +742,7 @@ First 15 observations of the SSU frame
 <h1>SSU (household) Probability of Selection</h1>
 <p>The second stage probabilities of selection are conditional on the first stage realization. For this stage, simple random selection (srs) and systematic selection(sys) are common methods used to select households. For this example, we use srs to select 15 households from each cluster. Conditionally to teh first stage, the second stage selection is a stratified srs where the clusters are the strata. More generally, we have that <span class="math display">\[\begin{equation} p_{hij} = \frac{m_{hi}}{M_{hi}^{'}} \end{equation}\]</span> where <span class="math inline">\(p_{hij}\)</span> is the conditional probability of selection for unit <span class="math inline">\(j\)</span> from stratum <span class="math inline">\(h\)</span> and cluster <span class="math inline">\(j\)</span>, <span class="math inline">\(m_{hi}\)</span> and <span class="math inline">\(M_{hi}^{'}\)</span> are the sample size and the number of secondary sampling units listed for stratum <span class="math inline">\(h\)</span> and cluster <span class="math inline">\(j\)</span>, respectively.</p>
 <p>In this scenario, sample size is the same in each stratum. Hence, the parameter <em>sample_size</em> does not need to be a Python dictionary; we will only provide 15 in the function call.</p>
-<div id="d2ad9a55" class="cell" data-execution_count="4">
+<div id="289ac4d6" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>stage2_design <span class="op">=</span> SampleSelection(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>SelectMethod.srs_wor, strat<span class="op">=</span><span class="va">True</span>, wr<span class="op">=</span><span class="va">False</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -916,7 +916,7 @@ First 15 observations of the SSU frame
 <section id="ssu-household-selection" class="level3">
 <h3 class="anchored" data-anchor-id="ssu-household-selection">SSU (household) Selection</h3>
 <p>The second stage sample is selected from the SSU frame (<em>ssu_frame</em>) using the variable <em>cluster</em> as the strat variable. The sample is selected without replacement according to the specification of the second stage design. Hence, both <em>ssu_sample</em> and <em>ssu_hits</em> sum to 150 and each selected household was hit only ounce (i.e.&nbsp;<em>ssu_hits</em> = 1).</p>
-<div id="6489141c" class="cell" data-execution_count="5">
+<div id="27343135" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">11</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ssu_sample, ssu_hits, ssu_probs <span class="op">=</span> stage2_design.select(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    ssu_frame[<span class="st">"household"</span>], <span class="dv">15</span>, ssu_frame[<span class="st">"cluster"</span>]</span>
@@ -1103,21 +1103,21 @@ First 15 observations of the SSU frame
 </div>
 <p>Let’s check that both <em>ssu_sample</em> and <em>ssu_hits</em> sum to 150 and each selected household was hit only ounce (i.e.&nbsp;<em>ssu_hits</em> = 1).</p>
 <div style="font-size:0.9rem">
-<div id="ffefcd93" class="cell" data-execution_count="6">
+<div id="59273fc9" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_sample` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_sample'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The sum of `ssu_sample` is equal to: 150
 </code></pre>
 </div>
 </div>
-<div id="740899eb" class="cell" data-execution_count="7">
+<div id="d6d6f698" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_hits` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_hits'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The sum of `ssu_hits` is equal to: 150
 </code></pre>
 </div>
 </div>
-<div id="f617850d" class="cell" data-execution_count="8">
+<div id="171e6f9f" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The values of `ssu_hits` are: </span><span class="sc">{</span>np<span class="sc">.</span>unique(ssu_frame[<span class="st">'ssu_hits'</span>])<span class="sc">.</span>tolist()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The values of `ssu_hits` are: [0, 1]
@@ -1127,7 +1127,7 @@ First 15 observations of the SSU frame
 </div>
 <p>To use systematic selection, we just need to replace <code>method=SelectMethod.srs_wor</code> by <code>method=SelectMethod.sys</code>.</p>
 <p>Another common approach is to use a rate for selecting the sample. Instead of selecting 15 households from 130 in the first cluster, we may want to select with a rate of 15/130, and similarly for the other clusters.</p>
-<div id="6d5a44e5" class="cell" data-execution_count="9">
+<div id="2d5f4724" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>rates <span class="op">=</span> np.repeat(<span class="dv">15</span>, <span class="dv">10</span>) <span class="op">/</span> ssu_counts[<span class="st">"number_households_listed"</span>].values</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ssu_rates <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(np.unique(ssu_frame[<span class="st">"cluster"</span>]), rates))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ssu_rates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1144,7 +1144,7 @@ First 15 observations of the SSU frame
  np.int64(86): np.float64(0.05474452554744526)}</code></pre>
 </div>
 </div>
-<div id="df78896d" class="cell" data-execution_count="10">
+<div id="3869c98d" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">22</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>stage2_design2 <span class="op">=</span> SampleSelection(</span>
@@ -1337,7 +1337,7 @@ First 15 observations of the SSU frame
 </div>
 </div>
 <p>Let’s store the first and second stages samples.</p>
-<div id="92972621" class="cell" data-execution_count="11">
+<div id="53e212e4" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage sample</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>psu_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"psu_prob"</span>]].to_csv(<span class="st">"psu_sample.csv"</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>

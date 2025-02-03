@@ -44,15 +44,19 @@ jobs:
           uv sync
 
       - name: Create coverage directory
-        run: mkdir -p coverage
+        run: |
+          mkdir -p coverage
+          ls -la coverage
 
       - name: Run tests with coverage
         run: |
-          uv run pytest --cov=src.samplics --cov-report=xml:coverage/coverage.xml --cov-report=term -v tests
+          uv run pytest --cov=src/samplics --cov-report=xml:coverage/coverage.xml --cov-report=term -v tests
+          ls -la coverage
 
       - name: Verify coverage report exists
         run: |
           ls -lh coverage/coverage.xml || echo "⚠️ Warning: coverage.xml not found!"
+          ls -la coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
