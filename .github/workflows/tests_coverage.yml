@@ -16,6 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Debug file and directory state
+        run: |
+          echo "Debugging file and directory state..."
+          ls -la
+          echo "Environment state..."
+          env
+          echo "Git status..."
+          git status
+
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v3
         with:
@@ -34,8 +43,12 @@ jobs:
           uv venv .venv
           uv sync
 
+      - name: Create coverage directory
+        run: mkdir -p coverage
+
       - name: Run tests with coverage
         run: |
+          source .venv/bin/activate
           uv run pytest --cov=src.samplics --cov-report=xml:coverage/coverage.xml --cov-report=term -v tests
 
       - name: Verify coverage report exists
@@ -46,7 +59,7 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage/coverage.xml 
+          files: ./coverage/coverage.xml
           flags: unittests
           env_vars: OS,PYTHON
           name: codecov-umbrella
