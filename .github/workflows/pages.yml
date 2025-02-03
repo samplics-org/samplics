@@ -30,10 +30,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs/docs_site
+          path: ./docs
       - name: Debug - Verify uploaded artifact exists
         run: |
-          ls -lh ./docs/docs_site || echo "❌ Build output missing!"
+          ls -lh ./docs || echo "❌ Build output missing!"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
