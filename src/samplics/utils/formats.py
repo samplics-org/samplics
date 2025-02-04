@@ -67,7 +67,9 @@ def dataframe_to_array(df: pd.DataFrame) -> np.ndarray:
         if nb_vars > 1:
             for k in range(1, nb_vars):
                 x_array = (
-                    x_array + "_&_" + df.select(col_names[k]).to_series().cast(pl.Utf8).to_numpy()
+                    x_array
+                    + "_&_"
+                    + df.select(col_names[k]).to_series().cast(pl.Utf8).to_numpy()
                 )
         return x_array
     else:
@@ -104,7 +106,11 @@ def dict_to_dataframe(col_names: list[str], *args: Any) -> pd.DataFrame:
         number_keys = len(keys)
         for k, arg in enumerate(args):
             args_keys = list(args[k].keys())
-            if not isinstance(arg, dict) or (keys != args_keys) or number_keys != len(args_keys):
+            if (
+                not isinstance(arg, dict)
+                or (keys != args_keys)
+                or number_keys != len(args_keys)
+            ):
                 raise AssertionError(
                     "All input parameters must be dictionaries with the same keys."
                 )
@@ -163,7 +169,9 @@ def remove_nans(n: Number, *args: np.ndarray) -> list:
     return ~excluded_units
 
 
-def fpc_as_dict(stratum: np.ndarray, fpc: Union[Array, Number]) -> Union[DictStrNum, Number]:
+def fpc_as_dict(
+    stratum: np.ndarray, fpc: Union[Array, Number]
+) -> Union[DictStrNum, Number]:
     if stratum.shape in ((), (0,)) and isinstance(fpc, (int, float)):
         return fpc
     elif stratum.shape not in ((), (0,)) and isinstance(fpc, (int, float)):

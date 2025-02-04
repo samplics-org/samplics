@@ -67,7 +67,7 @@ exclude = '''
 # target-version = ["py310", "py311"]
 
 [tool.pytest.ini_options]
-addopts = "--ignore=tests/apis --ignore=tests/sae --ignore=tests/types --ignore=tests/categorical"
+addopts = "--ignore=tests/apis --ignore=tests/sae --ignore=tests/types"
 
 # testpaths = ["tests"]
 

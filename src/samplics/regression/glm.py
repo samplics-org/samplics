@@ -11,7 +11,7 @@ from samplics.utils.formats import (
     fpc_as_dict,
     numpy_array,
 )
-from samplics.utils.types import Array, Number, Series, StringNumber
+from samplics.utils.types import Array, Number, Series, StringNumber, ModelType
 
 
 class SurveyGLM:
@@ -21,7 +21,9 @@ class SurveyGLM:
         self.beta: np.ndarray
 
     @staticmethod
-    def _residuals(e: np.ndarray, psu: np.ndarray, nb_vars: Number) -> tuple(np.ndarray, Number):
+    def _residuals(
+        e: np.ndarray, psu: np.ndarray, nb_vars: Number
+    ) -> tuple(np.ndarray, Number):
         psus = np.unique(psu)
         if psus.shape[0] == 1 and e.shape[0] == 1:
             raise AssertionError("Only one observation in the stratum")
@@ -63,12 +65,16 @@ class SurveyGLM:
 
     def estimate(
         self,
+        model: ModelType,
         y: Array,
         x: Optional[Array] = None,
         samp_weight: Optional[Array] = None,
         stratum: Optional[Series] = None,
         psu: Optional[Series] = None,
         fpc: Union[dict[StringNumber, Number], Series, Number] = 1.0,
+        add_intercept: bool = False,
+        tol: float = 1e-8,
+        maxiter: int = 100,
         remove_nan: bool = False,
     ) -> None:
         _y = numpy_array(y)
@@ -76,6 +82,12 @@ class SurveyGLM:
         _psu = numpy_array(psu)
         _stratum = numpy_array(stratum)
         _samp_weight = numpy_array(samp_weight)
+
+        if _x.shape[0] > 0 and _x.ndim == 1:
+            _x = _x.reshape(_x.shape[0], 1)
+
+        if add_intercept:
+            _x = np.insert(_x, 0, 1, axis=1)
 
         if _samp_weight.shape in ((), (0,)):
             _samp_weight = np.ones(y.shape[0])
@@ -86,11 +98,26 @@ class SurveyGLM:
             self.fpc = fpc_as_dict(_stratum, fpc)
         else:
             if np.unique(_stratum).tolist() != list(fpc.keys()):
-                raise AssertionError("fpc dictionary keys must be the same as the strata!")
+                raise AssertionError(
+                    "fpc dictionary keys must be the same as the strata!"
+                )
             else:
                 self.fpc = fpc
 
-        glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
+        match model:
+            case ModelType.LINEAR:
+                glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
+            case ModelType.LOGISTIC:
+                glm_model = sm.GLM(
+                    endog=_y,
+                    exog=_x,
+                    var_weights=_samp_weight,
+                    family=sm.families.Binomial(),
+                )
+            case _:
+                raise NotImplementedError(f"Model {model} is not implemented yet")
+
+        # glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
         glm_results = glm_model.fit()
 
         g = self._calculate_g(

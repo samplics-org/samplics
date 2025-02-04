@@ -35,7 +35,10 @@ def test_loading_psu_sample():
     psu_sample = load_psu_sample()
 
     assert psu_sample["name"] == "PSU Sample"
-    assert psu_sample["description"] == "The PSU sample obtained from the simulated PSU frame."
+    assert (
+        psu_sample["description"]
+        == "The PSU sample obtained from the simulated PSU frame."
+    )
     assert psu_sample["nrows"] == 10
     assert psu_sample["ncols"] == 3
     assert list(psu_sample["data"].columns) == ["cluster", "region", "psu_prob"]
@@ -45,7 +48,10 @@ def test_loading_ssu_sample():
     ssu_sample = load_ssu_sample()
 
     assert ssu_sample["name"] == "SSU Sample"
-    assert ssu_sample["description"] == "The SSU sample obtained from the simulated SSU frame."
+    assert (
+        ssu_sample["description"]
+        == "The SSU sample obtained from the simulated SSU frame."
+    )
     assert ssu_sample["nrows"] == 150
     assert ssu_sample["ncols"] == 3
     assert list(ssu_sample["data"].columns) == ["cluster", "household", "ssu_prob"]

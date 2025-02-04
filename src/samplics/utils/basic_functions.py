@@ -37,7 +37,9 @@ def set_variables_names(
                 if len(vars.shape) == 2:
                     return [prefix + "_" + str(k) for k in range(1, vars.shape[1] + 1)]
                 else:
-                    return [prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)]
+                    return [
+                        prefix + "_" + str(k) for k in range(1, len(vars.shape) + 1)
+                    ]
             elif isinstance(vars, (tuple, list)):
                 return [prefix + "_" + str(k) for k in range(1, len(vars) + 1)]
             else:

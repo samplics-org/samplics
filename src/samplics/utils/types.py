@@ -6,6 +6,8 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 import polars as pl
+from scipy.stats.distributions import cauchy
+from statsmodels.genmod.families.links import inverse_power
 
 
 DF = pl.DataFrame | pd.DataFrame
@@ -28,6 +30,49 @@ class FitMethod(Enum):
     fh = "FH"
     ml = "ML"
     reml = "REML"
+
+
+@unique
+class ModelType(Enum):
+    LINEAR = "Linear"
+    LOGISTIC = "Logistic"
+    # poisson = "Poisson"
+    # negative_binomial = "Negative Binomial"
+    # gamma = "Gamma"
+    # beta = "Beta"
+    # ordinal = "Ordinal"
+    # multinomial = "Multinomial"
+    # probit = "Probit"
+    # cloglog = "Cloglog"
+    # loglog = "Loglog"
+    # logit = "Logit"
+    # cloglog = "Cloglog"
+    # loglog = "Loglog"
+    # logit = "Logit"
+
+
+@unique
+class DistFamily(Enum):
+    GAUSSIAN = "Gaussian"
+    BINOMIAL = "Binomial"
+    NEG_BINOMIAL = "Negative Binomial"
+    # poisson = "Poisson"
+    # gamma = "Gamma"
+    # beta = "Beta"
+
+
+@unique
+class LinkFunction(Enum):
+    IDENTITY = "Identity"
+    LOGIT = "Logit"
+    PROBIT = "Probit"
+    CAUCHY = "Cauchy"
+    CLOGLOG = "Cloglog"
+    LOGLOG = "Loglog"
+    LOG = "Log"
+    INVERSE = "Inverse"
+    INVERSE_SQUARED = "Inverse Squared"
+    INVERSE_POWER = "Inverse Power"
 
 
 # Population parameters
