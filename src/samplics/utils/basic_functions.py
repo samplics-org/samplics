@@ -15,7 +15,6 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -28,9 +27,9 @@ def set_variables_names(
     vars: Array, varnames: Optional[Union[str, list[str]]], prefix: str
 ) -> Union[str, list[str]]:
     if varnames is None:
-        if isinstance(vars, pd.DataFrame):
+        if isinstance(vars, (pd.DataFrame, pl.DataFrame)):
             return list(vars.columns)
-        elif isinstance(vars, pd.Series) and vars.name is not None:
+        elif isinstance(vars, (pd.Series, pl.Series)) and vars.name is not None:
             return [vars.name]
         else:
             if isinstance(vars, (pd.Series, np.ndarray)):
@@ -180,51 +179,57 @@ def _plot_measure(
     measure: str = "skewness",
     block: bool = True,
 ) -> None:
-    y = numpy_array(y)
-    lambda_range = np.linspace(coef_min, coef_max, num=nb_points)
-    coefs = np.zeros(lambda_range.size)
-    measure_loc = None
-    for k, ll in enumerate(lambda_range):
-        if (1 + y * ll < 0).any():
-            break
-        y_ll = transform(y, ll)
-        if measure.lower() == "skewness":
-            coefs[k] = skewness(y_ll)
-            measure_loc = "lower right"
-        elif measure.lower() == "kurtosis":
-            coefs[k] = kurtosis(y_ll)
-            measure_loc = "upper right"
-        else:
-            raise ValueError("measure type not valid!")
+    try:
+        import matplotlib.pyplot as plt
 
-    normality = np.abs(coefs) < 2.0
+        y = numpy_array(y)
+        lambda_range = np.linspace(coef_min, coef_max, num=nb_points)
+        coefs = np.zeros(lambda_range.size)
+        measure_loc = None
+        for k, ll in enumerate(lambda_range):
+            if (1 + y * ll < 0).any():
+                break
+            y_ll = transform(y, ll)
+            if measure.lower() == "skewness":
+                coefs[k] = skewness(y_ll)
+                measure_loc = "lower right"
+            elif measure.lower() == "kurtosis":
+                coefs[k] = kurtosis(y_ll)
+                measure_loc = "upper right"
+            else:
+                raise ValueError("measure type not valid!")
 
-    p1 = plt.scatter(
-        lambda_range[normality],
-        coefs[normality],
-        marker="D",
-        c="green",
-        s=25,
-        alpha=0.3,
-    )
-    p2 = plt.scatter(
-        lambda_range[~normality],
-        coefs[~normality],
-        c="red",
-        s=10,
-        alpha=0.6,
-        edgecolors="none",
-    )
-    plt.axhline(0, color="blue", linestyle="--")
-    plt.title(f"{measure.title()} by BoxCox lambda")
-    plt.ylabel(f"{measure.title()}")
-    plt.xlabel("Lambda (coefs)")
-    plt.legend(
-        (p1, p2),
-        ("Normality zone", "Non-normality zone"),
-        loc=measure_loc,
-    )
-    plt.show(block=block)
+        normality = np.abs(coefs) < 2.0
+
+        p1 = plt.scatter(
+            lambda_range[normality],
+            coefs[normality],
+            marker="D",
+            c="green",
+            s=25,
+            alpha=0.3,
+        )
+        p2 = plt.scatter(
+            lambda_range[~normality],
+            coefs[~normality],
+            c="red",
+            s=10,
+            alpha=0.6,
+            edgecolors="none",
+        )
+        plt.axhline(0, color="blue", linestyle="--")
+        plt.title(f"{measure.title()} by BoxCox lambda")
+        plt.ylabel(f"{measure.title()}")
+        plt.xlabel("Lambda (coefs)")
+        plt.legend(
+            (p1, p2),
+            ("Normality zone", "Non-normality zone"),
+            loc=measure_loc,
+        )
+        plt.show(block=block)
+
+    except ImportError:
+        print("Matplotlib is not installed.")
 
 
 def plot_skewness(

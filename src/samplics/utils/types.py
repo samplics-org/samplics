@@ -6,8 +6,6 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 import polars as pl
-from scipy.stats.distributions import cauchy
-from statsmodels.genmod.families.links import inverse_power
 
 
 DF = pl.DataFrame | pd.DataFrame
@@ -83,6 +81,7 @@ class PopParam(Enum):
     total = "Total"
     prop = "Proportion"
     ratio = "Ratio"
+    median = "Median"
 
 
 @unique
@@ -121,3 +120,12 @@ class SinglePSUEst(Enum):
     skip = "Set variance to zero and skip stratum with one PSU"
     certainty = "Use SSUs or lowest units to estimate the variance"
     combine = "Combine the strata with the singleton psu to another stratum"
+
+
+@unique
+class QuantileMethod(Enum):
+    LOWER = "lower"
+    HIGHER = "higher"
+    NEAREST = "nearest"
+    LINEAR = "linear"
+    MIDDLE = "middle"

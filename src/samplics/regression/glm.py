@@ -11,7 +11,7 @@ from samplics.utils.formats import (
     fpc_as_dict,
     numpy_array,
 )
-from samplics.utils.types import Array, Number, Series, StringNumber, ModelType
+from samplics.utils.types import Array, ModelType, Number, Series, StringNumber
 
 
 class SurveyGLM:

@@ -34,6 +34,7 @@ from samplics.utils.types import (
     Array,
     Number,
     PopParam,
+    QuantileMethod,
     Series,
     SinglePSUEst,
     StringNumber,
@@ -56,10 +57,7 @@ class _SurveyEstimator:
             self.rand_seed = None
 
         self.param = param
-        # if param.lower() in ("proportion", "mean", "total", "ratio"):
-        #     self.param = param.lower()
-        # else:
-        #     raise AssertionError("parameter must be 'proportion', 'mean', 'total' or 'ratio'")
+        self.q_method = None
 
         self.alpha = alpha
 
@@ -96,6 +94,8 @@ class _SurveyEstimator:
             param = "MEAN"
         elif self.param == PopParam.total:
             param = "TOTAL"
+        elif self.param == PopParam.median:
+            param = "MEDIAN"
         elif self.param == PopParam.ratio:
             param = "RATIO"
         else:
@@ -194,6 +194,15 @@ class _SurveyEstimator:
             return float(np.sum(samp_weight * y) / np.sum(samp_weight))
         elif self.param == PopParam.total:
             return float(np.sum(samp_weight * y))
+        elif self.param == PopParam.median and self.q_method is not None:
+            return float(
+                self._weighted_quantile(
+                    y_sorted=np.sort(y),
+                    cdf=np.cumsum(samp_weight) / np.sum(samp_weight),
+                    p=0.5,
+                    q_method=self.q_method,
+                )
+            )
         elif self.param == PopParam.ratio and x.shape not in ((), (0,)):
             return float(np.sum(samp_weight * y) / np.sum(samp_weight * x))
         else:
@@ -225,13 +234,6 @@ class _SurveyEstimator:
 
         if self.param == PopParam.ratio and x.shape in ((), (0,)):
             raise AssertionError("Parameter x must be provided for ratio estimation.")
-
-        # if remove_nan:
-        #     if self.param == PopParam.ratio and x is not None:
-        #         excluded_units = np.isnan(y) | np.isnan(x)
-        #     else:
-        #         excluded_units = np.isnan(y)
-        #     y, samp_weight, x, domain = remove_nans(excluded_units, y, samp_weight, x, domain)
 
         if self.param == PopParam.prop or as_factor:
             y_dummies = pd.get_dummies(y)
@@ -288,6 +290,33 @@ class _SurveyEstimator:
                     estimate2[d] = self._get_point_d(y=y_d, samp_weight=weight_d, x=x_d)
                 return estimate2
 
+    @staticmethod
+    def _weighted_quantile(
+        y_sorted: np.ndarray, cdf: np.ndarray, p: float, q_method: QuantileMethod
+    ) -> np.ndarray:
+        index = np.searchsorted(cdf, p, side="right")
+        index = index - 1 if index > 0 else 0
+        match q_method:
+            case QuantileMethod.LOWER:
+                return y_sorted[index]
+            case QuantileMethod.HIGHER:
+                return y_sorted[index + 1]
+            case QuantileMethod.LINEAR:
+                return y_sorted[index] + (p - cdf[index]) * (
+                    y_sorted[index + 1] - y_sorted[index]
+                ) / (cdf[index + 1] - cdf[index])
+            case QuantileMethod.MIDDLE:
+                return (y_sorted[index] + y_sorted[index + 1]) / 2
+            case QuantileMethod.NEAREST:
+                if p - cdf[index] < cdf[index + 1] - p:
+                    return y_sorted[index]
+                else:
+                    return y_sorted[index + 1]
+            case _:
+                raise ValueError("Invalid interpolation method")
+
+
+
 
 class TaylorEstimator(_SurveyEstimator):
     """*TaylorEstimate* implements taylor-based variance approximations.
@@ -328,6 +357,26 @@ class TaylorEstimator(_SurveyEstimator):
         else:
             self.ciprop_method = None
 
+    @staticmethod
+    def _estimate_density(
+        y_sorted: np.ndarray, cdf: np.ndarray, quantile_value: float, epsilon: float
+    ) -> float:
+        lower_bound = quantile_value - epsilon / 2
+        upper_bound = quantile_value + epsilon / 2
+
+        F_lower = np.interp(lower_bound, y_sorted, cdf)
+        F_upper = np.interp(upper_bound, y_sorted, cdf)
+
+        density_est = (F_upper - F_lower) / epsilon
+        return density_est
+
+    @staticmethod
+    def _compute_influence_function(
+        y_sorted: np.ndarray, quantile_value: float, p: float, density_est: float
+    ) -> np.ndarray:
+        indicator = (y_sorted <= quantile_value).astype(float)
+        return (indicator - p) / density_est
+
     def _score_variable(
         self, y: np.ndarray, samp_weight: np.ndarray, x: Optional[np.ndarray] = None
     ) -> np.ndarray:
@@ -337,25 +386,29 @@ class TaylorEstimator(_SurveyEstimator):
         samp_weight = np.asarray(samp_weight)
         x = np.asarray(x)
 
-        ncols = 1 if len(y.shape) == 1 else y.shape[1]
-        y = y.reshape(y.shape[0], ncols)
-        y_weighted = y * samp_weight[:, None]  # .reshape(samp_weight.shape[0], 1)
-        if self.param in (PopParam.prop, PopParam.mean):
+        if self.param in (PopParam.prop, PopParam.mean, PopParam.median):
+            ncols = 1 if len(y.shape) == 1 else y.shape[1]
+            y = y.reshape(y.shape[0], ncols)
             scale_weights = np.sum(samp_weight)
-            location_weights = np.sum(y_weighted, axis=0) / scale_weights
             return np.asarray(
-                (y - location_weights) * samp_weight[:, None] / scale_weights
+                (y - np.sum(y * samp_weight[:, None], axis=0) / scale_weights)
+                * samp_weight[:, None]
+                / scale_weights
             )
         elif self.param == PopParam.ratio:
+            ncols = 1 if len(y.shape) == 1 else y.shape[1]
+            y = y.reshape(y.shape[0], ncols)
             weighted_sum_x = np.sum(x * samp_weight)
-            weighted_ratio = np.sum(y_weighted, axis=0) / weighted_sum_x
+            weighted_ratio = np.sum(y * samp_weight[:, None], axis=0) / weighted_sum_x
             return np.asarray(
                 samp_weight[:, None]
                 * (y - x[:, None] * weighted_ratio)
                 / weighted_sum_x
             )
         elif self.param == PopParam.total:
-            return np.asarray(y_weighted)
+            ncols = 1 if len(y.shape) == 1 else y.shape[1]
+            y = y.reshape(y.shape[0], ncols)
+            return np.asarray(y * samp_weight[:, None])
         else:
             raise ValueError("parameter not valid!")
 
@@ -481,19 +534,31 @@ class TaylorEstimator(_SurveyEstimator):
         if self.param == PopParam.ratio and x.shape in ((), (0,)):
             raise AssertionError("Parameter x must be provided for ratio estimation.")
 
-        # if remove_nan:
-        #     if self.param == PopParam.ratio and x is not None:
-        #         excluded_units = np.isnan(y) | np.isnan(x)
-        #     else:
-        #         excluded_units = np.isnan(y)
-        #         y, samp_weight, x, stratum, domain, psu, ssu = remove_nans(
-        #             excluded_units, y, samp_weight, x, stratum, domain, psu, ssu
-        #         )
-
         if self.param == PopParam.prop or as_factor:
             y_df = pd.get_dummies(y).astype(int)
             categories = list(y_df.columns)
             y = y_df.values
+
+        if self.param == PopParam.median and self.q_method is not None:
+            cdf = np.cumsum(samp_weight) / np.sum(samp_weight)
+            quantile_value = self._weighted_quantile(
+                y_sorted=y,
+                cdf=cdf,
+                p=0.5,
+                q_method=self.q_method,
+            )
+            density_est = self._estimate_density(
+                y_sorted=y,
+                cdf=cdf,
+                quantile_value=quantile_value,
+                epsilon=(y.max() - y.min())/1e7,
+            )
+            y = self._compute_influence_function(
+                y_sorted=y,
+                quantile_value=quantile_value,
+                p=0.5,
+                density_est=density_est,
+            )
 
         if domain.shape in ((), (0,)):
             y_score = self._score_variable(y, samp_weight, x)  # new
@@ -818,6 +883,7 @@ class TaylorEstimator(_SurveyEstimator):
         ] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         as_factor: bool = False,
+        q_method=QuantileMethod.LINEAR,
         remove_nan: bool = False,
     ) -> None:
         if as_factor and self.param not in (PopParam.mean, PopParam.total):
@@ -827,6 +893,11 @@ class TaylorEstimator(_SurveyEstimator):
 
         if self.param == PopParam.ratio and x.shape in ((), (0,)):
             raise AssertionError("x must be provided for ratio estimation.")
+
+        if self.param == PopParam.median:
+            self.q_method = q_method
+        else:
+            self.q_method = None
 
         _y = numpy_array(y)
         _x = numpy_array(x)
@@ -875,7 +946,7 @@ class TaylorEstimator(_SurveyEstimator):
             # use it in get_single_psu_strata and in the uncertainty calculation functions
             self.single_psu_strata = get_single_psu_strata(_stratum, _psu)
 
-        skipped_strata = None
+        skipped_strata = np.array(None)
         if self.single_psu_strata is not None:
             if single_psu == SinglePSUEst.error:
                 self._raise_singleton_error()
@@ -930,7 +1001,23 @@ class TaylorEstimator(_SurveyEstimator):
 
         self.as_factor = as_factor
 
+        if self.param == PopParam.median:
+            if _samp_weight.shape not in ((), (0,)):
+                _samp_weight = _samp_weight[np.argsort(_y)]
+            if _stratum.shape not in ((), (0,)):
+                _stratum = _stratum[np.argsort(_y)]
+            if _psu.shape not in ((), (0,)):
+                _psu = _psu[np.argsort(_y)]
+            if _ssu.shape not in ((), (0,)):
+                _ssu = _ssu[np.argsort(_y)]
+            if _domain.shape not in ((), (0,)):
+                _domain = _domain[np.argsort(_y)]
+            if skipped_strata.shape not in ((), (0,)):
+                skipped_strata = skipped_strata[np.argsort(_y)]
+            _y = _y[np.argsort(_y)]
+
         if _by.shape in ((), (0,)):
+
             self._estimate(
                 y=_y,
                 samp_weight=_samp_weight,

@@ -1,7 +1,6 @@
 [project]
 name = "samplics"
 version = "0.4.34"
-# license = "MIT"
 description = "Select, weight and analyze complex sample data"
 
 authors = [{ name = "Mamadou S Diallo", email = "msdiallo@samplics.org" }]
@@ -17,28 +16,20 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Development Status :: 4 - Beta",
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering",
 ]
 
-dependencies = [
-    "numpy >=2.0",
-    "pandas >=2.1",
-    "matplotlib >=3.4",
-    "statsmodels >=0.13",
-    "polars[pyarrow]>=1.15.0",
-]
+dependencies = ["numpy >=2.1", "statsmodels >=0.14", "polars[pyarrow]>=1.21.0"]
 
 [dependency-groups]
 dev = [
-    "black>=24.10.0",
-    "mypy>=1.13.0",
     "pytest>=8.3.3",
     "pytest-cov>=4.1",
-    "ruff>=0.8.0",
     "codecov>=2.1",
-    "jupyterlab>=4.3.4",
+    "jupyterlab>=4.3.5",
 ]
 
 
