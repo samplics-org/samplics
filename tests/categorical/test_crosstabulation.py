@@ -215,9 +215,9 @@ def test_twoway_count_one_var_count():
     tbl.tabulate(region, remove_nan=True)
 
 
-@pytest.mark.xfail(
-    strict=True, reason="For now, the method will fail if there are missing values"
-)
+# @pytest.mark.xfail(
+#     strict=True, reason="For now, the method will fail if there are missing values"
+# )
 def test_for_missing_values_in_the_design_matrix():
     tbl_prop = CrossTabulation(PopParam.prop)
     tbl_prop.tabulate(

@@ -488,7 +488,7 @@ class CrossTabulation:
                 df.filter(
                     (
                         pl.col(vars_names[0]).is_not_null()
-                        & ~pl.col(vars_names[1]).eq("NaN")
+                        & ~pl.col(vars_names[0]).eq("NaN")
                     )
                     & (
                         pl.col(vars_names[1]).is_not_null()
@@ -498,12 +498,9 @@ class CrossTabulation:
                         pl.col("samp_weight").is_not_null()
                         & pl.col("samp_weight").is_not_nan()
                     )
-                    & (
-                        pl.col("stratum").is_not_null()
-                        & ~pl.col(vars_names[1]).eq("NaN")
-                    )
-                    & (pl.col("psu").is_not_null() & ~pl.col(vars_names[1]).eq("NaN"))
-                    & (pl.col("ssu").is_not_null() & ~pl.col(vars_names[1]).eq("NaN"))
+                    & (pl.col("stratum").is_not_null() & ~pl.col("stratum").eq("NaN"))
+                    & (pl.col("psu").is_not_null() & ~pl.col("psu").eq("NaN"))
+                    & (pl.col("ssu").is_not_null() & ~pl.col("ssu").eq("NaN"))
                 )
                 .with_columns(
                     pl.col(vars_names[0]).cast(pl.String),
@@ -512,10 +509,23 @@ class CrossTabulation:
                 .sort(vars_names)
             )
         else:
-            df = df.with_columns(
-                pl.col(vars_names[0]).fill_null("__null__"),
-                pl.col(vars_names[1]).fill_null("__null__"),
-            ).sort(vars_names)
+            df = (
+                df.with_columns(
+                    pl.col(vars_names[0]).fill_null("__null__"),
+                    pl.col(vars_names[1]).fill_null("__null__"),
+                )
+                .with_columns(
+                    pl.when(pl.col(vars_names[0]).eq("NaN"))
+                    .then(pl.lit("__null__"))
+                    .otherwise(pl.col(vars_names[0]))
+                    .alias(vars_names[0]),
+                    pl.when(pl.col(vars_names[1]).eq("NaN"))
+                    .then(pl.lit("__null__"))
+                    .otherwise(pl.col(vars_names[1]))
+                    .alias(vars_names[1]),
+                )
+                .sort(vars_names)
+            )
 
         if len(df.shape) == 2:
             vars_for_oneway = (

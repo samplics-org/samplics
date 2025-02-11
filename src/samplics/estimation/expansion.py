@@ -316,8 +316,6 @@ class _SurveyEstimator:
                 raise ValueError("Invalid interpolation method")
 
 
-
-
 class TaylorEstimator(_SurveyEstimator):
     """*TaylorEstimate* implements taylor-based variance approximations.
 
@@ -551,7 +549,7 @@ class TaylorEstimator(_SurveyEstimator):
                 y_sorted=y,
                 cdf=cdf,
                 quantile_value=quantile_value,
-                epsilon=(y.max() - y.min())/1e7,
+                epsilon=(y.max() - y.min()) / 1e7,
             )
             y = self._compute_influence_function(
                 y_sorted=y,
