@@ -42,6 +42,7 @@ from samplics.utils import (
     CertaintyError,
     DimensionError,
     FitMethod,
+    ModelType,
     MethodError,
     PopParam,
     ProbError,
@@ -107,9 +108,10 @@ __all__ = [
     "SamplicsError",
     "CertaintyError",
     "DimensionError",
+    "ModelType",
     "MethodError",
     "ProbError",
     "SinglePSUError",
 ]
 
-__version__ = "0.4.36"
+__version__ = "0.4.37"

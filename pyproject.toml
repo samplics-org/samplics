@@ -1,6 +1,6 @@
 [project]
 name = "samplics"
-version = "0.4.36"
+version = "0.4.37"
 description = "Select, weight and analyze complex sample data"
 
 authors = [{ name = "Mamadou S Diallo", email = "msdiallo@samplics.org" }]
@@ -25,12 +25,7 @@ classifiers = [
 dependencies = ["numpy >=2.1", "statsmodels >=0.14", "polars[pyarrow]>=1.21.0"]
 
 [dependency-groups]
-dev = [
-    "pytest>=8.3.3",
-    "pytest-cov>=4.1",
-    "codecov>=2.1",
-    "jupyterlab>=4.3.5",
-]
+dev = ["pytest>=8.3.3", "pytest-cov>=4.1", "codecov>=2.1", "jupyterlab>=4.3.5"]
 
 
 [project.urls]

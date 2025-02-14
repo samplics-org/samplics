@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from samplics.regression import SurveyGLM
-from samplics.utils.types import ModelType
+from samplics import ModelType
 
 
 api_strat = pd.read_csv("./tests/regression/api_strat.csv")
