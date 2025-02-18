@@ -114,4 +114,4 @@ __all__ = [
     "SinglePSUError",
 ]
 
-__version__ = "0.4.37"
+__version__ = "0.4.38"

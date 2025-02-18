@@ -15,7 +15,7 @@ from samplics.utils.types import (
     SelectMethod,
     SinglePSUEst,
     SizeMethod,
-    ModelType
+    ModelType,
 )
 
 
@@ -34,5 +34,5 @@ __all__ = [
     "SinglePSUError",
     "ProbError",
     "MethodError",
-    "ModelType"
+    "ModelType",
 ]
