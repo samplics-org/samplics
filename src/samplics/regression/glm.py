@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import Optional, Union
 
 import numpy as np
-
-# import pandas as pd
+from scipy import stats
 import statsmodels.api as sm
 
 from samplics.utils.formats import (
@@ -17,8 +16,13 @@ from samplics.utils.types import Array, ModelType, Number, Series, StringNumber
 class SurveyGLM:
     """General linear models under complex survey sampling"""
 
-    def __init__(self):
-        self.beta: np.ndarray
+    def __init__(self, model: ModelType, alpha: float = 0.05):
+        self.model = model
+        self.alpha = alpha
+        self.beta: dict = {}
+        self.beta_cov: dict = {}
+        self.x_labels: list[str] = []
+        self.odds_ratio: dict = {}
 
     @staticmethod
     def _residuals(
@@ -65,9 +69,9 @@ class SurveyGLM:
 
     def estimate(
         self,
-        model: ModelType,
         y: Array,
         x: Optional[Array] = None,
+        x_labels: Optional[Array] = None,
         samp_weight: Optional[Array] = None,
         stratum: Optional[Series] = None,
         psu: Optional[Series] = None,
@@ -88,6 +92,17 @@ class SurveyGLM:
 
         if add_intercept:
             _x = np.insert(_x, 0, 1, axis=1)
+            self.x_labels = (
+                ["intercept"] + [f"__x{i}__" for i in range(1, _x.shape[1])]
+                if x_labels is None
+                else ["intercept"] + x_labels
+            )
+        else:
+            self.x_labels = (
+                ["intercept"] + [f"__x{i}__" for i in range(1, _x.shape[1])]
+                if x_labels is None
+                else x_labels
+            )
 
         if _samp_weight.shape in ((), (0,)):
             _samp_weight = np.ones(y.shape[0])
@@ -104,7 +119,7 @@ class SurveyGLM:
             else:
                 self.fpc = fpc
 
-        match model:
+        match self.model:
             case ModelType.LINEAR:
                 glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
             case ModelType.LOGISTIC:
@@ -115,11 +130,9 @@ class SurveyGLM:
                     family=sm.families.Binomial(),
                 )
             case _:
-                raise NotImplementedError(f"Model {model} is not implemented yet")
+                raise NotImplementedError(f"Model {self.model} is not implemented yet")
 
-        # glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
         glm_results = glm_model.fit()
-
         g = self._calculate_g(
             samp_weight=_samp_weight,
             resid=glm_results.resid_response,
@@ -129,8 +142,20 @@ class SurveyGLM:
             fpc=self.fpc,
             glm_scale=glm_results.scale,
         )
-
         d = glm_results.cov_params()
 
-        self.beta = glm_results.params
-        self.cov_beta = (d @ g) @ d
+        self.beta_cov = (d @ g) @ d
+        self.beta["point_est"] = glm_results.params
+        self.beta["stderror"] = np.sqrt(np.diag(self.beta_cov))
+        self.beta["lower_ci"] = (
+            self.beta["point_est"]
+            - stats.norm.ppf(1 - self.alpha / 2) * self.beta["stderror"]
+        )
+        self.beta["upper_ci"] = (
+            self.beta["point_est"]
+            + stats.norm.ppf(1 - self.alpha / 2) * self.beta["stderror"]
+        )
+
+        self.odds_ratio["point_est"] = np.exp(self.beta["point_est"])
+        self.odds_ratio["lower_ci"] = np.exp(self.beta["lower_ci"])
+        self.odds_ratio["upper_ci"] = np.exp(self.beta["upper_ci"])

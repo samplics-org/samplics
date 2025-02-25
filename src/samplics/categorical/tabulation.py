@@ -638,7 +638,9 @@ class CrossTabulation:
                 hermitian=True,
             ) @ (np.transpose(x2_tilde) @ cov_est @ x2_tilde)
 
-            warnings.warn("Matrix is computationally singular, results may be inaccurate")
+            warnings.warn(
+                "Matrix is computationally singular, results may be inaccurate"
+            )
         except:
             delta_est = np.zeros((nrows * ncols, nrows * ncols))
 
