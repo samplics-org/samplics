@@ -4,8 +4,9 @@ from typing import Optional, Union
 
 import numpy as np
 import polars as pl
-from scipy import stats
 import statsmodels.api as sm
+from patsy import dmatrix
+from scipy import stats
 
 from samplics.utils.formats import (
     fpc_as_dict,
@@ -72,7 +73,9 @@ class SurveyGLM:
         self,
         y: Array,
         x: Optional[Array] = None,
-        x_labels: Optional[Array] = None,
+        x_labels: Optional[list] = None,
+        x_cat: Optional[Array] = None,
+        x_cat_labels: Optional[list] = None,
         samp_weight: Optional[Array] = None,
         stratum: Optional[Series] = None,
         psu: Optional[Series] = None,
@@ -84,6 +87,7 @@ class SurveyGLM:
     ) -> None:
         _y = numpy_array(y)
         _x = numpy_array(x)
+        _x_cat = numpy_array(x_cat)
         _psu = numpy_array(psu)
         _stratum = numpy_array(stratum)
         _samp_weight = numpy_array(samp_weight)
@@ -122,7 +126,9 @@ class SurveyGLM:
 
         df = pl.from_numpy(_x)
         df.columns = self.x_labels
-        df = df.with_columns(
+        df_cat = pl.from_numpy(_x_cat)
+        df_cat.columns = x_cat_labels
+        df = df.hstack(df_cat).with_columns(
             pl.Series("_y", _y),
             pl.Series("_samp_weight", _samp_weight),
         )
@@ -136,11 +142,22 @@ class SurveyGLM:
         if remove_nan:
             df = df.drop_nulls().drop_nans()
 
+        if _x_cat.shape != ():
+            _x_cat = df_cat.select(x_cat_labels).unique().sort(x_cat_labels)
+            _x_cat_dummies = _x_cat.to_dummies()
+            _x_cat = _x_cat.hstack(_x_cat_dummies)
+
+            df = df.join(_x_cat, on=x_cat_labels, how="left")
+            self.x_labels = self.x_labels + _x_cat_dummies.columns
+
         match self.model:
             case ModelType.LINEAR:
-                glm_model = sm.GLM(endog=df["_y"].to_numpy(), exog=df.select(self.x_labels).to_numpy(), var_weights=df["_samp_weight"].to_numpy())
+                glm_model = sm.GLM(
+                    endog=df["_y"].to_numpy(),
+                    exog=df.select(self.x_labels).to_numpy(),
+                    var_weights=df["_samp_weight"].to_numpy(),
+                )
             case ModelType.LOGISTIC:
-                # _y = _y == _y[0]
                 glm_model = sm.GLM(
                     endog=df["_y"].to_numpy(),
                     exog=df.select(self.x_labels).to_numpy(),
@@ -149,7 +166,6 @@ class SurveyGLM:
                 )
             case _:
                 raise NotImplementedError(f"Model {self.model} is not implemented yet")
-
 
         glm_results = glm_model.fit()
         g = self._calculate_g(
@@ -167,7 +183,7 @@ class SurveyGLM:
         self.beta["point_est"] = glm_results.params
         self.beta["stderror"] = np.sqrt(np.diag(self.beta_cov))
         self.beta["z"] = self.beta["point_est"] / self.beta["stderror"]
-        self.beta["p_value"] = stats.norm.sf(np.abs(self.beta["z"])) * 2 # sf = 1 - cdf
+        self.beta["p_value"] = stats.norm.sf(np.abs(self.beta["z"])) * 2  # sf = 1 - cdf
         self.beta["lower_ci"] = (
             self.beta["point_est"]
             - stats.norm.ppf(1 - self.alpha / 2) * self.beta["stderror"]

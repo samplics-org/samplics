@@ -4,16 +4,10 @@ import polars as pl
 from samplics.regression import SurveyGLM
 from samplics import ModelType
 
+from data_reg import neuralgia
 
-api_strat = pl.read_csv("./tests/regression/api_strat.csv")
 
-y = api_strat["api00"]
-y_bin = (api_strat["api00"].to_numpy() > 743).astype(float)  # api_strat["api00"].quantile(0.75)
-x = api_strat.select(["ell", "meals", "mobility"])
-x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
-stratum = api_strat["stype"]
-psu = api_strat["dnum"]
-weight = api_strat["pw"]
+
 
 
 # Missing data
@@ -27,6 +21,35 @@ weight = api_strat["pw"]
 #     svyglm = SurveyGLM(model=ModelType.LOGISTIC)
 #     svyglm.estimate(y=y_bin, x=x, samp_weight=weight, remove_nan=True)
 
+## Categorical data
+
+
+def test_reg_logistic_categorical_factors():
+    x = neuralgia.select("age").insert_column(0, pl.Series("intercept", np.ones(neuralgia.shape[0])))
+    x_cat = neuralgia.select(["sex", "treatment"])
+    svyglm = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm.estimate(
+        y=neuralgia["y"],
+        x=x,
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=x_cat.columns,
+    )
+
+    breakpoint()
+
+
+api_strat = pl.read_csv("./tests/regression/api_strat.csv")
+
+y = api_strat["api00"]
+y_bin = (api_strat["api00"].to_numpy() > 743).astype(
+    float
+)  # api_strat["api00"].quantile(0.75)
+x = api_strat.select(["ell", "meals", "mobility"])
+x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
+stratum = api_strat["stype"]
+psu = api_strat["dnum"]
+weight = api_strat["pw"]
 
 ## Logistic regression
 
