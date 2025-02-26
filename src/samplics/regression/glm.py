@@ -166,6 +166,8 @@ class SurveyGLM:
         self.beta_cov = (d @ g) @ d
         self.beta["point_est"] = glm_results.params
         self.beta["stderror"] = np.sqrt(np.diag(self.beta_cov))
+        self.beta["z"] = self.beta["point_est"] / self.beta["stderror"]
+        self.beta["p_value"] = stats.norm.sf(np.abs(self.beta["z"])) * 2 # sf = 1 - cdf
         self.beta["lower_ci"] = (
             self.beta["point_est"]
             - stats.norm.ppf(1 - self.alpha / 2) * self.beta["stderror"]
