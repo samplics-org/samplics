@@ -126,12 +126,15 @@ class SurveyGLM:
 
         df = pl.from_numpy(_x)
         df.columns = self.x_labels
-        df_cat = pl.from_numpy(_x_cat)
-        df_cat.columns = x_cat_labels
-        df = df.hstack(df_cat).with_columns(
+        df = df.with_columns(
             pl.Series("_y", _y),
             pl.Series("_samp_weight", _samp_weight),
         )
+
+        if _x_cat.shape != ():
+            df_cat = pl.from_numpy(_x_cat)
+            df_cat.columns = x_cat_labels
+            df = df.hstack(df_cat)
 
         if _stratum.shape != ():
             df = df.with_columns(pl.Series("_stratum", _stratum))
@@ -144,11 +147,27 @@ class SurveyGLM:
 
         if _x_cat.shape != ():
             _x_cat = df_cat.select(x_cat_labels).unique().sort(x_cat_labels)
-            _x_cat_dummies = _x_cat.to_dummies()
-            _x_cat = _x_cat.hstack(_x_cat_dummies)
-
-            df = df.join(_x_cat, on=x_cat_labels, how="left")
-            self.x_labels = self.x_labels + _x_cat_dummies.columns
+            for col in x_cat_labels:
+                col_values = _x_cat[col].unique()
+                col_dummies = col_values.to_dummies(drop_first=True)
+                col_df = col_dummies.with_columns(
+                    pl.fold(
+                        acc=pl.lit(0.0),
+                        function=lambda acc, x: acc + x,
+                        exprs=[pl.col(c) for c in col_dummies.columns],
+                    ).alias("sum")
+                )
+                col_df = col_df.with_columns(
+                    [
+                        pl.when(pl.col("sum") == 0)
+                        .then(pl.lit(-1.0))
+                        .otherwise(pl.col(col))
+                        .alias(col)
+                        for col in col_dummies.columns
+                    ]
+                ).insert_column(0, col_values)
+                self.x_labels = self.x_labels + col_dummies.columns
+                df = df.join(col_df.drop("sum"), on=col, how="left")
 
         match self.model:
             case ModelType.LINEAR:
