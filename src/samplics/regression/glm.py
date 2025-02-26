@@ -123,7 +123,7 @@ class SurveyGLM:
             case ModelType.LINEAR:
                 glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
             case ModelType.LOGISTIC:
-                _y = _y == _y[0]
+                # _y = _y == _y[0]
                 glm_model = sm.GLM(
                     endog=_y,
                     exog=_x,
