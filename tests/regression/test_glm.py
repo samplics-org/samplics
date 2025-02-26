@@ -8,12 +8,24 @@ from samplics import ModelType
 api_strat = pl.read_csv("./tests/regression/api_strat.csv")
 
 y = api_strat["api00"]
-y_bin = api_strat["api00"] > 743  # api_strat["api00"].quantile(0.75)
+y_bin = (api_strat["api00"].to_numpy() > 743).astype(float)  # api_strat["api00"].quantile(0.75)
 x = api_strat.select(["ell", "meals", "mobility"])
 x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
 stratum = api_strat["stype"]
 psu = api_strat["dnum"]
 weight = api_strat["pw"]
+
+
+# Missing data
+
+# def test_reg_logistic_missing():
+#     y_bin[20] = np.nan
+#     y_bin[35] = np.nan
+#     x[33, 1] = np.nan
+#     weight[55] = np.nan
+
+#     svyglm = SurveyGLM(model=ModelType.LOGISTIC)
+#     svyglm.estimate(y=y_bin, x=x, samp_weight=weight, remove_nan=True)
 
 
 ## Logistic regression

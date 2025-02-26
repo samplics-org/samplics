@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional, Union
 
 import numpy as np
+import polars as pl
 from scipy import stats
 import statsmodels.api as sm
 
@@ -119,27 +120,44 @@ class SurveyGLM:
             else:
                 self.fpc = fpc
 
+        df = pl.from_numpy(_x)
+        df.columns = self.x_labels
+        df = df.with_columns(
+            pl.Series("_y", _y),
+            pl.Series("_samp_weight", _samp_weight),
+        )
+
+        if _stratum.shape != ():
+            df = df.with_columns(pl.Series("_stratum", _stratum))
+
+        if _psu.shape != ():
+            df = df.with_columns(pl.Series("_psu", _psu))
+
+        if remove_nan:
+            df = df.drop_nulls().drop_nans()
+
         match self.model:
             case ModelType.LINEAR:
-                glm_model = sm.GLM(endog=_y, exog=_x, var_weights=_samp_weight)
+                glm_model = sm.GLM(endog=df["_y"].to_numpy(), exog=df.select(self.x_labels).to_numpy(), var_weights=df["_samp_weight"].to_numpy())
             case ModelType.LOGISTIC:
                 # _y = _y == _y[0]
                 glm_model = sm.GLM(
-                    endog=_y,
-                    exog=_x,
-                    var_weights=_samp_weight,
+                    endog=df["_y"].to_numpy(),
+                    exog=df.select(self.x_labels).to_numpy(),
+                    var_weights=df["_samp_weight"].to_numpy(),
                     family=sm.families.Binomial(),
                 )
             case _:
                 raise NotImplementedError(f"Model {self.model} is not implemented yet")
 
+
         glm_results = glm_model.fit()
         g = self._calculate_g(
-            samp_weight=_samp_weight,
+            samp_weight=df["_samp_weight"].to_numpy(),
             resid=glm_results.resid_response,
-            x=_x,
-            stratum=_stratum,
-            psu=_psu,
+            x=df.select(self.x_labels).to_numpy(),
+            stratum=df["_stratum"].to_numpy() if _stratum.shape != () else _stratum,
+            psu=df["_psu"].to_numpy() if _psu.shape != () else _psu,
             fpc=self.fpc,
             glm_scale=glm_results.scale,
         )
