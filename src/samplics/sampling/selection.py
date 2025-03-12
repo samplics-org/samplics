@@ -17,7 +17,6 @@ sampling algorithms.
 from __future__ import annotations
 
 import math
-
 from dataclasses import InitVar, dataclass, field
 from typing import Optional, Union
 
@@ -25,16 +24,10 @@ import numpy as np
 import pandas as pd
 
 from samplics.utils.errors import CertaintyError, MethodError, ProbError
-from samplics.utils.formats import data_to_dict, numpy_array, remove_nans, sample_units
-from samplics.utils.types import (
-    Array,
-    DictStrBool,
-    DictStrFloat,
-    DictStrInt,
-    DictStrNum,
-    Number,
-    SelectMethod,
-)
+from samplics.utils.formats import (data_to_dict, numpy_array, remove_nans,
+                                    sample_units)
+from samplics.utils.types import (Array, DictStrBool, DictStrFloat, DictStrInt,
+                                  DictStrNum, Number, SelectMethod)
 
 
 @dataclass

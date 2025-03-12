@@ -4,7 +4,6 @@ import pandas as pd
 from samplics.estimation import TaylorEstimator
 from samplics.utils.types import PopParam
 
-
 np.random.seed(12345)
 
 yrbs = pd.read_csv("./tests/estimation/yrbs.csv")

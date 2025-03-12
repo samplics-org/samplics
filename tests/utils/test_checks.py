@@ -2,14 +2,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from samplics.utils.checks import (
-    assert_brr_number_psus,
-    assert_in_range,
-    assert_not_unique,
-    assert_proportions,
-    assert_response_status,
-    assert_weights,
-)
+from samplics.utils.checks import (assert_brr_number_psus, assert_in_range,
+                                   assert_not_unique, assert_proportions,
+                                   assert_response_status, assert_weights)
 
 
 @pytest.mark.parametrize(

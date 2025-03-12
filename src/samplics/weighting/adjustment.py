@@ -17,13 +17,8 @@ import pandas as pd
 import polars as pl
 
 from samplics.utils import checks, formats
-from samplics.utils.types import (
-    Array,
-    DictStrInt,
-    DictStrNum,
-    Number,
-    StringNumber,
-)
+from samplics.utils.types import (Array, DictStrInt, DictStrNum, Number,
+                                  StringNumber)
 
 
 class SampleWeight:

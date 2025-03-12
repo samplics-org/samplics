@@ -4,7 +4,6 @@ import pandas as pd
 from samplics.estimation import TaylorEstimator
 from samplics.utils.types import PopParam
 
-
 one_stage_fpc = pd.read_csv("./tests/estimation/one_stage_fpc.csv")
 
 fpc_array_psu = 1 - one_stage_fpc["nh"] / one_stage_fpc["Nh"]

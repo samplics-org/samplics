@@ -3,7 +3,6 @@ import pandas as pd
 
 from samplics.sae.eblup_unit_model import EblupUnitModel
 
-
 cornsoybean = pd.read_csv("./tests/sae/cornsoybean.csv")
 cornsoybean_mean = pd.read_csv("./tests/sae/cornsoybeanmeans.csv")
 

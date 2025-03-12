@@ -4,7 +4,6 @@ import pytest
 
 from samplics.sae.eblup_area_model import EblupAreaModel
 
-
 df = pd.DataFrame(
     {
         "AREA": np.array(

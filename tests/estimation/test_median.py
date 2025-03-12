@@ -3,7 +3,6 @@ import polars as pl
 from samplics.estimation import TaylorEstimator
 from samplics.utils.types import PopParam
 
-
 api_strat = pl.read_csv("./tests/regression/api_strat.csv")
 
 y = api_strat["api00"]

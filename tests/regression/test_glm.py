@@ -1,8 +1,8 @@
 import numpy as np
 import polars as pl
 
-from samplics.regression import SurveyGLM
 from samplics import ModelType
+from samplics.regression import SurveyGLM
 
 data_str = """
 P  F  68   1  No   B  M  74  16  No  P  F  67  30  No

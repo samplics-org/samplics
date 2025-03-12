@@ -4,7 +4,6 @@ from typing import Optional, Union
 
 from samplics.utils.types import Array, Number, Series, StringNumber
 
-
 # import numpy as np
 # import pandas as pd
 

@@ -5,13 +5,9 @@ from typing import Optional, Union
 import numpy as np
 import polars as pl
 import statsmodels.api as sm
-from patsy import dmatrix
 from scipy import stats
 
-from samplics.utils.formats import (
-    fpc_as_dict,
-    numpy_array,
-)
+from samplics.utils.formats import fpc_as_dict, numpy_array
 from samplics.utils.types import Array, ModelType, Number, Series, StringNumber
 
 

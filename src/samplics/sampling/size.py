@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-
 from dataclasses import InitVar, dataclass, field
 from typing import Optional, Union
 
@@ -12,19 +11,13 @@ import pandas as pd
 
 from samplics.sampling.power_functions import calculate_power
 from samplics.sampling.size_functions import (
-    calculate_ss_fleiss_prop,
-    calculate_ss_wald_mean,
-    calculate_ss_wald_mean_one_sample,
-    calculate_ss_wald_mean_two_samples,
-    calculate_ss_wald_prop,
-    calculate_ss_wald_prop_two_samples,
-)
-from samplics.utils.formats import (
-    convert_numbers_to_dicts,
-    dict_to_dataframe,
-    numpy_array,
-)
-from samplics.utils.types import Array, DictStrNum, Number, PopParam, SizeMethod
+    calculate_ss_fleiss_prop, calculate_ss_wald_mean,
+    calculate_ss_wald_mean_one_sample, calculate_ss_wald_mean_two_samples,
+    calculate_ss_wald_prop, calculate_ss_wald_prop_two_samples)
+from samplics.utils.formats import (convert_numbers_to_dicts,
+                                    dict_to_dataframe, numpy_array)
+from samplics.utils.types import (Array, DictStrNum, Number, PopParam,
+                                  SizeMethod)
 
 
 def allocate(

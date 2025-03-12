@@ -3,16 +3,10 @@ import pandas as pd
 import polars as pl
 import pytest
 
-from samplics.utils.formats import (
-    array_to_dict,
-    convert_numbers_to_dicts,
-    data_to_dict,
-    dataframe_to_array,
-    dict_to_dataframe,
-    numpy_array,
-    remove_nans,
-    sample_units,
-)
+from samplics.utils.formats import (array_to_dict, convert_numbers_to_dicts,
+                                    data_to_dict, dataframe_to_array,
+                                    dict_to_dataframe, numpy_array,
+                                    remove_nans, sample_units)
 
 
 def test_remove_nans():

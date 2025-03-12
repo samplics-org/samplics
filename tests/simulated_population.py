@@ -1,6 +1,5 @@
 import numpy as np
 
-
 population_size = 35000000
 
 admin1_nb = 10

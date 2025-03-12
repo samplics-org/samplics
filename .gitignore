@@ -139,6 +139,7 @@ presentations/*/
 roadmap/
 roadmap.md
 specs/
+benchmarks/
 
 #Other
 *.Rhistory

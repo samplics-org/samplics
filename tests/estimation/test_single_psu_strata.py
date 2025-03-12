@@ -5,7 +5,6 @@ import pytest
 from samplics.estimation import TaylorEstimator
 from samplics.utils.types import PopParam, SinglePSUEst
 
-
 sample_data1 = pd.DataFrame.from_dict(
     data={
         "region": [1, 1, 1, 2, 2, 3, 3, 4],

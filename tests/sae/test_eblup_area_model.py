@@ -4,7 +4,6 @@ import pandas as pd
 from samplics.sae.eblup_area_model import EblupAreaModel
 from samplics.utils.types import FitMethod
 
-
 # R SAE package datasets
 milk = pd.read_csv("./tests/sae/milk.csv")
 

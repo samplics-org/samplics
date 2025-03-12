@@ -5,12 +5,10 @@ This module compiles the core functions for calculating power and sample size
 from __future__ import annotations
 
 import math
-
 from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-
 from scipy.stats import norm as normal
 
 from samplics.utils.formats import numpy_array

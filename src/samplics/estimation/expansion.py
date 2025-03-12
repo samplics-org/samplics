@@ -15,30 +15,17 @@ and Wolter, K.M. (2007) [#w2007]_.
 from __future__ import annotations
 
 import math
-
 from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
-
 from scipy.stats import t as student
 
 from samplics.utils.basic_functions import get_single_psu_strata
-from samplics.utils.formats import (
-    dict_to_dataframe,
-    fpc_as_dict,
-    numpy_array,
-    remove_nans,
-)
-from samplics.utils.types import (
-    Array,
-    Number,
-    PopParam,
-    QuantileMethod,
-    Series,
-    SinglePSUEst,
-    StringNumber,
-)
+from samplics.utils.formats import (dict_to_dataframe, fpc_as_dict,
+                                    numpy_array, remove_nans)
+from samplics.utils.types import (Array, Number, PopParam, QuantileMethod,
+                                  Series, SinglePSUEst, StringNumber)
 
 
 class _SurveyEstimator:
@@ -264,10 +251,11 @@ class _SurveyEstimator:
             if self.param == PopParam.prop or as_factor:
                 estimate1: dict[StringNumber, dict[StringNumber, float]] = {}
                 for d in domain_ids:
-                    weight_d = samp_weight[domain == d]
+                    mask = domain == d
+                    weight_d = samp_weight[mask]
                     cat_dict_d: dict[StringNumber, float] = {}
                     for k in range(categories.size):
-                        y_d_k = y_dummies[domain == d, k]
+                        y_d_k = y_dummies[mask, k]
                         cat_dict_d_k = dict(
                             {
                                 categories[k]: self._get_point_d(
@@ -281,10 +269,11 @@ class _SurveyEstimator:
             else:
                 estimate2: dict[StringNumber, float] = {}
                 for d in domain_ids:
-                    weight_d = samp_weight[domain == d]
-                    y_d = y[domain == d]
+                    mask = domain == d
+                    weight_d = samp_weight[mask]
+                    y_d = y[mask]
                     if x.shape not in ((), (0,)):
-                        x_d = x[domain == d] if self.param == PopParam.ratio else None
+                        x_d = x[mask] if self.param == PopParam.ratio else None
                     else:
                         x_d = None
                     estimate2[d] = self._get_point_d(y=y_d, samp_weight=weight_d, x=x_d)
@@ -419,26 +408,50 @@ class TaylorEstimator(_SurveyEstimator):
     ) -> np.ndarray:
         """Computes the variance for one stratum"""
 
-        covariance = np.asarray([])
+        # if psu_s.shape not in ((), (0,)):
+        #     scores_s_mean = np.asarray(y_score_s.sum(axis=0) / nb_psus_in_s)  # new
+        #     psus = np.unique(psu_s)
+        #     scores_psus_sums = np.zeros((nb_psus_in_s, scores_s_mean.shape[0]))
+        #     for k, psu in enumerate(np.unique(psus)):
+        #         scores_psus_sums[k, :] = y_score_s[psu_s == psu].sum(axis=0)
+        #     covariance = np.transpose(scores_psus_sums - scores_s_mean) @ (
+        #         scores_psus_sums - scores_s_mean
+        #     )
+        #     if (nb_psus_in_s - 1) != 0:
+        #         covariance = (nb_psus_in_s / (nb_psus_in_s - 1)) * covariance
+        # else:
+        #     nb_obs = y_score_s.shape[0]
+        #     y_score_s_mean = y_score_s.sum(axis=0) / nb_obs
+        #     covariance = (
+        #         (nb_obs / (nb_obs - 1))
+        #         * np.transpose(y_score_s - y_score_s_mean)
+        #         @ (y_score_s - y_score_s_mean)
+        #     )
+
         if psu_s.shape not in ((), (0,)):
-            scores_s_mean = np.asarray(y_score_s.sum(axis=0) / nb_psus_in_s)  # new
-            psus = np.unique(psu_s)
-            scores_psus_sums = np.zeros((nb_psus_in_s, scores_s_mean.shape[0]))
-            for k, psu in enumerate(np.unique(psus)):
-                scores_psus_sums[k, :] = y_score_s[psu_s == psu].sum(axis=0)
-            covariance = np.transpose(scores_psus_sums - scores_s_mean) @ (
-                scores_psus_sums - scores_s_mean
-            )
-            if (nb_psus_in_s - 1) != 0:
-                covariance = (nb_psus_in_s / (nb_psus_in_s - 1)) * covariance
+            # Compute overall sum of scores per column, then derive the mean per PSU.
+            scores_s_mean = y_score_s.sum(axis=0) / nb_psus_in_s
+
+            # Compute group sums per unique PSU using vectorized np.add.at
+            unique_psus, inverse = np.unique(psu_s, return_inverse=True)
+            # Allocate an array to hold the sums for each PSU group
+            scores_psus_sums = np.zeros((unique_psus.size, y_score_s.shape[1]), dtype=y_score_s.dtype)
+            # Sum scores for each PSU group
+            np.add.at(scores_psus_sums, inverse, y_score_s)
+
+            # Compute covariance matrix from differences between PSU sums and overall mean
+            diff = scores_psus_sums - scores_s_mean
+            covariance = diff.T @ diff
+
+            # Apply Bessel's correction if possible
+            if nb_psus_in_s > 1:
+                covariance *= (nb_psus_in_s / (nb_psus_in_s - 1))
         else:
+            # If no PSU information is available, compute covariance from all observations.
             nb_obs = y_score_s.shape[0]
             y_score_s_mean = y_score_s.sum(axis=0) / nb_obs
-            covariance = (
-                (nb_obs / (nb_obs - 1))
-                * np.transpose(y_score_s - y_score_s_mean)
-                @ (y_score_s - y_score_s_mean)
-            )
+            diff = y_score_s - y_score_s_mean
+            covariance = (nb_obs / (nb_obs - 1)) * (diff.T @ diff)
 
         return covariance
 
@@ -495,13 +508,14 @@ class TaylorEstimator(_SurveyEstimator):
             strata = np.unique(stratum)
             singletons = np.isin(strata, skipped_strata)
             for s in strata[~singletons]:
-                y_score_s = y_score[stratum == s]
-                samp_weight_s = samp_weight[stratum == s]
-                psu_s = psu[stratum == s] if psu.shape not in ((), (0,)) else psu
+                mask = stratum == s
+                y_score_s = y_score[mask]
+                samp_weight_s = samp_weight[mask]
+                psu_s = psu[mask] if psu.shape not in ((), (0,)) else psu
                 nb_psus_in_s = (
                     np.size(np.unique(psu_s)) if psu_s.shape not in ((), (0,)) else 0
                 )
-                ssu[stratum == s] if ssu.shape not in ((), (0,)) else ssu
+                ssu[mask] if ssu.shape not in ((), (0,)) else ssu
                 covariance += fpc[s] * self._variance_stratum_between(
                     y_score_s=y_score_s,
                     samp_weight_s=samp_weight_s,
@@ -510,7 +524,7 @@ class TaylorEstimator(_SurveyEstimator):
                 )
             return np.asarray(covariance)
         else:
-            raise ValueError
+            raise ValueError("Invalid input for 'fpc' or 'stratum'.")
 
     def _get_variance(
         self,

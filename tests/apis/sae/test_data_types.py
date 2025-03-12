@@ -1,6 +1,5 @@
 from samplics.utils.types import DirectEst, FitMethod
 
-
 # FitMethod
 
 

@@ -1,10 +1,7 @@
 import numpy as np
 
-from samplics.sampling import (
-    SampleSizeMeanOneSample,
-    SampleSizePropOneSample,
-    calculate_power,
-)
+from samplics.sampling import (SampleSizeMeanOneSample,
+                               SampleSizePropOneSample, calculate_power)
 
 
 def test_calculate_power_two_sides():

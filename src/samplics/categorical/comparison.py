@@ -7,26 +7,18 @@ The module implements comparisons of groups.
 from __future__ import annotations
 
 import math
-
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
 from scipy.stats import t
 
 from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
 from samplics.utils.formats import numpy_array
-from samplics.utils.types import (
-    Array,
-    Number,
-    PopParam,
-    Series,
-    SinglePSUEst,
-    StringNumber,
-)
+from samplics.utils.types import (Array, Number, PopParam, Series,
+                                  SinglePSUEst, StringNumber)
 
 
 class Ttest:
