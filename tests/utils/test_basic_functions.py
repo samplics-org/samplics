@@ -2,10 +2,17 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from samplics.utils.basic_functions import (averageby, get_single_psu_strata,
-                                            kurtosis, plot_kurtosis,
-                                            plot_skewness, set_variables_names,
-                                            skewness, sumby, transform)
+from samplics.utils.basic_functions import (
+    averageby,
+    get_single_psu_strata,
+    kurtosis,
+    plot_kurtosis,
+    plot_skewness,
+    set_variables_names,
+    skewness,
+    sumby,
+    transform,
+)
 
 
 def test_set_variables_names1():

@@ -6,6 +6,7 @@ import pytest
 
 from samplics.apis import fit
 from samplics.apis.sae.area_eblup import _predict_eblup
+
 # from samplics.apis.sae import _log_likelihood, fit_eblup, predict_eblup
 from samplics.types import AuxVars, DirectEst, FitMethod
 

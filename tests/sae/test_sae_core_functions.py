@@ -1,11 +1,14 @@
 import numpy as np
 
-from samplics.sae.sae_core_functions import (covariance, fixed_coefficients,
-                                             inverse_covariance,
-                                             iterative_fisher_scoring,
-                                             log_det_covariance,
-                                             log_likelihood,
-                                             partial_derivatives)
+from samplics.sae.sae_core_functions import (
+    covariance,
+    fixed_coefficients,
+    inverse_covariance,
+    iterative_fisher_scoring,
+    log_det_covariance,
+    log_likelihood,
+    partial_derivatives,
+)
 
 np.random.seed(12345)
 

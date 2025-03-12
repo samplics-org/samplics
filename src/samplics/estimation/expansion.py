@@ -22,10 +22,21 @@ import pandas as pd
 from scipy.stats import t as student
 
 from samplics.utils.basic_functions import get_single_psu_strata
-from samplics.utils.formats import (dict_to_dataframe, fpc_as_dict,
-                                    numpy_array, remove_nans)
-from samplics.utils.types import (Array, Number, PopParam, QuantileMethod,
-                                  Series, SinglePSUEst, StringNumber)
+from samplics.utils.formats import (
+    dict_to_dataframe,
+    fpc_as_dict,
+    numpy_array,
+    remove_nans,
+)
+from samplics.utils.types import (
+    Array,
+    Number,
+    PopParam,
+    QuantileMethod,
+    Series,
+    SinglePSUEst,
+    StringNumber,
+)
 
 
 class _SurveyEstimator:
@@ -435,7 +446,9 @@ class TaylorEstimator(_SurveyEstimator):
             # Compute group sums per unique PSU using vectorized np.add.at
             unique_psus, inverse = np.unique(psu_s, return_inverse=True)
             # Allocate an array to hold the sums for each PSU group
-            scores_psus_sums = np.zeros((unique_psus.size, y_score_s.shape[1]), dtype=y_score_s.dtype)
+            scores_psus_sums = np.zeros(
+                (unique_psus.size, y_score_s.shape[1]), dtype=y_score_s.dtype
+            )
             # Sum scores for each PSU group
             np.add.at(scores_psus_sums, inverse, y_score_s)
 
@@ -445,7 +458,7 @@ class TaylorEstimator(_SurveyEstimator):
 
             # Apply Bessel's correction if possible
             if nb_psus_in_s > 1:
-                covariance *= (nb_psus_in_s / (nb_psus_in_s - 1))
+                covariance *= nb_psus_in_s / (nb_psus_in_s - 1)
         else:
             # If no PSU information is available, compute covariance from all observations.
             nb_obs = y_score_s.shape[0]

@@ -17,8 +17,14 @@ from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.checks import assert_probabilities
 from samplics.utils.formats import numpy_array
-from samplics.utils.types import (Array, Number, PopParam, Series,
-                                  SinglePSUEst, StringNumber)
+from samplics.utils.types import (
+    Array,
+    Number,
+    PopParam,
+    Series,
+    SinglePSUEst,
+    StringNumber,
+)
 
 
 class Ttest:

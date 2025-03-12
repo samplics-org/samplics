@@ -3,8 +3,15 @@
 import numpy as np
 import polars as pl
 
-from samplics.types import (AuxVars, DictStrNum, DirectEst, EblupEst,
-                            FitMethod, FitStats, Number)
+from samplics.types import (
+    AuxVars,
+    DictStrNum,
+    DirectEst,
+    EblupEst,
+    FitMethod,
+    FitStats,
+    Number,
+)
 
 
 def _predict_eblup(

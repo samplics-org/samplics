@@ -281,6 +281,7 @@ def test_twoway_count_upper_ci():
     assert np.isclose(tbl_count.upper_ci["3.0"]["2.0"], 26.2492, atol=1e-4)
     assert np.isclose(tbl_count.upper_ci["3.0"]["3.0"], 7.9187, atol=1e-4)
 
+
 @pytest.mark.skip(reason="TODO")
 def test_twoway_count_stats_pearson():
     assert np.isclose(tbl_count.stats["Pearson-Unadj"]["df"], 4, atol=1e-2)
@@ -293,6 +294,7 @@ def test_twoway_count_stats_pearson():
     assert np.isclose(tbl_count.stats["Pearson-Adj"]["df_den"], 3688, atol=1e-4)
     assert np.isclose(tbl_count.stats["Pearson-Adj"]["f_value"], 80.9816, atol=1e-4)
     assert np.isclose(tbl_count.stats["Pearson-Adj"]["p_value"], 0.0000, atol=1e-4)
+
 
 @pytest.mark.skip(reason="TODO")
 def test_twoway_count_stats_likelihood_ratio():
@@ -370,6 +372,7 @@ def test_twoway_prop_upper_ci():
     assert np.isclose(tbl_prop.upper_ci["3.0"]["2.0"], 0.0308, atol=1e-4)
     assert np.isclose(tbl_prop.upper_ci["3.0"]["3.0"], 0.0115, atol=1e-4)
 
+
 @pytest.mark.skip(reason="TODO")
 def test_twoway_prop_stats_pearson():
     assert np.isclose(tbl_prop.stats["Pearson-Unadj"]["df"], 4, atol=1e-2)
@@ -382,6 +385,7 @@ def test_twoway_prop_stats_pearson():
     assert np.isclose(tbl_prop.stats["Pearson-Adj"]["df_den"], 3688, atol=1e-4)
     assert np.isclose(tbl_prop.stats["Pearson-Adj"]["f_value"], 80.9816, atol=1e-4)
     assert np.isclose(tbl_prop.stats["Pearson-Adj"]["p_value"], 0.0000, atol=1e-4)
+
 
 @pytest.mark.skip(reason="TODO")
 def test_twoway_prop_stats_likelihood_ratio():
