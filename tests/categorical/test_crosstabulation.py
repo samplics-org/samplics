@@ -231,7 +231,7 @@ tbl_count.tabulate(
 
 
 def test_twoway_count_to_dataframe():
-    _ = tbl_count.to_dataframe()
+    df = tbl_count.to_dataframe()
 
 
 def test_twoway_count_point_est():

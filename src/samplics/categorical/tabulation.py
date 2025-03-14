@@ -794,39 +794,95 @@ class CrossTabulation:
             "degrees_of_freedom": tbl_est.nb_psus - tbl_est.nb_strata,
         }
 
+    @staticmethod
+    def _flatten_dict(nested_dict, row_varname, column_varname, stat):
+        flattened = []
+        for row, cols in nested_dict.items():
+            for col, value in cols.items():
+                flattened.append({row_varname: row, column_varname: col, stat: value})
+        return flattened
+
+
+    def _to_polars(self, row_varname, column_varname):
+
+        df = (
+            pl.DataFrame(
+                self._flatten_dict(
+                    self.point_est, row_varname, column_varname, stat="point_est"
+                )
+            )
+            .join(
+                pl.DataFrame(
+                    self._flatten_dict(
+                        self.stderror, row_varname, column_varname, stat="stderror"
+                    )
+                ),
+                on=[row_varname, column_varname],
+                how="left",
+            )
+            .join(
+                pl.DataFrame(
+                    self._flatten_dict(
+                        self.lower_ci, row_varname, column_varname, stat="lower_ci"
+                    )
+                ),
+                on=[row_varname, column_varname],
+                how="left",
+            )
+            .join(
+                pl.DataFrame(
+                    self._flatten_dict(
+                        self.upper_ci, row_varname, column_varname, stat="upper_ci"
+                    )
+                ),
+                on=[row_varname, column_varname],
+                how="left",
+            )
+        )
+
+        return df
+
     def to_dataframe(
         self,
-    ) -> pd.DataFrame:
-        both_levels = [self.row_levels, self.col_levels]
-        twoway_df = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
-        twoway_df.columns = self.vars_names
+        to_polars: bool = False
+    ) -> pd.DataFrame | pl.DataFrame:
 
-        for _ in range(len(self.row_levels)):
-            for _ in range(len(self.col_levels)):
-                twoway_df[self.param] = sum(
-                    pd.DataFrame.from_dict(
-                        self.point_est, orient="index"
-                    ).values.tolist(),
-                    [],
-                )
-                twoway_df["stderror"] = sum(
-                    pd.DataFrame.from_dict(
-                        self.stderror, orient="index"
-                    ).values.tolist(),
-                    [],
-                )
-                twoway_df["lower_ci"] = sum(
-                    pd.DataFrame.from_dict(
-                        self.lower_ci, orient="index"
-                    ).values.tolist(),
-                    [],
-                )
-                twoway_df["upper_ci"] = sum(
-                    pd.DataFrame.from_dict(
-                        self.upper_ci, orient="index"
-                    ).values.tolist(),
-                    [],
-                )
+        if to_polars:
+            return self._to_polars(row_varname=self.vars_names[0], column_varname=self.vars_names[1])
+        else:
+            return self._to_polars(row_varname=self.vars_names[0], column_varname=self.vars_names[1]).to_pandas()
+
+        # breakpoint()
+        # both_levels = [self.row_levels, self.col_levels]
+        # twoway_df = pd.DataFrame([ll for ll in itertools.product(*both_levels)])
+        # twoway_df.columns = self.vars_names
+
+        # for _ in range(len(self.row_levels)):
+        #     for _ in range(len(self.col_levels)):
+        #         twoway_df[self.param] = sum(
+        #             pd.DataFrame.from_dict(
+        #                 self.point_est, orient="index"
+        #             ).values.tolist(),
+        #             [],
+        #         )
+        #         twoway_df["stderror"] = sum(
+        #             pd.DataFrame.from_dict(
+        #                 self.stderror, orient="index"
+        #             ).values.tolist(),
+        #             [],
+        #         )
+        #         twoway_df["lower_ci"] = sum(
+        #             pd.DataFrame.from_dict(
+        #                 self.lower_ci, orient="index"
+        #             ).values.tolist(),
+        #             [],
+        #         )
+        #         twoway_df["upper_ci"] = sum(
+        #             pd.DataFrame.from_dict(
+        #                 self.upper_ci, orient="index"
+        #             ).values.tolist(),
+        #             [],
+        #         )
         # twoway_df.sort_values(by=self.vars_names, inplace=True)
 
-        return twoway_df
+        # return twoway_df

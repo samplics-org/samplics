@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -1621,7 +1622,7 @@ wheels = [
 
 [[package]]
 name = "samplics"
-version = "0.4.44"
+version = "0.4.45"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
