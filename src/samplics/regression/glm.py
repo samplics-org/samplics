@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 import numpy as np
 import polars as pl
@@ -24,43 +24,48 @@ class SurveyGLM:
 
     @staticmethod
     def _residuals(
-        e: np.ndarray, psu: np.ndarray, nb_vars: Number
-    ) -> tuple(np.ndarray, Number):
-        psus = np.unique(psu)
-        if psus.shape[0] == 1 and e.shape[0] == 1:
+        e: np.ndarray, psu: np.ndarray, nb_vars: int
+    ) -> Tuple[np.ndarray, int]:
+        unique_psus = np.unique(psu)
+
+        if unique_psus.shape[0] == 1 and e.shape[0] == 1:
             raise AssertionError("Only one observation in the stratum")
-        if psus.shape[0] == 1:
+
+        if unique_psus.shape[0] == 1:
             psu = np.arange(e.shape[0])
-            psus = np.unique(psu)
-        e_values = np.zeros((psus.shape[0], nb_vars))
+            unique_psus = np.unique(psu)
 
-        for i, p in enumerate(np.unique(psus)):
-            e_values[i, :] += np.sum(e[psu == p, :], axis=0)
-        e_means = np.sum(e_values, axis=0) / psus.shape[0]
+        e_values = np.vstack([np.sum(e[psu == p, :], axis=0) for p in unique_psus])
+        e_means = e_values.mean(axis=0)
+        ss = (e_values - e_means).T @ (e_values - e_means)
 
-        return np.transpose(e_values - e_means) @ (e_values - e_means), psus.shape[0]
+        return ss, unique_psus.size
 
     def _calculate_g(
         self,
         samp_weight: np.ndarray,
         resid: np.ndarray,
         x: np.ndarray,
-        stratum: np.ndarray,
-        psu: np.ndarray,
-        fpc: Union[dict[StringNumber, Number], Number],
-        glm_scale=Number,
+        stratum: Optional[np.ndarray],
+        psu: Optional[np.ndarray],
+        fpc: Union[dict[str, Number], Number],
+        glm_scale: Number,
     ) -> np.ndarray:
         e = (samp_weight * resid)[:, None] * x / glm_scale
+
         if psu.shape in ((), (0,)):
             psu = np.arange(e.shape[0])
+
         if stratum.shape in ((), (0,)):
             e_h, n_h = self._residuals(e=e, psu=psu, nb_vars=x.shape[1])
             return fpc * (n_h / (n_h - 1)) * e_h
         else:
+            unique_strata = np.unique(stratum)
             g_h = np.zeros((x.shape[1], x.shape[1]))
-            for s in np.unique(stratum):
-                e_s = e[stratum == s, :]
-                psu_s = psu[stratum == s]
+            for s in unique_strata:
+                mask = stratum == s
+                e_s = e[mask, :]
+                psu_s = psu[mask]
                 e_h, n_h = self._residuals(e=e_s, psu=psu_s, nb_vars=x.shape[1])
                 g_h += fpc[s] * (n_h / (n_h - 1)) * e_h
             return g_h
@@ -75,41 +80,50 @@ class SurveyGLM:
         samp_weight: Optional[Array] = None,
         stratum: Optional[Series] = None,
         psu: Optional[Series] = None,
-        fpc: Union[dict[StringNumber, Number], Series, Number] = 1.0,
+        fpc: Union[dict[str, Number], Series, Number] = 1.0,
         add_intercept: bool = False,
         tol: float = 1e-8,
         maxiter: int = 100,
         remove_nan: bool = False,
     ) -> None:
+        # Convert inputs to numpy arrays for consistency.
         _y = numpy_array(y)
-        _x = numpy_array(x)
-        _x_cat = numpy_array(x_cat)
-        _psu = numpy_array(psu)
-        _stratum = numpy_array(stratum)
-        _samp_weight = numpy_array(samp_weight)
+        _x = numpy_array(x) if x is not None else np.empty((len(_y), 0))
+        _x_cat = numpy_array(x_cat) if x_cat is not None else np.empty(())
+        _psu = numpy_array(psu) if psu is not None else np.empty(())
+        _stratum = numpy_array(stratum) if stratum is not None else np.empty(())
+        _samp_weight = (
+            numpy_array(samp_weight)
+            if samp_weight is not None
+            else np.ones(_y.shape[0])
+        )
 
-        if _x.shape[0] > 0 and _x.ndim == 1:
-            _x = _x.reshape(_x.shape[0], 1)
+        # Ensure _x is 2-dimensional.
+        if _x.ndim == 1 and _x.shape[0] > 0:
+            _x = _x.reshape(-1, 1)
 
+        # Add intercept if requested.
         if add_intercept:
             _x = np.insert(_x, 0, 1, axis=1)
-            self.x_labels = (
-                ["intercept"] + [f"__x{i}__" for i in range(1, _x.shape[1])]
-                if x_labels is None
-                else ["intercept"] + x_labels
+            self.x_labels = ["intercept"] + (
+                x_labels
+                if x_labels is not None
+                else [f"__x{i}__" for i in range(1, _x.shape[1])]
             )
         else:
             self.x_labels = (
-                ["intercept"] + [f"__x{i}__" for i in range(1, _x.shape[1])]
-                if x_labels is None
-                else x_labels
+                x_labels
+                if x_labels is not None
+                else [f"__x{i}__" for i in range(_x.shape[1])]
             )
 
+        # Ensure samp_weight is of proper length.
         if _samp_weight.shape in ((), (0,)):
-            _samp_weight = np.ones(y.shape[0])
-        if _samp_weight.shape[0] == 1:
+            _samp_weight = np.ones(_y.shape[0])
+        elif _samp_weight.shape[0] == 1:
             _samp_weight = _samp_weight * np.ones(_y.shape[0])
 
+        # Handle finite population correction: convert fpc to dictionary if not already.
         if not isinstance(fpc, dict):
             self.fpc = fpc_as_dict(_stratum, fpc)
         else:
@@ -117,70 +131,96 @@ class SurveyGLM:
                 raise AssertionError(
                     "fpc dictionary keys must be the same as the strata!"
                 )
-            else:
-                self.fpc = fpc
+            self.fpc = fpc
 
+        # Create Polars DataFrame from _x and assign column labels.
         df = pl.from_numpy(_x)
         df.columns = self.x_labels
+
+        # Add response and weight columns.
         df = df.with_columns(
-            pl.Series("_y", _y),
-            pl.Series("_samp_weight", _samp_weight),
+            pl.Series("_y", _y), pl.Series("_samp_weight", _samp_weight)
         )
 
+        # Optionally add categorical predictors.
         if _x_cat.shape != ():
             df_cat = pl.from_numpy(_x_cat)
             df_cat.columns = x_cat_labels
             df = df.hstack(df_cat)
 
+        # Add survey design variables if provided.
         if _stratum.shape != ():
             df = df.with_columns(pl.Series("_stratum", _stratum))
-
         if _psu.shape != ():
             df = df.with_columns(pl.Series("_psu", _psu))
 
+        # Remove rows with null or NaN values if specified.
         if remove_nan:
             df = df.drop_nulls().drop_nans()
 
+        # Process categorical variables (if provided) to create dummy variables.
         if _x_cat.shape != ():
-            _x_cat = df_cat.select(x_cat_labels).unique().sort(x_cat_labels)
+            # Get unique combinations for the categorical columns and sort.
+            unique_cat = df.select(x_cat_labels).unique().sort(x_cat_labels)
             for col in x_cat_labels:
-                col_values = _x_cat[col].unique()
+                # Create dummy variables from unique values.
+                col_values = unique_cat[col].unique()
                 col_dummies = col_values.to_dummies(drop_first=True)
-                col_df = col_dummies.with_columns(
-                    pl.fold(
-                        acc=pl.lit(0.0),
-                        function=lambda acc, x: acc + x,
-                        exprs=[pl.col(c) for c in col_dummies.columns],
-                    ).alias("sum")
+                col_dummies.columns = [
+                    col.replace(".", "__") for col in col_dummies.columns
+                ]
+                # Sum across dummy columns to create an indicator.
+                # col_df = col_dummies.with_columns(
+                #     pl.fold(
+                #         acc=pl.lit(0.0),
+                #         function=lambda acc, x: acc + x,
+                #         exprs=[pl.col(c) for c in col_dummies.columns]
+                #     ).alias("sum")
+                # )
+                # # Replace dummy values if the sum is zero.
+                # col_df = col_df.with_columns(
+                #     [
+                #         pl.when(pl.col("sum") == 0)
+                #         .then(pl.lit(0.0))
+                #         .otherwise(pl.col(c))
+                #         .alias(c)
+                #         for c in col_dummies.columns
+                #     ]
+                # ).insert_column(0, col_values)
+                # df = df.join(col_df.drop("sum"), on=col, how="left")
+                self.x_labels += col_dummies.columns
+                df = df.join(
+                    col_dummies.insert_column(0, col_values), on=col, how="left"
                 )
-                col_df = col_df.with_columns(
-                    [
-                        pl.when(pl.col("sum") == 0)
-                        .then(pl.lit(-1.0))
-                        .otherwise(pl.col(col))
-                        .alias(col)
-                        for col in col_dummies.columns
-                    ]
-                ).insert_column(0, col_values)
-                self.x_labels = self.x_labels + col_dummies.columns
-                df = df.join(col_df.drop("sum"), on=col, how="left")
 
+        # Fit model based on specified model type.
         match self.model:
             case ModelType.LINEAR:
                 glm_model = sm.GLM(
                     endog=df["_y"].to_numpy(),
                     exog=df.select(self.x_labels).to_numpy(),
-                    var_weights=df["_samp_weight"].to_numpy(),
+                    freq_weights=df["_samp_weight"].to_numpy(),
+                    family=sm.families.Gaussian(),
                 )
             case ModelType.LOGISTIC:
                 glm_model = sm.GLM(
                     endog=df["_y"].to_numpy(),
                     exog=df.select(self.x_labels).to_numpy(),
-                    var_weights=df["_samp_weight"].to_numpy(),
+                    freq_weights=df["_samp_weight"].to_numpy(),
                     family=sm.families.Binomial(),
                 )
+                # import statsmodels.formula.api as smf
+                # glm_model = smf.glm(
+                #     formula="_y ~ " + " + ".join([f"{col}" for col in self.x_labels if col != "intercept"]),
+                #     family=sm.families.Binomial(),
+                #     freq_weights=df["_samp_weight"].to_numpy(),
+                #     data=df,
+                # )
+                # breakpoint()
             case _:
                 raise NotImplementedError(f"Model {self.model} is not implemented yet")
+
+        # Continue with fitting, iteration, or returning the fitted model as needed.
 
         glm_results = glm_model.fit()
         g = self._calculate_g(

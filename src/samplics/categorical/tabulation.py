@@ -802,7 +802,6 @@ class CrossTabulation:
                 flattened.append({row_varname: row, column_varname: col, stat: value})
         return flattened
 
-
     def _to_polars(self, row_varname, column_varname):
 
         df = (
@@ -842,15 +841,16 @@ class CrossTabulation:
 
         return df
 
-    def to_dataframe(
-        self,
-        to_polars: bool = False
-    ) -> pd.DataFrame | pl.DataFrame:
+    def to_dataframe(self, to_polars: bool = False) -> pd.DataFrame | pl.DataFrame:
 
         if to_polars:
-            return self._to_polars(row_varname=self.vars_names[0], column_varname=self.vars_names[1])
+            return self._to_polars(
+                row_varname=self.vars_names[0], column_varname=self.vars_names[1]
+            )
         else:
-            return self._to_polars(row_varname=self.vars_names[0], column_varname=self.vars_names[1]).to_pandas()
+            return self._to_polars(
+                row_varname=self.vars_names[0], column_varname=self.vars_names[1]
+            ).to_pandas()
 
         # breakpoint()
         # both_levels = [self.row_levels, self.col_levels]
