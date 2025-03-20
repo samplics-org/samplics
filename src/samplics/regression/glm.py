@@ -1,5 +1,7 @@
-from __future__ import annotations
+# from __future__ import annotations
 
+import sys
+import warnings
 from typing import Optional, Union, Tuple
 
 import numpy as np
@@ -237,17 +239,37 @@ class SurveyGLM:
         self.beta_cov = (d @ g) @ d
         self.beta["point_est"] = glm_results.params
         self.beta["stderror"] = np.sqrt(np.diag(self.beta_cov))
-        self.beta["z"] = self.beta["point_est"] / self.beta["stderror"]
-        self.beta["p_value"] = stats.norm.sf(np.abs(self.beta["z"])) * 2  # sf = 1 - cdf
-        self.beta["lower_ci"] = (
-            self.beta["point_est"]
-            - stats.norm.ppf(1 - self.alpha / 2) * self.beta["stderror"]
-        )
-        self.beta["upper_ci"] = (
-            self.beta["point_est"]
-            + stats.norm.ppf(1 - self.alpha / 2) * self.beta["stderror"]
-        )
 
-        self.odds_ratio["point_est"] = np.exp(self.beta["point_est"])
-        self.odds_ratio["lower_ci"] = np.exp(self.beta["lower_ci"])
-        self.odds_ratio["upper_ci"] = np.exp(self.beta["upper_ci"])
+        min_sd = 100 * sys.float_info.epsilon
+        self.beta["z"] = np.zeros_like(self.beta["point_est"])
+        for k, sd in enumerate(self.beta["stderror"]):
+            if sd > min_sd:
+                self.beta["z"][k] = self.beta["point_est"][k] / sd
+            else:
+                self.beta["z"][k] = self.beta["point_est"][k] / min_sd
+                print(f"Warning: stderror is close to zero. stderror is smaller than {min_sd}")
+
+        self.beta["p_value"] = 2 * stats.norm.sf(
+            np.abs(self.beta["z"])
+        )  # sf = survival function
+        crit = stats.norm.ppf(1 - self.alpha / 2)
+        self.beta["lower_ci"] = self.beta["point_est"] - crit * self.beta["stderror"]
+        self.beta["upper_ci"] = self.beta["point_est"] + crit * self.beta["stderror"]
+
+        max_exp = sys.float_info.max / 100
+        max_log = np.log(max_exp)
+        self.odds_ratio["point_est"] = np.zeros_like(self.beta["point_est"])
+        self.odds_ratio["lower_ci"] = np.zeros_like(self.beta["point_est"])
+        self.odds_ratio["upper_ci"] = np.zeros_like(self.beta["point_est"])
+        for k, beta in enumerate(self.beta["point_est"]):
+            if beta < max_log:
+                self.odds_ratio["point_est"][k] = np.exp(self.beta["point_est"][k])
+                self.odds_ratio["lower_ci"][k] = np.exp(self.beta["lower_ci"][k])
+                self.odds_ratio["upper_ci"][k] = np.exp(self.beta["upper_ci"][k])
+            else:
+                self.odds_ratio["point_est"][k] = max_exp
+                self.odds_ratio["lower_ci"][k] = max_exp
+                self.odds_ratio["upper_ci"][k] = max_exp
+                warnings.warn(
+                    f"Exponentiation of beta values is potentially unsafe. Odds ratio capped to {max_exp}."
+                )
