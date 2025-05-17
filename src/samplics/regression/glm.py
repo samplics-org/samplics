@@ -48,7 +48,7 @@ class SurveyGLM:
             ]
         )
 
-        output = f" Model: {self.model.name} \n Sample size: {self.sample_size} \n Degree of freedom: {self.sample_size - len(self.beta["point_est"])} \n Alpha: {self.alpha} \n \n {df.__repr__()}"
+        output = f"\n Model: {self.model.name} \n Sample size: {self.sample_size} \n Degree of freedom: {self.sample_size - len(self.beta['point_est'])} \n Alpha: {self.alpha} \n \n {df.__repr__()}"
 
         return output
 
