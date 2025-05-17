@@ -138,7 +138,7 @@ class SurveyGLM:
         # Add intercept if requested.
         if add_intercept:
             _x = np.insert(_x, 0, 1, axis=1)
-            self.x_labels = ["intercept"] + (
+            self.x_labels = ["Intercept"] + (
                 x_labels
                 if x_labels is not None
                 else [f"__x{i}__" for i in range(1, _x.shape[1])]
@@ -244,7 +244,7 @@ class SurveyGLM:
                 )
                 # import statsmodels.formula.api as smf
                 # glm_model = smf.glm(
-                #     formula="_y ~ " + " + ".join([f"{col}" for col in self.x_labels if col != "intercept"]),
+                #     formula="_y ~ " + " + ".join([f"{col}" for col in self.x_labels if col != "Intercept"]),
                 #     family=sm.families.Binomial(),
                 #     freq_weights=df["_samp_weight"].to_numpy(),
                 #     data=df,
