@@ -1,6 +1,6 @@
 [project]
 name = "samplics"
-version = "0.4.48"
+version = "0.4.49"
 description = "Select, weight and analyze complex sample data"
 
 authors = [{ name = "Mamadou S Diallo", email = "msdiallo@samplics.org" }]

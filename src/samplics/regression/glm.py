@@ -23,6 +23,37 @@ class SurveyGLM:
         self.beta_cov: dict = {}
         self.x_labels: list[str] = []
         self.odds_ratio: dict = {}
+        self.sample_size = 0
+
+    def __str__(self) -> str:
+
+        df = pl.DataFrame(
+            {
+                "label": self.x_labels,
+                "coef": self.beta["point_est"],
+                "stderr": self.beta["stderror"],
+                "z": self.beta["z"],
+                "p_value": self.beta["p_value"],
+                "ci_low": self.beta["lower_ci"],
+                "ci_upp": self.beta["upper_ci"],
+            }
+        ).with_columns(
+            [
+                pl.col("coef").round(4),
+                pl.col("stderr").round(4),
+                pl.col("z").round(2),
+                pl.col("p_value").round(4),
+                pl.col("ci_low").round(4),
+                pl.col("ci_upp").round(4),
+            ]
+        )
+
+        output = f" Model: {self.model.name} \n Sample size: {self.sample_size} \n Degree of freedom: {self.sample_size - len(self.beta["point_est"])} \n Alpha: {self.alpha} \n \n {df.__repr__()}"
+
+        return output
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
     @staticmethod
     def _residuals(
@@ -236,6 +267,7 @@ class SurveyGLM:
         )
         d = glm_results.cov_params()
 
+        self.sample_size = df.shape[0]
         self.beta_cov = (d @ g) @ d
         self.beta["point_est"] = glm_results.params
         self.beta["stderror"] = np.sqrt(np.diag(self.beta_cov))
@@ -247,7 +279,9 @@ class SurveyGLM:
                 self.beta["z"][k] = self.beta["point_est"][k] / sd
             else:
                 self.beta["z"][k] = self.beta["point_est"][k] / min_sd
-                print(f"Warning: stderror is close to zero. stderror is smaller than {min_sd}")
+                print(
+                    f"Warning: stderror is close to zero. stderror is smaller than {min_sd}"
+                )
 
         self.beta["p_value"] = 2 * stats.norm.sf(
             np.abs(self.beta["z"])
@@ -256,20 +290,21 @@ class SurveyGLM:
         self.beta["lower_ci"] = self.beta["point_est"] - crit * self.beta["stderror"]
         self.beta["upper_ci"] = self.beta["point_est"] + crit * self.beta["stderror"]
 
-        max_exp = sys.float_info.max / 100
-        max_log = np.log(max_exp)
-        self.odds_ratio["point_est"] = np.zeros_like(self.beta["point_est"])
-        self.odds_ratio["lower_ci"] = np.zeros_like(self.beta["point_est"])
-        self.odds_ratio["upper_ci"] = np.zeros_like(self.beta["point_est"])
-        for k, beta in enumerate(self.beta["point_est"]):
-            if beta < max_log:
-                self.odds_ratio["point_est"][k] = np.exp(self.beta["point_est"][k])
-                self.odds_ratio["lower_ci"][k] = np.exp(self.beta["lower_ci"][k])
-                self.odds_ratio["upper_ci"][k] = np.exp(self.beta["upper_ci"][k])
-            else:
-                self.odds_ratio["point_est"][k] = max_exp
-                self.odds_ratio["lower_ci"][k] = max_exp
-                self.odds_ratio["upper_ci"][k] = max_exp
-                warnings.warn(
-                    f"Exponentiation of beta values is potentially unsafe. Odds ratio capped to {max_exp}."
-                )
+        if self.model == ModelType.LOGISTIC:
+            max_exp = sys.float_info.max / 100
+            max_log = np.log(max_exp)
+            self.odds_ratio["point_est"] = np.zeros_like(self.beta["point_est"])
+            self.odds_ratio["lower_ci"] = np.zeros_like(self.beta["point_est"])
+            self.odds_ratio["upper_ci"] = np.zeros_like(self.beta["point_est"])
+            for k, beta in enumerate(self.beta["point_est"]):
+                if beta < max_log:
+                    self.odds_ratio["point_est"][k] = np.exp(self.beta["point_est"][k])
+                    self.odds_ratio["lower_ci"][k] = np.exp(self.beta["lower_ci"][k])
+                    self.odds_ratio["upper_ci"][k] = np.exp(self.beta["upper_ci"][k])
+                else:
+                    self.odds_ratio["point_est"][k] = max_exp
+                    self.odds_ratio["lower_ci"][k] = max_exp
+                    self.odds_ratio["upper_ci"][k] = max_exp
+                    warnings.warn(
+                        f"Exponentiation of beta values is potentially unsafe. Odds ratio capped to {max_exp}."
+                    )

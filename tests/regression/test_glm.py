@@ -262,21 +262,10 @@ def test_reg_linear_not_stratified():
     ).all()
     assert np.isclose(
         svyglm.beta["upper_ci"],
-        [8.42389903e+02, 2.97863116e-01, -2.56974865e00, 1.01214836e00],
+        [8.42389903e02, 2.97863116e-01, -2.56974865e00, 1.01214836e00],
     ).all()
 
-    assert np.isclose(
-        svyglm.odds_ratio["point_est"],
-        [1.79769313e+306, 0.61842051, 0.0432164, 1.2532162],
-    ).all()
-    assert np.isclose(
-        svyglm.odds_ratio["lower_ci"],
-        [1.79769313e+306, 0.2839275, 0.02439634, 0.57079683],
-    ).all()
-    assert np.isclose(
-        svyglm.odds_ratio["upper_ci"],
-        [1.79769313e+306, 1.3469774, 0.07655479, 2.7515059],
-    ).all()
+    assert svyglm.odds_ratio == {}
 
     assert np.isclose(svyglm.beta_cov[0, 0], 10.97091**2)
     assert np.isclose(svyglm.beta_cov[1, 1], 0.3971755**2)
