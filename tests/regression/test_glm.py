@@ -316,3 +316,145 @@ def test_reg_linear_not_stratified():
 #     assert np.isclose(svyglm.cov_beta[1, 1], 0.4109377**2)
 #     assert np.isclose(svyglm.cov_beta[2, 2], 0.2743919**2)
 #     assert np.isclose(svyglm.cov_beta[3, 3], 0.3873394**2)
+
+## Deterministic and user designated reference
+
+def test_logistic_deterministic_reference():
+    """Test that dummy creation is deterministic when no reference is specified."""
+    df = pl.DataFrame({
+        "cat": ["B", "A", "C", "B", "C", "A"],
+        "y": [1, 0, 1, 0, 1, 0],
+        "x": [10, 20, 30, 40, 50, 60]
+    })
+
+    x = df.select("x")
+    x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
+    x_cat = df.select("cat")
+
+    svyglm_1 = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm_1.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=["cat"]
+    )
+    labels_1 = svyglm_1.x_labels.copy()
+
+    svyglm_2 = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm_2.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=["cat"]
+    )
+    labels_2 = svyglm_2.x_labels.copy()
+
+    svyglm_3 = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm_3.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=["cat"]
+    )
+    labels_3 = svyglm_3.x_labels.copy()
+
+    assert labels_1 == labels_2
+    assert labels_1 == labels_3
+
+
+def test_logistic_user_specified_reference():
+    """Test that specifying reference category produces correct dummies."""
+    df = pl.DataFrame({
+        "cat": ["B", "A", "C", "B", "C", "A"],
+        "y": [1, 0, 1, 0, 1, 0],
+        "x": [10, 20, 30, 40, 50, 60]
+    })
+
+    x = df.select("x")
+    x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
+    x_cat = df.select("cat")
+
+    svyglm = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=["cat"],
+        x_cat_reference={"cat": "B"},
+    )
+    assert any("cat_A" in s for s in svyglm.x_labels)
+    assert any("cat_C" in s for s in svyglm.x_labels)
+    assert not any("cat_B" in s for s in svyglm.x_labels), "Reference B should not appear"
+
+    svyglm_alt = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm_alt.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=["cat"],
+        x_cat_reference={"cat": "C"},
+    )
+    assert not any("cat_C" in s for s in svyglm_alt.x_labels), "Reference C should not appear"
+    assert any("cat_A" in s for s in svyglm_alt.x_labels)
+    assert any("cat_B" in s for s in svyglm_alt.x_labels)
+
+def test_logistic_two_categorical_predictors():
+    """Test dummy encoding for two categorical variables with and without reference."""
+    df = pl.DataFrame({
+        "cat1": ["B", "A", "C", "B", "C", "A"],
+        "cat2": ["X", "Y", "Z", "X", "Z", "Y"],
+        "y": [1, 0, 1, 0, 1, 0],
+        "x": [10, 20, 30, 40, 50, 60]
+    })
+
+    x = df.select("x")
+    x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
+    x_cat = df.select(["cat1", "cat2"])
+
+    # Without specifying reference
+    svyglm_default = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm_default.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=x_cat.columns,
+    )
+    labels_default = svyglm_default.x_labels.copy()
+
+    # With user-specified reference
+    svyglm_custom = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm_custom.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=x_cat.columns,
+        x_cat_reference={"cat1": "C", "cat2": "Z"},
+    )
+    labels_custom = svyglm_custom.x_labels.copy()
+
+    # Assert both contain expected dummy variables
+    assert any("cat1_A" in s for s in labels_custom)
+    assert any("cat1_B" in s for s in labels_custom)
+    assert not any("cat1_C" in s for s in labels_custom)
+
+    assert any("cat2_X" in s for s in labels_custom)
+    assert any("cat2_Y" in s for s in labels_custom)
+    assert not any("cat2_Z" in s for s in labels_custom)
+
+    # Consistency check for default reference behavior
+    svyglm_repeat = SurveyGLM(model=ModelType.LOGISTIC)
+    svyglm_repeat.estimate(
+        y=df["y"].to_numpy(),
+        x=x.to_numpy(),
+        x_labels=x.columns,
+        x_cat=x_cat,
+        x_cat_labels=x_cat.columns,
+    )
+    assert svyglm_repeat.x_labels == labels_default, "Default dummy encoding is not deterministic"

@@ -37,15 +37,6 @@ class SurveyGLM:
                 "ci_low": self.beta["lower_ci"],
                 "ci_upp": self.beta["upper_ci"],
             }
-        ).with_columns(
-            [
-                pl.col("coef").round(4),
-                pl.col("stderr").round(4),
-                pl.col("z").round(2),
-                pl.col("p_value").round(4),
-                pl.col("ci_low").round(4),
-                pl.col("ci_upp").round(4),
-            ]
         )
 
         output = f"\n Model: {self.model.name} \n Sample size: {self.sample_size} \n Degree of freedom: {self.sample_size - len(self.beta['point_est'])} \n Alpha: {self.alpha} \n \n {df.__repr__()}"
@@ -110,6 +101,7 @@ class SurveyGLM:
         x_labels: Optional[list] = None,
         x_cat: Optional[Array] = None,
         x_cat_labels: Optional[list] = None,
+        x_cat_reference: Optional[dict[str, str]] = None,
         samp_weight: Optional[Array] = None,
         stratum: Optional[Series] = None,
         psu: Optional[Series] = None,
@@ -119,7 +111,6 @@ class SurveyGLM:
         maxiter: int = 100,
         remove_nan: bool = False,
     ) -> None:
-        # Convert inputs to numpy arrays for consistency.
         _y = numpy_array(y)
         _x = numpy_array(x) if x is not None else np.empty((len(_y), 0))
         _x_cat = numpy_array(x_cat) if x_cat is not None else np.empty(())
@@ -131,11 +122,9 @@ class SurveyGLM:
             else np.ones(_y.shape[0])
         )
 
-        # Ensure _x is 2-dimensional.
         if _x.ndim == 1 and _x.shape[0] > 0:
             _x = _x.reshape(-1, 1)
 
-        # Add intercept if requested.
         if add_intercept:
             _x = np.insert(_x, 0, 1, axis=1)
             self.x_labels = ["Intercept"] + (
@@ -150,13 +139,11 @@ class SurveyGLM:
                 else [f"__x{i}__" for i in range(_x.shape[1])]
             )
 
-        # Ensure samp_weight is of proper length.
         if _samp_weight.shape in ((), (0,)):
             _samp_weight = np.ones(_y.shape[0])
         elif _samp_weight.shape[0] == 1:
             _samp_weight = _samp_weight * np.ones(_y.shape[0])
 
-        # Handle finite population correction: convert fpc to dictionary if not already.
         if not isinstance(fpc, dict):
             self.fpc = fpc_as_dict(_stratum, fpc)
         else:
@@ -166,67 +153,44 @@ class SurveyGLM:
                 )
             self.fpc = fpc
 
-        # Create Polars DataFrame from _x and assign column labels.
         df = pl.from_numpy(_x)
         df.columns = self.x_labels
 
-        # Add response and weight columns.
         df = df.with_columns(
             pl.Series("_y", _y), pl.Series("_samp_weight", _samp_weight)
         )
 
-        # Optionally add categorical predictors.
         if _x_cat.shape != ():
             df_cat = pl.from_numpy(_x_cat)
             df_cat.columns = x_cat_labels
             df = df.hstack(df_cat)
 
-        # Add survey design variables if provided.
         if _stratum.shape != ():
             df = df.with_columns(pl.Series("_stratum", _stratum))
         if _psu.shape != ():
             df = df.with_columns(pl.Series("_psu", _psu))
 
-        # Remove rows with null or NaN values if specified.
         if remove_nan:
             df = df.drop_nulls().drop_nans()
 
-        # Process categorical variables (if provided) to create dummy variables.
         if _x_cat.shape != ():
-            # Get unique combinations for the categorical columns and sort.
-            unique_cat = df.select(x_cat_labels).unique().sort(x_cat_labels)
             for col in x_cat_labels:
-                # Create dummy variables from unique values.
-                col_values = unique_cat[col].unique()
-                col_dummies = col_values.to_dummies(drop_first=True)
-                col_dummies.columns = [
-                    col.replace(".", "__") for col in col_dummies.columns
-                ]
-                # Sum across dummy columns to create an indicator.
-                # col_df = col_dummies.with_columns(
-                #     pl.fold(
-                #         acc=pl.lit(0.0),
-                #         function=lambda acc, x: acc + x,
-                #         exprs=[pl.col(c) for c in col_dummies.columns]
-                #     ).alias("sum")
-                # )
-                # # Replace dummy values if the sum is zero.
-                # col_df = col_df.with_columns(
-                #     [
-                #         pl.when(pl.col("sum") == 0)
-                #         .then(pl.lit(0.0))
-                #         .otherwise(pl.col(c))
-                #         .alias(c)
-                #         for c in col_dummies.columns
-                #     ]
-                # ).insert_column(0, col_values)
-                # df = df.join(col_df.drop("sum"), on=col, how="left")
-                self.x_labels += col_dummies.columns
-                df = df.join(
-                    col_dummies.insert_column(0, col_values), on=col, how="left"
-                )
+                ref_val = None
+                if x_cat_reference and col in x_cat_reference:
+                    ref_val = x_cat_reference[col]
+                levels = sorted(df[col].unique().to_list())
+                if ref_val is not None:
+                    levels = [ref_val] + [v for v in levels if v != ref_val]
+                else:
+                    ref_val = levels[0]
+                for level in levels[1:]:
+                    dummy_col = f"{col}_{level}".replace(".", "__")
+                    df = df.with_columns(
+                        pl.when(pl.col(col) == level).then(1.0).otherwise(0.0).alias(dummy_col)
+                    )
+                    self.x_labels.append(dummy_col)
 
-        # Fit model based on specified model type.
+
         match self.model:
             case ModelType.LINEAR:
                 glm_model = sm.GLM(
@@ -242,18 +206,8 @@ class SurveyGLM:
                     freq_weights=df["_samp_weight"].to_numpy(),
                     family=sm.families.Binomial(),
                 )
-                # import statsmodels.formula.api as smf
-                # glm_model = smf.glm(
-                #     formula="_y ~ " + " + ".join([f"{col}" for col in self.x_labels if col != "Intercept"]),
-                #     family=sm.families.Binomial(),
-                #     freq_weights=df["_samp_weight"].to_numpy(),
-                #     data=df,
-                # )
-                # breakpoint()
             case _:
                 raise NotImplementedError(f"Model {self.model} is not implemented yet")
-
-        # Continue with fitting, iteration, or returning the fitted model as needed.
 
         glm_results = glm_model.fit()
         g = self._calculate_g(
@@ -283,9 +237,9 @@ class SurveyGLM:
                     f"Warning: stderror is close to zero. stderror is smaller than {min_sd}"
                 )
 
-        self.beta["p_value"] = 2 * stats.norm.sf(
-            np.abs(self.beta["z"])
-        )  # sf = survival function
+        self.beta["p_value"] = 2 * stats.t.sf(
+            np.abs(self.beta["z"]), self.sample_size - len(self.beta["point_est"])
+        )
         crit = stats.norm.ppf(1 - self.alpha / 2)
         self.beta["lower_ci"] = self.beta["point_est"] - crit * self.beta["stderror"]
         self.beta["upper_ci"] = self.beta["point_est"] + crit * self.beta["stderror"]
