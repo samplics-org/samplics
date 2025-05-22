@@ -1,44 +1,69 @@
-name: Docs
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
-jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
+steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4 
+      # This step is often needed if your build tool requires a specific environment
+      # Example for Node.js based tools (e.g., Docusaurus, VitePress)
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '18' # Specify your Node.js version
+      #     cache: 'npm' # Or 'yarn', 'pnpm'
 
-      - name: "Debug: Check files before build"
-        run: ls -R ./docs || echo "❌ No docs directory found!"
+      # Example for Python-based tools (e.g., MkDocs, Sphinx)
+      # - name: Setup Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: '3.x' # Specify your Python version
+      # - name: Install dependencies
+      #   run: pip install -r requirements.txt # Or your dependency installation command
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: "Debug: Check files before build (source docs)"
+        run: ls -R ./docs || echo "❌ No source docs directory found at ./docs!"
+
+      # ------------------------------------------------------------------
+      # ▼▼▼ ADD YOUR BUILD STEP HERE ▼▼▼
+      # ------------------------------------------------------------------
+      # This is an EXAMPLE. Replace with your actual build command.
+      # Ensure your build tool outputs the site to a directory, e.g., 'site_output' or './docs/docs_site'
+      # If your tool outputs to './docs/docs_site', the path in upload-pages-artifact will match.
+      # If it outputs to another directory like 'dist' or '_site', adjust the path accordingly.
+      - name: Build documentation site
+        run: |
+          echo "Building documentation..."
+          # Example for MkDocs:
+          # pip install mkdocs mkdocs-material
+          # mkdocs build -d ../docs_site  # Assuming this workflow file is in .github/workflows
+                                        # and your mkdocs.yml is in the root or ./docs
+                                        # Adjust output directory as needed.
+                                        # Let's assume it outputs to a top-level 'docs_site' directory.
+          # For example, if your source docs are in ./docs and mkdocs.yml is in ./
+          # And you want the output in ./docs_site
+          # mkdocs build --site-dir ./docs_site
+
+          # If your source is in ./docs and your build command generates output in ./docs/docs_site:
+          # (cd ./docs && your-build-command --output ./docs_site)
+          # For this example, let's assume the build process creates files in a directory named 'build_output' at the root.
+          mkdir -p build_output # Create a dummy output directory for this example
+          echo "<h1>Hello from GitHub Pages</h1>" > build_output/index.html
+      # ------------------------------------------------------------------
+      # ▲▲▲ END OF BUILD STEP ▲▲▲
+      # ------------------------------------------------------------------
+
+      - name: "Debug: Check files after build (expected build output)"
+        # Adjust this path to where your build step actually places the files
+        run: ls -R ./build_output || echo "❌ Build output directory not found or empty!"
 
       - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3 # Use upload-pages-artifact
         with:
-          path: ./docs/docs_site
-      
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+          # Path to the directory containing your built static files.
+          # This MUST match the output directory of your build step.
+          path: ./build_output # Changed from ./docs/docs_site to match the example build output
 
-      - name: "Debug: Verify uploaded artifact exists"
-        run: |
-          ls -lh ./docs/docs_site || echo "❌ Build output missing!"
+      - name: Deploy to GitHub Pages
+        id: deployment # This ID is referenced by `url: ${{ steps.deployment.outputs.page_url }}`
+        uses: actions/deploy-pages@v4 # Add the deployment action
