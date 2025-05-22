@@ -25,15 +25,15 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v2  
 
       - name: "Debug: Check files before build"
         run: ls -R ./docs || echo "❌ No docs directory found!"
 
       - name: Upload GitHub Pages artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
-          path: ./docs/docs_site
+          path: ./docs/docs_site  
 
       - name: "Debug: Verify uploaded artifact exists"
         run: |
