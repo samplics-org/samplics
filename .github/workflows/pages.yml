@@ -25,68 +25,21 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4 # Good, helps configure the environment
+        uses: actions/configure-pages@v4
 
-      - name: "Debug: Check source files before build" # Checks your source docs, e.g., in ./docs
+      - name: "Debug: Check source files before build"
         run: ls -R ./docs || echo "ℹ️ Source docs directory ./docs not found or empty (this might be okay depending on your project structure)."
 
-      # ------------------------------------------------------------------
-      # ▼▼▼ INSERT YOUR BUILD STEPS HERE ▼▼▼
-      # ------------------------------------------------------------------
-      # Example: If you need Node.js for your build tool (e.g., Docusaurus, VitePress)
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '20' # Specify your Node.js version
-      #     cache: 'npm'       # Or 'yarn', 'pnpm'
-
-      # Example: If you need Python for your build tool (e.g., MkDocs, Sphinx)
-      # - name: Setup Python
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: '3.11' # Specify your Python version
-      # - name: Install Python dependencies
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     pip install -r requirements.txt # If you have a requirements.txt for your docs build
-
-      - name: Build documentation site ⚙️
-        run: |
-          echo "🚀 Starting documentation build..."
-          # === REPLACE THIS WITH YOUR ACTUAL BUILD COMMANDS ===
-          # This command MUST generate your static site files into the './docs/docs_site' directory.
-          #
-          # Example for MkDocs (if mkdocs.yml is in root, source in ./docs, output to ./docs/docs_site):
-          # pip install mkdocs mkdocs-material
-          # mkdocs build --site-dir ./docs/docs_site
-          #
-          # Example for a Node.js project (e.g., Docusaurus, assuming package.json scripts exist):
-          # npm install
-          # npm run build # Ensure this outputs to ./docs/docs_site or adjust path below
-          #
-          # Example for Jekyll (if _config.yml specifies destination: ./docs/docs_site):
-          # gem install bundler
-          # bundle install
-          # bundle exec jekyll build
-          #
-          # For this placeholder, let's create a dummy file:
-          mkdir -p ./docs/docs_site
-          echo "<h1>Hello from Built Docs!</h1>" > ./docs/docs_site/index.html
-          echo "✅ Build complete. Output should be in ./docs/docs_site"
-      # ------------------------------------------------------------------
-      # ▲▲▲ END OF BUILD STEPS ▲▲▲
-      # ------------------------------------------------------------------
-
-      - name: "Debug: Verify build output 🔎" # Moved and renamed this step
+      - name: "Debug: Verify build output 🔎"
         run: |
           echo "Checking content of ./docs/docs_site..."
           ls -lah ./docs/docs_site || echo "❌ Build output directory ./docs/docs_site is missing or empty!"
 
       - name: Upload GitHub Pages artifact ⬆️
-        uses: actions/upload-pages-artifact@v3 # Suggested update to v3
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs/docs_site # This path MUST match your build output directory
+          path: ./docs/docs_site
 
       - name: Deploy to GitHub Pages 🚀
         id: deployment
-        uses: actions/deploy-pages@v4 # Suggested update to v4
+        uses: actions/deploy-pages@v4
