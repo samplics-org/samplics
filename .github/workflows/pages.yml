@@ -27,9 +27,6 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: "Debug: Check source files before build"
-        run: ls -R ./docs || echo "ℹ️ Source docs directory ./docs not found or empty (this might be okay depending on your project structure)."
-
       - name: "Debug: Verify build output 🔎"
         run: |
           echo "Checking content of ./docs/docs_site..."

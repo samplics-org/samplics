@@ -1,6 +1,5 @@
 <img src="./img/samplics_logo.jpg"  align="left" style="height: 110px; border-radius: 10%; padding: 5px;"/>
 
-
 <h1> Sample Analytics </h1>
 
 [<img src="https://github.com/survey-methods/samplics/workflows/Testing/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting)
@@ -8,8 +7,6 @@
 [<img src="https://github.com/survey-methods/samplics/workflows/Docs/badge.svg">](https://github.com/samplics-org/samplics/actions?query=workflow%3ADocs)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.03376/status.svg)](https://doi.org/10.21105/joss.03376)
 [<img src="https://pepy.tech/badge/samplics">](https://pepy.tech/project/samplics)
-
-
 
 In large-scale surveys, often complex random mechanisms are used to select samples. Estimates derived from such samples must reflect the random mechanism. _Samplics_ is a python package that implements a set of sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four sub-packages.
 
@@ -40,24 +37,26 @@ For more details, visit https://samplics-org.github.io/samplics/
 Let's assume that we have a population and we would like to select a sample from it. The goal is to calculate the sample size for an expected proportion of 0.80 with a precision (half confidence interval) of 0.10.
 
 > ```python
+> from samplics.utils.types import SizeMethod, PopParam
 > from samplics.sampling import SampleSize
 >
-> sample_size = SampleSize(parameter = "proportion")
+> sample_size = SampleSize(param=PopParam.prop, method=SizeMethod.wald)
 > sample_size.calculate(target=0.80, half_ci=0.10)
 > ```
 
 Furthermore, the population is located in four natural regions i.e. North, South, East, and West. We could be interested in calculating sample sizes based on region specific requirements e.g. expected proportions, desired precisions and associated design effects.
 
 > ```python
+> from samplics.utils.types import SizeMethod, PopParam
 > from samplics.sampling import SampleSize
 >
-> sample_size = SampleSize(parameter="proportion", method="wald", strat=True)
+> sample_size = SampleSize(param=PopParam.prop, method=SizeMethod.wald, strat=True)
 >
 > expected_proportions = {"North": 0.95, "South": 0.70, "East": 0.30, "West": 0.50}
 > half_ci = {"North": 0.30, "South": 0.10, "East": 0.15, "West": 0.10}
 > deff = {"North": 1, "South": 1.5, "East": 2.5, "West": 2.0}
 >
-> sample_size = SampleSize(parameter = "proportion", method="Fleiss", strat=True)
+> sample_size = SampleSize(param=PopParam.prop, method=SizeMethod.fleiss, strat=True)
 > sample_size.calculate(target=expected_proportions, half_ci=half_ci, deff=deff)
 > ```
 
@@ -140,7 +139,7 @@ we can use code similar to:
 > # adjust sample weights
 > full_sample["nr_weight"] = SampleWeight().adjust(
 >    samp_weight=full_sample["design_weight"],
->    adjust_class=full_sample["region"],
+>    adj_class=full_sample["region"],
 >    resp_status=full_sample["response_status"],
 >    resp_dict=status_mapping
 >    )
@@ -150,6 +149,7 @@ To estimate population parameters using Taylor-based and replication-based metho
 
 > ```python
 > # Taylor-based
+> from samplics.utils.types import PopParam, RepMethod
 > from samplics.datasets import load_nhanes2
 >
 > nhanes2_dict = load_nhanes2()
@@ -157,7 +157,7 @@ To estimate population parameters using Taylor-based and replication-based metho
 >
 > from samplics.estimation import TaylorEstimator
 >
-> zinc_mean_str = TaylorEstimator("mean")
+> zinc_mean_str = TaylorEstimator(PopParam.mean)
 > zinc_mean_str.estimate(
 >     y=nhanes2["zinc"],
 >     samp_weight=nhanes2["finalwgt"],
@@ -174,7 +174,7 @@ To estimate population parameters using Taylor-based and replication-based metho
 >
 > from samplics.estimation import ReplicateEstimator
 >
-> ratio_wgt_hgt = ReplicateEstimator("brr", "ratio").estimate(
+> ratio_wgt_hgt = ReplicateEstimator(RepMethod.brr, PopParam.ratio).estimate(
 >     y=nhanes2brr["weight"],
 >     samp_weight=nhanes2brr["finalwgt"],
 >     x=nhanes2brr["height"],
@@ -191,6 +191,7 @@ To predict small area parameters, we can use code similar to:
 > import pandas as pd
 >
 > # Area-level basic method
+> from samplics.utils.types import FitMethod
 > from samplics.datasets import load_expenditure_milk
 >
 > milk_exp_dict = load_expenditure_milk()
@@ -198,7 +199,7 @@ To predict small area parameters, we can use code similar to:
 >
 > from samplics.sae import EblupAreaModel
 >
-> fh_model_reml = EblupAreaModel(method="REML")
+> fh_model_reml = EblupAreaModel(method=FitMethod.reml)
 > fh_model_reml.fit(
 >     yhat=milk_exp["direct_est"],
 >     X=pd.get_dummies(milk_exp["major_area"], drop_first=True),
@@ -242,7 +243,7 @@ To predict small area parameters, we can use code similar to:
 
 `pip install samplics`
 
-Python 3.7 or newer is required and the main dependencies are [numpy](https://numpy.org), [pandas](https://pandas.pydata.org), [scpy](https://www.scipy.org), and [statsmodel](https://www.statsmodels.org/stable/index.html).
+Python 3.10 or newer is required and the main dependencies are [numpy](https://numpy.org), [polars](https://pola.rs/), and [statsmodel](https://www.statsmodels.org/stable/index.html).
 
 ## Contribution
 
