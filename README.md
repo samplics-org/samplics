@@ -8,6 +8,12 @@
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.03376/status.svg)](https://doi.org/10.21105/joss.03376)
 [<img src="https://pepy.tech/badge/samplics">](https://pepy.tech/project/samplics)
 
+> ### Help Shape the Future of Samplics
+>
+> We are driven by community feedback and would love to hear from you! Please take a few minutes to complete our user survey.
+>
+> **[➡️ Share Your Feedback](https://forms.gle/zNexPMg7nTfjrJ498)**
+
 In large-scale surveys, often complex random mechanisms are used to select samples. Estimates derived from such samples must reflect the random mechanism. _Samplics_ is a python package that implements a set of sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four sub-packages.
 
 **Sampling** provides a set of random selection techniques used to draw a sample from a population. It also provides procedures for calculating sample sizes. The sampling subpackage contains:
