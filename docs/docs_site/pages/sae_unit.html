@@ -443,13 +443,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="county-crop-corn-and-soybeans-areas-data" class="level2">
 <h2 class="anchored" data-anchor-id="county-crop-corn-and-soybeans-areas-data">County Crop (Corn and Soybeans) Areas Data</h2>
 <p>For this example, we use the county crop data used by Battese, Harter, and Fuller (1988). The datasets contains 37 observations on areas under corn and under soybeans for each of the 12 counties in the north-central of Iowa. Each county was divided in segments and using interviews and LANDSAT satellite data, data on area used for corn and soybeans was obtained. In the unit level data, each observation is a segment with the following variables: county id (county_id), area in hectare under corn (corn_area), area in heactare under soybeans (soybeans_area), number of pixel classified as corn (corn_pixel), and number of pixels classified as soybeans (soybeans_pixel).</p>
-<div id="2b5e1acd" class="cell" data-execution_count="1">
+<div id="6f55a4e2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_county_crop, load_county_crop_means</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sae <span class="im">import</span> EblupUnitModel</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.utils.types <span class="im">import</span> FitMethod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="f5d9a0f1" class="cell" data-execution_count="2">
+<div id="1b32cdef" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load County Crop sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>countycrop_dict <span class="op">=</span> load_county_crop()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>countycrop <span class="op">=</span> countycrop_dict[<span class="st">"data"</span>]</span>
@@ -602,7 +602,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>In addition to the unit (segment) level data, we have the small area (county) level averages of the number of pixels classified as corn or soybeans.</p>
-<div id="1e4e2a9e" class="cell" data-execution_count="3">
+<div id="6038f8a2" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load County Crop Area Means sample data</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>countycropmeans_dict <span class="op">=</span> load_county_crop_means()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>countycrop_means <span class="op">=</span> countycropmeans_dict[<span class="st">"data"</span>]</span>
@@ -735,7 +735,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="empirical-bayes-linear-unbiased-predictor-eblup">Empirical Bayes linear unbiased predictor (EBLUP)</h2>
 <p>Now we are going to estimates the average area size under corn and soybeans. To do so, we use the nested error linear regression (special case of the linear mixed model) to model the number of hectares. As auxiliary variables, we use the number of pixel classified as corn and soybeans.</p>
 <p>First, we use the method <code>fit()</code> to estimate the model parameters.</p>
-<div id="c0146252" class="cell" data-execution_count="4">
+<div id="e9a7e8eb" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>areas <span class="op">=</span> countycrop[<span class="st">"county_id"</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ys <span class="op">=</span> countycrop[<span class="st">"corn_area"</span>]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Xs <span class="op">=</span> countycrop[[<span class="st">"corn_pixel"</span>, <span class="st">"soybeans_pixel"</span>]]</span>
@@ -782,7 +782,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   warnings.warn(</code></pre>
 </div>
 </div>
-<div id="fef63041" class="cell" data-execution_count="5">
+<div id="6dbfbfa9" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">"""ML Method"""</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>eblup_bhf_ml <span class="op">=</span> EblupUnitModel(method<span class="op">=</span>FitMethod.ml)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>eblup_bhf_ml.fit(</span>
