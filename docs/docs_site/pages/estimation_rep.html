@@ -467,13 +467,13 @@ window.Quarto = {
 <p>Samplics’s class <em>TaylorEstimator</em> uses replicate-based methods (bootstrap, brr/fay, and jackknife) to estimate the variance of population parameters.</p>
 <section id="bootstrap" class="level1">
 <h1>Bootstrap</h1>
-<div id="69b1205c" class="cell" data-execution_count="1">
+<div id="32e3a735" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_nhanes2brr, load_nhanes2jk, load_nmihs</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.estimation <span class="im">import</span> ReplicateEstimator</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.utils.types <span class="im">import</span> PopParam, RepMethod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="bb3413e0" class="cell" data-execution_count="2">
+<div id="c41ea195" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load NMIHS sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nmihs_dict <span class="op">=</span> load_nmihs()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>nmihs <span class="op">=</span> nmihs_dict[<span class="st">"data"</span>]</span>
@@ -879,7 +879,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Let’s estimate the average birth weight using the bootstrap weights.</p>
-<div id="2feee83e" class="cell" data-execution_count="3">
+<div id="aaba10da" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rep_wgt_boot = nmihsboot.loc[:, "bsrw1":"bsrw50"]</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>birthwgt <span class="op">=</span> ReplicateEstimator(RepMethod.bootstrap, PopParam.mean).estimate(</span>
@@ -904,7 +904,7 @@ Degree of freedom: 49
 </section>
 <section id="balanced-repeated-replication-brr" class="level1">
 <h1>Balanced repeated replication (BRR)</h1>
-<div id="921db13f" class="cell" data-execution_count="4">
+<div id="4040e0e6" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load NMIHS sample data</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>nhanes2brr_dict <span class="op">=</span> load_nhanes2brr()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>nhanes2brr <span class="op">=</span> nhanes2brr_dict[<span class="st">"data"</span>]</span>
@@ -1310,7 +1310,7 @@ Degree of freedom: 49
 </div>
 </div>
 <p>Let’s estimate the average birth weight using the BRR weights.</p>
-<div id="0b0877ee" class="cell" data-execution_count="5">
+<div id="52e47a37" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>brr <span class="op">=</span> ReplicateEstimator(RepMethod.brr, PopParam.ratio)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ratio_wgt_hgt <span class="op">=</span> brr.estimate(</span>
@@ -1336,7 +1336,7 @@ Degree of freedom: 16
 </section>
 <section id="jackknife" class="level1">
 <h1>Jackknife</h1>
-<div id="8e8f95a3" class="cell" data-execution_count="6">
+<div id="76f2b0a7" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load NMIHS sample data</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>nhanes2jk_dict <span class="op">=</span> load_nhanes2jk()</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>nhanes2jk <span class="op">=</span> nhanes2jk_dict[<span class="st">"data"</span>]</span>
@@ -1742,7 +1742,7 @@ Degree of freedom: 16
 </div>
 </div>
 <p>In this case, stratification was used to calculate the jackknife weights. The stratum variable is not indicated in the dataset or survey design description. However, it says that the number of strata is 31 and the number of replicates is 62. Hence, the jackknife replicate coefficient is <span class="math inline">\((n_h - 1) / n_h = (2-1) / 2 = 0.5\)</span>. Now we can call <em>replicate()</em> and specify <em>rep_coefs = 0.5</em>.</p>
-<div id="1475c677" class="cell" data-execution_count="7">
+<div id="8a5eeea2" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>jackknife <span class="op">=</span> ReplicateEstimator(RepMethod.jackknife, PopParam.ratio)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ratio_wgt_hgt2 <span class="op">=</span> jackknife.estimate(</span>
