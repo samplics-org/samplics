@@ -442,7 +442,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Comparison of two paired means</li>
 </ul>
 <p><code>Ttest()</code> is the class that implements all four type of comparisons. To run a comparison, the user call the method <code>compare()</code> with the appropriate parameters.</p>
-<div id="4f4a551b" class="cell" data-execution_count="1">
+<div id="a88a9f1e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_auto</span>
@@ -457,7 +457,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Ha: mean(mpg) != 20 (not_equal alternative)</li>
 </ul>
 <p>All three alternatives are automatically computed by the method <code>compare()</code>. This behavior is similar across the four type of comparisons.</p>
-<div id="48ef8eb3" class="cell" data-execution_count="2">
+<div id="2b36576e" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Auto sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>auto_dict <span class="op">=</span> load_auto()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>auto <span class="op">=</span> auto_dict[<span class="st">"data"</span>]</span>
@@ -484,7 +484,7 @@ Design-based One-Sample T-test
 </div>
 </div>
 <p>The print below shows the information encapsulated in the object. <code>point_est</code> provides the sample mean. Similarly, <code>stderror</code>, <code>stddev</code>, <code>lower_ci</code>, and <code>upper_ci</code> provide the standard error, standard deviation, lower bound confidence interval (CI), and upper bound CI, respectively. The class member <code>stats</code> provides the statistics related to the three t-tests (for the three alternative hypothesis). There is additional information encapsulated in the object as shown below.</p>
-<div id="672772e7" class="cell" data-execution_count="3">
+<div id="9af9f742" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pprint(one_sample_known_mean.__dict__)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>{'alpha': 0.05,
@@ -512,7 +512,7 @@ Design-based One-Sample T-test
 <section id="comparison-of-two-groups-from-the-same-sample" class="level1">
 <h1>Comparison of two groups from the same sample</h1>
 <p>This type of comparison is used when the two groups are from the sample. For example, after running a survey, the user want to know if the domestic cars have the same mpg on average compare to the foreign cars. The parameter <code>group</code> indicates the categorical variable. NB: note that, at this point, <code>Ttest()</code> does not take into account potential dependencies between groups.</p>
-<div id="fb7576c5" class="cell" data-execution_count="4">
+<div id="6d3e3d5a" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>foreign <span class="op">=</span> auto[<span class="st">"foreign"</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>one_sample_two_groups <span class="op">=</span> Ttest(samp_type<span class="op">=</span><span class="st">"one-sample"</span>)</span>
@@ -545,7 +545,7 @@ Domestic       52      19.826923    0.655868   4.729532 18.519780 21.134066
 </div>
 </div>
 <p>Since there are two groups for this comparison, the sample mean, standard error, standard deviation, lower bound CI, and upper bound CI are provided by group as Python dictionaries. The class member <code>stats</code> provides statistics for the comparison assuming both equal and unequal variances.</p>
-<div id="3c73e2e6" class="cell" data-execution_count="5">
+<div id="1584d858" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"These are the group means for mpg:"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pprint(one_sample_two_groups.point_est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -553,7 +553,7 @@ Domestic       52      19.826923    0.655868   4.729532 18.519780 21.134066
 {'Domestic': 19.826923076923077, 'Foreign': 24.772727272727273}</code></pre>
 </div>
 </div>
-<div id="ba240044" class="cell" data-execution_count="6">
+<div id="86995885" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"These are the group standard error for mpg:"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pprint(one_sample_two_groups.stderror)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -561,7 +561,7 @@ Domestic       52      19.826923    0.655868   4.729532 18.519780 21.134066
 {'Domestic': 0.6558681110509441, 'Foreign': 1.3865030562044942}</code></pre>
 </div>
 </div>
-<div id="649d8f2d" class="cell" data-execution_count="7">
+<div id="37a1d2e7" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"These are the group standard deviation for mpg:"</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>pprint(one_sample_two_groups.stddev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -569,7 +569,7 @@ Domestic       52      19.826923    0.655868   4.729532 18.519780 21.134066
 {'Domestic': 4.7295322086717775, 'Foreign': 6.50327578586491}</code></pre>
 </div>
 </div>
-<div id="e9099e12" class="cell" data-execution_count="8">
+<div id="6bd894aa" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"These are the computed statistics:"</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>pprint(one_sample_two_groups.stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -591,7 +591,7 @@ Domestic       52      19.826923    0.655868   4.729532 18.519780 21.134066
 <section id="comparison-of-two-means-from-two-different-samples" class="level1">
 <h1>Comparison of two means from two different samples</h1>
 <p>This type of comparison should be used when the two groups come from different samples or different strata. The group are assumed independent. Otherwise, the information is similar to the previous test. Note that, when instantiating the class, we used <code>samp_type="two-sample"</code>.</p>
-<div id="c25ad72b" class="cell" data-execution_count="9">
+<div id="78c1ded9" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>two_samples_unpaired <span class="op">=</span> Ttest(samp_type<span class="op">=</span><span class="st">"two-sample"</span>, paired<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>two_samples_unpaired.compare(y<span class="op">=</span>mpg, group<span class="op">=</span>foreign)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -621,7 +621,7 @@ Domestic       52      19.826923    0.657777   4.743297 18.506381 21.147465
 </code></pre>
 </div>
 </div>
-<div id="d33fbf76" class="cell" data-execution_count="10">
+<div id="b9b60665" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"These are the group means for mpg:"</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>pprint(two_samples_unpaired.point_est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -629,7 +629,7 @@ Domestic       52      19.826923    0.657777   4.743297 18.506381 21.147465
 {'Domestic': 19.826923076923077, 'Foreign': 24.772727272727273}</code></pre>
 </div>
 </div>
-<div id="653c70c7" class="cell" data-execution_count="11">
+<div id="2306bd18" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"These are the group standard error for mpg:"</span>) </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>pprint(two_samples_unpaired.stderror)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -637,7 +637,7 @@ Domestic       52      19.826923    0.657777   4.743297 18.506381 21.147465
 {'Domestic': 0.6577769784877485, 'Foreign': 1.409509782735444}</code></pre>
 </div>
 </div>
-<div id="23afc597" class="cell" data-execution_count="12">
+<div id="ad0df356" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"These are the group standard deviation for mpg:"</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>pprint(two_samples_unpaired.stddev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -645,7 +645,7 @@ Domestic       52      19.826923    0.657777   4.743297 18.506381 21.147465
 {'Domestic': 4.743297247514701, 'Foreign': 6.611186898567625}</code></pre>
 </div>
 </div>
-<div id="792657cf" class="cell" data-execution_count="13">
+<div id="ce6bf8ad" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"These are the computed statistics:"</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pprint(two_samples_unpaired.stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -667,7 +667,7 @@ Domestic       52      19.826923    0.657777   4.743297 18.506381 21.147465
 <section id="comparison-of-two-paired-means" class="level1">
 <h1>Comparison of two paired means</h1>
 <p>When two measures are taken from the same observations, the paired t-test is appropriate for comparing the means.</p>
-<div id="89624317" class="cell" data-execution_count="14">
+<div id="888d9855" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>two_samples_paired <span class="op">=</span> Ttest(samp_type<span class="op">=</span><span class="st">"two-sample"</span>, paired<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>two_samples_paired.compare(y<span class="op">=</span>auto[[<span class="st">"y1"</span>, <span class="st">"y2"</span>]], group<span class="op">=</span>foreign)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -689,7 +689,7 @@ Design-based Two-Sample T-test
 </div>
 </div>
 <p><code>varnames</code> can be used rename the variables</p>
-<div id="f6f2d9ca" class="cell" data-execution_count="15">
+<div id="80abe4cf" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="op">=</span> auto[<span class="st">"y1"</span>]</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>y2 <span class="op">=</span> auto[<span class="st">"y2"</span>]</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
