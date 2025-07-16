@@ -446,13 +446,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="milk-expenditure-data">Milk Expenditure data</h2>
 <p>To illustrate the EblupAreaModel class, we will use the Milk Expenditure dataset used in Rao and Molina (2015). As mentioned in the book, this dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006). For the R users, this dataset is also used by the R package sae (https://cran.r-project.org/web/packages/sae/index.html).</p>
 <p>The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. The datasets has the following values: major area representing (major_area), small area (small_area), sample size (samp_size), direct survey estimates of average expenditure (direct_est), standard error of the direct estimate (std_error), and coefficient of variation of the direct estimates (coef_variance).</p>
-<div id="2db852f2" class="cell" data-execution_count="1">
+<div id="e173e4b7" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_expenditure_milk</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sae <span class="im">import</span> EblupAreaModel</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.utils.types <span class="im">import</span> FitMethod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="b05ce8a2" class="cell" data-execution_count="2">
+<div id="c52a4cf5" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Expenditure on Milk sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>milk_exp_dict <span class="op">=</span> load_expenditure_milk()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>milk_exp <span class="op">=</span> milk_exp_dict[<span class="st">"data"</span>]</span>
@@ -627,7 +627,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="eblup-predictor">EBLUP Predictor</h2>
 <p>As shown in the milk expenditure datasets, some of the coefficients of variation are not small which indicates unstability of the direct survey estimates. Hence, we can try to reduce the variability of the estimates by smoothing them through modeling. For illustration purpose, we will model the average expenditure on milk using the major areas as auxiliary variables.</p>
 <p>First, we use the method <code>fit()</code> to estimate the model parameters. The pandas’s method <code>get_dummies()</code> create a matrix with dummy values (0 and 1) from the categorical variable <em>major_area</em>.</p>
-<div id="b5dbc113" class="cell" data-execution_count="3">
+<div id="5512313d" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>area <span class="op">=</span> milk_exp[<span class="st">"small_area"</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>yhat <span class="op">=</span> milk_exp[<span class="st">"direct_est"</span>]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -641,7 +641,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    yhat<span class="op">=</span>yhat, X<span class="op">=</span>X, area<span class="op">=</span>area, error_std<span class="op">=</span>sigma_e, intercept<span class="op">=</span><span class="va">True</span>, tol<span class="op">=</span><span class="fl">1e-8</span>,</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="136201e0" class="cell" data-execution_count="4">
+<div id="950f7914" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The estimated fixed effects are:"</span>) </span>
@@ -651,7 +651,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 </div>
 </div>
-<div id="66b5f73a" class="cell" data-execution_count="5">
+<div id="b1c92688" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The estimated standard error of the area random effects is:"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.re_std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -659,7 +659,7 @@ array([ 0.96818899,  0.13278031,  0.22694622, -0.24130104])</code></pre>
 np.float64(0.1361996136767915)</code></pre>
 </div>
 </div>
-<div id="1dd09135" class="cell" data-execution_count="6">
+<div id="41b79c37" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The convergence statistics are:"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.convergence)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -669,7 +669,7 @@ np.float64(0.1361996136767915)</code></pre>
  'precision': np.float64(1.979926775564084e-09)}</code></pre>
 </div>
 </div>
-<div id="e0dddf56" class="cell" data-execution_count="7">
+<div id="99084654" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The goodness of fit statistics are:"</span>) </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pprint(fh_model_reml.goodness)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -679,7 +679,7 @@ np.float64(0.1361996136767915)</code></pre>
  'loglike': -9.403474408989055}</code></pre>
 </div>
 </div>
-<div id="1cbb196e" class="cell" data-execution_count="8">
+<div id="11f0eaad" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fh_model_reml.predict(</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    X<span class="op">=</span>X, area<span class="op">=</span>area, intercept<span class="op">=</span><span class="va">True</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -732,7 +732,7 @@ np.float64(0.1361996136767915)</code></pre>
 </div>
 </div>
 <p>We can use the utility method <code>to_dataframe()</code> to output the estimates as a pandas dataframe. The function provides the area, the estimate and its MSE estimates. We can use <em>col_names</em> to customize the name of the columns. For example, using <code>col_names = ["small_area", "eblup_estimate", "eblup_mse"]</code>. Otherwise, if col_names is not provided, “_area”, “_estimates” and “_mse” are used as defaults.</p>
-<div id="c4d00dc4" class="cell" data-execution_count="9">
+<div id="9f6f5dce" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>milk_est_reml <span class="op">=</span> fh_model_reml.to_dataframe(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    col_names <span class="op">=</span> [<span class="st">"parameter"</span>, <span class="st">"small_area"</span>, <span class="st">"eblup_estimate"</span>, <span class="st">"eblup_mse"</span>]</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    )</span>
@@ -787,7 +787,7 @@ np.float64(0.1361996136767915)</code></pre>
 </div>
 </div>
 <p>We could also fit the model parameters using the maximum likelihood (ML) method which will impact the MSE estimation as well. To estimate the area means using the ML methdo, we only need to set <em>method=“ML”</em> then run the prediction as follows.</p>
-<div id="84855ef2" class="cell" data-execution_count="10">
+<div id="6925bda7" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">## ML method</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fh_model_ml <span class="op">=</span> EblupAreaModel(method<span class="op">=</span>FitMethod.ml)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>fh_model_ml.fit(</span>
@@ -854,7 +854,7 @@ np.float64(0.1361996136767915)</code></pre>
 </div>
 </div>
 <p>Similar, we can use the Fay-Herriot method as follows</p>
-<div id="55a25472" class="cell" data-execution_count="11">
+<div id="6594931d" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">## FH method</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fh_model_fh <span class="op">=</span> EblupAreaModel(method<span class="op">=</span>FitMethod.fh)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>fh_model_fh.fit(</span>

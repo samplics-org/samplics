@@ -475,7 +475,7 @@ window.Quarto = {
 </ul>
 <p>This example is not meant to be exhaustif. There are many use cases that are not covered in this tutorial. For example, some PSUs may be segmented due to their size and segments selected in a subsequent step. Segment selection can be done with Samplics in a similar way as the PSUs selection, with PPS or SRS, after the segements have been created by the user.</p>
 <p>First, let us import the python packages necessary to run the tutorial.</p>
-<div id="c521a59c" class="cell" data-execution_count="1">
+<div id="eff5179a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_psu_frame</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -486,7 +486,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="sample-dataset">Sample Dataset</h2>
 <p>The file <em>sample_frame.csv</em> - shown below - contains synthetic data of 100 clusters classified by region (East, North, South and West). Clusters represent a group of households. In the file, each cluster has an associated number of households (number_households) and a status variable indicating whether the cluster is in scope or not.</p>
 <p>This synthetic data represents a simplified version of enumeration areas (EAs) frames found in many countries and used by major household survey programs such as the Demographic and Health Surveys (DHS), the Population-based HIV Impact Assessment (PHIA) surveys and the Multiple Cluster Indicator Surveys (MICS).</p>
-<div id="23177550" class="cell" data-execution_count="2">
+<div id="ca64d1e2" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>psu_frame_dict <span class="op">=</span> load_psu_frame()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="op">=</span> psu_frame_dict[<span class="st">"data"</span>]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>psu_frame.head(<span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -736,7 +736,7 @@ Important
 <section id="psu-sample-size" class="level2">
 <h2 class="anchored" data-anchor-id="psu-sample-size">PSU Sample size</h2>
 <p>For a stratified sampling design, the sample size is provided using a Python dictionary. Python dictionaries allow us to pair the strata with the sample sizes. Let’s say that we want to select 3 clusters from stratum <em>East</em>, 2 from <em>West</em>, 2 from <em>North</em> and 3 from <em>South</em>. The snippet of code below demonstrates how to create the Python dictionary. Note that it is important to correctly spell out the keys of the dictionary which corresponds to the values of the variable stratum (in our case it’s <em>region</em>).</p>
-<div id="1b60ea9c" class="cell" data-execution_count="3">
+<div id="b4c25709" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>psu_sample_size <span class="op">=</span> {<span class="st">"East"</span>:<span class="dv">3</span>, <span class="st">"West"</span>: <span class="dv">2</span>, <span class="st">"North"</span>: <span class="dv">2</span>, <span class="st">"South"</span>: <span class="dv">3</span>}</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The sample size per domain is:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>psu_sample_size<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -749,7 +749,7 @@ The sample size per domain is:
 </div>
 <p>The function <em>array_to_dict()</em> converts an array to a dictionnary by pairing the values of the array to their frequency. We can use this function to calculates the number of clusters per stratum and store the result in a Python dictionnary. Then, we modify the values of the dictionnary to create the sample size dictionnary.</p>
 <p>If some of the clusters are certainties then an exception will be raised. Hence, the user will have to manually handle the certaininties. Better handling of certainties is planned for future versions of the library <em>samplics</em>.</p>
-<div id="f0baa696" class="cell" data-execution_count="4">
+<div id="aafe1b3c" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics <span class="im">import</span> array_to_dict</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>frame_size <span class="op">=</span> array_to_dict(psu_frame[<span class="st">"region"</span>])</span>
@@ -760,7 +760,7 @@ The number of clusters per stratum is:
  {'East': np.int64(25), 'North': np.int64(10), 'South': np.int64(20), 'West': np.int64(45)}</code></pre>
 </div>
 </div>
-<div id="151b1f11" class="cell" data-execution_count="5">
+<div id="de76f0e0" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>psu_sample_size <span class="op">=</span> frame_size.copy()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>psu_sample_size[<span class="st">"East"</span>] <span class="op">=</span> <span class="dv">3</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>psu_sample_size[<span class="st">"North"</span>] <span class="op">=</span> <span class="dv">2</span></span>
@@ -774,7 +774,7 @@ The sample size per stratum is:
 </code></pre>
 </div>
 </div>
-<div id="695910c3" class="cell" data-execution_count="6">
+<div id="e69cfc20" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stage1_design <span class="op">=</span> SampleSelection(method<span class="op">=</span>SelectMethod.pps_sys, strat<span class="op">=</span><span class="va">True</span>, wr<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>psu_frame[<span class="st">"psu_prob"</span>] <span class="op">=</span> stage1_design.inclusion_probs(</span>
@@ -970,7 +970,7 @@ Note
 <p><em>np.random.seed()</em> fixes the random seed to allow us to reproduce the random selection.</p>
 </div>
 </div>
-<div id="be0eed06" class="cell" data-execution_count="7">
+<div id="8f4f6718" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>psu_frame[<span class="st">"psu_sample"</span>], psu_frame[<span class="st">"psu_hits"</span>], psu_frame[<span class="st">"psu_probs"</span>] <span class="op">=</span> <span class="op">\</span></span>
@@ -1153,7 +1153,7 @@ First 15 obs of the PSU frame with the sampling information
 </div>
 </div>
 <p>The default setting <code>sample_only=False</code> returns the entire frame. We can easily reduce the output data to the sample by filtering i.e.&nbsp;<code>psu_sample == 1</code>. However, if we are only interested in the sample, we could use <code>sample_only=True</code> when calling <em>select()</em>. This will reduce the output data to the sampled units and <code>to_dataframe=true</code> will convert the data to a pandas dataframe (pd.DataFrame). Note that the columns in the dataframe will be reduced to the minimum.</p>
-<div id="7151de40" class="cell" data-execution_count="8">
+<div id="de8f0b0f" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> stage1_design.select(</span>
@@ -1286,7 +1286,7 @@ PSU sample without the non-sampled units
 </div>
 </div>
 <p>The systematic selection method can be implemented with or without replacement. The other <em>samplics</em> algorithms for selecting sample with unequal probablities of selection are Brewer, Hanurav-Vijayan (hv), Murphy, and Rao-Sampford (rs) methods. As shown below, all these sampling techniques can be specified when extentiating a <em>Sample</em> class; then call <em>select()</em> to draw samples.</p>
-<div id="fe7dc9f3" class="cell" data-execution_count="9">
+<div id="04e64ce6" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_sys, wr<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_sys, wr<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_brewer, wr<span class="op">=</span><span class="va">False</span>)</span>
@@ -1295,7 +1295,7 @@ PSU sample without the non-sampled units
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_rs, wr<span class="op">=</span><span class="va">False</span>) <span class="co"># Rao-Sampford method</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For example, if we wanted to select the sample using the Rao-Sampford method, we could use the following snippet of code.</p>
-<div id="8c836c9c" class="cell" data-execution_count="10">
+<div id="c9632ac1" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>stage1_sampford <span class="op">=</span> SampleSelection(</span>
