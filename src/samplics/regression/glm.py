@@ -223,6 +223,9 @@ class SurveyGLM:
                         skipped_strata = _skip_singleton(
                             single_psu_strata=self.single_psu_strata, skipped_strata=numpy_array(s)
                         )
+                        df = df.filter(~pl.col("_stratum").is_in(skipped_strata))
+                        _stratum = df["_stratum"].to_numpy()
+                        _psu = df["_psu"].to_numpy()
                     if single_psu[s] == SinglePSUEst.certainty:
                         _psu = _certainty_singleton(
                             singletons=numpy_array(s),
@@ -230,13 +233,18 @@ class SurveyGLM:
                             _psu=_psu,
                             _ssu=_ssu,
                         )
-                        breakpoint()
+                        df = df.with_columns(pl.Series("_psu", np.asarray(_psu)))
+                        _stratum = df["_stratum"].to_numpy()
+                        _psu = df["_psu"].to_numpy()
                     if single_psu[s] == SinglePSUEst.combine:
                         _stratum = _combine_strata(strata_comb, _stratum)
-                df = df.with_columns(
-                    pl.Series("_stratum", np.asarray(_stratum)),
-                    pl.Series("_psu", np.asarray(_psu)),
-                )
+                        df = df.with_columns(pl.Series("_stratum", np.asarray(_stratum)))
+                        _stratum = df["_stratum"].to_numpy()
+                        _psu = df["_psu"].to_numpy()
+                # df = df.with_columns(
+                #     pl.Series("_stratum", np.asarray(_stratum)),
+                #     pl.Series("_psu", np.asarray(_psu)),
+                # )
             skipped_strata = get_single_psu_strata(_stratum, _psu)
             df = df.filter(~pl.col("_stratum").is_in(skipped_strata))
             if skipped_strata is not None and single_psu in [
