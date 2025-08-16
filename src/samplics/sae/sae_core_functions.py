@@ -160,8 +160,7 @@ def inverse_covariance(
         gamma_d = sigma2u / (sigma2u + sigma2e / sum_scale_d)
         V_inv[start:end, start:end] = (1 / sigma2e) * (
             np.diag(a_d)
-            - (gamma_d / sum_scale_d)
-            * np.matmul(a_d[:, None], np.transpose(a_d[:, None]))
+            - (gamma_d / sum_scale_d) * np.matmul(a_d[:, None], np.transpose(a_d[:, None]))
         )
 
     return V_inv
@@ -187,11 +186,7 @@ def log_det_covariance(
     det = 0
     for d in np.unique(area):
         nd = np.sum(area == d)
-        det += (
-            np.sum(np.log(scale))
-            + nd * np.log(sigma2e)
-            + np.log(1 + nd * sigma2u / sigma2e)
-        )
+        det += np.sum(np.log(scale)) + nd * np.log(sigma2e) + np.log(1 + nd * sigma2u / sigma2e)
 
     return det
 

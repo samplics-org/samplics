@@ -1,11 +1,10 @@
 import numpy as np
 
+
 population_size = 35000000
 
 admin1_nb = 10
-admin1_share = np.array(
-    [0.005, 0.020, 0.045, 0.075, 0.095, 0.105, 0.125, 0.130, 0.150, 0.250]
-)
+admin1_share = np.array([0.005, 0.020, 0.045, 0.075, 0.095, 0.105, 0.125, 0.130, 0.150, 0.250])
 admin1_size = admin1_share * population_size
 
 if sum(admin1_share) != 1.000:

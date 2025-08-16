@@ -3,6 +3,7 @@ import pandas as pd
 
 from samplics.sae.eb_unit_model import EbUnitModel
 
+
 incomesample = pd.read_csv("./tests/sae/incomedata.csv")
 
 areas = incomesample["prov"]
@@ -38,9 +39,7 @@ eb_bhf_reml.fit(ys, Xs, areas, intercept=True)
 
 eb_bhf_reml.predict(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
-eb_bhf_reml.bootstrap_mse(
-    Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484
-)
+eb_bhf_reml.bootstrap_mse(Xr, arear, pov_gap, 10, show_progress=False, pov_line=6477.484)
 
 
 def test_eb_bhf_reml():

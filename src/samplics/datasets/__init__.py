@@ -13,6 +13,7 @@ from samplics.datasets.datasets import (
     load_ssu_sample,
 )
 
+
 __all__ = [
     "load_auto",
     "load_birth",

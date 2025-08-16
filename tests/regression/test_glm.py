@@ -4,6 +4,7 @@ import polars as pl
 from samplics import ModelType
 from samplics.regression import SurveyGLM
 
+
 data_str = """
 P  F  68   1  No   B  M  74  16  No  P  F  67  30  No
 P  M  66  26  Yes  B  F  67  28  No  B  F  77  16  No
@@ -48,10 +49,7 @@ neuralgia = (
     )
     .rename(mapping=str.lower)
     .with_columns(
-        pl.when(pl.col("pain") == "Yes")
-        .then(pl.lit(0.0))
-        .otherwise(pl.lit(1.0))
-        .alias("y")
+        pl.when(pl.col("pain") == "Yes").then(pl.lit(0.0)).otherwise(pl.lit(1.0)).alias("y")
     )
 )
 
@@ -88,9 +86,7 @@ def test_reg_logistic_categorical_factors():
 api_strat = pl.read_csv("./tests/regression/api_strat.csv")
 
 y = api_strat["api00"]
-y_bin = (api_strat["api00"].to_numpy() > 743).astype(
-    float
-)  # api_strat["api00"].quantile(0.75)
+y_bin = (api_strat["api00"].to_numpy() > 743).astype(float)  # api_strat["api00"].quantile(0.75)
 x = api_strat.select(["ell", "meals", "mobility"])
 x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
 stratum = api_strat["stype"]
@@ -319,13 +315,16 @@ def test_reg_linear_not_stratified():
 
 ## Deterministic and user designated reference
 
+
 def test_logistic_deterministic_reference():
     """Test that dummy creation is deterministic when no reference is specified."""
-    df = pl.DataFrame({
-        "cat": ["B", "A", "C", "B", "C", "A"],
-        "y": [1, 0, 1, 0, 1, 0],
-        "x": [10, 20, 30, 40, 50, 60]
-    })
+    df = pl.DataFrame(
+        {
+            "cat": ["B", "A", "C", "B", "C", "A"],
+            "y": [1, 0, 1, 0, 1, 0],
+            "x": [10, 20, 30, 40, 50, 60],
+        }
+    )
 
     x = df.select("x")
     x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
@@ -333,31 +332,19 @@ def test_logistic_deterministic_reference():
 
     svyglm_1 = SurveyGLM(model=ModelType.LOGISTIC)
     svyglm_1.estimate(
-        y=df["y"].to_numpy(),
-        x=x.to_numpy(),
-        x_labels=x.columns,
-        x_cat=x_cat,
-        x_cat_labels=["cat"]
+        y=df["y"].to_numpy(), x=x.to_numpy(), x_labels=x.columns, x_cat=x_cat, x_cat_labels=["cat"]
     )
     labels_1 = svyglm_1.x_labels.copy()
 
     svyglm_2 = SurveyGLM(model=ModelType.LOGISTIC)
     svyglm_2.estimate(
-        y=df["y"].to_numpy(),
-        x=x.to_numpy(),
-        x_labels=x.columns,
-        x_cat=x_cat,
-        x_cat_labels=["cat"]
+        y=df["y"].to_numpy(), x=x.to_numpy(), x_labels=x.columns, x_cat=x_cat, x_cat_labels=["cat"]
     )
     labels_2 = svyglm_2.x_labels.copy()
 
     svyglm_3 = SurveyGLM(model=ModelType.LOGISTIC)
     svyglm_3.estimate(
-        y=df["y"].to_numpy(),
-        x=x.to_numpy(),
-        x_labels=x.columns,
-        x_cat=x_cat,
-        x_cat_labels=["cat"]
+        y=df["y"].to_numpy(), x=x.to_numpy(), x_labels=x.columns, x_cat=x_cat, x_cat_labels=["cat"]
     )
     labels_3 = svyglm_3.x_labels.copy()
 
@@ -367,11 +354,13 @@ def test_logistic_deterministic_reference():
 
 def test_logistic_user_specified_reference():
     """Test that specifying reference category produces correct dummies."""
-    df = pl.DataFrame({
-        "cat": ["B", "A", "C", "B", "C", "A"],
-        "y": [1, 0, 1, 0, 1, 0],
-        "x": [10, 20, 30, 40, 50, 60]
-    })
+    df = pl.DataFrame(
+        {
+            "cat": ["B", "A", "C", "B", "C", "A"],
+            "y": [1, 0, 1, 0, 1, 0],
+            "x": [10, 20, 30, 40, 50, 60],
+        }
+    )
 
     x = df.select("x")
     x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))
@@ -403,14 +392,17 @@ def test_logistic_user_specified_reference():
     assert any("cat_A" in s for s in svyglm_alt.x_labels)
     assert any("cat_B" in s for s in svyglm_alt.x_labels)
 
+
 def test_logistic_two_categorical_predictors():
     """Test dummy encoding for two categorical variables with and without reference."""
-    df = pl.DataFrame({
-        "cat1": ["B", "A", "C", "B", "C", "A"],
-        "cat2": ["X", "Y", "Z", "X", "Z", "Y"],
-        "y": [1, 0, 1, 0, 1, 0],
-        "x": [10, 20, 30, 40, 50, 60]
-    })
+    df = pl.DataFrame(
+        {
+            "cat1": ["B", "A", "C", "B", "C", "A"],
+            "cat2": ["X", "Y", "Z", "X", "Z", "Y"],
+            "y": [1, 0, 1, 0, 1, 0],
+            "x": [10, 20, 30, 40, 50, 60],
+        }
+    )
 
     x = df.select("x")
     x.insert_column(0, pl.Series("intercept", np.ones(x.shape[0])))

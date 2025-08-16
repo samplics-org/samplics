@@ -1,5 +1,6 @@
 from samplics.utils.types import DirectEst, FitMethod
 
+
 # FitMethod
 
 
@@ -129,15 +130,9 @@ class TestDirectEst1:
 
         est_pl = est.to_polars()
         assert (est.domains == est_pl.select("__domain").to_numpy().flatten()).all()
-        assert est.est == dict(
-            zip(est.domains, est_pl.select("est").to_numpy().flatten())
-        )
-        assert est.stderr == dict(
-            zip(est.domains, est_pl.select("stderr").to_numpy().flatten())
-        )
-        assert est.ssize == dict(
-            zip(est.domains, est_pl.select("ssize").to_numpy().flatten())
-        )
+        assert est.est == dict(zip(est.domains, est_pl.select("est").to_numpy().flatten()))
+        assert est.stderr == dict(zip(est.domains, est_pl.select("stderr").to_numpy().flatten()))
+        assert est.ssize == dict(zip(est.domains, est_pl.select("ssize").to_numpy().flatten()))
 
     def test_directest_pandas(self):
         est = DirectEst(

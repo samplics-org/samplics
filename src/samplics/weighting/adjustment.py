@@ -124,10 +124,7 @@ class SampleWeight:
         resp_status = formats.numpy_array(resp_status)
         checks.assert_response_status(resp_status, resp_dict)
 
-        if (
-            not np.isin(resp_status, ("in", "rr", "nr", "uk")).any()
-            and resp_dict is not None
-        ):
+        if not np.isin(resp_status, ("in", "rr", "nr", "uk")).any() and resp_dict is not None:
             if "rr" not in resp_dict:
                 raise ValueError("The response dictionary must contain the key 'rr'!")
 
@@ -161,17 +158,15 @@ class SampleWeight:
         uk_weights_sum = float(np.sum(samp_weight[uk_sample]))
 
         if unknown_to_inelig:
-            adj_uk = (
-                in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum
-            ) / (in_weights_sum + rr_weights_sum + nr_weights_sum)
+            adj_uk = (in_weights_sum + rr_weights_sum + nr_weights_sum + uk_weights_sum) / (
+                in_weights_sum + rr_weights_sum + nr_weights_sum
+            )
             adj_rr = (rr_weights_sum + nr_weights_sum) / rr_weights_sum
         else:
             adj_uk = 1
             adj_rr = (rr_weights_sum + nr_weights_sum + uk_weights_sum) / rr_weights_sum
 
-        adj_factor = np.zeros(
-            samp_weight.size
-        )  # unknown and nonresponse will get 0 by default
+        adj_factor = np.zeros(samp_weight.size)  # unknown and nonresponse will get 0 by default
         adj_factor[rr_sample] = adj_rr * adj_uk
         adj_factor[in_sample] = adj_uk
 
@@ -224,9 +219,7 @@ class SampleWeight:
                 adj_class = pd.DataFrame(np.column_stack(adj_class))
             elif isinstance(adj_class, np.ndarray):
                 adj_class = pd.DataFrame(adj_class)
-            elif not isinstance(
-                adj_class, (pd.Series, pd.DataFrame, pl.Series, pl.DataFrame)
-            ):
+            elif not isinstance(adj_class, (pd.Series, pd.DataFrame, pl.Series, pl.DataFrame)):
                 raise AssertionError(
                     "adj_class must be an numpy ndarray, a list of numpy ndarray or a pandas dataframe."
                 )
@@ -317,13 +310,9 @@ class SampleWeight:
         else:
             if control is None:
                 self.control = np.sum(samp_weight.size)
-                norm_weight, self.adj_factor = self._norm_adjustment(
-                    samp_weight, self.control
-                )
+                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, self.control)
             elif isinstance(control, (int, float)):
-                norm_weight, self.adj_factor = self._norm_adjustment(
-                    samp_weight, control
-                )
+                norm_weight, self.adj_factor = self._norm_adjustment(samp_weight, control)
                 self.control = control
 
         self.adj_method = "normalization"
@@ -463,13 +452,10 @@ class SampleWeight:
                         / sum_prev_wgt[margin][d]
                     )
                     diff_ctrl_margin[d] = (
-                        np.abs(sum_wgt[margin][d] - control[margin][d])
-                        / control[margin][d]
+                        np.abs(sum_wgt[margin][d] - control[margin][d]) / control[margin][d]
                     )
                     if display_iter:
-                        print(
-                            f"    Difference against previous value for '{d}': {diff_margin[d]}"
-                        )
+                        print(f"    Difference against previous value for '{d}': {diff_margin[d]}")
                         print(
                             f"    Difference against control value for '{d}': {diff_ctrl_margin[d]}"
                         )
@@ -611,9 +597,7 @@ class SampleWeight:
         if x.shape == (x.size,):
             adj_factor = _core_vector(x, core_factor)
         else:
-            adj_factor = np.apply_along_axis(
-                _core_vector, axis=1, arr=x, core_factor=core_factor
-            )
+            adj_factor = np.apply_along_axis(_core_vector, axis=1, arr=x, core_factor=core_factor)
 
         return adj_factor
 
@@ -721,9 +705,7 @@ class SampleWeight:
                         x_control=np.array(control_d_values),
                         scale=scale_d,
                     )
-                    adj_factor[domain == d] = (
-                        1 + self._calib_wgt(x_d, core_factor_d) / scale_d
-                    )
+                    adj_factor[domain == d] = 1 + self._calib_wgt(x_d, core_factor_d) / scale_d
 
         if additive:
             calib_weight = np.transpose(np.transpose(adj_factor) * samp_weight)

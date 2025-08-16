@@ -15,13 +15,21 @@ and Wolter, K.M. (2007) [#w2007]_.
 from __future__ import annotations
 
 import math
+
 from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
+
 from scipy.stats import t as student
 
 from samplics.utils.basic_functions import get_single_psu_strata
+from samplics.utils.checks import (
+    _certainty_singleton,
+    _combine_strata,
+    _raise_singleton_error,
+    _skip_singleton,
+)
 from samplics.utils.formats import (
     dict_to_dataframe,
     fpc_as_dict,
@@ -42,9 +50,7 @@ from samplics.utils.types import (
 class _SurveyEstimator:
     """General approach for sample estimation of linear parameters."""
 
-    def __init__(
-        self, param: PopParam, alpha: float = 0.05, rand_seed: Optional[int] = None
-    ):
+    def __init__(self, param: PopParam, alpha: float = 0.05, rand_seed: Optional[int] = None):
         """Initializes the instance"""
 
         self.rand_seed: Optional[int]
@@ -59,9 +65,7 @@ class _SurveyEstimator:
 
         self.alpha = alpha
 
-        self.point_est: Any = (
-            {}
-        )  # Union[dict[StringNumber, DictStrNum], DictStrNum, Number]
+        self.point_est: Any = {}  # Union[dict[StringNumber, DictStrNum], DictStrNum, Number]
         self.variance: Any = {}
         self.covariance: Any = {}
         self.stderror: Any = {}
@@ -107,9 +111,7 @@ class _SurveyEstimator:
             and isinstance(self.upper_ci, dict)
             and isinstance(self.coef_var, dict)
         ):
-            if self.domains is not None and (
-                self.param == PopParam.prop or self.as_factor
-            ):
+            if self.domains is not None and (self.param == PopParam.prop or self.as_factor):
                 domains = list()
                 levels = list()
                 point_est = list()
@@ -185,9 +187,7 @@ class _SurveyEstimator:
 
         self.degree_of_freedom = self.nb_psus - self.nb_strata
 
-    def _get_point_d(
-        self, y: np.ndarray, samp_weight: np.ndarray, x: np.ndarray
-    ) -> float:
+    def _get_point_d(self, y: np.ndarray, samp_weight: np.ndarray, x: np.ndarray) -> float:
         if self.param in (PopParam.prop, PopParam.mean):
             return float(np.sum(samp_weight * y) / np.sum(samp_weight))
         elif self.param == PopParam.total:
@@ -247,11 +247,7 @@ class _SurveyEstimator:
                 for k in range(categories.size):
                     y_k = y_dummies[:, k]
                     cat_dict_k = dict(
-                        {
-                            categories[k]: self._get_point_d(
-                                y=y_k, samp_weight=samp_weight, x=x
-                            )
-                        }
+                        {categories[k]: self._get_point_d(y=y_k, samp_weight=samp_weight, x=x)}
                     )
                     cat_dict.update(cat_dict_k)
                 return cat_dict
@@ -268,11 +264,7 @@ class _SurveyEstimator:
                     for k in range(categories.size):
                         y_d_k = y_dummies[mask, k]
                         cat_dict_d_k = dict(
-                            {
-                                categories[k]: self._get_point_d(
-                                    y=y_d_k, samp_weight=weight_d, x=x
-                                )
-                            }
+                            {categories[k]: self._get_point_d(y=y_d_k, samp_weight=weight_d, x=x)}
                         )
                         cat_dict_d.update(cat_dict_d_k)
                     estimate1[d] = cat_dict_d
@@ -399,9 +391,7 @@ class TaylorEstimator(_SurveyEstimator):
             weighted_sum_x = np.sum(x * samp_weight)
             weighted_ratio = np.sum(y * samp_weight[:, None], axis=0) / weighted_sum_x
             return np.asarray(
-                samp_weight[:, None]
-                * (y - x[:, None] * weighted_ratio)
-                / weighted_sum_x
+                samp_weight[:, None] * (y - x[:, None] * weighted_ratio) / weighted_sum_x
             )
         elif self.param == PopParam.total:
             ncols = 1 if len(y.shape) == 1 else y.shape[1]
@@ -525,9 +515,7 @@ class TaylorEstimator(_SurveyEstimator):
                 y_score_s = y_score[mask]
                 samp_weight_s = samp_weight[mask]
                 psu_s = psu[mask] if psu.shape not in ((), (0,)) else psu
-                nb_psus_in_s = (
-                    np.size(np.unique(psu_s)) if psu_s.shape not in ((), (0,)) else 0
-                )
+                nb_psus_in_s = np.size(np.unique(psu_s)) if psu_s.shape not in ((), (0,)) else 0
                 ssu[mask] if ssu.shape not in ((), (0,)) else ssu
                 covariance += fpc[s] * self._variance_stratum_between(
                     y_score_s=y_score_s,
@@ -596,9 +584,7 @@ class TaylorEstimator(_SurveyEstimator):
                 fpc=fpc,
                 skipped_strata=skipped_strata,
             )  # new
-            if (self.param == PopParam.prop or as_factor) and isinstance(
-                cov_score, np.ndarray
-            ):
+            if (self.param == PopParam.prop or as_factor) and isinstance(cov_score, np.ndarray):
                 variance1: dict[StringNumber, dict] = {}
                 covariance1: dict[StringNumber, dict] = {}
                 variance1 = dict(zip(categories, np.diag(cov_score)))
@@ -703,11 +689,7 @@ class TaylorEstimator(_SurveyEstimator):
 
         if domain.shape in ((), (0,)):
             if (
-                (
-                    self.param == PopParam.prop
-                    or as_factor
-                    and self.param == PopParam.mean
-                )
+                (self.param == PopParam.prop or as_factor and self.param == PopParam.mean)
                 and isinstance(self.point_est, dict)
                 and isinstance(self.variance, dict)
             ):
@@ -740,9 +722,7 @@ class TaylorEstimator(_SurveyEstimator):
                 self.lower_ci = lower_ci
                 self.upper_ci = upper_ci
             elif (
-                as_factor
-                and isinstance(self.point_est, dict)
-                and isinstance(self.variance, dict)
+                as_factor and isinstance(self.point_est, dict) and isinstance(self.variance, dict)
             ):
                 stderror = {}
                 lower_ci = {}
@@ -750,12 +730,8 @@ class TaylorEstimator(_SurveyEstimator):
                 coef_var = {}
                 for level in self.variance:
                     stderror[level] = math.sqrt(self.variance[level])
-                    lower_ci[level] = (
-                        self.point_est[level] - t_quantile * stderror[level]
-                    )
-                    upper_ci[level] = (
-                        self.point_est[level] + t_quantile * stderror[level]
-                    )
+                    lower_ci[level] = self.point_est[level] - t_quantile * stderror[level]
+                    upper_ci[level] = self.point_est[level] + t_quantile * stderror[level]
                     coef_var[level] = stderror[level] / self.point_est[level]
 
                 self.stderror = stderror
@@ -772,11 +748,7 @@ class TaylorEstimator(_SurveyEstimator):
         elif isinstance(self.variance, dict):
             for key in self.variance:
                 if (
-                    (
-                        self.param == PopParam.prop
-                        or as_factor
-                        and self.param == PopParam.mean
-                    )
+                    (self.param == PopParam.prop or as_factor and self.param == PopParam.mean)
                     and isinstance(self.point_est, dict)
                     and isinstance(self.variance, dict)
                 ):
@@ -798,9 +770,7 @@ class TaylorEstimator(_SurveyEstimator):
                                 upper_ci[level] = 1
                                 coef_var[level] = 0
                             else:
-                                location_ci = math.log(
-                                    point_est1[level] / (1 - point_est1[level])
-                                )
+                                location_ci = math.log(point_est1[level] / (1 - point_est1[level]))
                                 scale_ci = stderror[level] / (
                                     point_est1[level] * (1 - point_est1[level])
                                 )
@@ -825,12 +795,8 @@ class TaylorEstimator(_SurveyEstimator):
                     coef_var = {}
                     for level in self.variance[key]:
                         stderror[level] = math.sqrt(self.variance[key][level])
-                        lower_ci[level] = (
-                            self.point_est[key][level] - t_quantile * stderror[level]
-                        )
-                        upper_ci[level] = (
-                            self.point_est[key][level] + t_quantile * stderror[level]
-                        )
+                        lower_ci[level] = self.point_est[key][level] - t_quantile * stderror[level]
+                        upper_ci[level] = self.point_est[key][level] + t_quantile * stderror[level]
                         coef_var[level] = stderror[level] / self.point_est[key][level]
 
                     self.stderror[key] = stderror
@@ -839,56 +805,50 @@ class TaylorEstimator(_SurveyEstimator):
                     self.upper_ci[key] = upper_ci
                 elif isinstance(self.point_est, dict):
                     self.stderror[key] = math.sqrt(self.variance[key])
-                    self.lower_ci[key] = (
-                        self.point_est[key] - t_quantile * self.stderror[key]
-                    )
-                    self.upper_ci[key] = (
-                        self.point_est[key] + t_quantile * self.stderror[key]
-                    )
-                    self.coef_var[key] = (
-                        math.sqrt(self.variance[key]) / self.point_est[key]
-                    )
+                    self.lower_ci[key] = self.point_est[key] - t_quantile * self.stderror[key]
+                    self.upper_ci[key] = self.point_est[key] + t_quantile * self.stderror[key]
+                    self.coef_var[key] = math.sqrt(self.variance[key]) / self.point_est[key]
 
-    def _raise_singleton_error(self):
-        raise ValueError(
-            f"Only one PSU in the following strata: {self.single_psu_strata}"
-        )
+    # def _raise_singleton_error(self):
+    #     raise ValueError(
+    #         f"Only one PSU in the following strata: {self.single_psu_strata}"
+    #     )
 
-    def _skip_singleton(self, skipped_strata: Array) -> Array:
-        skipped_str = np.isin(self.single_psu_strata, skipped_strata)
-        if skipped_str.sum() > 0:
-            return self.single_psu_strata[skipped_str]
-        else:
-            raise ValueError("{skipped_strata} does not contain singleton PSUs")
+    # def _skip_singleton(self, skipped_strata: Array) -> Array:
+    #     skipped_str = np.isin(self.single_psu_strata, skipped_strata)
+    #     if skipped_str.sum() > 0:
+    #         return self.single_psu_strata[skipped_str]
+    #     else:
+    #         raise ValueError("{skipped_strata} does not contain singleton PSUs")
 
-    @staticmethod
-    def _certainty_singleton(
-        singletons: Array,
-        _stratum: Array,
-        _psu: Array,
-        _ssu: Array,
-    ) -> Array:
-        if _ssu.shape not in ((), (0,)):
-            certainties = np.isin(_stratum, singletons)
-            _psu[certainties] = _ssu[certainties]
-        else:
-            for s in singletons:
-                cert_s = np.isin(_stratum, s)
-                nb_records = _psu[cert_s].shape[0]
-                _psu[cert_s] = np.linspace(1, nb_records, num=nb_records, dtype="int")
+    # @staticmethod
+    # def _certainty_singleton(
+    #     singletons: Array,
+    #     _stratum: Array,
+    #     _psu: Array,
+    #     _ssu: Array,
+    # ) -> Array:
+    #     if _ssu.shape not in ((), (0,)):
+    #         certainties = np.isin(_stratum, singletons)
+    #         _psu[certainties] = _ssu[certainties]
+    #     else:
+    #         for s in singletons:
+    #             cert_s = np.isin(_stratum, s)
+    #             nb_records = _psu[cert_s].shape[0]
+    #             _psu[cert_s] = np.linspace(1, nb_records, num=nb_records, dtype="int")
 
-        return _psu
+    #     return _psu
 
-    @staticmethod
-    def _combine_strata(comb_strata: Array, _stratum: Array) -> Array:
-        if comb_strata is None:
-            raise ValueError(
-                "The parameter 'strata_comb' must be provided to combine strata"
-            )
-        else:
-            for s in comb_strata:
-                _stratum[_stratum == s] = comb_strata[s]
-            return _stratum
+    # @staticmethod
+    # def _combine_strata(comb_strata: Array, _stratum: Array) -> Array:
+    #     if comb_strata is None:
+    #         raise ValueError(
+    #             "The parameter 'strata_comb' must be provided to combine strata"
+    #         )
+    #     else:
+    #         for s in comb_strata:
+    #             _stratum[_stratum == s] = comb_strata[s]
+    #         return _stratum
 
     def estimate(
         self,
@@ -903,18 +863,14 @@ class TaylorEstimator(_SurveyEstimator):
         fpc: Union[dict[StringNumber, Number], Series, Number] = 1.0,
         deff: bool = False,
         coef_var: bool = False,
-        single_psu: Union[
-            SinglePSUEst, dict[StringNumber, SinglePSUEst]
-        ] = SinglePSUEst.error,
+        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
         strata_comb: Optional[dict[Array, Array]] = None,
         as_factor: bool = False,
         q_method=QuantileMethod.LINEAR,
         remove_nan: bool = False,
     ) -> None:
         if as_factor and self.param not in (PopParam.mean, PopParam.total):
-            raise AssertionError(
-                "When as_factor is True, parameter must be mean or total!"
-            )
+            raise AssertionError("When as_factor is True, parameter must be mean or total!")
 
         if self.param == PopParam.ratio and x.shape in ((), (0,)):
             raise AssertionError("x must be provided for ratio estimation.")
@@ -944,27 +900,19 @@ class TaylorEstimator(_SurveyEstimator):
 
             _y = _y[to_keep] if _y.shape not in ((), (0,)) else _y
             _x = _x[to_keep] if _x.shape not in ((), (0,)) else _x
-            _stratum = (
-                _stratum[to_keep] if _stratum.shape not in ((), (0,)) else _stratum
-            )
+            _stratum = _stratum[to_keep] if _stratum.shape not in ((), (0,)) else _stratum
             _psu = _psu[to_keep] if _psu.shape not in ((), (0,)) else _psu
             _ssu = _ssu[to_keep] if _ssu.shape not in ((), (0,)) else _ssu
             _domain = _domain[to_keep] if _domain.shape not in ((), (0,)) else _domain
             _by = _by[to_keep] if _by.shape not in ((), (0,)) else _by
             _samp_weight = (
-                _samp_weight[to_keep]
-                if _samp_weight.shape not in ((), (0,))
-                else _samp_weight
+                _samp_weight[to_keep] if _samp_weight.shape not in ((), (0,)) else _samp_weight
             )
 
         self.by = np.unique(_by).tolist() if _by.shape not in ((), (0,)) else _by
-        self.strata = (
-            np.unique(_stratum) if _stratum.shape not in ((), (0,)) else _stratum
-        )
+        self.strata = np.unique(_stratum) if _stratum.shape not in ((), (0,)) else _stratum
 
-        self.domains = (
-            np.unique(_domain) if _domain.shape not in ((), (0,)) else _domain
-        )
+        self.domains = np.unique(_domain) if _domain.shape not in ((), (0,)) else _domain
 
         if _stratum.shape not in ((), (0,)):
             # TODO: we could improve efficiency by creating the pair [stratum,psu, ssu] ounce and
@@ -974,53 +922,51 @@ class TaylorEstimator(_SurveyEstimator):
         skipped_strata = np.array(None)
         if self.single_psu_strata is not None:
             if single_psu == SinglePSUEst.error:
-                self._raise_singleton_error()
+                _raise_singleton_error(self.single_psu_strata)
             if single_psu == SinglePSUEst.skip:
-                skipped_strata = self._skip_singleton(
-                    skipped_strata=self.single_psu_strata
+                skipped_strata = _skip_singleton(
+                    single_psu_strata=self.single_psu_strata, skipped_strata=self.single_psu_strata
                 )
             if single_psu == SinglePSUEst.certainty:
-                _psu = self._certainty_singleton(
+                _psu = _certainty_singleton(
                     singletons=self.single_psu_strata,
                     _stratum=_stratum,
                     _psu=_psu,
                     _ssu=_ssu,
                 )
             if single_psu == SinglePSUEst.combine:
-                _stratum = self._combine_strata(strata_comb, _stratum)
+                _stratum = _combine_strata(strata_comb, _stratum)
             # TODO: more method for singleton psus to be implemented
             if isinstance(single_psu, dict):
                 for s in single_psu:
                     if single_psu[s] == SinglePSUEst.error:
-                        self._raise_singleton_error()
+                        _raise_singleton_error(self.single_psu_strata)
                     if single_psu[s] == SinglePSUEst.skip:
-                        skipped_strata = self._skip_singleton(
-                            skipped_strata=numpy_array(s)
+                        skipped_strata = _skip_singleton(
+                            single_psu_strata=self.single_psu_strata, skipped_strata=numpy_array(s)
                         )
                     if single_psu[s] == SinglePSUEst.certainty:
-                        _psu = self._certainty_singleton(
+                        _psu = _certainty_singleton(
                             singletons=numpy_array(s),
                             _stratum=_stratum,
                             _psu=_psu,
                             _ssu=_ssu,
                         )
                     if single_psu[s] == SinglePSUEst.combine:
-                        _stratum = self._combine_strata(strata_comb, _stratum)
+                        _stratum = _combine_strata(strata_comb, _stratum)
 
             skipped_strata = get_single_psu_strata(_stratum, _psu)
             if skipped_strata is not None and single_psu in [
                 SinglePSUEst.certainty,
                 SinglePSUEst.combine,
             ]:  # TODO: add the left our singletons when using the dict instead of SinglePSUEst
-                self._raise_singleton_error()
+                _raise_singleton_error(self.single_psu_strata)
 
         if not isinstance(fpc, dict):
             self.fpc = fpc_as_dict(_stratum, fpc)
         else:
             if list(np.unique(_stratum)) != list(fpc.keys()):
-                raise AssertionError(
-                    "fpc dictionary keys must be the same as the strata!"
-                )
+                raise AssertionError("fpc dictionary keys must be the same as the strata!")
             else:
                 self.fpc = fpc
 
@@ -1042,7 +988,6 @@ class TaylorEstimator(_SurveyEstimator):
             _y = _y[np.argsort(_y)]
 
         if _by.shape in ((), (0,)):
-
             self._estimate(
                 y=_y,
                 samp_weight=_samp_weight,
@@ -1064,14 +1009,10 @@ class TaylorEstimator(_SurveyEstimator):
                 _y_b = _y[group_b]
                 _samp_weight_b = _samp_weight[group_b]
                 _x_b = _x[group_b] if _x.shape not in ((), (0,)) else _x
-                _stratum_b = (
-                    _stratum[group_b] if _stratum.shape not in ((), (0,)) else _stratum
-                )
+                _stratum_b = _stratum[group_b] if _stratum.shape not in ((), (0,)) else _stratum
                 _psu_b = _psu[group_b] if _psu.shape not in ((), (0,)) else _psu
                 _ssu_b = _ssu[group_b] if _ssu.shape not in ((), (0,)) else _ssu
-                _domain_b = (
-                    _domain[group_b] if _domain.shape not in ((), (0,)) else _domain
-                )
+                _domain_b = _domain[group_b] if _domain.shape not in ((), (0,)) else _domain
 
                 by_est = TaylorEstimator(
                     param=self.param,

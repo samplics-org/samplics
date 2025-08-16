@@ -5,10 +5,12 @@ This module compiles the core functions for calculating power and sample size
 from __future__ import annotations
 
 import math
+
 from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
+
 from scipy.stats import norm as normal
 
 from samplics.utils.formats import numpy_array
@@ -307,9 +309,7 @@ def _calculate_ss_wald_mean_one_sample(
         z_beta = normal().ppf(power)
 
     return math.ceil(
-        (1 / resp_rate)
-        * deff_c
-        * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
+        (1 / resp_rate) * deff_c * ((z_alpha + z_beta) * sigma / (delta - abs(epsilon))) ** 2
     )
 
 

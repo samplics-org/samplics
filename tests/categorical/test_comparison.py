@@ -4,6 +4,7 @@ import pytest
 
 from samplics.categorical.comparison import Ttest
 
+
 auto = pd.read_csv("./tests/categorical/auto2.csv")
 
 y = auto["mpg"]
@@ -16,17 +17,13 @@ y2 = auto["y2"]
 one_sample_known_mean = Ttest(samp_type="one-sample")
 
 
-@pytest.mark.xfail(
-    strict=True, reason="Parameters 'known_mean' or 'group' must be provided!"
-)
+@pytest.mark.xfail(strict=True, reason="Parameters 'known_mean' or 'group' must be provided!")
 def test_one_sample_wrong_specifications1():
     one_sample_wrong = Ttest()
     one_sample_wrong.compare(y)
 
 
-@pytest.mark.xfail(
-    strict=True, reason="Parameters 'known_mean' or 'group' must be provided!"
-)
+@pytest.mark.xfail(strict=True, reason="Parameters 'known_mean' or 'group' must be provided!")
 def test_one_sample_wrong_specifications2():
     one_sample_wrong = Ttest("one-sample")
     one_sample_wrong.compare(y)
@@ -117,29 +114,17 @@ def test_one_sample_two_groups_number_obs():
 def test_one_sample_two_groups_t_eq_variance():
     assert np.isclose(one_sample_stats["t_eq_variance"], -3.66326, 1e-4)
     assert np.isclose(one_sample_stats["df_eq_variance"], 72, 1e-4)
-    assert np.isclose(
-        one_sample_stats["p_value_eq_variance"]["less_than"], 0.0002362, 1e-4
-    )
-    assert np.isclose(
-        one_sample_stats["p_value_eq_variance"]["greater_than"], 0.9997638, 1e-4
-    )
-    assert np.isclose(
-        one_sample_stats["p_value_eq_variance"]["not_equal"], 0.0004725, 1e-4
-    )
+    assert np.isclose(one_sample_stats["p_value_eq_variance"]["less_than"], 0.0002362, 1e-4)
+    assert np.isclose(one_sample_stats["p_value_eq_variance"]["greater_than"], 0.9997638, 1e-4)
+    assert np.isclose(one_sample_stats["p_value_eq_variance"]["not_equal"], 0.0004725, 1e-4)
 
 
 def test_one_sample_two_groups_t_uneq_variance():
     assert np.isclose(one_sample_stats["t_uneq_variance"], -3.22454, 1e-4)
     assert np.isclose(one_sample_stats["df_uneq_variance"], 30.81429, 1e-4)
-    assert np.isclose(
-        one_sample_stats["p_value_uneq_variance"]["less_than"], 0.0014909, 1e-4
-    )
-    assert np.isclose(
-        one_sample_stats["p_value_uneq_variance"]["greater_than"], 0.9985091, 1e-4
-    )
-    assert np.isclose(
-        one_sample_stats["p_value_uneq_variance"]["not_equal"], 0.0029818, 1e-4
-    )
+    assert np.isclose(one_sample_stats["p_value_uneq_variance"]["less_than"], 0.0014909, 1e-4)
+    assert np.isclose(one_sample_stats["p_value_uneq_variance"]["greater_than"], 0.9985091, 1e-4)
+    assert np.isclose(one_sample_stats["p_value_uneq_variance"]["not_equal"], 0.0029818, 1e-4)
 
 
 ## Two-sample comparisons - UNPAIRED
@@ -184,29 +169,17 @@ def test_two_samples_unpaired_number_obs():
 def test_two_samples_unpaired_t_eq_variance():
     assert np.isclose(two_samples_stats["t_eq_variance"], -3.630848, 1e-4)
     assert np.isclose(two_samples_stats["df_eq_variance"], 72, 1e-4)
-    assert np.isclose(
-        two_samples_stats["p_value_eq_variance"]["less_than"], 0.0002627, 1e-4
-    )
-    assert np.isclose(
-        two_samples_stats["p_value_eq_variance"]["greater_than"], 0.9997372, 1e-4
-    )
-    assert np.isclose(
-        two_samples_stats["p_value_eq_variance"]["not_equal"], 0.0005254, 1e-4
-    )
+    assert np.isclose(two_samples_stats["p_value_eq_variance"]["less_than"], 0.0002627, 1e-4)
+    assert np.isclose(two_samples_stats["p_value_eq_variance"]["greater_than"], 0.9997372, 1e-4)
+    assert np.isclose(two_samples_stats["p_value_eq_variance"]["not_equal"], 0.0005254, 1e-4)
 
 
 def test_two_samples_unpaired_t_uneq_variance():
     assert np.isclose(two_samples_stats["t_uneq_variance"], -3.179685, 1e-4)
     assert np.isclose(two_samples_stats["df_uneq_variance"], 30.546278, 1e-4)
-    assert np.isclose(
-        two_samples_stats["p_value_uneq_variance"]["less_than"], 0.0016850, 1e-4
-    )
-    assert np.isclose(
-        two_samples_stats["p_value_uneq_variance"]["greater_than"], 0.9983150, 1e-4
-    )
-    assert np.isclose(
-        two_samples_stats["p_value_uneq_variance"]["not_equal"], 0.0033701, 1e-4
-    )
+    assert np.isclose(two_samples_stats["p_value_uneq_variance"]["less_than"], 0.0016850, 1e-4)
+    assert np.isclose(two_samples_stats["p_value_uneq_variance"]["greater_than"], 0.9983150, 1e-4)
+    assert np.isclose(two_samples_stats["p_value_uneq_variance"]["not_equal"], 0.0033701, 1e-4)
 
 
 ## two-sample with paired observations

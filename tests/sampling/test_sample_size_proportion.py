@@ -3,6 +3,7 @@ import pytest
 from samplics.sampling import SampleSize, allocate
 from samplics.utils import PopParam, SizeMethod
 
+
 region = ["Dakar", "Kaolack", "Ziguinchor"]
 pop_size = {"Dakar": 500, "Kaolack": 300, "Ziguinchor": 200}
 
@@ -13,9 +14,7 @@ def test_equal_stratum_error():
 
 
 def test_equal():
-    sizes, rates = allocate(
-        method="equal", stratum=region, pop_size=pop_size, constant=15
-    )
+    sizes, rates = allocate(method="equal", stratum=region, pop_size=pop_size, constant=15)
     assert sizes["Dakar"] == 15
     assert sizes["Kaolack"] == 15
     assert sizes["Ziguinchor"] == 15
@@ -33,9 +32,7 @@ def test_equal_error():
 
 
 def test_propal():
-    sizes, rates = allocate(
-        method="propal", stratum=region, samp_size=100, pop_size=pop_size
-    )
+    sizes, rates = allocate(method="propal", stratum=region, samp_size=100, pop_size=pop_size)
     assert sizes["Dakar"] == 50
     assert sizes["Kaolack"] == 30
     assert sizes["Ziguinchor"] == 20
@@ -50,9 +47,7 @@ def test_propal_error():
 
 
 def test_fixed_rate_number():
-    sizes, rates = allocate(
-        method="fixed_rate", stratum=region, pop_size=pop_size, rate=0.05
-    )
+    sizes, rates = allocate(method="fixed_rate", stratum=region, pop_size=pop_size, rate=0.05)
     assert sizes["Dakar"] == 25
     assert sizes["Kaolack"] == 15
     assert sizes["Ziguinchor"] == 10
@@ -206,10 +201,7 @@ def test_deff_equal_errors():
     assert sizes["Kaolack"] == 5
     assert sizes["Ziguinchor"] == 20
     assert rates["Dakar"] == 5 * stddev["Dakar"] * stddev["Dakar"] / pop_size["Dakar"]
-    assert (
-        rates["Kaolack"]
-        == 5 * stddev["Kaolack"] * stddev["Kaolack"] / pop_size["Kaolack"]
-    )
+    assert rates["Kaolack"] == 5 * stddev["Kaolack"] * stddev["Kaolack"] / pop_size["Kaolack"]
     assert (
         rates["Ziguinchor"]
         == 5 * stddev["Ziguinchor"] * stddev["Ziguinchor"] / pop_size["Ziguinchor"]
@@ -233,9 +225,7 @@ def test_equal_errors_error1():
 
 def test_optimum_comparison_error2():
     with pytest.raises(ValueError):
-        allocate(
-            method="optimum_comparison", stratum=region, pop_size=pop_size, stddev=[5]
-        )
+        allocate(method="optimum_comparison", stratum=region, pop_size=pop_size, stddev=[5])
 
 
 ## Design effects
@@ -309,17 +299,13 @@ def test_size_nat_wald_size_with_deff_and_resp_rate():
 def test_size_nat_wald_df():
     size_nat_wald.calculate(target=0.80, half_ci=0.10)
     size_df = size_nat_wald.to_dataframe()
-    assert (
-        size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]
-    ).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_wald_df_with_resp_rate():
     size_nat_wald.calculate(target=0.80, half_ci=0.10, resp_rate=0.5)
     size_df = size_nat_wald.to_dataframe()
-    assert (
-        size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]
-    ).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_wald_pop_size1():
@@ -456,9 +442,7 @@ def test_size_str_wald_size4_with_resp_rate1():
 
 
 def test_size_str_wald_size4_with_resp_rate2():
-    size_str_wald.calculate(
-        target=target, half_ci=half_ci, deff=deff, resp_rate=resp_rate
-    )
+    size_str_wald.calculate(target=target, half_ci=half_ci, deff=deff, resp_rate=resp_rate)
     assert size_str_wald.samp_size["stratum1"] == 3
     assert size_str_wald.samp_size["stratum2"] == 173
     assert size_str_wald.samp_size["stratum3"] == 299
@@ -477,9 +461,7 @@ def test_size_str_wald_size5():
 
 
 def test_size_str_wald_size5_with_resp_rate():
-    size_str_wald.calculate(
-        target=0.8, half_ci=0.1, deff=1.5, nb_strata=5, resp_rate=0.5
-    )
+    size_str_wald.calculate(target=0.8, half_ci=0.1, deff=1.5, nb_strata=5, resp_rate=0.5)
     assert size_str_wald.samp_size["_stratum_1"] == 185
     assert size_str_wald.samp_size["_stratum_2"] == 185
     assert size_str_wald.samp_size["_stratum_3"] == 185
@@ -497,8 +479,7 @@ def test_size_str_wald_df():
     size_df = size_str_wald.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
-        size_df.columns
-        == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
@@ -507,8 +488,7 @@ def test_size_str_wald_df_with_resp_rate():
     size_df = size_str_wald.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
-        size_df.columns
-        == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
@@ -661,32 +641,24 @@ def test_size_nat_fleiss_size_with_deff4():
 def test_size_nat_fleiss_df1():
     size_nat_fleiss.calculate(target=0.80, half_ci=0.10)
     size_df = size_nat_fleiss.to_dataframe()
-    assert (
-        size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]
-    ).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_fleiss_df1_with_resp_rate():
     size_nat_fleiss.calculate(target=0.80, half_ci=0.10, resp_rate=0.33)
     size_df = size_nat_fleiss.to_dataframe()
-    assert (
-        size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]
-    ).all()
+    assert (size_df.columns == ["_param", "_target", "_sigma", "_half_ci", "_samp_size"]).all()
 
 
 def test_size_nat_fleiss_df2():
     size_nat_fleiss.calculate(target=0.80, half_ci=0.10)
-    size_df = size_nat_fleiss.to_dataframe(
-        ["param", "prop", "sigma", "half_ci", "size"]
-    )
+    size_df = size_nat_fleiss.to_dataframe(["param", "prop", "sigma", "half_ci", "size"])
     assert (size_df.columns == ["param", "prop", "sigma", "half_ci", "size"]).all()
 
 
 def test_size_nat_fleiss_df2_with_resp_rate():
     size_nat_fleiss.calculate(target=0.80, half_ci=0.10, resp_rate=0.44)
-    size_df = size_nat_fleiss.to_dataframe(
-        ["param", "prop", "sigma", "half_ci", "size"]
-    )
+    size_df = size_nat_fleiss.to_dataframe(["param", "prop", "sigma", "half_ci", "size"])
     assert (size_df.columns == ["param", "prop", "sigma", "half_ci", "size"]).all()
 
 
@@ -790,8 +762,7 @@ def test_size_str_fleiss_df1():
     size_df = size_str_fleiss.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
-        size_df.columns
-        == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
@@ -800,28 +771,19 @@ def test_size_str_fleiss_df1_with_resp_rate():
     size_df = size_str_fleiss.to_dataframe()
     assert size_df.shape[0] == 5
     assert (
-        size_df.columns
-        == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
+        size_df.columns == ["_param", "_stratum", "_target", "_sigma", "_half_ci", "_samp_size"]
     ).all()
 
 
 def test_size_str_fleiss_df2():
     size_str_fleiss.calculate(target=0.80, half_ci=0.10, nb_strata=5)
-    size_df = size_str_fleiss.to_dataframe(
-        ["param", "str", "prop", "sigma", "half_ci", "size"]
-    )
+    size_df = size_str_fleiss.to_dataframe(["param", "str", "prop", "sigma", "half_ci", "size"])
     assert size_df.shape[0] == 5
-    assert (
-        size_df.columns == ["param", "str", "prop", "sigma", "half_ci", "size"]
-    ).all()
+    assert (size_df.columns == ["param", "str", "prop", "sigma", "half_ci", "size"]).all()
 
 
 def test_size_str_fleiss_df2_with_resp_rate():
     size_str_fleiss.calculate(target=0.80, half_ci=0.10, nb_strata=5, resp_rate=0.6)
-    size_df = size_str_fleiss.to_dataframe(
-        ["param", "str", "prop", "sigma", "half_ci", "size"]
-    )
+    size_df = size_str_fleiss.to_dataframe(["param", "str", "prop", "sigma", "half_ci", "size"])
     assert size_df.shape[0] == 5
-    assert (
-        size_df.columns == ["param", "str", "prop", "sigma", "half_ci", "size"]
-    ).all()
+    assert (size_df.columns == ["param", "str", "prop", "sigma", "half_ci", "size"]).all()

@@ -3,6 +3,7 @@ import pandas as pd
 
 from samplics.sae.robust_unit_model import EllUnitModel
 
+
 incomesample = pd.read_csv("./tests/sae/incomedata.csv")
 
 areas = incomesample["prov"]

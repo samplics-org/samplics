@@ -10,6 +10,7 @@ from samplics.sae.sae_core_functions import (
     partial_derivatives,
 )
 
+
 np.random.seed(12345)
 
 # model parameters
@@ -78,12 +79,8 @@ def test_log_det_covariance():
 
 
 ## REML method
-est_log_likelihod = log_likelihood(
-    "REML", y, X, beta, est_inv_covariance, est_log_det_covariance
-)
-est_partial_deriv, est_info_matrix = partial_derivatives(
-    "REML", area, y, X, 1, 0.25, scale
-)
+est_log_likelihod = log_likelihood("REML", y, X, beta, est_inv_covariance, est_log_det_covariance)
+est_partial_deriv, est_info_matrix = partial_derivatives("REML", area, y, X, 1, 0.25, scale)
 
 
 def test_log_likehood():
@@ -109,12 +106,8 @@ def test_iterative_fisher():
 
 
 ## REML method
-est_log_likelihod_ml = log_likelihood(
-    "ML", y, X, beta, est_inv_covariance, est_log_det_covariance
-)
-est_partial_deriv_ml, est_info_matrix_ml = partial_derivatives(
-    "ML", area, y, X, 1, 0.25, scale
-)
+est_log_likelihod_ml = log_likelihood("ML", y, X, beta, est_inv_covariance, est_log_det_covariance)
+est_partial_deriv_ml, est_info_matrix_ml = partial_derivatives("ML", area, y, X, 1, 0.25, scale)
 
 
 def test_log_likehood2():

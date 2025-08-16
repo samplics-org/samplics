@@ -52,6 +52,7 @@ from samplics.utils import (
 )
 from samplics.weighting import ReplicateWeight, SampleWeight
 
+
 __all__ = [
     "allocate",
     "array_to_dict",
@@ -108,4 +109,4 @@ __all__ = [
     "SinglePSUError",
 ]
 
-__version__ = "0.4.52"
+__version__ = "0.4.53"

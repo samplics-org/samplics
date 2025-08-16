@@ -5,6 +5,7 @@ import pytest
 
 from samplics.types.containers import AuxVars
 
+
 # Auxiliary variables
 
 

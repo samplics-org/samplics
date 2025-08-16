@@ -18,6 +18,7 @@ from samplics.utils.types import (
     SizeMethod,
 )
 
+
 __all__ = [
     "array_to_dict",
     "FitMethod",

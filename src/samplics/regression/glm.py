@@ -2,15 +2,24 @@
 
 import sys
 import warnings
-from typing import Optional, Union, Tuple
+
+from typing import Any, Optional, Tuple, Union
 
 import numpy as np
 import polars as pl
 import statsmodels.api as sm
+
 from scipy import stats
 
+from samplics.utils.basic_functions import get_single_psu_strata
+from samplics.utils.checks import (
+    _certainty_singleton,
+    _combine_strata,
+    _raise_singleton_error,
+    _skip_singleton,
+)
 from samplics.utils.formats import fpc_as_dict, numpy_array
-from samplics.utils.types import Array, ModelType, Number, Series, StringNumber
+from samplics.utils.types import Array, ModelType, Number, Series, SinglePSUEst, StringNumber
 
 
 class SurveyGLM:
@@ -24,9 +33,9 @@ class SurveyGLM:
         self.x_labels: list[str] = []
         self.odds_ratio: dict = {}
         self.sample_size = 0
+        self.single_psu_strata: Any = None
 
     def __str__(self) -> str:
-
         df = pl.DataFrame(
             {
                 "label": self.x_labels,
@@ -47,9 +56,7 @@ class SurveyGLM:
         return self.__str__()
 
     @staticmethod
-    def _residuals(
-        e: np.ndarray, psu: np.ndarray, nb_vars: int
-    ) -> Tuple[np.ndarray, int]:
+    def _residuals(e: np.ndarray, psu: np.ndarray, nb_vars: int) -> Tuple[np.ndarray, int]:
         unique_psus = np.unique(psu)
 
         if unique_psus.shape[0] == 1 and e.shape[0] == 1:
@@ -109,17 +116,18 @@ class SurveyGLM:
         add_intercept: bool = False,
         tol: float = 1e-8,
         maxiter: int = 100,
+        single_psu: Union[SinglePSUEst, dict[StringNumber, SinglePSUEst]] = SinglePSUEst.error,
+        strata_comb: Optional[dict[Array, Array]] = None,
         remove_nan: bool = False,
     ) -> None:
         _y = numpy_array(y)
         _x = numpy_array(x) if x is not None else np.empty((len(_y), 0))
         _x_cat = numpy_array(x_cat) if x_cat is not None else np.empty(())
         _psu = numpy_array(psu) if psu is not None else np.empty(())
+        _ssu = np.empty(())
         _stratum = numpy_array(stratum) if stratum is not None else np.empty(())
         _samp_weight = (
-            numpy_array(samp_weight)
-            if samp_weight is not None
-            else np.ones(_y.shape[0])
+            numpy_array(samp_weight) if samp_weight is not None else np.ones(_y.shape[0])
         )
 
         if _x.ndim == 1 and _x.shape[0] > 0:
@@ -128,15 +136,11 @@ class SurveyGLM:
         if add_intercept:
             _x = np.insert(_x, 0, 1, axis=1)
             self.x_labels = ["Intercept"] + (
-                x_labels
-                if x_labels is not None
-                else [f"__x{i}__" for i in range(1, _x.shape[1])]
+                x_labels if x_labels is not None else [f"__x{i}__" for i in range(1, _x.shape[1])]
             )
         else:
             self.x_labels = (
-                x_labels
-                if x_labels is not None
-                else [f"__x{i}__" for i in range(_x.shape[1])]
+                x_labels if x_labels is not None else [f"__x{i}__" for i in range(_x.shape[1])]
             )
 
         if _samp_weight.shape in ((), (0,)):
@@ -148,17 +152,13 @@ class SurveyGLM:
             self.fpc = fpc_as_dict(_stratum, fpc)
         else:
             if np.unique(_stratum).tolist() != list(fpc.keys()):
-                raise AssertionError(
-                    "fpc dictionary keys must be the same as the strata!"
-                )
+                raise AssertionError("fpc dictionary keys must be the same as the strata!")
             self.fpc = fpc
 
         df = pl.from_numpy(_x)
         df.columns = self.x_labels
 
-        df = df.with_columns(
-            pl.Series("_y", _y), pl.Series("_samp_weight", _samp_weight)
-        )
+        df = df.with_columns(pl.Series("_y", _y), pl.Series("_samp_weight", _samp_weight))
 
         if _x_cat.shape != ():
             df_cat = pl.from_numpy(_x_cat)
@@ -190,6 +190,60 @@ class SurveyGLM:
                     )
                     self.x_labels.append(dummy_col)
 
+        if _stratum.shape not in ((), (0,)):
+            # TODO: we could improve efficiency by creating the pair [stratum,psu, ssu] ounce and
+            # use it in get_single_psu_strata and in the uncertainty calculation functions
+            self.single_psu_strata = get_single_psu_strata(_stratum, _psu)
+
+        skipped_strata = np.array(None)
+        if self.single_psu_strata is not None:
+            if single_psu == SinglePSUEst.error:
+                _raise_singleton_error(self.single_psu_strata)
+            if single_psu == SinglePSUEst.skip:
+                skipped_strata = _skip_singleton(
+                    single_psu_strata=self.single_psu_strata, skipped_strata=self.single_psu_strata
+                )
+            if single_psu == SinglePSUEst.certainty:
+                _psu = _certainty_singleton(
+                    singletons=self.single_psu_strata,
+                    _stratum=_stratum,
+                    _psu=_psu,
+                    _ssu=_ssu,
+                )
+                df = df.with_columns(pl.Series("_psu", np.asarray(_psu)))
+            if single_psu == SinglePSUEst.combine:
+                _stratum = _combine_strata(strata_comb, _stratum)
+                df = df.with_columns(pl.Series("_stratum", np.asarray(_stratum)))
+            # TODO: more method for singleton psus to be implemented
+            if isinstance(single_psu, dict):
+                for s in single_psu:
+                    if single_psu[s] == SinglePSUEst.error:
+                        _raise_singleton_error(self.single_psu_strata)
+                    if single_psu[s] == SinglePSUEst.skip:
+                        skipped_strata = _skip_singleton(
+                            single_psu_strata=self.single_psu_strata, skipped_strata=numpy_array(s)
+                        )
+                    if single_psu[s] == SinglePSUEst.certainty:
+                        _psu = _certainty_singleton(
+                            singletons=numpy_array(s),
+                            _stratum=_stratum,
+                            _psu=_psu,
+                            _ssu=_ssu,
+                        )
+                        breakpoint()
+                    if single_psu[s] == SinglePSUEst.combine:
+                        _stratum = _combine_strata(strata_comb, _stratum)
+                df = df.with_columns(
+                    pl.Series("_stratum", np.asarray(_stratum)),
+                    pl.Series("_psu", np.asarray(_psu)),
+                )
+            skipped_strata = get_single_psu_strata(_stratum, _psu)
+            df = df.filter(~pl.col("_stratum").is_in(skipped_strata))
+            if skipped_strata is not None and single_psu in [
+                SinglePSUEst.certainty,
+                SinglePSUEst.combine,
+            ]:  # TODO: add the left our singletons when using the dict instead of SinglePSUEst
+                _raise_singleton_error(self.single_psu_strata)
 
         match self.model:
             case ModelType.LINEAR:
@@ -233,9 +287,7 @@ class SurveyGLM:
                 self.beta["z"][k] = self.beta["point_est"][k] / sd
             else:
                 self.beta["z"][k] = self.beta["point_est"][k] / min_sd
-                print(
-                    f"Warning: stderror is close to zero. stderror is smaller than {min_sd}"
-                )
+                print(f"Warning: stderror is close to zero. stderror is smaller than {min_sd}")
 
         self.beta["p_value"] = 2 * stats.t.sf(
             np.abs(self.beta["z"]), self.sample_size - len(self.beta["point_est"])

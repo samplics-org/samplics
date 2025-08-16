@@ -4,6 +4,7 @@ from typing import Optional, Union
 
 from samplics.utils.types import Array, Number, Series, StringNumber
 
+
 # import numpy as np
 # import pandas as pd
 
@@ -11,9 +12,7 @@ from samplics.utils.types import Array, Number, Series, StringNumber
 class CalibrateEstimator:
     """Provides calibration based estimation"""
 
-    def __init__(
-        self, param: str, alpha: float = 0.05, rand_seed: Optional[int] = None
-    ):
+    def __init__(self, param: str, alpha: float = 0.05, rand_seed: Optional[int] = None):
         pass
 
     def estimate(

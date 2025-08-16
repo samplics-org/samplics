@@ -25,6 +25,7 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 from __future__ import annotations
 
 import warnings
+
 from typing import Any, Callable, Optional, Union
 
 import numpy as np
@@ -159,14 +160,10 @@ class EbUnitModel:
         elif self.boxcox["lambda"] != 0.0:
             if inverse:
                 return np.asarray(
-                    np.exp(
-                        np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"]
-                    )
+                    np.exp(np.log(1 + y * self.boxcox["lambda"]) / self.boxcox["lambda"])
                 )
             else:
-                return np.asarray(
-                    np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"]
-                )
+                return np.asarray(np.power(y, self.boxcox["lambda"]) / self.boxcox["lambda"])
         else:
             raise AssertionError
 
@@ -303,9 +300,7 @@ class EbUnitModel:
                     scale=(sigma2u * (1 - self.gamma[d])) ** 0.5,
                     size=cycle_size,
                 )
-                errors = np.random.normal(
-                    scale=scale_dr * (sigma2e**0.5), size=(cycle_size, N_dr)
-                )
+                errors = np.random.normal(scale=scale_dr * (sigma2e**0.5), size=(cycle_size, N_dr))
                 y_dr_j = mu_dr[None, :] + mu_bias_dr + re_effects[:, None] + errors
                 if j == 0:
                     y_dr = y_dr_j
@@ -321,9 +316,7 @@ class EbUnitModel:
                         end="",
                     )
 
-            y_d = np.append(
-                y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1
-            )
+            y_d = np.append(y_dr, np.tile(y_s[area_s == d], [number_samples, 1]), axis=1)
             z_d = basic_functions.transform(
                 y_d,
                 llambda=self.boxcox["lambda"],
@@ -516,9 +509,7 @@ class EbUnitModel:
 
         eta_pop_boot = np.zeros((number_reps, nb_areas_ps))
         eta_samp_boot = np.zeros((number_reps, nb_areas_ps))
-        y_samp_boot = np.zeros(
-            (number_reps, int(np.sum(list(sample_size_dict.values()))))
-        )
+        y_samp_boot = np.zeros((number_reps, int(np.sum(list(sample_size_dict.values())))))
         print(f"Generating the {number_reps} bootstrap replicate populations")
         for b in range(number_cycles):
             start = b * cycle_size
@@ -539,9 +530,7 @@ class EbUnitModel:
                     scale=self.error_std * scale_dict[d],
                     size=(cycle_size, np.sum(indice_dict[d])),
                 )
-                yboot_d = (
-                    (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
-                )
+                yboot_d = (X_dict[d] @ self.fixed_effects)[None, :] + re_d[:, None] + err_d
                 zboot_d = basic_functions.transform(
                     yboot_d,
                     llambda=self.boxcox["lambda"],
@@ -553,9 +542,7 @@ class EbUnitModel:
                 if i == 0:
                     yboot_s = yboot_d[:, -int(sample_size_dict[d]) :]
                 else:
-                    yboot_s = np.append(
-                        yboot_s, yboot_d[:, -int(sample_size_dict[d]) :], axis=1
-                    )
+                    yboot_s = np.append(yboot_s, yboot_d[:, -int(sample_size_dict[d]) :], axis=1)
 
                 if show_progress:
                     run_id = b * nb_areas_ps + i
@@ -590,9 +577,7 @@ class EbUnitModel:
             # "pgtol": tol,
             "maxiter": maxiter,
         }  # TODO: to improve in the future. Check: statsmodels.LikelihoodModel.fit()
-        print(
-            f"Fitting and predicting using each of the {number_reps} bootstrap populations"
-        )
+        print(f"Fitting and predicting using each of the {number_reps} bootstrap populations")
         for b in range(number_reps):
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore")
@@ -639,9 +624,7 @@ class EbUnitModel:
 
         print("\n")
 
-        mse_boot = np.asarray(
-            np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0)
-        )
+        mse_boot = np.asarray(np.mean(np.power(eta_samp_boot - eta_pop_boot, 2), axis=0))
         self.area_mse_boot = dict(zip(self.arear_list, mse_boot))
 
     def to_dataframe(
@@ -661,9 +644,7 @@ class EbUnitModel:
         ncols = len(col_names)
 
         if self.area_est is None:
-            raise AssertionError(
-                "No prediction yet. Must predict the area level estimates."
-            )
+            raise AssertionError("No prediction yet. Must predict the area level estimates.")
         elif self.area_mse_boot is None and ncols not in (2, 3):
             raise AssertionError("col_names must have 2 or 3 values")
         elif self.area_mse_boot is None and ncols == 3:
@@ -672,8 +653,6 @@ class EbUnitModel:
         if self.area_mse_boot is None:
             area_df = formats.dict_to_dataframe(col_names, self.area_est)
         else:
-            area_df = formats.dict_to_dataframe(
-                col_names, self.area_est, self.area_mse_boot
-            )
+            area_df = formats.dict_to_dataframe(col_names, self.area_est, self.area_mse_boot)
 
         return area_df

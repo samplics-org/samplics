@@ -4,6 +4,7 @@ import pytest
 
 from samplics.sae.eblup_area_model import EblupAreaModel
 
+
 df = pd.DataFrame(
     {
         "AREA": np.array(
@@ -628,9 +629,7 @@ area = df.AREA
 error_std = df.AWEEKS_SE
 
 
-@pytest.mark.xfail(
-    strict=True, reason="At least one standard error is NOT strickly positive!"
-)
+@pytest.mark.xfail(strict=True, reason="At least one standard error is NOT strickly positive!")
 def test_standard_errors_non_positive():
     fh_model_reml = EblupAreaModel(method="REML")
     fh_model_reml.fit(

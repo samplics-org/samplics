@@ -1,5 +1,6 @@
 import numpy as np
 
+
 np.random.seed(12345)
 
 # model parameters

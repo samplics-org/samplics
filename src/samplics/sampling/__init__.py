@@ -17,6 +17,7 @@ from samplics.sampling.size import (
     calculate_ss_wald_prop,
 )
 
+
 __all__ = [
     "allocate",
     "calculate_power",

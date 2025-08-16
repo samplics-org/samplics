@@ -9,6 +9,7 @@ from samplics.types.errors import (
 )
 from samplics.types.options import PopParam, SelectMethod, SinglePSUEst, SizeMethod
 
+
 __all__ = [
     "PopParam",
     "SinglePSUEst",
