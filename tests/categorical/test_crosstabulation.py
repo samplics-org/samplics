@@ -5,7 +5,6 @@ import pytest
 from samplics.categorical import CrossTabulation
 from samplics.utils.types import PopParam
 
-
 # dummy
 
 f2_0 = np.concatenate((np.repeat(1, 13), np.repeat(2, 7), np.repeat(3, 4)))

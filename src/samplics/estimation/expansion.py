@@ -15,36 +15,19 @@ and Wolter, K.M. (2007) [#w2007]_.
 from __future__ import annotations
 
 import math
-
 from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
-
 from scipy.stats import t as student
 
 from samplics.utils.basic_functions import get_single_psu_strata
-from samplics.utils.checks import (
-    _certainty_singleton,
-    _combine_strata,
-    _raise_singleton_error,
-    _skip_singleton,
-)
-from samplics.utils.formats import (
-    dict_to_dataframe,
-    fpc_as_dict,
-    numpy_array,
-    remove_nans,
-)
-from samplics.utils.types import (
-    Array,
-    Number,
-    PopParam,
-    QuantileMethod,
-    Series,
-    SinglePSUEst,
-    StringNumber,
-)
+from samplics.utils.checks import (_certainty_singleton, _combine_strata,
+                                   _raise_singleton_error, _skip_singleton)
+from samplics.utils.formats import (dict_to_dataframe, fpc_as_dict,
+                                    numpy_array, remove_nans)
+from samplics.utils.types import (Array, Number, PopParam, QuantileMethod,
+                                  Series, SinglePSUEst, StringNumber)
 
 
 class _SurveyEstimator:
@@ -120,7 +103,7 @@ class _SurveyEstimator:
                 upper_ci = list()
                 coef_var = list()
                 for domain in self.domains:
-                    domains += np.repeat(domain, len(self.point_est[domain])).tolist()
+                    self.domains += np.repeat(domain, len(self.point_est[domain])).tolist()
                     levels += list(self.point_est[domain].keys())
                     point_est += list(self.point_est[domain].values())
                     stderror += list(self.stderror[domain].values())
@@ -688,6 +671,7 @@ class TaylorEstimator(_SurveyEstimator):
         t_quantile = student.ppf(1 - self.alpha / 2, df=self.degree_of_freedom)
 
         if domain.shape in ((), (0,)):
+            self.domains = None
             if (
                 (self.param == PopParam.prop or as_factor and self.param == PopParam.mean)
                 and isinstance(self.point_est, dict)
@@ -1073,7 +1057,7 @@ class TaylorEstimator(_SurveyEstimator):
                 ]
             if self.deff == {}:
                 col_names.pop()
-            if self.domains.shape in ((), (0,)):
+            if self.domains is None:
                 col_names.pop(1)
         else:
             ncols = len(col_names)

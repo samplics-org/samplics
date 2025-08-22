@@ -3,7 +3,6 @@ import polars as pl
 
 from samplics.weighting import SampleWeight
 
-
 # stata example
 
 # nhis_sam = pl.read_csv("~/Downloads/nhis_sam.csv").with_columns(

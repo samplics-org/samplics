@@ -4,7 +4,6 @@ import pytest
 
 from samplics.categorical.comparison import Ttest
 
-
 auto = pd.read_csv("./tests/categorical/auto2.csv")
 
 y = auto["mpg"]

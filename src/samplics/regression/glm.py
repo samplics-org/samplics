@@ -2,24 +2,19 @@
 
 import sys
 import warnings
-
 from typing import Any, Optional, Tuple, Union
 
 import numpy as np
 import polars as pl
 import statsmodels.api as sm
-
 from scipy import stats
 
 from samplics.utils.basic_functions import get_single_psu_strata
-from samplics.utils.checks import (
-    _certainty_singleton,
-    _combine_strata,
-    _raise_singleton_error,
-    _skip_singleton,
-)
+from samplics.utils.checks import (_certainty_singleton, _combine_strata,
+                                   _raise_singleton_error, _skip_singleton)
 from samplics.utils.formats import fpc_as_dict, numpy_array
-from samplics.utils.types import Array, ModelType, Number, Series, SinglePSUEst, StringNumber
+from samplics.utils.types import (Array, ModelType, Number, Series,
+                                  SinglePSUEst, StringNumber)
 
 
 class SurveyGLM:

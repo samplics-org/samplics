@@ -3,7 +3,6 @@ import pandas as pd
 from samplics.utils import RepMethod
 from samplics.weighting import ReplicateWeight
 
-
 test_data = pd.read_csv("./tests/weighting/small_data_for_testing_replicate_weights.csv")
 
 cluster_id = test_data["psu"].astype(str)

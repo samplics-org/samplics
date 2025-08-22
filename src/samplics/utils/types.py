@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import polars as pl
 
-
 DF = pl.DataFrame | pd.DataFrame
 Array = np.ndarray | pd.Series | pl.Series | list | tuple
 Series = pd.Series | pl.Series | list | tuple

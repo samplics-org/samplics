@@ -4,7 +4,6 @@ import pandas as pd
 from samplics.estimation import ReplicateEstimator
 from samplics.utils.types import PopParam, RepMethod
 
-
 """Jackknife estimates"""
 nhanes2jkn = pd.read_csv("./tests/estimation/nhanes2jknife.csv")
 

@@ -14,7 +14,6 @@ Dever, J. A. (2018) [#vd2018]_ and Wolter, K.M. (2007) [#w2007]_ for more detail
 from __future__ import annotations
 
 import math
-
 from typing import Optional, Union
 
 import numpy as np

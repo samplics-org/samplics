@@ -4,7 +4,6 @@ import pandas as pd
 from samplics.sampling import SampleSelection
 from samplics.utils.types import SelectMethod
 
-
 countries_population = pd.read_csv("./tests/sampling/countries_population_2019.csv")
 
 countries = countries_population["country"]

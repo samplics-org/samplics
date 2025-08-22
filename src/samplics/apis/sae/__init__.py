@@ -1,14 +1,8 @@
 # from samplics.apis.sae.area_eblup import _log_likelihood
-from samplics.types.errors import (
-    CertaintyError,
-    DimensionError,
-    MethodError,
-    ProbError,
-    SamplicsError,
-    SinglePSUError,
-)
-from samplics.types.options import PopParam, SelectMethod, SinglePSUEst, SizeMethod
-
+from samplics.types.errors import (CertaintyError, DimensionError, MethodError,
+                                   ProbError, SamplicsError, SinglePSUError)
+from samplics.types.options import (PopParam, SelectMethod, SinglePSUEst,
+                                    SizeMethod)
 
 __all__ = [
     "PopParam",

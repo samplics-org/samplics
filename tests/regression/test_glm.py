@@ -4,7 +4,6 @@ import polars as pl
 from samplics import ModelType
 from samplics.regression import SurveyGLM
 
-
 data_str = """
 P  F  68   1  No   B  M  74  16  No  P  F  67  30  No
 P  M  66  26  Yes  B  F  67  28  No  B  F  77  16  No

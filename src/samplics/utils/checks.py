@@ -14,7 +14,6 @@ from typing import Iterable, Mapping, Optional, Union
 
 import numpy as np
 import pandas as pd
-
 from numpy.typing import ArrayLike, NDArray
 
 from samplics.utils import formats

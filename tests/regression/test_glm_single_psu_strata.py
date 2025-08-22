@@ -6,7 +6,6 @@ from samplics import ModelType
 from samplics.regression import SurveyGLM
 from samplics.utils.types import SinglePSUEst
 
-
 sample_data1 = pl.DataFrame(
     {
         "region": [1, 1, 1, 2, 2, 3, 3, 3, 4, 4],
@@ -120,6 +119,6 @@ def test_reg_logistic_single_psu5():
         x_cat_labels=x_cat.columns,
         stratum=sample_data2["region"],
         psu=sample_data2["district"],
-        single_psu={1:SinglePSUEst.skip, 4: SinglePSUEst.combine, 5: SinglePSUEst.certainty},
+        single_psu={1: SinglePSUEst.skip, 4: SinglePSUEst.combine, 5: SinglePSUEst.certainty},
         strata_comb={4: 3},
     )

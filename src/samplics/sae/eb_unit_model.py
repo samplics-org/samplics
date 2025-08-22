@@ -25,7 +25,6 @@ see Rao, J.N.K. and Molina, I. (2015) [#rm2015]_.
 from __future__ import annotations
 
 import warnings
-
 from typing import Any, Callable, Optional, Union
 
 import numpy as np

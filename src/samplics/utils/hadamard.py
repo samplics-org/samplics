@@ -19,7 +19,6 @@ TODO: implements Hadamard matrices of order higher than 28.
 import math
 
 import numpy as np
-
 from scipy.linalg import hadamard as hdd
 
 

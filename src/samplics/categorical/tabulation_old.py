@@ -7,12 +7,10 @@ The module implements the cross-tabulation analysis.
 from __future__ import annotations
 
 import itertools
-
 from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-
 from patsy import dmatrix
 from scipy.stats import chi2, f
 
@@ -20,7 +18,8 @@ from samplics.estimation import TaylorEstimator
 from samplics.utils.basic_functions import set_variables_names
 from samplics.utils.errors import DimensionError
 from samplics.utils.formats import numpy_array, remove_nans
-from samplics.utils.types import Array, Number, PopParam, SinglePSUEst, StringNumber
+from samplics.utils.types import (Array, Number, PopParam, SinglePSUEst,
+                                  StringNumber)
 
 
 class Tabulation:

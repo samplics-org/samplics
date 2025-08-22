@@ -3,7 +3,6 @@ import pandas as pd
 
 from samplics.weighting import SampleWeight
 
-
 # All categorical
 sample_cat = pd.DataFrame(
     [

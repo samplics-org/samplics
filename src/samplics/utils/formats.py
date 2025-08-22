@@ -16,14 +16,8 @@ import pandas as pd
 import polars as pl
 
 from samplics.utils.checks import assert_not_unique
-from samplics.utils.types import (
-    Array,
-    DictStrInt,
-    DictStrNum,
-    Number,
-    Series,
-    StringNumber,
-)
+from samplics.utils.types import (Array, DictStrInt, DictStrNum, Number,
+                                  Series, StringNumber)
 
 
 def numpy_array(arr: Array) -> np.ndarray:
