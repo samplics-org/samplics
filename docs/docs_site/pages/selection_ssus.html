@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -70,14 +70,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../public/img/samplics_logo.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-43f3719592dba936979dd507688b4ba0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-12f6946bb06afb64f2ed36f89a165916.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -105,7 +106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -123,7 +124,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -157,7 +158,8 @@ window.Quarto = {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo light-content">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Samplics Documentation</span>
@@ -210,6 +212,10 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -467,19 +473,19 @@ window.Quarto = {
 
 <p>To select the second stage sample, we need the second stage frame which is the list of all the households in the 10 selected clusters (psus). DHS, PHIA, MICS and other large scale surveys visit the selected clusters and construct the list of all households in the selected clusters.</p>
 <p>Before starting the second stage selection, let us import the data from the first stage sampling information that is the first stage sample (psu_sample). For clarity, we explicitly import the packages and modules needed for this notebook.</p>
-<div id="12f72a14" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
+<div id="6b636ef3" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics <span class="im">import</span> SelectMethod</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSelection</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the selected PSUs </span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="op">=</span> pd.read_csv(<span class="st">"./psu_frame.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="op">=</span> pd.read_csv(<span class="st">"./psu_frame.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>In this tutorial, we will simulate the second stage frame. For the simulation, assume that the psu frame was obtained from a previous census conducted several years before. We also assume that, the change in the number of households since the previous census follows a normal distribution with a mean equal to 5% higher than the census value and a variance of 0.15 times the number of households from the census. Under these assumptions, we generate the following second stage frame of households. Note that the frame is created only for the selected PSUs.</p>
-<div id="5429c5f1" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a synthetic second stage frame</span></span>
+<div id="a58013d0" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a synthetic second stage frame</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>census_size <span class="op">=</span> psu_frame.loc[</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>, </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"number_households_census"</span></span>
@@ -516,7 +522,7 @@ window.Quarto = {
 <span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>nb_obs <span class="op">=</span> <span class="dv">15</span></span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">First </span><span class="sc">{</span>nb_obs<span class="sc">}</span><span class="ss"> observations of the SSU frame</span><span class="ch">\n</span><span class="ss">"</span>)</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>ssu_frame.head(nb_obs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>ssu_frame.head(nb_obs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 First 15 observations of the SSU frame
@@ -526,7 +532,7 @@ First 15 observations of the SSU frame
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -537,91 +543,91 @@ First 15 observations of the SSU frame
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>71</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>72</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>73</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>74</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>75</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>7</td>
 <td>North</td>
 <td>76</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>77</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>7</td>
 <td>North</td>
 <td>78</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>7</td>
 <td>North</td>
 <td>79</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>7</td>
 <td>North</td>
 <td>710</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>7</td>
 <td>North</td>
 <td>711</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>712</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>7</td>
 <td>North</td>
 <td>713</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>7</td>
 <td>North</td>
 <td>714</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>7</td>
 <td>North</td>
 <td>715</td>
@@ -632,8 +638,8 @@ First 15 observations of the SSU frame
 </div>
 </div>
 </div>
-<div id="21d05aca" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_frame.loc[psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
+<div id="446e70b3" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_frame.loc[psu_frame[<span class="st">"psu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ssu_counts <span class="op">=</span> ssu_frame.groupby(<span class="st">"cluster"</span>).count()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ssu_counts.drop(columns<span class="op">=</span><span class="st">"region"</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>ssu_counts.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
@@ -646,12 +652,12 @@ First 15 observations of the SSU frame
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    psu_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"number_households_census"</span>]],</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    ssu_counts[[<span class="st">"cluster"</span>, <span class="st">"number_households_listed"</span>]],</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span>[<span class="st">"cluster"</span>],</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -663,70 +669,70 @@ First 15 observations of the SSU frame
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>130</td>
 <td>130</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>10</td>
 <td>North</td>
 <td>600</td>
 <td>660</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>16</td>
 <td>South</td>
 <td>190</td>
 <td>195</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>24</td>
 <td>South</td>
 <td>75</td>
 <td>73</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>29</td>
 <td>South</td>
 <td>200</td>
 <td>217</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>34</td>
 <td>East</td>
 <td>305</td>
 <td>239</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>45</td>
 <td>East</td>
 <td>450</td>
 <td>398</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>52</td>
 <td>East</td>
 <td>700</td>
 <td>620</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>64</td>
 <td>West</td>
 <td>300</td>
 <td>301</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>86</td>
 <td>West</td>
 <td>280</td>
@@ -744,8 +750,8 @@ First 15 observations of the SSU frame
 <h1>SSU (household) Probability of Selection</h1>
 <p>The second stage probabilities of selection are conditional on the first stage realization. For this stage, simple random selection (srs) and systematic selection(sys) are common methods used to select households. For this example, we use srs to select 15 households from each cluster. Conditionally to teh first stage, the second stage selection is a stratified srs where the clusters are the strata. More generally, we have that <span class="math display">\[\begin{equation} p_{hij} = \frac{m_{hi}}{M_{hi}^{'}} \end{equation}\]</span> where <span class="math inline">\(p_{hij}\)</span> is the conditional probability of selection for unit <span class="math inline">\(j\)</span> from stratum <span class="math inline">\(h\)</span> and cluster <span class="math inline">\(j\)</span>, <span class="math inline">\(m_{hi}\)</span> and <span class="math inline">\(M_{hi}^{'}\)</span> are the sample size and the number of secondary sampling units listed for stratum <span class="math inline">\(h\)</span> and cluster <span class="math inline">\(j\)</span>, respectively.</p>
 <p>In this scenario, sample size is the same in each stratum. Hence, the parameter <em>sample_size</em> does not need to be a Python dictionary; we will only provide 15 in the function call.</p>
-<div id="e1127fe7" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>stage2_design <span class="op">=</span> SampleSelection(</span>
+<div id="86b4cb96" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>stage2_design <span class="op">=</span> SampleSelection(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>SelectMethod.srs_wor, strat<span class="op">=</span><span class="va">True</span>, wr<span class="op">=</span><span class="va">False</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -753,12 +759,12 @@ First 15 observations of the SSU frame
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    ssu_frame[<span class="st">"household"</span>], <span class="dv">15</span>, ssu_frame[<span class="st">"cluster"</span>]</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ssu_frame.sample(<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ssu_frame.sample(<span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -770,140 +776,140 @@ First 15 observations of the SSU frame
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">1438</td>
+<th data-quarto-table-cell-role="th">1438</th>
 <td>34</td>
 <td>East</td>
 <td>34164</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">2517</td>
+<th data-quarto-table-cell-role="th">2517</th>
 <td>52</td>
 <td>East</td>
 <td>52606</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2943</td>
+<th data-quarto-table-cell-role="th">2943</th>
 <td>86</td>
 <td>West</td>
 <td>86111</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3002</td>
+<th data-quarto-table-cell-role="th">3002</th>
 <td>86</td>
 <td>West</td>
 <td>86170</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">559</td>
+<th data-quarto-table-cell-role="th">559</th>
 <td>10</td>
 <td>North</td>
 <td>10430</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1216</td>
+<th data-quarto-table-cell-role="th">1216</th>
 <td>29</td>
 <td>South</td>
 <td>29159</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2751</td>
+<th data-quarto-table-cell-role="th">2751</th>
 <td>64</td>
 <td>West</td>
 <td>64220</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">412</td>
+<th data-quarto-table-cell-role="th">412</th>
 <td>10</td>
 <td>North</td>
 <td>10283</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2549</td>
+<th data-quarto-table-cell-role="th">2549</th>
 <td>64</td>
 <td>West</td>
 <td>6418</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1508</td>
+<th data-quarto-table-cell-role="th">1508</th>
 <td>34</td>
 <td>East</td>
 <td>34234</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">1517</td>
+<th data-quarto-table-cell-role="th">1517</th>
 <td>45</td>
 <td>East</td>
 <td>454</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">2658</td>
+<th data-quarto-table-cell-role="th">2658</th>
 <td>64</td>
 <td>West</td>
 <td>64127</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">1072</td>
+<th data-quarto-table-cell-role="th">1072</th>
 <td>29</td>
 <td>South</td>
 <td>2915</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1074</td>
+<th data-quarto-table-cell-role="th">1074</th>
 <td>29</td>
 <td>South</td>
 <td>2917</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">1669</td>
+<th data-quarto-table-cell-role="th">1669</th>
 <td>45</td>
 <td>East</td>
 <td>45156</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1286</td>
+<th data-quarto-table-cell-role="th">1286</th>
 <td>34</td>
 <td>East</td>
 <td>3412</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">1162</td>
+<th data-quarto-table-cell-role="th">1162</th>
 <td>29</td>
 <td>South</td>
 <td>29105</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1051</td>
+<th data-quarto-table-cell-role="th">1051</th>
 <td>24</td>
 <td>South</td>
 <td>2467</td>
 <td>0.004828</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">3085</td>
+<th data-quarto-table-cell-role="th">3085</th>
 <td>86</td>
 <td>West</td>
 <td>86253</td>
 <td>0.004828</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">2148</td>
+<th data-quarto-table-cell-role="th">2148</th>
 <td>52</td>
 <td>East</td>
 <td>52237</td>
@@ -918,8 +924,8 @@ First 15 observations of the SSU frame
 <section id="ssu-household-selection" class="level3">
 <h3 class="anchored" data-anchor-id="ssu-household-selection">SSU (household) Selection</h3>
 <p>The second stage sample is selected from the SSU frame (<em>ssu_frame</em>) using the variable <em>cluster</em> as the strat variable. The sample is selected without replacement according to the specification of the second stage design. Hence, both <em>ssu_sample</em> and <em>ssu_hits</em> sum to 150 and each selected household was hit only ounce (i.e.&nbsp;<em>ssu_hits</em> = 1).</p>
-<div id="edea24df" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">11</span>)</span>
+<div id="6a3ea61b" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">11</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ssu_sample, ssu_hits, ssu_probs <span class="op">=</span> stage2_design.select(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    ssu_frame[<span class="st">"household"</span>], <span class="dv">15</span>, ssu_frame[<span class="st">"cluster"</span>]</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -928,12 +934,12 @@ First 15 observations of the SSU frame
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"ssu_hits"</span>] <span class="op">=</span> ssu_hits</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ssu_frame[<span class="st">"ssu_probs"</span>] <span class="op">=</span> ssu_probs</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ssu_frame[ssu_frame[<span class="st">"ssu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>].sample(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ssu_frame[ssu_frame[<span class="st">"ssu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>].sample(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -948,7 +954,7 @@ First 15 observations of the SSU frame
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2319</td>
+<th data-quarto-table-cell-role="th">2319</th>
 <td>52</td>
 <td>East</td>
 <td>52408</td>
@@ -958,7 +964,7 @@ First 15 observations of the SSU frame
 <td>0.024194</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">2931</td>
+<th data-quarto-table-cell-role="th">2931</th>
 <td>86</td>
 <td>West</td>
 <td>8699</td>
@@ -968,7 +974,7 @@ First 15 observations of the SSU frame
 <td>0.054745</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2642</td>
+<th data-quarto-table-cell-role="th">2642</th>
 <td>64</td>
 <td>West</td>
 <td>64111</td>
@@ -978,7 +984,7 @@ First 15 observations of the SSU frame
 <td>0.049834</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">122</td>
+<th data-quarto-table-cell-role="th">122</th>
 <td>7</td>
 <td>North</td>
 <td>7123</td>
@@ -988,7 +994,7 @@ First 15 observations of the SSU frame
 <td>0.115385</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">60</td>
+<th data-quarto-table-cell-role="th">60</th>
 <td>7</td>
 <td>North</td>
 <td>761</td>
@@ -998,7 +1004,7 @@ First 15 observations of the SSU frame
 <td>0.115385</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">945</td>
+<th data-quarto-table-cell-role="th">945</th>
 <td>16</td>
 <td>South</td>
 <td>16156</td>
@@ -1008,7 +1014,7 @@ First 15 observations of the SSU frame
 <td>0.076923</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">338</td>
+<th data-quarto-table-cell-role="th">338</th>
 <td>10</td>
 <td>North</td>
 <td>10209</td>
@@ -1018,7 +1024,7 @@ First 15 observations of the SSU frame
 <td>0.022727</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">2218</td>
+<th data-quarto-table-cell-role="th">2218</th>
 <td>52</td>
 <td>East</td>
 <td>52307</td>
@@ -1028,7 +1034,7 @@ First 15 observations of the SSU frame
 <td>0.024194</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2870</td>
+<th data-quarto-table-cell-role="th">2870</th>
 <td>86</td>
 <td>West</td>
 <td>8638</td>
@@ -1038,7 +1044,7 @@ First 15 observations of the SSU frame
 <td>0.054745</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1764</td>
+<th data-quarto-table-cell-role="th">1764</th>
 <td>45</td>
 <td>East</td>
 <td>45251</td>
@@ -1048,7 +1054,7 @@ First 15 observations of the SSU frame
 <td>0.037688</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">630</td>
+<th data-quarto-table-cell-role="th">630</th>
 <td>10</td>
 <td>North</td>
 <td>10501</td>
@@ -1058,7 +1064,7 @@ First 15 observations of the SSU frame
 <td>0.022727</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1441</td>
+<th data-quarto-table-cell-role="th">1441</th>
 <td>34</td>
 <td>East</td>
 <td>34167</td>
@@ -1068,7 +1074,7 @@ First 15 observations of the SSU frame
 <td>0.062762</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">986</td>
+<th data-quarto-table-cell-role="th">986</th>
 <td>24</td>
 <td>South</td>
 <td>242</td>
@@ -1078,7 +1084,7 @@ First 15 observations of the SSU frame
 <td>0.205479</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1796</td>
+<th data-quarto-table-cell-role="th">1796</th>
 <td>45</td>
 <td>East</td>
 <td>45283</td>
@@ -1088,7 +1094,7 @@ First 15 observations of the SSU frame
 <td>0.037688</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">1264</td>
+<th data-quarto-table-cell-role="th">1264</th>
 <td>29</td>
 <td>South</td>
 <td>29207</td>
@@ -1105,22 +1111,22 @@ First 15 observations of the SSU frame
 </div>
 <p>Let’s check that both <em>ssu_sample</em> and <em>ssu_hits</em> sum to 150 and each selected household was hit only ounce (i.e.&nbsp;<em>ssu_hits</em> = 1).</p>
 <div style="font-size:0.9rem">
-<div id="80c900fa" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_sample` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_sample'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="0252f19a" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_sample` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_sample'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The sum of `ssu_sample` is equal to: 150
 </code></pre>
 </div>
 </div>
-<div id="f4cc59e8" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_hits` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_hits'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="daf50f0a" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The sum of `ssu_hits` is equal to: </span><span class="sc">{</span>ssu_frame[<span class="st">'ssu_hits'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The sum of `ssu_hits` is equal to: 150
 </code></pre>
 </div>
 </div>
-<div id="81f116b5" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The values of `ssu_hits` are: </span><span class="sc">{</span>np<span class="sc">.</span>unique(ssu_frame[<span class="st">'ssu_hits'</span>])<span class="sc">.</span>tolist()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="85d88005" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The values of `ssu_hits` are: </span><span class="sc">{</span>np<span class="sc">.</span>unique(ssu_frame[<span class="st">'ssu_hits'</span>])<span class="sc">.</span>tolist()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The values of `ssu_hits` are: [0, 1]
 </code></pre>
@@ -1129,10 +1135,10 @@ First 15 observations of the SSU frame
 </div>
 <p>To use systematic selection, we just need to replace <code>method=SelectMethod.srs_wor</code> by <code>method=SelectMethod.sys</code>.</p>
 <p>Another common approach is to use a rate for selecting the sample. Instead of selecting 15 households from 130 in the first cluster, we may want to select with a rate of 15/130, and similarly for the other clusters.</p>
-<div id="ccd388c9" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>rates <span class="op">=</span> np.repeat(<span class="dv">15</span>, <span class="dv">10</span>) <span class="op">/</span> ssu_counts[<span class="st">"number_households_listed"</span>].values</span>
+<div id="24d17666" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>rates <span class="op">=</span> np.repeat(<span class="dv">15</span>, <span class="dv">10</span>) <span class="op">/</span> ssu_counts[<span class="st">"number_households_listed"</span>].values</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ssu_rates <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(np.unique(ssu_frame[<span class="st">"cluster"</span>]), rates))</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ssu_rates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ssu_rates</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>{np.int64(7): np.float64(0.11538461538461539),
  np.int64(10): np.float64(0.022727272727272728),
@@ -1146,8 +1152,8 @@ First 15 observations of the SSU frame
  np.int64(86): np.float64(0.05474452554744526)}</code></pre>
 </div>
 </div>
-<div id="315b16d9" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">22</span>)</span>
+<div id="00a2347a" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">22</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>stage2_design2 <span class="op">=</span> SampleSelection(</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>SelectMethod.sys, strat<span class="op">=</span><span class="va">True</span>, wr<span class="op">=</span><span class="va">False</span></span>
@@ -1167,12 +1173,12 @@ First 15 observations of the SSU frame
 <span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>ssu_sample2.head(<span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>ssu_sample2.head(<span class="dv">25</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1183,151 +1189,151 @@ First 15 observations of the SSU frame
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>71</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>72</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>73</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>74</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>75</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>76</td>
 <td>1</td>
 <td>1</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>77</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>78</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>79</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>710</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>711</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>712</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>713</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>714</td>
 <td>1</td>
 <td>1</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>715</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">15</td>
+<th data-quarto-table-cell-role="th">15</th>
 <td>716</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">16</td>
+<th data-quarto-table-cell-role="th">16</th>
 <td>717</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">17</td>
+<th data-quarto-table-cell-role="th">17</th>
 <td>718</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">18</td>
+<th data-quarto-table-cell-role="th">18</th>
 <td>719</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">19</td>
+<th data-quarto-table-cell-role="th">19</th>
 <td>720</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">20</td>
+<th data-quarto-table-cell-role="th">20</th>
 <td>721</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">21</td>
+<th data-quarto-table-cell-role="th">21</th>
 <td>722</td>
 <td>1</td>
 <td>1</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">22</td>
+<th data-quarto-table-cell-role="th">22</th>
 <td>723</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">23</td>
+<th data-quarto-table-cell-role="th">23</th>
 <td>724</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">24</td>
+<th data-quarto-table-cell-role="th">24</th>
 <td>725</td>
 <td>0</td>
 <td>0</td>
@@ -1339,13 +1345,13 @@ First 15 observations of the SSU frame
 </div>
 </div>
 <p>Let’s store the first and second stages samples.</p>
-<div id="06de4934" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage sample</span></span>
+<div id="004a9878" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage sample</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>psu_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"psu_prob"</span>]].to_csv(<span class="st">"psu_sample.csv"</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Second stage sample</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>ssu_sample <span class="op">=</span> ssu_frame.loc[ssu_frame[<span class="st">"ssu_sample"</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>ssu_sample[[<span class="st">"cluster"</span>, <span class="st">"household"</span>, <span class="st">"ssu_prob"</span>]].to_csv(<span class="st">"ssu_sample.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>ssu_sample[[<span class="st">"cluster"</span>, <span class="st">"household"</span>, <span class="st">"ssu_prob"</span>]].to_csv(<span class="st">"ssu_sample.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 
@@ -1404,13 +1410,14 @@ First 15 observations of the SSU frame
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

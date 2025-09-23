@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -70,14 +70,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../public/img/samplics_logo.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-43f3719592dba936979dd507688b4ba0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-12f6946bb06afb64f2ed36f89a165916.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -105,7 +106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -123,7 +124,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -157,7 +158,8 @@ window.Quarto = {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo light-content">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Samplics Documentation</span>
@@ -210,6 +212,10 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -478,18 +484,18 @@ window.Quarto = {
 <li>learn how to use the method <em>normalize()</em> to ensure that the sample weights sum to known constants.</li>
 </ul>
 <p>To run the code in this notebook, we will use the dataset that was developed in the previous tutorial on sample selection.</p>
-<div id="43c1fcb5" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div id="97fa927e" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_psu_sample, load_ssu_sample</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.weighting <span class="im">import</span> SampleWeight</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.weighting <span class="im">import</span> SampleWeight</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="design-base-weight" class="level1">
 <h1>Design (base) weight</h1>
 <p>The design weight is the inverse of the overall probability of selection which is the product of the first and second probabilities of selection.</p>
-<div id="ef1f8868" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load PSU sample data</span></span>
+<div id="aa19c0ba" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load PSU sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>psu_sample_dict <span class="op">=</span> load_psu_sample()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> psu_sample_dict[<span class="st">"data"</span>]</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -507,12 +513,12 @@ window.Quarto = {
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    full_sample[<span class="st">"ssu_prob"</span>]</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"design_weight"</span>] <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> full_sample[<span class="st">"inclusion_prob"</span>]</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>full_sample.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>full_sample.head(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -527,7 +533,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -537,7 +543,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -547,7 +553,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -557,7 +563,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -567,7 +573,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -577,7 +583,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -587,7 +593,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -597,7 +603,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -607,7 +613,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -617,7 +623,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -627,7 +633,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -637,7 +643,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -647,7 +653,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -657,7 +663,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -667,7 +673,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -683,8 +689,8 @@ window.Quarto = {
 </div>
 </div>
 <p>For the purposes of this illustration of handling non-response, we first need to incorporate some household non-response into our example. That is, we simulate the non-response status and store it in the variable <em>response_status</em>. The variable <em>response_status</em> has four possible values: <em>ineligible</em> which indicates that the sampling unit is not eligible for the survey, <em>respondent</em> which indicates that the sampling unit responded to the survey, <em>non-respondent</em> which indicates that the sampling unit did not respond to the survey, and <em>unknown</em> means that we are not able to infer the status of the sampling unit i.e.&nbsp;we do not know whether the sampling unit is eligible or not to the survey.</p>
-<div id="70cffd93" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">7</span>)</span>
+<div id="7a3f7ee7" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">7</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"response_status"</span>] <span class="op">=</span> np.random.choice(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"ineligible"</span>, <span class="st">"respondent"</span>, <span class="st">"non-respondent"</span>, <span class="st">"unknown"</span>], </span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span>full_sample.shape[<span class="dv">0</span>], </span>
@@ -693,12 +699,12 @@ window.Quarto = {
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>full_sample[</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"design_weight"</span>, <span class="st">"response_status"</span>]</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ].head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ].head(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -710,105 +716,105 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>ineligible</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>unknown</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>ineligible</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>non-respondent</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>respondent</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
 <td>ineligible</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
@@ -826,8 +832,8 @@ window.Quarto = {
 <p>Also, the weights of the sampling units with unknown eligibility are redistributed to the rest of the sampling units. In general, ineligible sampling units receive weights from the sampling units with unknown eligibility since eligible sampling units can be part of the unknown pool.</p>
 <p>The method <em>adjust()</em> has a boolean parameter <em>unknown_to_inelig</em> which controls how the sample weights of the unknown is redistributed. By default, <em>adjust()</em> redistribute the sample weights of the sampling units of the unknown to the ineligibles (<em>unknown_to_inelig=True</em>). If we do not wish to redistribute the sample weights of the unknowns to the ineligibles then we just set the flag to False (<em>unknown_to_inelig=Fasle</em>).</p>
 <p>In the snippet of code below, we adjust the weight within clusters that is we use clusters as our adjustment classes. Note that we run the nonresponse adjustment twice, the first time with <em>unknown_to_inelig=True</em> (<em>nr_weight</em>) and the second time with the flag equal to False (<em>nr_weight2</em>). With <em>unknown_to_inelig=True</em>, the ineligible received part of the sample weights from the unknowns. Hence, the sample weights for the respondent is less than when the flag is False. With <em>unknown_to_inelig=Fasle</em>, the ineligible did Not receive any weights from the unknowns. Hence, the sample weights for the ineligible units remain the same before and after adjustment. In a real survey, the statistician may decide on the best non-response strategy based on the available information.</p>
-<div id="0304d0da" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>status_mapping <span class="op">=</span> {</span>
+<div id="d63dd63b" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>status_mapping <span class="op">=</span> {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"in"</span>: <span class="st">"ineligible"</span>, </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rr"</span>: <span class="st">"respondent"</span>, </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nr"</span>: <span class="st">"non-respondent"</span>, </span>
@@ -856,12 +862,12 @@ window.Quarto = {
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"response_status"</span>, </span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nr_weight"</span>, </span>
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nr_weight2"</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    ]].drop_duplicates().head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    ]].drop_duplicates().head(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -875,7 +881,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
@@ -884,7 +890,7 @@ window.Quarto = {
 <td>46.166667</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
@@ -893,7 +899,7 @@ window.Quarto = {
 <td>55.400000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
@@ -902,7 +908,7 @@ window.Quarto = {
 <td>0.000000</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>46.166667</td>
@@ -911,7 +917,7 @@ window.Quarto = {
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">15</td>
+<th data-quarto-table-cell-role="th">15</th>
 <td>10</td>
 <td>North</td>
 <td>50.783333</td>
@@ -920,7 +926,7 @@ window.Quarto = {
 <td>0.000000</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">16</td>
+<th data-quarto-table-cell-role="th">16</th>
 <td>10</td>
 <td>North</td>
 <td>50.783333</td>
@@ -929,7 +935,7 @@ window.Quarto = {
 <td>71.096667</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">19</td>
+<th data-quarto-table-cell-role="th">19</th>
 <td>10</td>
 <td>North</td>
 <td>50.783333</td>
@@ -938,7 +944,7 @@ window.Quarto = {
 <td>50.783333</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">21</td>
+<th data-quarto-table-cell-role="th">21</th>
 <td>10</td>
 <td>North</td>
 <td>50.783333</td>
@@ -947,7 +953,7 @@ window.Quarto = {
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">30</td>
+<th data-quarto-table-cell-role="th">30</th>
 <td>16</td>
 <td>South</td>
 <td>62.149123</td>
@@ -956,7 +962,7 @@ window.Quarto = {
 <td>66.588346</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">35</td>
+<th data-quarto-table-cell-role="th">35</th>
 <td>16</td>
 <td>South</td>
 <td>62.149123</td>
@@ -965,7 +971,7 @@ window.Quarto = {
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">45</td>
+<th data-quarto-table-cell-role="th">45</th>
 <td>24</td>
 <td>South</td>
 <td>58.940741</td>
@@ -974,7 +980,7 @@ window.Quarto = {
 <td>63.852469</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">47</td>
+<th data-quarto-table-cell-role="th">47</th>
 <td>24</td>
 <td>South</td>
 <td>58.940741</td>
@@ -983,7 +989,7 @@ window.Quarto = {
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">55</td>
+<th data-quarto-table-cell-role="th">55</th>
 <td>24</td>
 <td>South</td>
 <td>58.940741</td>
@@ -992,7 +998,7 @@ window.Quarto = {
 <td>58.940741</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">60</td>
+<th data-quarto-table-cell-role="th">60</th>
 <td>29</td>
 <td>South</td>
 <td>65.702778</td>
@@ -1001,7 +1007,7 @@ window.Quarto = {
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">61</td>
+<th data-quarto-table-cell-role="th">61</th>
 <td>29</td>
 <td>South</td>
 <td>65.702778</td>
@@ -1030,18 +1036,18 @@ Important
 </div>
 <p>In the call above, if we omit the parameter <em>response_dict</em>, then the run would fail with an assertion error message. The current error message is the following: <strong>The response status must only contains values in (‘in’, ‘rr’, ‘nr’, ‘uk’) or the mapping should be provided using response_dict parameter</strong>. For the call to run without using <em>response_dict</em>, it is necessary that the response status takes only values in the standard codes i.e.&nbsp;(“in”, “rr”, “nr”, “uk”). The variable associated with <em>response_status</em> can contain any code but a mapping is necessary when the response variable is not constructed using the standard codes.</p>
 <p>To further illustrate the mapping of response status, let’s assume that we have response_status2 which has the values 100 for ineligible, 200 for non-respondent, 300 for respondent, and 999 for unknown.</p>
-<div id="556e7328" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>response_status2 <span class="op">=</span> np.repeat(<span class="dv">100</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
+<div id="3790dd2d" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>response_status2 <span class="op">=</span> np.repeat(<span class="dv">100</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>response_status2[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"non-respondent"</span>] <span class="op">=</span> <span class="dv">200</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>response_status2[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"respondent"</span>] <span class="op">=</span> <span class="dv">300</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>response_status2[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"unknown"</span>] <span class="op">=</span> <span class="dv">999</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>pd.crosstab(response_status2, full_sample[<span class="st">"response_status"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>pd.crosstab(response_status2, full_sample[<span class="st">"response_status"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th">response_status</th>
@@ -1060,28 +1066,28 @@ Important
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">100</td>
+<th data-quarto-table-cell-role="th">100</th>
 <td>16</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">200</td>
+<th data-quarto-table-cell-role="th">200</th>
 <td>0</td>
 <td>23</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">300</td>
+<th data-quarto-table-cell-role="th">300</th>
 <td>0</td>
 <td>0</td>
 <td>106</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">999</td>
+<th data-quarto-table-cell-role="th">999</th>
 <td>0</td>
 <td>0</td>
 <td>0</td>
@@ -1094,8 +1100,8 @@ Important
 </div>
 </div>
 <p>To use <em>response_status2</em>, we need to map the values 100, 200, 300 and 999 to “in”, “rr”, “nr”, and “uk”. This mapping is done below using the Python dictionary <em>status_mapping2</em>. Using <em>status_mapping2</em> in the function call <em>adjust()</em> will lead to the same adjustment as in the previous run i.e.&nbsp;<em>nr_weight</em> and <em>nr_weight3</em> contain the same adjusted weights.</p>
-<div id="78a7f822" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>status_mapping2 <span class="op">=</span> {<span class="st">"in"</span>: <span class="dv">100</span>, <span class="st">"nr"</span>: <span class="dv">200</span>, <span class="st">"rr"</span>: <span class="dv">300</span>, <span class="st">"uk"</span>: <span class="dv">999</span>}</span>
+<div id="306db968" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>status_mapping2 <span class="op">=</span> {<span class="st">"in"</span>: <span class="dv">100</span>, <span class="st">"nr"</span>: <span class="dv">200</span>, <span class="st">"rr"</span>: <span class="dv">300</span>, <span class="st">"uk"</span>: <span class="dv">999</span>}</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"nr_weight3"</span>] <span class="op">=</span> SampleWeight().adjust(</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"design_weight"</span>],</span>
@@ -1106,12 +1112,12 @@ Important
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>full_sample[</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"response_status"</span>, <span class="st">"nr_weight"</span>, <span class="st">"nr_weight3"</span>]</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    ].drop_duplicates().head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    ].drop_duplicates().head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1124,7 +1130,7 @@ Important
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>ineligible</td>
@@ -1132,7 +1138,7 @@ Important
 <td>49.464286</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>respondent</td>
@@ -1140,7 +1146,7 @@ Important
 <td>54.410714</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>unknown</td>
@@ -1148,7 +1154,7 @@ Important
 <td>0.000000</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>non-respondent</td>
@@ -1156,7 +1162,7 @@ Important
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">15</td>
+<th data-quarto-table-cell-role="th">15</th>
 <td>10</td>
 <td>North</td>
 <td>non-respondent</td>
@@ -1170,8 +1176,8 @@ Important
 </div>
 </div>
 <p>If the response status variable only takes values “in”, “nr”, “rr” and “uk”, then it is not necessary to provide the mapping dictionary to the function i.e.&nbsp;<em>resp_dict</em> can be omitted from the function call <em>adjust()</em>.</p>
-<div id="cef32922" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>response_status3 <span class="op">=</span> np.repeat(<span class="st">"in"</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
+<div id="0feb01f1" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>response_status3 <span class="op">=</span> np.repeat(<span class="st">"in"</span>, full_sample[<span class="st">"response_status"</span>].shape[<span class="dv">0</span>])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>response_status3[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"non-respondent"</span>] <span class="op">=</span> <span class="st">"nr"</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>response_status3[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"respondent"</span>] <span class="op">=</span> <span class="st">"rr"</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>response_status3[full_sample[<span class="st">"response_status"</span>] <span class="op">==</span> <span class="st">"unknown"</span>] <span class="op">=</span> <span class="st">"uk"</span></span>
@@ -1184,12 +1190,12 @@ Important
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>full_sample[</span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"response_status"</span>, <span class="st">"nr_weight"</span>, <span class="st">"nr_weight4"</span>]</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    ].drop_duplicates().head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    ].drop_duplicates().head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1202,7 +1208,7 @@ Important
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>ineligible</td>
@@ -1210,7 +1216,7 @@ Important
 <td>49.464286</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>respondent</td>
@@ -1218,7 +1224,7 @@ Important
 <td>54.410714</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>unknown</td>
@@ -1226,7 +1232,7 @@ Important
 <td>0.000000</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>non-respondent</td>
@@ -1234,7 +1240,7 @@ Important
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">15</td>
+<th data-quarto-table-cell-role="th">15</th>
 <td>10</td>
 <td>North</td>
 <td>non-respondent</td>
@@ -1247,8 +1253,8 @@ Important
 </div>
 </div>
 </div>
-<div id="9f81e3b2" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Just dropping a couple of variables </span></span>
+<div id="ee036223" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Just dropping a couple of variables </span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># not needed for the rest of the tutorial</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>full_sample.drop(</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>[</span>
@@ -1260,7 +1266,7 @@ Important
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"nr_weight4"</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        ], </span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    inplace<span class="op">=</span><span class="va">True</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="poststratification" class="level2">
@@ -1281,8 +1287,8 @@ Warning
 </div>
 <p>Let’s assume that we have a reliable external source e.g.&nbsp;a recent census that provides the number of households by region. The external source has the following control data: 3700 households for East, 1500 for North, 2800 for South and 6500 for West.</p>
 <p>We use the method <em>poststratify()</em> to ensure that the poststratified sample weights (<em>ps_weight</em>) sum to the know control totals by region. Note that the control totals are provided using the Python dictionary <em>census_households</em>.</p>
-<div id="5eb5ca6e" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>census_households <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">3700</span>, <span class="st">"North"</span>: <span class="dv">1500</span>, <span class="st">"South"</span>: <span class="dv">2800</span>, <span class="st">"West"</span>: <span class="dv">6500</span>}</span>
+<div id="0c92a50a" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>census_households <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">3700</span>, <span class="st">"North"</span>: <span class="dv">1500</span>, <span class="st">"South"</span>: <span class="dv">2800</span>, <span class="st">"West"</span>: <span class="dv">6500</span>}</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_weight"</span>] <span class="op">=</span> SampleWeight().poststratify(</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
@@ -1290,12 +1296,12 @@ Warning
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>full_sample.head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>full_sample.head(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1310,7 +1316,7 @@ Warning
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>72</td>
@@ -1320,7 +1326,7 @@ Warning
 <td>51.020408</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>73</td>
@@ -1330,7 +1336,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>75</td>
@@ -1340,7 +1346,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>715</td>
@@ -1350,7 +1356,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>722</td>
@@ -1360,7 +1366,7 @@ Warning
 <td>0.000000</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>7</td>
 <td>North</td>
 <td>724</td>
@@ -1370,7 +1376,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>755</td>
@@ -1380,7 +1386,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>7</td>
 <td>North</td>
 <td>761</td>
@@ -1390,7 +1396,7 @@ Warning
 <td>51.020408</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>7</td>
 <td>North</td>
 <td>764</td>
@@ -1400,7 +1406,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>7</td>
 <td>North</td>
 <td>782</td>
@@ -1410,7 +1416,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>7</td>
 <td>North</td>
 <td>795</td>
@@ -1420,7 +1426,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>7111</td>
@@ -1430,7 +1436,7 @@ Warning
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>7</td>
 <td>North</td>
 <td>7112</td>
@@ -1440,7 +1446,7 @@ Warning
 <td>56.122449</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>7</td>
 <td>North</td>
 <td>7117</td>
@@ -1450,7 +1456,7 @@ Warning
 <td>51.020408</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>7</td>
 <td>North</td>
 <td>7123</td>
@@ -1466,17 +1472,17 @@ Warning
 </div>
 </div>
 <p>The snippet of code below shows that the poststratified sample weights sum to the expected control totals that is 3700 households for East, 1500 for North, 2800 for South and 6500 for West.</p>
-<div id="8ace3bfa" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights <span class="op">=</span> full_sample[</span>
+<div id="6a8c2f88" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights <span class="op">=</span> full_sample[</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"ps_weight"</span>]</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    ].groupby(<span class="st">"region"</span>).<span class="bu">sum</span>()</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>sum_of_weights.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>sum_of_weights.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>sum_of_weights.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1487,25 +1493,25 @@ Warning
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>East</td>
 <td>3698.703391</td>
 <td>3700.0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>North</td>
 <td>1454.250000</td>
 <td>1500.0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>South</td>
 <td>2801.889620</td>
 <td>2800.0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>West</td>
 <td>6485.783333</td>
 <td>6500.0</td>
@@ -1517,16 +1523,16 @@ Warning
 </div>
 </div>
 <p>The crosstable below shows that only one adjustment factor was calculated and applied per adjustment class or region.</p>
-<div id="173e3094" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_adj_fct"</span>] <span class="op">=</span> <span class="op">\</span></span>
+<div id="d9ea5e83" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_adj_fct"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(full_sample[<span class="st">"ps_weight"</span>] <span class="op">/</span> full_sample[<span class="st">"nr_weight"</span>], <span class="dv">12</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>pd.crosstab(full_sample[<span class="st">"ps_adj_fct"</span>], full_sample[<span class="st">"region"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>pd.crosstab(full_sample[<span class="st">"ps_adj_fct"</span>], full_sample[<span class="st">"region"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th">region</th>
@@ -1545,28 +1551,28 @@ Warning
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0.999326</td>
+<th data-quarto-table-cell-role="th">0.999326</th>
 <td>0</td>
 <td>0</td>
 <td>38</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1.000351</td>
+<th data-quarto-table-cell-role="th">1.000351</th>
 <td>37</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">1.002192</td>
+<th data-quarto-table-cell-role="th">1.002192</th>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>23</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1.031460</td>
+<th data-quarto-table-cell-role="th">1.031460</th>
 <td>0</td>
 <td>24</td>
 <td>0</td>
@@ -1580,20 +1586,20 @@ Warning
 </div>
 <p>In some surveys, there is interest in keeping relative distribution of strata to some known distribution. For example, WHO EPI vaccination surveys often postratify sample weights to ensure that relative sizes of strata reflect offcial statistics e.g.&nbsp;census data. In most cases, the strata are based on some administrative divisions.</p>
 <p>For example, assume that according to census data that East contains 25% of the households, North contains 10%, South contains 20% and West contains 45%. We can poststratify using the snippet of code below.</p>
-<div id="dd3fba38" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>known_ratios <span class="op">=</span> {<span class="st">"East"</span>: <span class="fl">0.25</span>, <span class="st">"North"</span>: <span class="fl">0.10</span>, <span class="st">"South"</span>: <span class="fl">0.20</span>, <span class="st">"West"</span>: <span class="fl">0.45</span>}</span>
+<div id="42683e36" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>known_ratios <span class="op">=</span> {<span class="st">"East"</span>: <span class="fl">0.25</span>, <span class="st">"North"</span>: <span class="fl">0.10</span>, <span class="st">"South"</span>: <span class="fl">0.20</span>, <span class="st">"West"</span>: <span class="fl">0.45</span>}</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"ps_weight2"</span>] <span class="op">=</span> SampleWeight().poststratify(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span>known_ratios, </span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>full_sample.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>full_sample.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1610,7 +1616,7 @@ Warning
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>72</td>
@@ -1622,7 +1628,7 @@ Warning
 <td>49.117777</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>73</td>
@@ -1634,7 +1640,7 @@ Warning
 <td>54.029554</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>75</td>
@@ -1646,7 +1652,7 @@ Warning
 <td>54.029554</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>715</td>
@@ -1658,7 +1664,7 @@ Warning
 <td>54.029554</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>722</td>
@@ -1675,19 +1681,19 @@ Warning
 </div>
 </div>
 </div>
-<div id="13b7c1f8" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights2 <span class="op">=</span> full_sample[</span>
+<div id="f03cf27b" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sum_of_weights2 <span class="op">=</span> full_sample[</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"ps_weight2"</span>]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    ].groupby(<span class="st">"region"</span>).<span class="bu">sum</span>()</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>sum_of_weights2.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>sum_of_weights2[<span class="st">"ratio"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    sum_of_weights2[<span class="st">"ps_weight2"</span>] <span class="op">/</span> <span class="bu">sum</span>(sum_of_weights2[<span class="st">"ps_weight2"</span>])</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>sum_of_weights2.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>sum_of_weights2.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1699,28 +1705,28 @@ Warning
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>East</td>
 <td>3698.703391</td>
 <td>3610.156586</td>
 <td>0.25</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>North</td>
 <td>1454.250000</td>
 <td>1444.062634</td>
 <td>0.10</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>South</td>
 <td>2801.889620</td>
 <td>2888.125269</td>
 <td>0.20</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>West</td>
 <td>6485.783333</td>
 <td>6498.281855</td>
@@ -1865,8 +1871,8 @@ Warning
 </tbody>
 </table></li>
 </ul>
-<div id="1b42ee9b" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">150</span>)</span>
+<div id="192b59fc" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">150</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"education"</span>] <span class="op">=</span> np.random.choice(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"Low"</span>, <span class="st">"Medium"</span>, <span class="st">"High"</span>), </span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    size<span class="op">=</span><span class="dv">150</span>, </span>
@@ -1887,12 +1893,12 @@ Warning
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"education"</span>, </span>
 <span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"poverty"</span>, </span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"under_five"</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    ]].head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    ]].head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1907,7 +1913,7 @@ Warning
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>72</td>
@@ -1917,7 +1923,7 @@ Warning
 <td>1</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>73</td>
@@ -1927,7 +1933,7 @@ Warning
 <td>3</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>75</td>
@@ -1937,7 +1943,7 @@ Warning
 <td>2</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>715</td>
@@ -1947,7 +1953,7 @@ Warning
 <td>2</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>722</td>
@@ -1964,19 +1970,19 @@ Warning
 </div>
 <p>We now will calibrate the nonreponse weight (<em>nr_weight</em>) to ensure that the estimated number of households in poverty is equal to 4,700 and the estimated total number of children under five is 30,8500. The control numbers 4,700 and 30,800 are obtained from the table above.</p>
 <p>The class <em>SampleWeight()</em> uses the method <em>calibrate(samp_weight, aux_vars, control, domain, scale, bounded, modified)</em> to adjust the weight using the GREG approach. * The contol values must be stored in a python dictionnary i.e.&nbsp;totals = {“poverty”: 4700, “under_five”: 30800}. In this case, we have two numerical variables poverty with values in {0, 1} and under_five with values in {0, 1, 2, 3, 4, 5}. * <em>aux_vars</em> is the matrix of covariates.</p>
-<div id="ccd5306d" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>totals <span class="op">=</span> {<span class="st">"poverty"</span>: <span class="dv">4700</span>, <span class="st">"under_five"</span>: <span class="dv">30800</span>}</span>
+<div id="47ac9c4c" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>totals <span class="op">=</span> {<span class="st">"poverty"</span>: <span class="dv">4700</span>, <span class="st">"under_five"</span>: <span class="dv">30800</span>}</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"calib_weight"</span>] <span class="op">=</span> SampleWeight().calibrate(</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    full_sample[<span class="st">"nr_weight"</span>], full_sample[[<span class="st">"poverty"</span>, <span class="st">"under_five"</span>]], totals</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>full_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"household"</span>, <span class="st">"nr_weight"</span>, <span class="st">"calib_weight"</span>]].head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>full_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"household"</span>, <span class="st">"nr_weight"</span>, <span class="st">"calib_weight"</span>]].head(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1989,7 +1995,7 @@ Warning
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>72</td>
@@ -1997,7 +2003,7 @@ Warning
 <td>50.432441</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>73</td>
@@ -2005,7 +2011,7 @@ Warning
 <td>57.233887</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>75</td>
@@ -2013,7 +2019,7 @@ Warning
 <td>56.292829</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>715</td>
@@ -2021,7 +2027,7 @@ Warning
 <td>56.416743</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>722</td>
@@ -2029,7 +2035,7 @@ Warning
 <td>0.000000</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>7</td>
 <td>North</td>
 <td>724</td>
@@ -2037,7 +2043,7 @@ Warning
 <td>57.233887</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>755</td>
@@ -2045,7 +2051,7 @@ Warning
 <td>57.233887</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>7</td>
 <td>North</td>
 <td>761</td>
@@ -2053,7 +2059,7 @@ Warning
 <td>49.464286</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>7</td>
 <td>North</td>
 <td>764</td>
@@ -2061,7 +2067,7 @@ Warning
 <td>56.292829</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>7</td>
 <td>North</td>
 <td>782</td>
@@ -2069,7 +2075,7 @@ Warning
 <td>57.233887</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>7</td>
 <td>North</td>
 <td>795</td>
@@ -2077,7 +2083,7 @@ Warning
 <td>58.174944</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>7111</td>
@@ -2085,7 +2091,7 @@ Warning
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>7</td>
 <td>North</td>
 <td>7112</td>
@@ -2093,7 +2099,7 @@ Warning
 <td>59.116002</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>7</td>
 <td>North</td>
 <td>7117</td>
@@ -2101,7 +2107,7 @@ Warning
 <td>50.319793</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>7</td>
 <td>North</td>
 <td>7123</td>
@@ -2115,8 +2121,8 @@ Warning
 </div>
 </div>
 <p>We can confirm that the estimated totals for the auxiliary variables are equal to their control values.</p>
-<div id="3073ab4e" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>poverty <span class="op">=</span> full_sample[<span class="st">"poverty"</span>]</span>
+<div id="7447c1f6" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>poverty <span class="op">=</span> full_sample[<span class="st">"poverty"</span>]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>under_5 <span class="op">=</span> full_sample[<span class="st">"under_five"</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>nr_weight <span class="op">=</span> full_sample[<span class="st">"nr_weight"</span>]</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>calib_weight <span class="op">=</span> full_sample[<span class="st">"calib_weight"</span>]</span>
@@ -2130,7 +2136,7 @@ Warning
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"""Total estimated number of children under 5 was </span></span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span><span class="bu">sum</span>(under_5<span class="op">*</span>nr_weight)<span class="sc">:.2f}</span><span class="ss"> before adjustment and </span></span>
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span><span class="bu">sum</span>(under_5<span class="op">*</span>calib_weight)<span class="sc">:.2f}</span><span class="ss"> after adjustment.</span><span class="ch">\n</span><span class="ss">"""</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Total estimated number of poor households was 
@@ -2144,8 +2150,8 @@ Total estimated number of children under 5 was
 </div>
 </div>
 <p>If we want to control by domain then we can do so using the parameter <em>domain</em> of <em>calibrate()</em>. First we need to update the python dictionary holding the control values. Now, those values have to be provided for each domain. Note that the dictionary is now a nested dictionary where the higher level keys hold the domain values i.e.&nbsp;East, North, South and West. Then the higher level values of the dictionary are the dictionaries providing mapping for the auxiliary variables and the corresponding control values.</p>
-<div id="2185eeb6" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
+<div id="92d6f00c" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"East"</span>: {<span class="st">"poverty"</span>: <span class="dv">1200</span>, <span class="st">"under_five"</span>: <span class="dv">6300</span>},</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"North"</span>: {<span class="st">"poverty"</span>: <span class="dv">200</span>, <span class="st">"under_five"</span>: <span class="dv">4000</span>},</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"South"</span>: {<span class="st">"poverty"</span>: <span class="dv">1100</span>, <span class="st">"under_five"</span>: <span class="dv">6500</span>},</span>
@@ -2165,12 +2171,12 @@ Total estimated number of children under 5 was
 <span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nr_weight"</span>, </span>
 <span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"calib_weight"</span>, </span>
 <span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"calib_weight_d"</span></span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    ]].head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    ]].head(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -2184,7 +2190,7 @@ Total estimated number of children under 5 was
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>72</td>
@@ -2193,7 +2199,7 @@ Total estimated number of children under 5 was
 <td>40.892864</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>7</td>
 <td>North</td>
 <td>73</td>
@@ -2202,7 +2208,7 @@ Total estimated number of children under 5 was
 <td>61.852139</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>7</td>
 <td>North</td>
 <td>75</td>
@@ -2211,7 +2217,7 @@ Total estimated number of children under 5 was
 <td>59.371664</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>7</td>
 <td>North</td>
 <td>715</td>
@@ -2220,7 +2226,7 @@ Total estimated number of children under 5 was
 <td>47.462625</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>7</td>
 <td>North</td>
 <td>722</td>
@@ -2229,7 +2235,7 @@ Total estimated number of children under 5 was
 <td>0.000000</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>7</td>
 <td>North</td>
 <td>724</td>
@@ -2238,7 +2244,7 @@ Total estimated number of children under 5 was
 <td>61.852139</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>755</td>
@@ -2247,7 +2253,7 @@ Total estimated number of children under 5 was
 <td>61.852139</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>7</td>
 <td>North</td>
 <td>761</td>
@@ -2256,7 +2262,7 @@ Total estimated number of children under 5 was
 <td>49.464286</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>7</td>
 <td>North</td>
 <td>764</td>
@@ -2265,7 +2271,7 @@ Total estimated number of children under 5 was
 <td>59.371664</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>7</td>
 <td>North</td>
 <td>782</td>
@@ -2274,7 +2280,7 @@ Total estimated number of children under 5 was
 <td>61.852139</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>7</td>
 <td>North</td>
 <td>795</td>
@@ -2283,7 +2289,7 @@ Total estimated number of children under 5 was
 <td>64.332614</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>7</td>
 <td>North</td>
 <td>7111</td>
@@ -2292,7 +2298,7 @@ Total estimated number of children under 5 was
 <td>0.000000</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>7</td>
 <td>North</td>
 <td>7112</td>
@@ -2301,7 +2307,7 @@ Total estimated number of children under 5 was
 <td>66.813089</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>7</td>
 <td>North</td>
 <td>7117</td>
@@ -2310,7 +2316,7 @@ Total estimated number of children under 5 was
 <td>51.719263</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>7</td>
 <td>North</td>
 <td>7123</td>
@@ -2325,11 +2331,11 @@ Total estimated number of children under 5 was
 </div>
 </div>
 <p>Note that the GREG domain estimates above do not have the additive property. That is the GREG domain estimates do not sum to the overal GREG estimate. To illustrate this, let’s assume that we want to estimate the number of households.</p>
-<div id="2d8063f7" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The number of households using the overall GREG is: </span><span class="op">\</span></span>
+<div id="9ed6657a" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The number of households using the overall GREG is: </span><span class="op">\</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="op">\</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight_d'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight_d'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 The number of households using the overall GREG is:     14960.15 
@@ -2351,8 +2357,8 @@ Note
 <p>If the additive flag is set to <code>True</code>, the sum of the domain estimates will be equal to the GREG overal estimate.</p>
 </div>
 </div>
-<div id="29b1c2cf" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
+<div id="8cf1b493" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>totals_by_domain <span class="op">=</span> {</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"East"</span>: {<span class="st">"poverty"</span>: <span class="dv">1200</span>, <span class="st">"under_five"</span>: <span class="dv">6300</span>},</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"North"</span>: {<span class="st">"poverty"</span>: <span class="dv">200</span>, <span class="st">"under_five"</span>: <span class="dv">4000</span>},</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"South"</span>: {<span class="st">"poverty"</span>: <span class="dv">1100</span>, <span class="st">"under_five"</span>: <span class="dv">6500</span>},</span>
@@ -2365,37 +2371,37 @@ Note
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    totals_by_domain,</span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    full_sample[<span class="st">"region"</span>],</span>
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    additive<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="d8be2de6" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>under_5 <span class="op">=</span> np.array(full_sample[<span class="st">"under_five"</span>])</span>
+<div id="69df1f1b" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>under_5 <span class="op">=</span> np.array(full_sample[<span class="st">"under_five"</span>])</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Each column can be used to estimate a domain: </span><span class="op">\</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3) <span class="op">*</span> under_5, axis<span class="op">=</span><span class="dv">1</span>)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3) <span class="op">*</span> under_5, axis<span class="op">=</span><span class="dv">1</span>)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Each column can be used to estimate a domain: [ 6300.  4000.  6500. 14000.]
 </code></pre>
 </div>
 </div>
-<div id="0bc24b24" class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the overall GREG is: </span><span class="op">\</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="3371eb14" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the overall GREG is: </span><span class="op">\</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight'</span>])<span class="sc">:.2f}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The number of households using the overall GREG is: 14960.15 
 </code></pre>
 </div>
 </div>
-<div id="a8c3a7ed" class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="op">\</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight_d'</span>])<span class="sc">:.2f}</span><span class="ss"> (additive=False)</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="f4c1fd6b" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="op">\</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">sum</span>(full_sample[<span class="st">'calib_weight_d'</span>])<span class="sc">:.2f}</span><span class="ss"> (additive=False)</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The number of households using the domain GREG is: 14959.01 (additive=False)
 </code></pre>
 </div>
 </div>
-<div id="e96f1369" class="cell" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="op">\</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3))<span class="sc">:.2f}</span><span class="ss"> (additive=True) </span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="51e67710" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The number of households using the domain GREG is: </span><span class="op">\</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>np<span class="sc">.</span><span class="bu">sum</span>(np.transpose(calib_weight3))<span class="sc">:.2f}</span><span class="ss"> (additive=True) </span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The number of households using the domain GREG is: 14960.15 (additive=True) 
 </code></pre>
@@ -2419,43 +2425,43 @@ Note
 <p><em>normalization</em> is mostly added here for completeness but it is sheldom to see sample weight normalize in large scale household surveys. One major downside of normalized weights is the Note that estimation of totals does not make sense with normalized weights.</p>
 </div>
 </div>
-<div id="4c4866fd" class="cell" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight"</span>] <span class="op">=</span> <span class="op">\</span></span>
+<div id="7c4470e0" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    SampleWeight().normalize(samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>])</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>full_sample[[<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>]].head(<span class="dv">25</span>)</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((full_sample.shape[<span class="dv">0</span>], full_sample[<span class="st">"norm_weight"</span>].<span class="bu">sum</span>()))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((full_sample.shape[<span class="dv">0</span>], full_sample[<span class="st">"norm_weight"</span>].<span class="bu">sum</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>(150, np.float64(150.0))</code></pre>
 </div>
 </div>
 <p>When <em>normalize()</em> is called with only the parameter <em>sample_weight</em> then the sample weights are normalize to sum to the length of the sample weight vector.</p>
-<div id="929858d8" class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight2"</span>] <span class="op">=</span> <span class="op">\</span></span>
+<div id="5b12dfb9" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight2"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    SampleWeight().normalize(</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>        control<span class="op">=</span><span class="dv">300</span></span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>        )</span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(full_sample[<span class="st">"norm_weight2"</span>].<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(full_sample[<span class="st">"norm_weight2"</span>].<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>300.0</code></pre>
 </div>
 </div>
-<div id="6fe99596" class="cell" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight3"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
+<div id="80bd45ed" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight3"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span>full_sample[<span class="st">"region"</span>]</span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="26">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -2467,28 +2473,28 @@ Note
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>East</td>
 <td>3698.703391</td>
 <td>38.419768</td>
 <td>45.0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>North</td>
 <td>1454.250000</td>
 <td>15.105820</td>
 <td>30.0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>South</td>
 <td>2801.889620</td>
 <td>29.104239</td>
 <td>45.0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>West</td>
 <td>6485.783333</td>
 <td>67.370173</td>
@@ -2500,8 +2506,8 @@ Note
 </div>
 </div>
 </div>
-<div id="08105fbe" class="cell" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>norm_level <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">10</span>, <span class="st">"North"</span>: <span class="dv">20</span>, <span class="st">"South"</span>: <span class="dv">30</span>, <span class="st">"West"</span>: <span class="dv">50</span>}</span>
+<div id="ecc43965" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>norm_level <span class="op">=</span> {<span class="st">"East"</span>: <span class="dv">10</span>, <span class="st">"North"</span>: <span class="dv">20</span>, <span class="st">"South"</span>: <span class="dv">30</span>, <span class="st">"West"</span>: <span class="dv">50</span>}</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>full_sample[<span class="st">"norm_weight4"</span>] <span class="op">=</span> SampleWeight().normalize(</span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    samp_weight<span class="op">=</span>full_sample[<span class="st">"nr_weight"</span>], </span>
@@ -2511,12 +2517,12 @@ Note
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>weight_sum <span class="op">=</span> full_sample.groupby([<span class="st">"region"</span>]).<span class="bu">sum</span>()</span>
 <span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>weight_sum.reset_index(inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>, <span class="st">"norm_weight4"</span>,]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>weight_sum[[<span class="st">"region"</span>, <span class="st">"nr_weight"</span>, <span class="st">"norm_weight"</span>, <span class="st">"norm_weight3"</span>, <span class="st">"norm_weight4"</span>,]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -2529,7 +2535,7 @@ Note
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>East</td>
 <td>3698.703391</td>
 <td>38.419768</td>
@@ -2537,7 +2543,7 @@ Note
 <td>10.0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>North</td>
 <td>1454.250000</td>
 <td>15.105820</td>
@@ -2545,7 +2551,7 @@ Note
 <td>20.0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>South</td>
 <td>2801.889620</td>
 <td>29.104239</td>
@@ -2553,7 +2559,7 @@ Note
 <td>30.0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>West</td>
 <td>6485.783333</td>
 <td>67.370173</td>
@@ -2623,13 +2629,14 @@ Note
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

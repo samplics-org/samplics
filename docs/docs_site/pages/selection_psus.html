@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -70,14 +70,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../public/img/samplics_logo.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-43f3719592dba936979dd507688b4ba0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-12f6946bb06afb64f2ed36f89a165916.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -105,7 +106,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -123,7 +124,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -157,7 +158,8 @@ window.Quarto = {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo light-content">
+    <img src="../public/img/samplics_logo2.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Samplics Documentation</span>
@@ -210,6 +212,10 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -474,26 +480,26 @@ window.Quarto = {
 </ul>
 <p>This example is not meant to be exhaustif. There are many use cases that are not covered in this tutorial. For example, some PSUs may be segmented due to their size and segments selected in a subsequent step. Segment selection can be done with Samplics in a similar way as the PSUs selection, with PPS or SRS, after the segements have been created by the user.</p>
 <p>First, let us import the python packages necessary to run the tutorial.</p>
-<div id="65a794af" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
+<div id="1f0b0538" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_psu_frame</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics <span class="im">import</span> SelectMethod</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSelection</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSelection</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="sample-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="sample-dataset">Sample Dataset</h2>
 <p>The file <em>sample_frame.csv</em> - shown below - contains synthetic data of 100 clusters classified by region (East, North, South and West). Clusters represent a group of households. In the file, each cluster has an associated number of households (number_households) and a status variable indicating whether the cluster is in scope or not.</p>
 <p>This synthetic data represents a simplified version of enumeration areas (EAs) frames found in many countries and used by major household survey programs such as the Demographic and Health Surveys (DHS), the Population-based HIV Impact Assessment (PHIA) surveys and the Multiple Cluster Indicator Surveys (MICS).</p>
-<div id="ddcb9876" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>psu_frame_dict <span class="op">=</span> load_psu_frame()</span>
+<div id="df95cd8f" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>psu_frame_dict <span class="op">=</span> load_psu_frame()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>psu_frame <span class="op">=</span> psu_frame_dict[<span class="st">"data"</span>]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>psu_frame.head(<span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>psu_frame.head(<span class="dv">25</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -506,7 +512,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>1</td>
 <td>North</td>
 <td>105</td>
@@ -514,7 +520,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>2</td>
 <td>North</td>
 <td>85</td>
@@ -522,7 +528,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>3</td>
 <td>North</td>
 <td>95</td>
@@ -530,7 +536,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>4</td>
 <td>North</td>
 <td>75</td>
@@ -538,7 +544,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>5</td>
 <td>North</td>
 <td>120</td>
@@ -546,7 +552,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>6</td>
 <td>North</td>
 <td>90</td>
@@ -554,7 +560,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>130</td>
@@ -562,7 +568,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>8</td>
 <td>North</td>
 <td>55</td>
@@ -570,7 +576,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>9</td>
 <td>North</td>
 <td>30</td>
@@ -578,7 +584,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>10</td>
 <td>North</td>
 <td>600</td>
@@ -586,7 +592,7 @@ window.Quarto = {
 <td>due to a large building</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>11</td>
 <td>South</td>
 <td>25</td>
@@ -594,7 +600,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>12</td>
 <td>South</td>
 <td>250</td>
@@ -602,7 +608,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>13</td>
 <td>South</td>
 <td>105</td>
@@ -610,7 +616,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>14</td>
 <td>South</td>
 <td>75</td>
@@ -618,7 +624,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>15</td>
 <td>South</td>
 <td>205</td>
@@ -626,7 +632,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">15</td>
+<th data-quarto-table-cell-role="th">15</th>
 <td>16</td>
 <td>South</td>
 <td>190</td>
@@ -634,7 +640,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">16</td>
+<th data-quarto-table-cell-role="th">16</th>
 <td>17</td>
 <td>South</td>
 <td>95</td>
@@ -642,7 +648,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">17</td>
+<th data-quarto-table-cell-role="th">17</th>
 <td>18</td>
 <td>South</td>
 <td>85</td>
@@ -650,7 +656,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">18</td>
+<th data-quarto-table-cell-role="th">18</th>
 <td>19</td>
 <td>South</td>
 <td>50</td>
@@ -658,7 +664,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">19</td>
+<th data-quarto-table-cell-role="th">19</th>
 <td>20</td>
 <td>South</td>
 <td>110</td>
@@ -666,7 +672,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">20</td>
+<th data-quarto-table-cell-role="th">20</th>
 <td>21</td>
 <td>South</td>
 <td>130</td>
@@ -674,7 +680,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">21</td>
+<th data-quarto-table-cell-role="th">21</th>
 <td>22</td>
 <td>South</td>
 <td>180</td>
@@ -682,7 +688,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">22</td>
+<th data-quarto-table-cell-role="th">22</th>
 <td>23</td>
 <td>South</td>
 <td>65</td>
@@ -690,7 +696,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">23</td>
+<th data-quarto-table-cell-role="th">23</th>
 <td>24</td>
 <td>South</td>
 <td>75</td>
@@ -698,7 +704,7 @@ window.Quarto = {
 <td>NaN</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">24</td>
+<th data-quarto-table-cell-role="th">24</th>
 <td>25</td>
 <td>South</td>
 <td>95</td>
@@ -735,10 +741,10 @@ Important
 <section id="psu-sample-size" class="level2">
 <h2 class="anchored" data-anchor-id="psu-sample-size">PSU Sample size</h2>
 <p>For a stratified sampling design, the sample size is provided using a Python dictionary. Python dictionaries allow us to pair the strata with the sample sizes. Let’s say that we want to select 3 clusters from stratum <em>East</em>, 2 from <em>West</em>, 2 from <em>North</em> and 3 from <em>South</em>. The snippet of code below demonstrates how to create the Python dictionary. Note that it is important to correctly spell out the keys of the dictionary which corresponds to the values of the variable stratum (in our case it’s <em>region</em>).</p>
-<div id="6e1f93e1" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>psu_sample_size <span class="op">=</span> {<span class="st">"East"</span>:<span class="dv">3</span>, <span class="st">"West"</span>: <span class="dv">2</span>, <span class="st">"North"</span>: <span class="dv">2</span>, <span class="st">"South"</span>: <span class="dv">3</span>}</span>
+<div id="b24dc4ed" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>psu_sample_size <span class="op">=</span> {<span class="st">"East"</span>:<span class="dv">3</span>, <span class="st">"West"</span>: <span class="dv">2</span>, <span class="st">"North"</span>: <span class="dv">2</span>, <span class="st">"South"</span>: <span class="dv">3</span>}</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The sample size per domain is:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>psu_sample_size<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The sample size per domain is:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>psu_sample_size<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 The sample size per domain is:
@@ -748,24 +754,24 @@ The sample size per domain is:
 </div>
 <p>The function <em>array_to_dict()</em> converts an array to a dictionnary by pairing the values of the array to their frequency. We can use this function to calculates the number of clusters per stratum and store the result in a Python dictionnary. Then, we modify the values of the dictionnary to create the sample size dictionnary.</p>
 <p>If some of the clusters are certainties then an exception will be raised. Hence, the user will have to manually handle the certaininties. Better handling of certainties is planned for future versions of the library <em>samplics</em>.</p>
-<div id="e432326b" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics <span class="im">import</span> array_to_dict</span>
+<div id="cf71138a" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics <span class="im">import</span> array_to_dict</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>frame_size <span class="op">=</span> array_to_dict(psu_frame[<span class="st">"region"</span>])</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The number of clusters per stratum is:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>frame_size<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The number of clusters per stratum is:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>frame_size<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 The number of clusters per stratum is:
  {'East': np.int64(25), 'North': np.int64(10), 'South': np.int64(20), 'West': np.int64(45)}</code></pre>
 </div>
 </div>
-<div id="7cabb530" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>psu_sample_size <span class="op">=</span> frame_size.copy()</span>
+<div id="6a3b5728" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>psu_sample_size <span class="op">=</span> frame_size.copy()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>psu_sample_size[<span class="st">"East"</span>] <span class="op">=</span> <span class="dv">3</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>psu_sample_size[<span class="st">"North"</span>] <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>psu_sample_size[<span class="st">"South"</span>] <span class="op">=</span> <span class="dv">3</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>psu_sample_size[<span class="st">"West"</span>] <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The sample size per stratum is:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>psu_sample_size<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">The sample size per stratum is:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>psu_sample_size<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 The sample size per stratum is:
@@ -773,8 +779,8 @@ The sample size per stratum is:
 </code></pre>
 </div>
 </div>
-<div id="3c6efd5b" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stage1_design <span class="op">=</span> SampleSelection(method<span class="op">=</span>SelectMethod.pps_sys, strat<span class="op">=</span><span class="va">True</span>, wr<span class="op">=</span><span class="va">False</span>)</span>
+<div id="dab091e3" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>stage1_design <span class="op">=</span> SampleSelection(method<span class="op">=</span>SelectMethod.pps_sys, strat<span class="op">=</span><span class="va">True</span>, wr<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>psu_frame[<span class="st">"psu_prob"</span>] <span class="op">=</span> stage1_design.inclusion_probs(</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    psu_frame[<span class="st">"cluster"</span>], </span>
@@ -785,7 +791,7 @@ The sample size per stratum is:
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>nb_obs <span class="op">=</span> <span class="dv">15</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">First </span><span class="sc">{</span>nb_obs<span class="sc">}</span><span class="ss"> observations of the PSU frame </span><span class="ch">\n</span><span class="ss">"</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>psu_frame.head(nb_obs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>psu_frame.head(nb_obs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 First 15 observations of the PSU frame 
@@ -795,7 +801,7 @@ First 15 observations of the PSU frame
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -809,7 +815,7 @@ First 15 observations of the PSU frame
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>1</td>
 <td>North</td>
 <td>105</td>
@@ -818,7 +824,7 @@ First 15 observations of the PSU frame
 <td>0.151625</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>2</td>
 <td>North</td>
 <td>85</td>
@@ -827,7 +833,7 @@ First 15 observations of the PSU frame
 <td>0.122744</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>3</td>
 <td>North</td>
 <td>95</td>
@@ -836,7 +842,7 @@ First 15 observations of the PSU frame
 <td>0.137184</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>4</td>
 <td>North</td>
 <td>75</td>
@@ -845,7 +851,7 @@ First 15 observations of the PSU frame
 <td>0.108303</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>5</td>
 <td>North</td>
 <td>120</td>
@@ -854,7 +860,7 @@ First 15 observations of the PSU frame
 <td>0.173285</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>6</td>
 <td>North</td>
 <td>90</td>
@@ -863,7 +869,7 @@ First 15 observations of the PSU frame
 <td>0.129964</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>130</td>
@@ -872,7 +878,7 @@ First 15 observations of the PSU frame
 <td>0.187726</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>8</td>
 <td>North</td>
 <td>55</td>
@@ -881,7 +887,7 @@ First 15 observations of the PSU frame
 <td>0.079422</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>9</td>
 <td>North</td>
 <td>30</td>
@@ -890,7 +896,7 @@ First 15 observations of the PSU frame
 <td>0.043321</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>10</td>
 <td>North</td>
 <td>600</td>
@@ -899,7 +905,7 @@ First 15 observations of the PSU frame
 <td>0.866426</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>11</td>
 <td>South</td>
 <td>25</td>
@@ -908,7 +914,7 @@ First 15 observations of the PSU frame
 <td>0.027523</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>12</td>
 <td>South</td>
 <td>250</td>
@@ -917,7 +923,7 @@ First 15 observations of the PSU frame
 <td>0.275229</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>13</td>
 <td>South</td>
 <td>105</td>
@@ -926,7 +932,7 @@ First 15 observations of the PSU frame
 <td>0.115596</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>14</td>
 <td>South</td>
 <td>75</td>
@@ -935,7 +941,7 @@ First 15 observations of the PSU frame
 <td>0.082569</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>15</td>
 <td>South</td>
 <td>205</td>
@@ -969,8 +975,8 @@ Note
 <p><em>np.random.seed()</em> fixes the random seed to allow us to reproduce the random selection.</p>
 </div>
 </div>
-<div id="bcedcd73" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
+<div id="0be3dc69" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>psu_frame[<span class="st">"psu_sample"</span>], psu_frame[<span class="st">"psu_hits"</span>], psu_frame[<span class="st">"psu_probs"</span>] <span class="op">=</span> <span class="op">\</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    stage1_design.select(</span>
@@ -987,7 +993,7 @@ Note
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>psu_frame[</span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"cluster"</span>, <span class="st">"region"</span>, <span class="st">"psu_prob"</span>, <span class="st">"psu_sample"</span>, <span class="st">"psu_hits"</span>, <span class="st">"psu_probs"</span>]</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    ].head(<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    ].head(<span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 First 15 obs of the PSU frame with the sampling information
@@ -997,7 +1003,7 @@ First 15 obs of the PSU frame with the sampling information
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1011,7 +1017,7 @@ First 15 obs of the PSU frame with the sampling information
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>1</td>
 <td>North</td>
 <td>0.151625</td>
@@ -1020,7 +1026,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.151625</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>2</td>
 <td>North</td>
 <td>0.122744</td>
@@ -1029,7 +1035,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.122744</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>3</td>
 <td>North</td>
 <td>0.137184</td>
@@ -1038,7 +1044,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.137184</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>4</td>
 <td>North</td>
 <td>0.108303</td>
@@ -1047,7 +1053,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.108303</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>5</td>
 <td>North</td>
 <td>0.173285</td>
@@ -1056,7 +1062,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.173285</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>6</td>
 <td>North</td>
 <td>0.129964</td>
@@ -1065,7 +1071,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.129964</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>7</td>
 <td>North</td>
 <td>0.187726</td>
@@ -1074,7 +1080,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.187726</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>8</td>
 <td>North</td>
 <td>0.079422</td>
@@ -1083,7 +1089,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.079422</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>9</td>
 <td>North</td>
 <td>0.043321</td>
@@ -1092,7 +1098,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.043321</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>10</td>
 <td>North</td>
 <td>0.866426</td>
@@ -1101,7 +1107,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.866426</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<th data-quarto-table-cell-role="th">10</th>
 <td>11</td>
 <td>South</td>
 <td>0.027523</td>
@@ -1110,7 +1116,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.027523</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<th data-quarto-table-cell-role="th">11</th>
 <td>12</td>
 <td>South</td>
 <td>0.275229</td>
@@ -1119,7 +1125,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.275229</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">12</td>
+<th data-quarto-table-cell-role="th">12</th>
 <td>13</td>
 <td>South</td>
 <td>0.115596</td>
@@ -1128,7 +1134,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.115596</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">13</td>
+<th data-quarto-table-cell-role="th">13</th>
 <td>14</td>
 <td>South</td>
 <td>0.082569</td>
@@ -1137,7 +1143,7 @@ First 15 obs of the PSU frame with the sampling information
 <td>0.082569</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">14</td>
+<th data-quarto-table-cell-role="th">14</th>
 <td>15</td>
 <td>South</td>
 <td>0.225688</td>
@@ -1152,8 +1158,8 @@ First 15 obs of the PSU frame with the sampling information
 </div>
 </div>
 <p>The default setting <code>sample_only=False</code> returns the entire frame. We can easily reduce the output data to the sample by filtering i.e.&nbsp;<code>psu_sample == 1</code>. However, if we are only interested in the sample, we could use <code>sample_only=True</code> when calling <em>select()</em>. This will reduce the output data to the sampled units and <code>to_dataframe=true</code> will convert the data to a pandas dataframe (pd.DataFrame). Note that the columns in the dataframe will be reduced to the minimum.</p>
-<div id="266311b3" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
+<div id="e7e8733f" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>psu_sample <span class="op">=</span> stage1_design.select(</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    psu_frame[<span class="st">"cluster"</span>], </span>
@@ -1165,7 +1171,7 @@ First 15 obs of the PSU frame with the sampling information
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">PSU sample without the non-sampled units</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>psu_sample</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>psu_sample</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 PSU sample without the non-sampled units
@@ -1175,7 +1181,7 @@ PSU sample without the non-sampled units
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1189,7 +1195,7 @@ PSU sample without the non-sampled units
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>7</td>
 <td>North</td>
 <td>130</td>
@@ -1198,7 +1204,7 @@ PSU sample without the non-sampled units
 <td>0.187726</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>10</td>
 <td>North</td>
 <td>600</td>
@@ -1207,7 +1213,7 @@ PSU sample without the non-sampled units
 <td>0.866426</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>16</td>
 <td>South</td>
 <td>190</td>
@@ -1216,7 +1222,7 @@ PSU sample without the non-sampled units
 <td>0.209174</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>24</td>
 <td>South</td>
 <td>75</td>
@@ -1225,7 +1231,7 @@ PSU sample without the non-sampled units
 <td>0.082569</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>29</td>
 <td>South</td>
 <td>200</td>
@@ -1234,7 +1240,7 @@ PSU sample without the non-sampled units
 <td>0.220183</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<th data-quarto-table-cell-role="th">5</th>
 <td>34</td>
 <td>East</td>
 <td>305</td>
@@ -1243,7 +1249,7 @@ PSU sample without the non-sampled units
 <td>0.210587</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
+<th data-quarto-table-cell-role="th">6</th>
 <td>45</td>
 <td>East</td>
 <td>450</td>
@@ -1252,7 +1258,7 @@ PSU sample without the non-sampled units
 <td>0.310702</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<th data-quarto-table-cell-role="th">7</th>
 <td>52</td>
 <td>East</td>
 <td>700</td>
@@ -1261,7 +1267,7 @@ PSU sample without the non-sampled units
 <td>0.483314</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<th data-quarto-table-cell-role="th">8</th>
 <td>64</td>
 <td>West</td>
 <td>300</td>
@@ -1270,7 +1276,7 @@ PSU sample without the non-sampled units
 <td>0.091673</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
+<th data-quarto-table-cell-role="th">9</th>
 <td>86</td>
 <td>West</td>
 <td>280</td>
@@ -1285,17 +1291,17 @@ PSU sample without the non-sampled units
 </div>
 </div>
 <p>The systematic selection method can be implemented with or without replacement. The other <em>samplics</em> algorithms for selecting sample with unequal probablities of selection are Brewer, Hanurav-Vijayan (hv), Murphy, and Rao-Sampford (rs) methods. As shown below, all these sampling techniques can be specified when extentiating a <em>Sample</em> class; then call <em>select()</em> to draw samples.</p>
-<div id="75f90bb2" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_sys, wr<span class="op">=</span><span class="va">True</span>)</span>
+<div id="678b78a1" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_sys, wr<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_sys, wr<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_brewer, wr<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_hv, wr<span class="op">=</span><span class="va">False</span>) <span class="co"># Hanurav-Vijayan method</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_murphy, wr<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_rs, wr<span class="op">=</span><span class="va">False</span>) <span class="co"># Rao-Sampford method</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>Sample(method<span class="op">=</span>SelectMethod.pps_rs, wr<span class="op">=</span><span class="va">False</span>) <span class="co"># Rao-Sampford method</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For example, if we wanted to select the sample using the Rao-Sampford method, we could use the following snippet of code.</p>
-<div id="ea86a8f4" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
+<div id="11d493cc" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">23</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>stage1_sampford <span class="op">=</span> SampleSelection(</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>SelectMethod.pps_rs, </span>
@@ -1312,12 +1318,12 @@ PSU sample without the non-sampled units
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    sample_only<span class="op">=</span><span class="va">False</span></span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>psu_sample_sampford</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>psu_sample_sampford</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -1331,7 +1337,7 @@ PSU sample without the non-sampled units
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
+<th data-quarto-table-cell-role="th">0</th>
 <td>1</td>
 <td>North</td>
 <td>105</td>
@@ -1340,7 +1346,7 @@ PSU sample without the non-sampled units
 <td>0.151625</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
+<th data-quarto-table-cell-role="th">1</th>
 <td>2</td>
 <td>North</td>
 <td>85</td>
@@ -1349,7 +1355,7 @@ PSU sample without the non-sampled units
 <td>0.122744</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
+<th data-quarto-table-cell-role="th">2</th>
 <td>3</td>
 <td>North</td>
 <td>95</td>
@@ -1358,7 +1364,7 @@ PSU sample without the non-sampled units
 <td>0.137184</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
+<th data-quarto-table-cell-role="th">3</th>
 <td>4</td>
 <td>North</td>
 <td>75</td>
@@ -1367,7 +1373,7 @@ PSU sample without the non-sampled units
 <td>0.108303</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
+<th data-quarto-table-cell-role="th">4</th>
 <td>5</td>
 <td>North</td>
 <td>120</td>
@@ -1376,7 +1382,7 @@ PSU sample without the non-sampled units
 <td>0.173285</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">...</td>
+<th data-quarto-table-cell-role="th">...</th>
 <td>...</td>
 <td>...</td>
 <td>...</td>
@@ -1385,7 +1391,7 @@ PSU sample without the non-sampled units
 <td>...</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">95</td>
+<th data-quarto-table-cell-role="th">95</th>
 <td>96</td>
 <td>West</td>
 <td>95</td>
@@ -1394,7 +1400,7 @@ PSU sample without the non-sampled units
 <td>0.029030</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">96</td>
+<th data-quarto-table-cell-role="th">96</th>
 <td>97</td>
 <td>West</td>
 <td>40</td>
@@ -1403,7 +1409,7 @@ PSU sample without the non-sampled units
 <td>0.012223</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">97</td>
+<th data-quarto-table-cell-role="th">97</th>
 <td>98</td>
 <td>West</td>
 <td>105</td>
@@ -1412,7 +1418,7 @@ PSU sample without the non-sampled units
 <td>0.032086</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">98</td>
+<th data-quarto-table-cell-role="th">98</th>
 <td>99</td>
 <td>West</td>
 <td>320</td>
@@ -1421,7 +1427,7 @@ PSU sample without the non-sampled units
 <td>0.097785</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">99</td>
+<th data-quarto-table-cell-role="th">99</th>
 <td>100</td>
 <td>West</td>
 <td>200</td>
@@ -1492,13 +1498,14 @@ PSU sample without the non-sampled units
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

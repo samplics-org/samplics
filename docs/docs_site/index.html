@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.24">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -34,14 +34,15 @@ ul.task-list li input[type="checkbox"] {
 <link href="./public/img/samplics_logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-43f3719592dba936979dd507688b4ba0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-12f6946bb06afb64f2ed36f89a165916.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -89,7 +90,8 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./public/img/samplics_logo2.png" alt="" class="navbar-logo">
+    <img src="./public/img/samplics_logo2.png" alt="" class="navbar-logo light-content">
+    <img src="./public/img/samplics_logo2.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Samplics Documentation</span>
@@ -142,6 +144,10 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -390,11 +396,20 @@ ul.task-list li input[type="checkbox"] {
 
 <p><a href="https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting"><img src="https://github.com/survey-methods/samplics/workflows/Testing/badge.svg" class="img-fluid" alt="Testing Status"></a> <a href="https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage"><img src="https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg" class="img-fluid"></a> <a href="https://github.com/samplics-org/samplics/actions?query=workflow%3ADocs"><img src="https://github.com/survey-methods/samplics/workflows/Docs/badge.svg"></a> <a href="https://doi.org/10.21105/joss.03376"><img src="https://joss.theoj.org/papers/10.21105/joss.03376/status.svg" class="img-fluid"></a> <a href="https://pypi.org/project/samplics/ansicolortags/"><img src="https://img.shields.io/pypi/l/ansicolortags.svg" class="img-fluid" alt="License"></a> <a href="https://pepy.tech/project/samplics"><img src="https://pepy.tech/badge/samplics"></a></p>
 <p><br></p>
-<blockquote class="blockquote">
-<h3 id="help-shape-the-future-of-samplics" class="anchored">Help Shape the Future of Samplics</h3>
-<p>We are driven by community feedback and would love to hear from you! Please take a few minutes to complete our user survey.</p>
-<p><strong><a href="https://forms.gle/zNexPMg7nTfjrJ498">➡️ Share Your Feedback</a></strong></p>
-</blockquote>
+<div class="callout callout-style-default callout-tip callout-titled" title="Pre-launch: svy &amp; svyLab are coming 🚀">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Pre-launch: svy &amp; svyLab are coming 🚀
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Manage, analyze, collaborate and share complex survey data—powered by <strong>svy</strong> and modern web stacks.</p>
+<p><strong>👉 <a href="https://svylab.com/" target="_blank" rel="noopener">Join the waitlist</a></strong></p>
+</div>
+</div>
 <p><br></p>
 <p>In large-scale surveys, often complex random mechanisms are used to select samples. Estimations obtained from such samples must reflect the random mechanism to ensure accurate calculations. <em>samplics</em> implements a set of sampling techniques for complex survey designs.</p>
 <p><strong>Sampling.</strong> Since the full population cannot be observed, a sample is selected to estimate population parameters of interest. The assumption is that the sample is representative of the population for the characteristics of interest. The sample size calculation and selection methods in <em>samplics</em> are:</p>
@@ -477,13 +492,14 @@ ul.task-list li input[type="checkbox"] {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
