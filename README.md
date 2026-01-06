@@ -9,7 +9,7 @@
 [<img src="https://pepy.tech/badge/samplics">](https://pepy.tech/project/samplics)
 
 > [!IMPORTANT]
-> **Migration strongly recommended: svy & svyLab 🚀**
+> **Migration strongly recommended: svy, svy-sae & svyLab 🚀**
 >
 > **svy** supersedes _samplics_ and provides a richer, more scalable ecosystem for complex survey design, estimation, and collaboration.
 >
