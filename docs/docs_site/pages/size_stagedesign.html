@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.24">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-12f6946bb06afb64f2ed36f89a165916.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -183,10 +183,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
@@ -580,7 +576,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p>The 2017 Senegal DHS data collection happened from April to December 2018. Therefore, the data shown in the table represent children born from October 2016 to December 2017. For the purpose of this tutorial, we will assume that these vaccine coverage rates still hold. Furthermore, we will use the basic vaccination coverage rates to calculate sample size.</p>
-<div id="9b97b169" class="cell" data-execution_count="1">
+<div id="06b1a40b" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.sampling <span class="im">import</span> SampleSize</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="number-of-children" class="level1">
@@ -588,13 +584,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="wald-method" class="level2">
 <h2 class="anchored" data-anchor-id="wald-method"><code>Wald</code> method</h2>
 <p>The first step is to create and object using the <em>SampleSize</em> class with the parameter of interest, the sample size calculation method, and the stratification status. In this example, we want to calculate sample size for proportions, using wald method for a stratified design. This is achived with the following snippet of code.</p>
-<div id="c3551026" class="cell" data-execution_count="2">
+<div id="a52a3495" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>SampleSize(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    param<span class="op">=</span><span class="st">"proportion"</span>, method<span class="op">=</span><span class="st">"wald"</span>, strat<span class="op">=</span><span class="va">True</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Because, we are using a stratified sample design, it is best to specify the expected coverage levels by stratum. If the information is not available then aggregated values can be used across the strata. The 2017 Senegal DHS published the coverage rates by region hence we have the information available by stratum. To provide the informmation to <em>Samplics</em> we use the python dictionaries as follows</p>
-<div id="c12a16a2" class="cell" data-execution_count="3">
+<div id="65a7b3b9" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>expected_coverage <span class="op">=</span> {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Dakar"</span>: <span class="fl">0.849</span>,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ziguinchor"</span>: <span class="fl">0.809</span>,</span>
@@ -614,7 +610,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Now, we want to calculate the sample size with desired precision of 0.07 which means that we want the expected vaccination coverage rates to have 7% half confidence intervals e.g.&nbsp;expected rate of 90% will have a confidence interval of [83%, 97%]. Note that the desired precision can be specified by stratum in a similar way as the target coverage using a python dictionary.</p>
 <p>Given that information, we can calculate the sample size using <em>SampleSize</em> class as follows.</p>
-<div id="4288796f" class="cell" data-execution_count="4">
+<div id="f4a6f55f" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.utils.types <span class="im">import</span> SizeMethod, PopParam</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare the sample size calculation parameters</span></span>
@@ -650,7 +646,7 @@ Calculated sample sizes by stratum: </code></pre>
 </div>
 </div>
 <p><em>SampleSize</em> calculates the sample sizes and store the in teh <em>samp_size</em> attributes which is a python dictinary object. If a dataframe is better suited for the use case, the method <em>to_dataframe()</em> can be used to return a pandas dataframe.</p>
-<div id="0ad94ef7" class="cell" data-execution_count="5">
+<div id="4c5190b3" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.to_dataframe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
@@ -802,7 +798,7 @@ Calculated sample sizes by stratum: </code></pre>
 </div>
 </div>
 <p>The sample size calculation above assumes that the design effect (DEFF) was equal to 1. A design effect of 1 correspond to sampling design with a variance equivalent to a simple random selection of same sample size. In the context of complex sampling designs, DEFF is often different from 1. Stage sampling and unequal weights usually increase the design effect above 1. The 2017 Senegal DHS indicated a design effect equal to 1.963 (1.401^2) for basic vaccination. Hence, to calculate the sample size, we will use the design effect provided by DHS.</p>
-<div id="36e834a1" class="cell" data-execution_count="6">
+<div id="fe9be55a" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.calculate(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>expected_coverage, half_ci<span class="op">=</span><span class="fl">0.07</span>, deff<span class="op">=</span><span class="fl">1.401</span> <span class="op">**</span> <span class="dv">2</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -958,7 +954,7 @@ Calculated sample sizes by stratum: </code></pre>
 </div>
 </div>
 <p>Since the sample design is stratified, the sample size calculation will be more precised if DEFF is specified at the stratum level which is available from the 2017 Senegal DHS provided report. Some regions have a design effect below 1. To be conservative with our sample size calculation, we will use 1.21 as the minimum design effect to use in the sample size calculation.</p>
-<div id="cb194921" class="cell" data-execution_count="7">
+<div id="f3c78c5d" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Target coverage rates</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>expected_deff <span class="op">=</span> {</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Dakar"</span>: <span class="fl">1.100</span> <span class="op">**</span> <span class="dv">2</span>,</span>
@@ -1134,7 +1130,7 @@ Calculated sample sizes by stratum: </code></pre>
 </div>
 </div>
 <p>The sample size calculation above does not account for attrition of sample sizes due to non-response. In the 2017 Semegal DHS, the overal household and women reponse rate was abou 94.2%.</p>
-<div id="effde989" class="cell" data-execution_count="8">
+<div id="bc4f086e" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate sample sizes with a resp_rate of 94.2%</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>sen_vaccine_wald.calculate(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span>expected_coverage, </span>
@@ -1307,7 +1303,7 @@ Calculated sample sizes by stratum: </code></pre>
 <section id="fleiss-method" class="level2">
 <h2 class="anchored" data-anchor-id="fleiss-method"><code>Fleiss</code> method</h2>
 <p>The World Health Organization (WHO) recommends using the Fleiss method for calculating sample size for vaccination coverage survey, as specified in the following guideline document: <a href="https://www.who.int/immunization/documents/who_ivb_18.09/en/" class="uri">https://www.who.int/immunization/documents/who_ivb_18.09/en/</a>. To use the Fleiss method, the examples shown above are the same with <code>method="fleiss"</code>.</p>
-<div id="2b2734eb" class="cell" data-execution_count="9">
+<div id="76bb1363" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_fleiss <span class="op">=</span> SampleSize(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    param<span class="op">=</span>PopParam.prop, </span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span>SizeMethod.fleiss, </span>
@@ -1488,7 +1484,7 @@ Calculated sample sizes by stratum: </code></pre>
 <h1>Number of households</h1>
 <p>To obtain the number of households, we need to know the expected average number of children aged 12-23 months per household. This information can be obtained from census data or from surveys’ rosters. Since, the design is stratified, it is best to obtain the information per stratum. In this example, we wil assume that 5.2% of the population is between 12 and 23 months of age and apply that to all strata and household. Hence, the minimum number of households to select is:</p>
 <!-- :::{style="font-size: 1rem"} -->
-<div id="fc7cecaa" class="cell" data-execution_count="10">
+<div id="b997ef8a" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sen_vaccine_sample[<span class="st">"number_hhs"</span>] <span class="op">=</span> <span class="bu">round</span>(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    sen_vaccine_sample[<span class="st">"count_12_23"</span>] <span class="op">/</span> <span class="fl">0.052</span>, <span class="dv">0</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span>
