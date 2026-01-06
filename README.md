@@ -8,10 +8,14 @@
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.03376/status.svg)](https://doi.org/10.21105/joss.03376)
 [<img src="https://pepy.tech/badge/samplics">](https://pepy.tech/project/samplics)
 
-> [!TIP]
-> **Pre-launch: svy & svyLab are coming 🚀**
-> Manage, analyze, collaborate and share complex survey data—powered by **svy** and modern web stacks.
-> **👉 [Join the waitlist](https://svylab.com/)**
+> [!IMPORTANT]
+> **Migration strongly recommended: svy & svyLab 🚀**
+>
+> **svy** supersedes _samplics_ and provides a richer, more scalable ecosystem for complex survey design, estimation, and collaboration.
+>
+> While _samplics_ remains available, **all new features, enhancements, and long-term support are delivered through svy and svyLab**.
+>
+> 👉 **Get started with svy:** https://svylab.com/docs
 
 In large-scale surveys, often complex random mechanisms are used to select samples. Estimates derived from such samples must reflect the random mechanism. _Samplics_ is a python package that implements a set of sampling techniques for complex survey designs. These survey sampling techniques are organized into the following four sub-packages.
 
