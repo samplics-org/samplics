@@ -437,7 +437,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>In this tutorial, we will explore samplics’ APIs for creating design-based tabulations. There are two main python classes for tabulation i.e.&nbsp;<code>Tabulation()</code> for one-way tables and <code>CrossTabulation()</code> for two-way tables.</p>
-<div id="244682c2" class="cell" data-execution_count="1">
+<div id="0a3e51f4" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> samplics.datasets <span class="im">import</span> load_birth, load_nhanes2</span>
@@ -448,7 +448,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="one-way-tabulation" class="level1">
 <h1>One-way tabulation</h1>
 <p>The birth dataset has four variables: region, agecat, birthcat, and pop. The variables agecat and birthcat are categirical. By default, pandas read them as numerical, because they are coded with numerical values. We use <code>dtype="string"</code> or <code>dtype="category"</code> to ensure that pandas codes the variables as categorical responses.</p>
-<div id="9f2f672d" class="cell" data-execution_count="2">
+<div id="8e31f55a" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Birth sample data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>birth_dict <span class="op">=</span> load_birth()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>birth <span class="op">=</span> birth_dict[<span class="st">"data"</span>].astype(</span>
@@ -587,7 +587,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>When requesting a table, the user can set <code>param="count"</code> which results in a tabulation with counts in the cells while <code>param="proportion</code> leads to cells with proportions. The expression <code>Tabulation("count")</code> instantiates the class <code>Tabulation()</code> which has a method <code>tabulate()</code> to produce the table.</p>
-<div id="4cf3d9cd" class="cell" data-execution_count="3">
+<div id="15fe5c1b" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -608,7 +608,7 @@ birthcat      3.0           233.0 13.204959 207.084737 258.915263
 </div>
 </div>
 <p>When <code>remove_nan=False</code>, the numpy and pandas special values NaNs, respectively np.nan and NaN, are treated as valid categories and added to the tables as shown below</p>
-<div id="dd367cd1" class="cell" data-execution_count="4">
+<div id="92eafab3" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>birth_count <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>birth_count.tabulate(birthcat, remove_nan<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -630,7 +630,7 @@ birthcat      nan            33.0  5.647499  21.917060  44.082940
 </div>
 </div>
 <p>The data associated with the tabulation are stored in nested python dictionaries. The higher level key is the variable name and the inner keys are the response categories. Each of the last four columns shown above are stored in separated dictionaries. Two of those dictionaries for the counts and standard errors shown below.</p>
-<div id="fd3ccda8" class="cell" data-execution_count="5">
+<div id="a6faa9eb" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count.point_est)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -649,7 +649,7 @@ The designed-based standard errors are:
 </div>
 </div>
 <p>Sometimes, the user may want to run multiple one-way tables of several variables. In this case, the user can provide the data as a two-dimensional dataframe where each column represents one categorical variable. In this situation, each categorical variable is tabulated individually then combined into Python dictionaries.</p>
-<div id="c2cb608d" class="cell" data-execution_count="6">
+<div id="239c801c" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>birth_count2 <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.count)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>birth_count2.tabulate(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    birth[[<span class="st">"region"</span>, <span class="st">"agecat"</span>, <span class="st">"birthcat"</span>]], </span>
@@ -680,7 +680,7 @@ birthcat      3.0           233.0 13.204959 207.084737 258.915263
 </div>
 </div>
 <p>Two of the associated Python dictionaries are shown below. The structure of the inner dictionaries remain the same but additional key-value pairs are added to represent the several categorical variables.</p>
-<div id="0b2d6558" class="cell" data-execution_count="7">
+<div id="944c7906" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">The designed-based estimated counts are:"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pprint(birth_count2.point_est)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -707,7 +707,7 @@ The designed-based standard errors are:
 </div>
 </div>
 <p>In the example above, we used pandas series and dataframes with labelled variables. In some situations, the user may want to tabulate numpy arrays, lists or tuples without variable names atrribute from the data. For these situations, the <code>varnames</code> parameter provides a way to assign names for the categorical variables. Even when the variables have labels, users can leverage <code>varnames</code> to rename the categorical variables.</p>
-<div id="4cc1f595" class="cell" data-execution_count="8">
+<div id="542d9e6e" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>region_no_name <span class="op">=</span> birth[<span class="st">"region"</span>].to_numpy()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>agecat_no_name <span class="op">=</span> birth[<span class="st">"agecat"</span>].to_numpy()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>birthcat_no_name <span class="op">=</span> birth[<span class="st">"birthcat"</span>].to_numpy()</span>
@@ -743,7 +743,7 @@ BirthType      3.0       0.252438  0.014307  0.225406  0.281533
 </div>
 </div>
 <p>If the user does not specify <code>varnames</code>, the <code>tabulate()</code> creates generic variables names <code>var_1</code>, <code>var_2</code>, etc.</p>
-<div id="32ab3c58" class="cell" data-execution_count="9">
+<div id="c6d9622d" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2 <span class="op">=</span> Tabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>birth_prop_new_name2.tabulate(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>[region_no_name, agecat_no_name, birthcat_no_name], </span>
@@ -774,7 +774,7 @@ Tabulation of var_1
 </div>
 </div>
 <p>If the data was collected from a complex survey sample, the user may provide the sample design information to derive design-based statistics for the tabulation.</p>
-<div id="44147cea" class="cell" data-execution_count="10">
+<div id="34e3ec41" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Nhanes sample data</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>nhanes2_dict <span class="op">=</span> load_nhanes2()</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>nhanes2 <span class="op">=</span> nhanes2_dict[<span class="st">"data"</span>]</span>
@@ -814,7 +814,7 @@ diabetes       1.0       0.034285  0.001820  0.030762  0.038197
 <section id="two-way-tabulation-cross-tabulation" class="level1">
 <h1>Two-way tabulation (cross-tabulation)</h1>
 <p>Cross-tabulation of two categorical variables is achieved by using the class <code>CrossTabulation()</code>. As above, cross-tabulation is possible for counts and proportions using <code>CrossTabulation(param="count")</code> and <code>CrossTabulation(param="proportion")</code>, respectively. The Python script below creates a design-based cross-tabulation of race by diabetes status. The sample design information is optional; when not provided, a simple random sample (srs) is assumed.</p>
-<div id="c85af79e" class="cell" data-execution_count="11">
+<div id="c781a7b0" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>nhanes2[[<span class="st">"race"</span>, <span class="st">"diabetes"</span>]],</span>
@@ -852,7 +852,7 @@ Pearson (with Rao-Scott adjustment):
 </div>
 </div>
 <p>In addition to pandas dataframe, the categorical variables may be provided as an numpy array, list or tuple. In the examples below, the categorical variables are provided as a tuple <code>vars=(rage, diabetes)</code>. In this case, <code>race</code> and <code>diabetes</code> are numpy arrays and do not have a name attribute. The parameter <code>varnames</code> allows the user to name the categorical variables. If varnames is not specified then `<code>var_1</code> and <code>var_2</code> are used as variables names.</p>
-<div id="9e904367" class="cell" data-execution_count="12">
+<div id="58743354" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>race <span class="op">=</span> nhanes2[<span class="st">"race"</span>].to_numpy()</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>diabetes <span class="op">=</span> nhanes2[<span class="st">"diabetes"</span>].to_numpy()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -893,7 +893,7 @@ Pearson (with Rao-Scott adjustment):
 </div>
 </div>
 <p>Same as the above example with variables names specified by <code>varnames=["Race", DiabetesStatus"]</code></p>
-<div id="5dc3a21b" class="cell" data-execution_count="13">
+<div id="e653d64f" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes <span class="op">=</span> CrossTabulation(param<span class="op">=</span>PopParam.prop)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>crosstab_nhanes.tabulate(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">vars</span><span class="op">=</span>(race, diabetes),</span>
