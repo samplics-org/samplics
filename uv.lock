@@ -1622,7 +1622,7 @@ wheels = [
 
 [[package]]
 name = "samplics"
-version = "0.4.55"
+version = "0.5.1"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },

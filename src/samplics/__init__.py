@@ -1,3 +1,6 @@
+import warnings
+
+
 # from samplics.apis import Frame, Sample
 from samplics.categorical import CrossTabulation, Tabulation, Ttest
 from samplics.datasets import (load_auto, load_birth, load_county_crop,
@@ -24,6 +27,15 @@ from samplics.utils import (CertaintyError, DimensionError, FitMethod,
                             SinglePSUError, SinglePSUEst, SizeMethod,
                             array_to_dict, transform)
 from samplics.weighting import ReplicateWeight, SampleWeight
+
+
+warnings.warn(
+    "samplics is deprecated and no longer maintained. "
+    "Please migrate to 'svy' (pip install svy) and 'svy-sae' (pip install svy-sae). "
+    "Documentation: https://svylab.com/docs/",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 __all__ = [
     "allocate",
@@ -81,4 +93,4 @@ __all__ = [
     "SinglePSUError",
 ]
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
