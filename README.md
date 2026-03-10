@@ -46,4 +46,4 @@ If you use _samplics_ in published research, please cite:
 
 ## Contact
 
-Created by [Mamadou S. Diallo](https://svylab.com) · [info@svylab.com](mailto:info@svylab.com)
+Created by [svyLab](https://svylab.com) · [info@svylab.com](mailto:info@svylab.com)
