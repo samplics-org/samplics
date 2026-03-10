@@ -1,0 +1,14 @@
+---
+title: "Overviews"
+---
+
+When a sample frame is available, the simple random sampling (srs) method is usually the easiest way to select a sample. However, operational and cost constraints often result in much more complex mechanisms for selecting samples. Common use cases of complex sampling designs are the national household surveys such as [The Demographic and Health Surveys (DHS)](https://dhsprogram.com), [The Living Standards Measurement Study (LSMS)](http://surveys.worldbank.org), [The Multiple Indicator Cluster Surveys (MICS)](https://mics.unicef.org), and many more. In the national household surveys, the sample is selected in stages. For example, at the first stage clusters of households are selected using probability proportional to size (pps) method, at the second stage households are selected from the sampled clusters, and at the final stage individuals are selected from households in the sample.  
+
+In this tutorial, we generate simulated data to illustrate the first and second stage selections of clusters and households, respectively. 
+
+<a href="selection_psus.html">Section 1: Selection of PSUs</a> <br>
+<a href="selection_ssus.html">Section 2: Selection of SSUs</a> <br>
+
+
+For a comprehensive review of sampling techniques, users may want to consult @brewer1983, @cochran1977, @kish1965, and @lohr2021.
+

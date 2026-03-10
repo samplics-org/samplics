@@ -1,0 +1,184 @@
+---
+title: "Replicate Weights"
+---
+
+Replicate weights are usually created for the purpose of variance (uncertainty) estimation. One common use case for replication-based methods is the estimation of non-linear parameters fow which Taylor-based approximation may not be accurate enough. Another use case is when the number of primary sampling units selected per stratum is small (low degree of freedom). Replicate weights are usually created for the purpose of variance (uncertainty)estimation. One common use case for replication-based methods is the estimation of non-linear parameters fow which Taylor-based approximation may not be accurate enough. Another use case is when the number of primary sampling units selected per stratum is small (low degree of freedom). 
+
+In this tutorial, we will explore creating replicate weights using the class *ReplicateWeight*. Three replication methods have been implemented: balanced repeated replication (BRR) including the Fay-BRR, bootstrap and jackknife. The replicate method of interest is specified when initializing the class by using the parameter *method*. The parameter *method* takes the values "bootstrap", "brr", or "jackknife". In this tutorial, we show how the API works for producing replicate weights. 
+
+```{python}
+#| echo: true
+
+import pandas as pd
+
+from samplics.datasets import load_psu_sample, load_ssu_sample
+from samplics.weighting import ReplicateWeight
+
+from samplics.utils.types import RepMethod
+```
+
+We import the sample data...
+
+```{python}
+#| echo: true
+
+# Load PSU sample data
+psu_sample_dict = load_psu_sample()
+psu_sample = psu_sample_dict["data"]
+
+# Load PSU sample data
+ssu_sample_dict = load_ssu_sample()
+ssu_sample = ssu_sample_dict["data"]
+
+full_sample = pd.merge(
+    psu_sample[["cluster", "region", "psu_prob"]], 
+    ssu_sample[["cluster", "household", "ssu_prob"]], 
+    on="cluster")
+
+full_sample["inclusion_prob"] = \
+    full_sample["psu_prob"] * full_sample["ssu_prob"] 
+full_sample["design_weight"] = 1 / full_sample["inclusion_prob"] 
+
+full_sample.head(15)
+```
+
+# Balanced Repeated Replication (BRR)
+
+The basic idea of BRR is to slip the sample in independent random groups. The groups are then threated as independent replicates of the the sample design. A special case is when the sample is split into two half samples in each stratum. This design is suitable to many survey designs where only two psus are selected by stratum. In practice, one of the psu is asigned to the first random group and the other psu is assign to the second group. The sample weights are double for one group (say the first one) and the sample weights in the other group are set to zero. To ensure that the replicates are independent, we use hadamard matrices to assign the random groups. 
+
+
+```{python}
+#| echo: true
+
+import scipy
+scipy.linalg.hadamard(8)
+```
+
+In our example, we have 10 psus. If we do not have explicit stratification then *replicate()* will group the clusters into 5 strata (2 per stratum). In this case, the smallest number of replicates possible using the hadamard matrix is 8.  
+
+The result below shows that *replicate()* created 5 strata by grouping clusters 7 and 10 in the first stratum, clusters 16 and 24 in the second stratum, and so on. We can achieve the same result by providing setting *strat=True* and providing the stratum variable to *replicate()*. 
+
+
+```{python}
+#| echo: true
+
+brr = ReplicateWeight(method=RepMethod.brr, strat=False)
+brr_wgt = brr.replicate(
+    samp_weight=full_sample["design_weight"], 
+    psu=full_sample["cluster"]
+    )
+
+brr_wgt.drop_duplicates().head(10)
+```
+
+An extension of BRR is the Fay's method. In the Fay's approach, instead of multiplying one half-sample by zero, we multiple the sampel weights by a factor $\alpha$ and the other halh-sample by $2-\alpha$. We refer to $\alpha$ as the fay coefficient. Note that when $\alpha=0$ then teh Fay's method reduces to BRR. 
+
+```{python}
+#| echo: true
+
+fay = ReplicateWeight(method=RepMethod.brr, strat=False, fay_coef=0.3)
+fay_wgt = fay.replicate(
+    samp_weight=full_sample["design_weight"], 
+    psu=full_sample["cluster"], 
+    rep_prefix="fay_weight_",
+    psu_varname="cluster", 
+    str_varname="stratum"
+)
+
+fay_wgt.drop_duplicates().head(10)
+```
+
+:::{.callout-important}
+For any of the three methods, we can request the replicate coefficient instead of the replicate weights by using *rep_coefs=True*. 
+:::
+
+```{python}
+#| echo: true
+
+#fay = ReplicateWeight(method="brr", strat=False, fay_coef=0.3)
+fay_wgt = fay.replicate(
+    samp_weight=full_sample["design_weight"], 
+    psu=full_sample["cluster"], 
+    rep_prefix="fay_weight_",
+    psu_varname="cluster", 
+    str_varname="stratum",
+    rep_coefs=True
+)
+
+fay_wgt.drop_duplicates().head(10)
+```
+
+# Bootstrap 
+
+For the bootstrap replicates, we need to provide the number of replicates. When the number of replicates is not provided, *ReplicateWeight* will default to 500. The bootstrap consists of selecting the same number of psus as in the sample but with replacement. The selection is independently repeated for each replicate. 
+
+
+```{python}
+#| echo: true
+
+bootstrap = ReplicateWeight(
+    method=RepMethod.bootstrap, 
+    strat=False, 
+    nb_reps=50
+    )
+boot_wgt = bootstrap.replicate(
+    samp_weight=full_sample["design_weight"], 
+    psu=full_sample["cluster"]
+    )
+
+boot_wgt.drop_duplicates().head(10)
+```
+
+# Jackknife 
+
+Below, we illustrate the API for creating replicate weights using the jackknife method. 
+
+```{python}
+#| echo: true
+
+jackknife = ReplicateWeight(
+    method=RepMethod.jackknife, 
+    strat=False
+    )
+jkn_wgt = jackknife.replicate(
+    samp_weight=full_sample["design_weight"], 
+    psu=full_sample["cluster"]
+    )
+
+jkn_wgt.drop_duplicates().head(10)
+```
+
+With stratification...
+
+```{python}
+#| echo: true
+
+jackknife = ReplicateWeight(method=RepMethod.jackknife, strat=True)
+jkn_wgt = jackknife.replicate(
+    samp_weight=full_sample["design_weight"], 
+    psu=full_sample["cluster"], 
+    stratum=full_sample["region"]
+    )
+
+jkn_wgt.drop_duplicates().head(10)
+```
+
+:::{.callout-important}
+For any of the three methods, we can request the replicate coefficient instead of the replicate weights by using *rep_coefs=True*. 
+:::
+
+```{python}
+#| echo: true
+
+#jackknife = ReplicateWeight(method=RepMethod.jackknife, strat=True)
+jkn_wgt = jackknife.replicate(
+    samp_weight=full_sample["design_weight"], 
+    psu=full_sample["cluster"], 
+    stratum=full_sample["region"], 
+    rep_coefs=True
+)
+
+jkn_wgt.drop_duplicates().sort_values(by="_stratum").head(15)
+```
+
+

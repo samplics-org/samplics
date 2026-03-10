@@ -1,0 +1,13 @@
+---
+title: "Overview"
+---
+
+The sample weighting is the mechanism that allows us to generalize the results from the sample to the target population. The design/base weights are obtained from the final probability of selection as their inverse. In large scale surveys, design weights are adjusted to account for non-response, for extreme values, or to ensure that auxiliary variables benchmark to known controls. 
+
+The weighting tutorial is in two parts. The first part discusses several weight adjustments methods e.g. non-response adjustment, poststratification, calibration. The second part of the tutorial walks the user through the creation of replicate weights using Booststrap, Balanced Repeated Replication (BRR), and Jackknife methods. 
+
+<a href="weight_adj.html">Section 1: Sample weight adjustments</a> <br>
+<a href="weight_replicates.html">Section 2: Replicates weights</a> <br>
+
+Valliant, R. and Dever, J. A. (2018) [@valliant2018] provides a step-by-step guide on calculating 
+sample weights.

@@ -1,0 +1,11 @@
+---
+title: "Overview"
+---
+
+
+SAE techniques can be considered as extensions of the survey estimation techniques that only use the sample data to produce estimates. Note that we include model assisted techniques such as the Generalized Regression (GREG) estimator in this category. These are often referred to as the direct estimates. In some applications, sample sizes are not large enough to produce reliable direct estimates for the domains of interest. In these situations, one possible way to improve the domain level estimates is to use SAE techniques which require availability of auxiliary information. Depending on the SAE method used, the auxiliary information needs to be available at the domains aggregated level or for non-sampled observations in the target population. SAE techniques produce modeled estimates of parameters of interest. There are two main categories of SAE methods that are the area level and the unit level, discussed in this tutorial. 
+
+<a href="sae_area.html">Section 1: Area level modeling</a> <br>
+<a href="sae_unit.html">Section 2: Unit level modeling</a> <br>
+
+Generalized linear mixed model are the statistical framework used to develop the SAE methods, for an introduction to GLMM see @mcculloch2008. For a comprehensive review of the small area estimation models and its applications, see @rao2015. 

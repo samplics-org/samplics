@@ -1,0 +1,111 @@
+---
+title: "Replicated-based Estimation"
+---
+
+
+
+Samplics's class *TaylorEstimator* uses replicate-based methods (bootstrap, brr/fay, and jackknife) to estimate the variance of population parameters. 
+
+
+
+# Bootstrap
+
+```{python}
+#| echo: true
+
+from samplics.datasets import load_nhanes2brr, load_nhanes2jk, load_nmihs
+from samplics.estimation import ReplicateEstimator
+
+from samplics.utils.types import PopParam, RepMethod
+```
+
+
+```{python}
+#| echo: true
+
+# Load NMIHS sample data
+nmihs_dict = load_nmihs()
+nmihs = nmihs_dict["data"]
+
+nmihs.head(15)
+```
+
+
+Let's estimate the average birth weight using the bootstrap weights. 
+
+```{python}
+#| echo: true
+
+# rep_wgt_boot = nmihsboot.loc[:, "bsrw1":"bsrw50"]
+
+birthwgt = ReplicateEstimator(RepMethod.bootstrap, PopParam.mean).estimate(
+    y=nmihs["birth_weight"],
+    samp_weight=nmihs["finalwgt"],
+    rep_weights=nmihs.loc[:, "bsrw1":"bsrw50"],
+    remove_nan=True,
+)
+
+print(birthwgt)
+```
+
+# Balanced repeated replication (BRR)
+
+```{python}
+#| echo: true
+
+# Load NMIHS sample data
+nhanes2brr_dict = load_nhanes2brr()
+nhanes2brr = nhanes2brr_dict["data"]
+
+nhanes2brr.head(15)
+```
+
+Let's estimate the average birth weight using the BRR weights. 
+
+```{python}
+#| echo: true
+
+brr = ReplicateEstimator(RepMethod.brr, PopParam.ratio)
+
+ratio_wgt_hgt = brr.estimate(
+    y=nhanes2brr["weight"],
+    samp_weight=nhanes2brr["finalwgt"],
+    x=nhanes2brr["height"],
+    rep_weights=nhanes2brr.loc[:, "brr_1":"brr_32"],
+    remove_nan=True,
+)
+
+print(ratio_wgt_hgt)
+```
+
+# Jackknife
+
+```{python}
+#| echo: true
+
+# Load NMIHS sample data
+nhanes2jk_dict = load_nhanes2jk()
+nhanes2jk = nhanes2jk_dict["data"]
+
+nhanes2jk.head(15)
+```
+
+In this case, stratification was used to calculate the jackknife weights. The stratum variable is not indicated in the dataset or survey design description. However, it says that the number of strata is 31 and the number of replicates is 62. Hence, the jackknife replicate coefficient is $(n_h - 1) / n_h = (2-1) / 2 = 0.5$. Now we can call *replicate()* and specify *rep_coefs = 0.5*.
+
+
+```{python}
+#| echo: true
+
+jackknife = ReplicateEstimator(RepMethod.jackknife, PopParam.ratio)
+
+ratio_wgt_hgt2 = jackknife.estimate(
+    y=nhanes2jk["weight"],
+    samp_weight=nhanes2jk["finalwgt"],
+    x=nhanes2jk["height"],
+    rep_weights=nhanes2jk.loc[:, "jkw_1":"jkw_62"],
+    rep_coefs=0.5,
+    remove_nan=True,
+)
+
+print(ratio_wgt_hgt2)
+```

@@ -1,0 +1,11 @@
+---
+title: "Overview"
+
+---
+
+Categorical data analysis refers to the set of methods for analyzing categorical response variables. This is a large topic in data analysis and used in the context of complex survey sampling. Contingency tables or cross-tabulations with associated statistics are well-known categorical data analysis techniques. But categorical data analysis extends to more areas such as modeling techniques for categorical response variables e.g. logistic/logit/loglinear regressions and generalized linear mixed models for categorical responses. 
+
+<a href="categorical_tabulation.html">Section 1: Tabulation</a> <br>
+<a href="categorical_ttest.html">Section 2: T-Test</a> <br>
+
+@agresti2013 provides an overview of these methods. 

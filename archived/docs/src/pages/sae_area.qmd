@@ -1,0 +1,158 @@
+---
+title: "Area Level Modeling"
+---
+
+
+# Empirical best linear unbiased predictor (EBLUP)
+
+Small area estimation (SAE) are useful techniques when the sample sizes are not sufficient to provide reliable direct domain estimates given the sampling design. In this tutorial, the direct estimates refer to estimates obtained from the design-based approach. It usually consists of applying adjusted design weights to the variable of interest to compute sample parameters as estimates of equivalent population parameters. When auxiliary information is available, we can use model assisted survey methods can be used to estimate population parameters. 
+
+In this tutorial, we will go futher and use modeling techniques to produce domains estimates. For the area level model, the modeling is done at the area level using generalized linear mixed models. The sections below shows how to use the *EblupAreaModel* class from the *samplics* package to produce area level estimates. 
+
+## Milk Expenditure data
+
+To illustrate the EblupAreaModel class, we will use the Milk Expenditure dataset used in Rao and Molina (2015). As mentioned in the book, this dataset was originally used by Arora and Lahiri (1997) and later by You and Chapman (2006). For the R users, this dataset is also used by the R package sae (https://cran.r-project.org/web/packages/sae/index.html). 
+
+The Milk Expenditure data contains 43 observations on the average expenditure on fresh milk for the year 1989. The datasets has the following values: major area representing (major_area), small area (small_area), sample size (samp_size), direct survey estimates of average expenditure (direct_est), standard error of the direct estimate (std_error), and coefficient of variation of the direct estimates (coef_variance). 
+
+```{python}
+#| echo: true
+
+from samplics.datasets import load_expenditure_milk
+from samplics.sae import EblupAreaModel
+
+from samplics.utils.types import FitMethod
+```
+
+```{python}
+#| echo: true
+
+# Load Expenditure on Milk sample data
+milk_exp_dict = load_expenditure_milk()
+milk_exp = milk_exp_dict["data"]
+
+nb_obs = 15
+print(f"First {nb_obs} observations of the Milk Expendure dataset\n")
+milk_exp.tail(nb_obs)
+```
+
+## EBLUP Predictor
+
+As shown in the milk expenditure datasets, some of the coefficients of variation are not small which indicates unstability of the direct survey estimates. Hence, we can try to reduce the variability of the estimates by smoothing them through modeling. For illustration purpose, we will model the average expenditure on milk using the major areas as auxiliary variables.
+
+First, we use the method `fit()` to estimate the model parameters. The pandas's method `get_dummies()` create a matrix with dummy values (0 and 1) from the categorical variable *major_area*. 
+
+```{python}
+#| echo: true
+
+area = milk_exp["small_area"]
+yhat = milk_exp["direct_est"]
+
+import pandas as pd
+X = pd.get_dummies(milk_exp["major_area"],drop_first=True)
+sigma_e = milk_exp["std_error"]
+
+## REML method
+fh_model_reml = EblupAreaModel(method=FitMethod.reml)
+fh_model_reml.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, intercept=True, tol=1e-8,
+)
+```
+
+```{python}
+#| echo: true
+
+from pprint import pprint
+
+print(f"The estimated fixed effects are:") 
+pprint(fh_model_reml.fixed_effects)
+```
+
+```{python}
+#| echo: true
+
+print("The estimated standard error of the area random effects is:")
+pprint(fh_model_reml.re_std)
+```
+
+```{python}
+#| echo: true
+
+print("The convergence statistics are:")
+pprint(fh_model_reml.convergence)
+```
+
+```{python}
+#| echo: true
+
+print("The goodness of fit statistics are:") 
+pprint(fh_model_reml.goodness)
+```
+
+```{python}
+#| echo: true
+
+fh_model_reml.predict(
+    X=X, area=area, intercept=True
+)
+
+pprint(fh_model_reml.area_est)
+```
+
+We can use the utility method `to_dataframe()` to output the estimates as a pandas dataframe. The function provides the area, the estimate and its MSE estimates. We can use *col_names* to customize the name of the columns. For example, using `col_names = ["small_area", "eblup_estimate", "eblup_mse"]`. Otherwise, if col_names is not provided, "_area", "_estimates" and "_mse" are used as defaults.
+
+```{python}
+#| echo: true
+
+milk_est_reml = fh_model_reml.to_dataframe(
+    col_names = ["parameter", "small_area", "eblup_estimate", "eblup_mse"]
+    )
+print("The dataframe version of the area level estimates:")
+print(milk_est_reml)
+```
+
+We could also fit the model parameters using the maximum likelihood (ML) method which will impact the MSE estimation as well. To estimate the area means using the ML methdo, we only need to set *method="ML"* then run the prediction as follows. 
+
+```{python}
+#| echo: true
+
+## ML method
+fh_model_ml = EblupAreaModel(method=FitMethod.ml)
+fh_model_ml.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, intercept=True, tol=1e-8,
+)
+
+milk_est_ml = fh_model_ml.predict(
+    X=X, area=area, intercept=True
+)
+
+milk_est_ml = fh_model_ml.to_dataframe(
+    col_names = ["parameter", "small_area", "eblup_estimate", "eblup_mse"]
+    )
+
+
+print("The dataframe version of the ML area level estimates:")
+print(milk_est_ml)
+```
+
+Similar, we can use the Fay-Herriot method as follows
+
+```{python}
+#| echo: true
+
+## FH method
+fh_model_fh = EblupAreaModel(method=FitMethod.fh)
+fh_model_fh.fit(
+    yhat=yhat, X=X, area=area, error_std=sigma_e, intercept=True, tol=1e-8,
+)
+
+milk_est_fh = fh_model_fh.predict(
+    X=X, area=area, intercept=True
+)
+
+milk_est_fh = fh_model_fh.to_dataframe(col_names = ["parameter", "small_area", "eblup_estimate", "eblup_mse"])
+
+
+print(f"The dataframe version of the ML area level estimates:")
+print(milk_est_fh)
+```

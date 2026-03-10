@@ -1,0 +1,87 @@
+---
+title: "Taylor-based Estimation"
+---
+
+
+Samplics's class *TaylorEstimator* uses linearization methods to estimate the variance of population parameters. 
+
+
+```{python}
+#| echo: true
+
+from samplics.datasets import load_nhanes2
+from samplics.estimation import TaylorEstimator
+
+from samplics.utils.types import PopParam
+```
+
+
+```{python}
+#| echo: true
+
+# Load Nhanes sample data
+nhanes2_dict = load_nhanes2()
+nhanes2 = nhanes2_dict["data"]
+
+nhanes2.head(15)
+```
+
+Using *samplics*, we can estimate the average level of zinc in the blood using the following
+
+```{python}
+#| echo: true
+
+zinc_mean_str = TaylorEstimator(PopParam.mean)
+zinc_mean_str.estimate(
+    y=nhanes2["zinc"],
+    samp_weight=nhanes2["finalwgt"],
+    stratum=nhanes2["stratid"],
+    psu=nhanes2["psuid"],
+    remove_nan=True,
+)
+
+print(zinc_mean_str)
+```
+
+The results of the estimation are stored in the dictionary `zinc_mean_str`. The users can covert the main estimation information into a pd.DataFrame by using the method `to_dataframe()`.
+
+```{python}
+#| echo: true
+
+zinc_mean_str.to_dataframe()
+```
+
+The method `to_dataframe()` is more useful for domain estimation by producing a table where which row is a level of the domain of interest, as shown below.
+
+```{python}
+#| echo: true
+
+zinc_mean_by_race = TaylorEstimator(PopParam.mean)
+zinc_mean_by_race.estimate(
+    y=nhanes2["zinc"],
+    samp_weight=nhanes2["finalwgt"],
+    stratum=nhanes2["stratid"],
+    domain=nhanes2["race"],
+    psu=nhanes2["psuid"],
+    remove_nan=True,
+)
+
+zinc_mean_by_race.to_dataframe()
+```
+
+
+Let's remove the stratum parameter then we get
+
+```{python}
+#| echo: true
+
+zinc_mean_nostr = TaylorEstimator(PopParam.mean)
+zinc_mean_nostr.estimate(
+    y=nhanes2["zinc"], 
+    samp_weight=nhanes2["finalwgt"], 
+    psu=nhanes2["psuid"], 
+    remove_nan=True
+)
+
+print(zinc_mean_nostr)
+```

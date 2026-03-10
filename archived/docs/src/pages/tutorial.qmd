@@ -1,0 +1,31 @@
+---
+title: "Outline"
+---
+
+Samplics is a Python package designed to be a comprehensive tool for selecting, weighting and analyzing survey sample data obtained from complex designs. The main objective of this tutorial is to take the user through the Samplics' APIs main features. We hope that after going through the tutorial, the user will have a good understanding of the APIs and be able to analyze complex sample data using samplics. It is assumed that the user has a basic understanding of Python syntax. 
+
+:::{.callout-note}
+
+This tutorial is not intended to teach survey sampling methods. To learn survey sampling methods, we refer the user to the reference textbook [@lohr2021], the [UNStats Handbook 2005](https://unstats.un.org/unsd/hhsurveys/), [Designing Household Survey Samples: Practical Guidelines](https://unstats.un.org/unsd/demographic/sources/surveys/Series_F98en.pdf), and the reference material mentioned throughout this tutorial. 
+
+:::
+
+The tutorial is organized into several sections. The sections are fairly independent and users can directly consult the section(s) of interest. However, we recommend that all first time users start with the Section on the Datasets before diving into other sections. 
+
+<a href="datasets.html">Section 1: Datasets</a> <br>
+<a href="size.html">Section 2: Sample size calculation</a>  <br>
+&nbsp; &nbsp; <a href="size_stagedesign.html">Section 2.1: Sample size for stage design</a>  <br>
+<a href="selection.html">Section 3: Sample selection</a>  <br>
+<a href="weight.html">Section 4: Sample weigthing</a>  <br>
+&nbsp; &nbsp; <a href="weight_adj.html">Section 4.1: Sample weight sdjustment</a>  <br>
+&nbsp; &nbsp; <a href="weight_replicates.html">Section 4.2: Replicate weights</a>  <br>
+<a href="estimation.html">Section 5: Population parameters estimation</a>  <br>
+&nbsp; &nbsp; <a href="estimation_taylor.html">Section 5.1: Tabulation</a>  <br>
+&nbsp; &nbsp; <a href="estimation_rep.html">Section 5.2: Unit T-test</a>  <br>
+<a href="categorical.html">Section 6: Categorical data analysis</a>  <br>
+&nbsp; &nbsp; <a href="categorical_tabulation.html">Section 6.1: Tabulation</a>  <br>
+&nbsp; &nbsp; <a href="categorical_ttest.html">Section 6.2: Unit T-test</a>  <br>
+<a href="sae.html">Section 7: Small area estimation (SAE)</a>  <br>
+&nbsp; &nbsp; <a href="sae_area.html">Section 7.1: Area level modeling</a>  <br>
+&nbsp; &nbsp; <a href="sae_unit.html">Section 7.2: Unit level modeling</a>  <br>
+

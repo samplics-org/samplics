@@ -1,0 +1,67 @@
+---
+title: "Introduction"
+execute:
+  enabled: true
+---
+
+[![](https://github.com/survey-methods/samplics/workflows/Testing/badge.svg){fig-alt="Testing Status"}](https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting)
+[![](https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg)](https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage)
+[<img src="https://github.com/survey-methods/samplics/workflows/Docs/badge.svg">](https://github.com/samplics-org/samplics/actions?query=workflow%3ADocs)
+[![](https://joss.theoj.org/papers/10.21105/joss.03376/status.svg)](https://doi.org/10.21105/joss.03376)
+[![](https://img.shields.io/pypi/l/ansicolortags.svg){fig-alt="License"}](https://pypi.org/project/samplics/ansicolortags/)
+[<img src="https://pepy.tech/badge/samplics">](https://pepy.tech/project/samplics)
+
+<br>
+
+::: {.callout-important title="Migration strongly recommended: svy, svy-sae & svyLab 🚀"}
+**svy** supersedes _samplics_ and provides a richer, more scalable ecosystem for complex survey design, estimation, and collaboration.
+
+While _samplics_ remains available, **all new features, enhancements, and long-term support are delivered through svy and svyLab**.
+
+👉 **Get started with svy:** [https://svylab.com/docs](https://svylab.com/docs)
+:::
+
+<br>
+
+In large-scale surveys, often complex random mechanisms are used to select samples. Estimations obtained from such samples must reflect the random mechanism to ensure accurate calculations. *samplics* implements a set of sampling techniques for complex survey designs.
+
+
+**Sampling.** Since the full population cannot be observed, a sample is selected
+to estimate population parameters of interest. The assumption is
+that the sample is representative of the population for the characteristics
+of interest. The sample size calculation and selection methods in *samplics* are:
+
+* Sample size calculation and allocation: Wald and Fleiss methods for proportions.
+* Equal probability of selection: simple random sampling (SRS) and systematic selection (SYS)
+* Probability proportional to size (PPS): Systematic, Brewer's method, Hanurav-Vijayan method, Murphy's method, and Rao-Sampford's method.
+
+**Sample weighting.** Sample weighting is the main mechanism used in surveys to formalize the
+representivity of the sample. The design/base weights are usually
+adjusted to compensate for distortions due nonresponse and other shortcomings
+of the the sampling design implementation.
+
+* Weight adjustment due to nonresponse
+* Weight poststratification, calibration and normalization
+* Weight replication i.e. Bootstrap, BRR, and Jackknife
+
+**Population parameters estimation.** The estimation of the parameters of interest must reflect the sampling
+mechanism and the weight adjustments.
+
+* Taylor-based procedures
+* Replication-based estimation i.e. Boostrap, BRR, and Jackknife
+* Regression-based e.g. generalized regression (GREG)
+
+**Categorical data analysis.** The estimation of the parameters of interest must reflect the sampling
+mechanism and the weight adjustments.
+
+* One-way and two-way tabulation
+* T-test including Rao-Scott adjustment
+
+**Small Area Estimation (SAE).** When the sample size is not large enough to produce reliable / stable domain level estimates, SAE techniques can be used to model the output variable of interest to produce domain level estimates.
+
+
+
+**Contact Information** <br>
+Mamadou S. Diallo <br>
+Twiter: [\@MamadouSDiallo](https://twitter.com/MamadouSDiallo) <br>
+Email: <msdiallo@samplics.org>

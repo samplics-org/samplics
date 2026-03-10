@@ -1,0 +1,15 @@
+---
+title: "Overview"
+---
+
+Often the goal of conducting a survey is to estimate parameters of the target population from the survey sample. To appropriately estimate uncertainties associated with the sample estimates, the complex design must be taken into account. 
+
+In this tutorial, we demonstrate how to use the Samplics APIs to produce point estimates of mean, total, proportion and ratio parameters as well as their associated Taylor-based and replication-based measures of uncertainty. 
+
+<a href="estimation_taylor.html">Section 1: Taylor-based Estimation</a> <br>
+<a href="estimation_rep.html">Section 2: Replicate-based Estimation</a> <br>
+
+@wolter2007 provides a self-contained description of a number of techniques for variance estimation both Taylor and replication based.  
+
+
+

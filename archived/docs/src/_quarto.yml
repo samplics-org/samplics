@@ -1,0 +1,103 @@
+project:
+  type: website
+  output-dir: ../docs_site
+  # preview:
+  #   port: 4200
+  #   browser: true
+
+website:
+  title: "Samplics Documentation"
+  description: "Documentation of the Python package Samplics for statistical design and analysis of complex samples"
+  favicon: public/img/samplics_logo.png
+  page-navigation: true
+  open-graph: true
+  twitter-card:
+    site: "@MamadouSDiallo"
+
+  navbar:
+    search: true
+    logo: public/img/samplics_logo2.png
+    background: dark
+    left:
+      - href: index.qmd
+        text: Overview
+      - href: pages/tutorial.qmd
+        text: Tutorial
+      # - href: pages/examples.qmd
+      #   text: Examples
+    right:
+      - icon: twitter
+        href: https://twitter.com/MamadouSDiallo
+        aria-label: Twitter
+      - icon: github
+        href: https://github.com/samplics-org/samplics
+        aria-label: GitHub
+
+  sidebar:
+    style: "floating"
+    # search: true
+    # logo: public/img/samplics_logo.png
+
+    contents:
+      - section: "Overview"
+        contents:
+          - index.qmd
+          - pages/getting_started.qmd
+      - section: "Tutorial"
+        contents:
+          - pages/tutorial.qmd
+          - pages/datasets.qmd
+          - section: "Size Calculation"
+            contents:
+              - pages/size.qmd
+              - pages/size_stagedesign.qmd
+          - section: "Selection"
+            contents:
+              - pages/selection.qmd
+              - pages/selection_psus.qmd
+              - pages/selection_ssus.qmd
+          - section: "Weighting"
+            contents:
+              - pages/weight.qmd
+              - pages/weight_adj.qmd
+              - pages/weight_replicates.qmd
+          - section: "Population Parameters Estimation"
+            contents:
+              - pages/estimation.qmd
+              - pages/estimation_taylor.qmd
+              - pages/estimation_rep.qmd
+          - section: "Categorical Data Analysis"
+            contents:
+              - pages/categorical.qmd
+              - pages/categorical_tabulation.qmd
+              - pages/categorical_ttest.qmd
+          - section: "Small Area Estimation"
+            contents:
+              - pages/sae.qmd
+              - pages/sae_area.qmd
+              - pages/sae_unit.qmd
+      # - section: "Examples"
+      # - section: "References"
+
+  page-footer:
+    left:
+      - text: "© Copyright 2019-2020, samplics."
+    center: "Samplics for Design and Analysis of Complex Survey Data"
+    right:
+      - text: "Back to Home"
+        href: index.qmd
+      - icon: twitter
+        href: https://twitter.com/MamadouSDiallo
+        aria-label: Twitter
+      - icon: github
+        href: https://github.com/samplics-org/samplics
+        aria-label: GitHub
+
+format:
+  html:
+    theme: cosmo
+    css: public/styles.css
+    toc: true
+
+bibliography: references.bib
+link-citations: true

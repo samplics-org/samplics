@@ -1,0 +1,106 @@
+---
+title: "Unit Level Modeling"
+---
+
+
+# Empirical best linear unbiased Prediction (EBLUP)
+
+The Unit Level model refers to a class of SAE techniques that fit the linear mixed model at the sampling unit level. As for the Area Level model, generalized linear mixed models are also the modeling framework for Unit Level model. In this case, given that the model is happening at the sub-area level, both the random effects and unit level standard errors can be estimated from the model. In this tutorial, we will predict the area level means which is a linear parameter.
+
+## County Crop (Corn and Soybeans) Areas Data
+
+For this example, we use the county crop data used by Battese, Harter, and Fuller (1988). The datasets contains 37 observations on areas under corn and under soybeans for each of the 12 counties in the north-central of Iowa. Each county was divided in segments and using interviews and LANDSAT satellite data, data on area used for corn and soybeans was obtained. In the unit level data, each observation is a segment with the following variables: county id (county_id), area in hectare under corn (corn_area), area in heactare under soybeans (soybeans_area), number of pixel classified as corn (corn_pixel), and number of pixels classified as soybeans (soybeans_pixel). 
+
+```{python}
+#| echo: true
+
+from samplics.datasets import load_county_crop, load_county_crop_means
+from samplics.sae import EblupUnitModel
+
+from samplics.utils.types import FitMethod
+```
+
+```{python}
+#| echo: true
+
+# Load County Crop sample data
+countycrop_dict = load_county_crop()
+countycrop = countycrop_dict["data"]
+
+print("First observations from the unit (segment) level crop areas data")
+countycrop.head(15)
+```
+
+In addition to the unit (segment) level data, we have the small area (county) level averages of the number of pixels classified as corn or soybeans.  
+
+```{python}
+#| echo: true
+
+# Load County Crop Area Means sample data
+countycropmeans_dict = load_county_crop_means()
+countycrop_means = countycropmeans_dict["data"]
+
+print(f"County level crop areas averages")
+countycrop_means.head(15)
+```
+
+## Empirical Bayes linear unbiased predictor (EBLUP)
+
+Now we are going to estimates the average area size under corn and soybeans. To do so, we use the nested error linear regression (special case of the linear mixed model) to model the number of hectares. As auxiliary variables, we use the number of pixel classified as corn and soybeans. 
+
+First, we use the method `fit()` to estimate the model parameters. 
+
+```{python}
+#| echo: true
+
+areas = countycrop["county_id"]
+ys = countycrop["corn_area"]
+Xs = countycrop[["corn_pixel", "soybeans_pixel"]]
+Xp_mean = countycrop_means[["ave_corn_pixel", "ave_corn_pixel"]]
+samp_size = countycrop_means[["samp_segments"]]
+pop_size = countycrop_means[["pop_segments"]]
+
+import numpy as np
+areap = np.linspace(1, 12, 12)
+
+"""REML Method"""
+eblup_bhf_reml = EblupUnitModel()
+eblup_bhf_reml.fit(
+    ys,
+    Xs,
+    areas,
+)
+
+eblup_bhf_reml.predict(
+    Xmean=Xp_mean,
+    area=areap,
+)
+
+corn_est_reml = eblup_bhf_reml.to_dataframe()
+
+print(corn_est_reml)
+```
+
+```{python}
+#| echo: true
+#| warning: false
+
+"""ML Method"""
+eblup_bhf_ml = EblupUnitModel(method=FitMethod.ml)
+eblup_bhf_ml.fit(
+    ys,
+    Xs,
+    areas,
+)
+
+eblup_bhf_ml.predict(Xp_mean, areap)
+
+corn_est_ml = eblup_bhf_ml.to_dataframe()
+
+print(corn_est_ml)
+```
+
+
+## Bootstrap MSE estimation
+
+As shown above, the `predict()` method provides the taylor-based MSE estimates. However, we can also calculate MSE estimates using the bootstrap approach.

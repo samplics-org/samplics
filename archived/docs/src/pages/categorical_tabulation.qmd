@@ -1,0 +1,224 @@
+---
+title: "Tabulation"
+---
+
+In this tutorial, we will explore samplics' APIs for creating design-based tabulations. There are two main python classes for tabulation i.e. `Tabulation()` for one-way tables and `CrossTabulation()` for two-way tables. 
+
+
+```{python}
+#| echo: true
+
+from pprint import pprint
+
+from samplics.datasets import load_birth, load_nhanes2
+from samplics.categorical import Tabulation, CrossTabulation
+
+from samplics.utils.types import PopParam
+```
+
+# One-way tabulation
+
+The birth dataset has four variables: region, agecat, birthcat, and pop. The variables agecat and birthcat are categirical. By default, pandas read them as numerical, because they are coded with numerical values. We use `dtype="string"` or `dtype="category"` to ensure that pandas codes the variables as categorical responses. 
+
+```{python}
+#| echo: true
+
+# Load Birth sample data
+birth_dict = load_birth()
+birth = birth_dict["data"].astype(
+    {"region": str, "agecat": str, "birthcat": str}
+)
+
+region = birth["region"]
+agecat = birth["agecat"]
+birthcat = birth["birthcat"]
+
+birth.head(15)
+```
+
+When requesting a table, the user can set `param="count"` which results in a tabulation with counts in the cells while `param="proportion` leads to cells with proportions. The expression `Tabulation("count")` instantiates the class `Tabulation()` which has a method `tabulate()` to produce the table. 
+
+```{python}
+#| echo: true
+#| warning: false
+
+birth_count = Tabulation(param=PopParam.count)
+birth_count.tabulate(birthcat, remove_nan=True)
+
+print(birth_count)
+```
+
+When `remove_nan=False`, the numpy and pandas special values NaNs, respectively np.nan and NaN, are treated as valid categories and added to the tables as shown below
+
+
+```{python}
+#| echo: true
+#| warning: false
+
+birth_count = Tabulation(param=PopParam.count)
+birth_count.tabulate(birthcat, remove_nan=False)
+
+print(birth_count)
+```
+
+The data associated with the tabulation are stored in nested python dictionaries. The higher level key is the variable name and the inner keys are the response categories. Each of the last four columns shown above are stored in separated dictionaries. Two of those dictionaries for the counts and standard errors shown below.
+
+
+```{python}
+#| echo: true
+
+print("\nThe designed-based estimated counts are:")
+pprint(birth_count.point_est)
+
+print("\nThe designed-based standard errors are:")
+pprint(birth_count.stderror)
+```
+
+Sometimes, the user may want to run multiple one-way tables of several variables. In this case, the user can provide the data as a two-dimensional dataframe where each column represents one categorical variable. In this situation, each categorical variable is tabulated individually then combined into Python dictionaries.
+
+
+```{python}
+#| echo: true
+#| warning: false
+
+birth_count2 = Tabulation(param=PopParam.count)
+birth_count2.tabulate(
+    birth[["region", "agecat", "birthcat"]], 
+    remove_nan=True
+    )
+
+print(birth_count2)
+```
+
+
+Two of the associated Python dictionaries are shown below. The structure of the inner dictionaries remain the same but additional key-value pairs are added to represent the several categorical variables.
+
+```{python}
+#| echo: true
+
+print("\nThe designed-based estimated counts are:")
+pprint(birth_count2.point_est)
+
+print("\nThe designed-based standard errors are:")
+pprint(birth_count2.stderror)
+```
+
+In the example above, we used pandas series and dataframes with labelled variables. In some situations, the user may want to tabulate numpy arrays, lists or tuples without variable names atrribute from the data. For these situations, the `varnames` parameter provides a way to assign names for the categorical variables. Even when the variables have labels, users can leverage `varnames` to rename the categorical variables. 
+
+
+```{python}
+#| echo: true
+#| warning: false
+
+region_no_name = birth["region"].to_numpy()
+agecat_no_name = birth["agecat"].to_numpy()
+birthcat_no_name = birth["birthcat"].to_numpy()
+
+birth_prop_new_name = Tabulation(param=PopParam.prop)
+birth_prop_new_name.tabulate(
+    vars=[region_no_name, agecat_no_name, birthcat_no_name],
+    varnames=["Region", "AgeGroup", "BirthType"],
+    remove_nan=True,
+)
+
+print(birth_prop_new_name)
+```
+
+If the user does not specify `varnames`, the `tabulate()` creates generic variables names `var_1`, `var_2`, etc.
+
+```{python}
+#| echo: true
+#| warning: false
+
+birth_prop_new_name2 = Tabulation(param=PopParam.prop)
+birth_prop_new_name2.tabulate(
+    vars=[region_no_name, agecat_no_name, birthcat_no_name], 
+    remove_nan=True
+)
+
+print(birth_prop_new_name2)
+```
+
+If the data was collected from a complex survey sample, the user may provide the sample design information to derive design-based statistics for the tabulation. 
+
+```{python}
+#| echo: true
+#| warning: false
+
+# Load Nhanes sample data
+nhanes2_dict = load_nhanes2()
+nhanes2 = nhanes2_dict["data"]
+
+stratum = nhanes2["stratid"]
+psu = nhanes2["psuid"]
+weight = nhanes2["finalwgt"]
+
+diabetes_nhanes = Tabulation(param=PopParam.prop)
+diabetes_nhanes.tabulate(
+    vars=nhanes2[["race", "diabetes"]],
+    samp_weight=weight,
+    stratum=stratum,
+    psu=psu,
+    remove_nan=True,
+)
+
+print(diabetes_nhanes)
+```
+
+# Two-way tabulation (cross-tabulation)
+
+Cross-tabulation of two categorical variables is achieved by using the class `CrossTabulation()`. As above, cross-tabulation is possible for counts and proportions using `CrossTabulation(param="count")` and `CrossTabulation(param="proportion")`, respectively. The Python script below creates a design-based cross-tabulation of race by diabetes status. The sample design information is optional; when not provided, a simple random sample (srs) is assumed. 
+
+```{python}
+#| echo: true
+
+crosstab_nhanes = CrossTabulation(param=PopParam.prop)
+crosstab_nhanes.tabulate(
+    vars=nhanes2[["race", "diabetes"]],
+    samp_weight=weight,
+    stratum=stratum,
+    psu=psu,
+    remove_nan=True,
+)
+
+print(crosstab_nhanes)
+```
+
+In addition to pandas dataframe, the categorical variables may be provided as an numpy array, list or tuple. In the examples below, the categorical variables are provided as a tuple `vars=(rage, diabetes)`. In this case, `race` and `diabetes` are numpy arrays and do not have a name attribute. The parameter `varnames` allows the user to name the categorical variables. If varnames is not specified then ``var_1` and `var_2` are used as variables names. 
+
+
+```{python}
+#| echo: true
+
+race = nhanes2["race"].to_numpy()
+diabetes = nhanes2["diabetes"].to_numpy()
+
+crosstab_nhanes = CrossTabulation(param=PopParam.prop)
+crosstab_nhanes.tabulate(
+    vars=(race, diabetes),
+    samp_weight=weight,
+    stratum=stratum,
+    psu=psu,
+    remove_nan=True,
+)
+
+print(crosstab_nhanes)
+```
+
+Same as the above example with variables names specified by `varnames=["Race", DiabetesStatus"]`
+
+```{python}
+#| echo: true
+
+crosstab_nhanes = CrossTabulation(param=PopParam.prop)
+crosstab_nhanes.tabulate(
+    vars=(race, diabetes),
+    varnames=["Race", "DiabetesStatus"],
+    samp_weight=weight,
+    stratum=stratum,
+    psu=psu,
+    remove_nan=True,
+)
+
+print(crosstab_nhanes)
+```
