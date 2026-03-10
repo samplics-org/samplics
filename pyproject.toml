@@ -6,7 +6,7 @@ description = "Select, weight and analyze complex sample data"
 authors = [{ name = "Mamadou S Diallo", email = "msdiallo@samplics.org" }]
 
 readme = "README.md"
-requires-python = ">=3.10,<3.15"
+requires-python = ">=3.10, <3.15"
 
 
 keywords = ["sampling", "sample", "weighting", "estimation", "survey"]
