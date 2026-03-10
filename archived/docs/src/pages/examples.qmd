@@ -1,5 +1,0 @@
----
-title: "Objectives"
----
-
-Show real examples of analysis using Samplics
