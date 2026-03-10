@@ -30,10 +30,10 @@ from samplics.weighting import ReplicateWeight, SampleWeight
 
 
 warnings.warn(
-    "samplics is deprecated and no longer maintained. "
-    "Please migrate to 'svy' (pip install svy) and 'svy-sae' (pip install svy-sae). "
-    "Documentation: https://svylab.com/docs/",
-    DeprecationWarning,
+    "samplics is archived and no longer maintained. "
+    "Migrate to 'svy' (pip install svy) for the same functionality and more. "
+    "Documentation: https://svylab.com/docs",
+    FutureWarning,
     stacklevel=2,
 )
 
@@ -93,4 +93,4 @@ __all__ = [
     "SinglePSUError",
 ]
 
-__version__ = "0.5.1"
+__version__ = "0.6.0"
