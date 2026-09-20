@@ -2,19 +2,27 @@
 
 <h1>samplics</h1>
 
-[<img src="https://github.com/survey-methods/samplics/workflows/Testing/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ATesting)
-[<img src="https://github.com/survey-methods/samplics/workflows/Coverage/badge.svg">](https://github.com/survey-methods/samplics/actions?query=workflow%3ACoverage)
+[<img src="https://github.com/samplics-org/samplics/workflows/Testing/badge.svg">](https://github.com/samplics-org/samplics/actions?query=workflow%3ATesting)
+[<img src="https://github.com/samplics-org/samplics/workflows/Coverage/badge.svg">](https://github.com/samplics-org/samplics/actions?query=workflow%3ACoverage)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.03376/status.svg)](https://doi.org/10.21105/joss.03376)
 [<img src="https://pepy.tech/badge/samplics">](https://pepy.tech/project/samplics)
 
-> [!IMPORTANT]
-> **This repository is archived. Active development has moved to svy. 🚀**
+> **⚠️ samplics is no longer maintained. Use [svy](https://pypi.org/project/svy/) instead.**
 >
-> **svy** supersedes _samplics_ and provides a richer, more scalable ecosystem for complex survey design, estimation, and analysis.
+> **svy** is the successor to _samplics_, from the same author: the same survey
+> methodology (design, sampling, weighting, estimation, small area models),
+> rebuilt on Polars with a Rust core, an end-to-end workflow through reporting,
+> and active development.
 >
-> All new features, enhancements, and long-term support are delivered through **svy** and **svyLab**.
+> ```bash
+> pip install svy
+> ```
 >
-> 👉 **Get started:** https://svylab.com/docs
+> - Docs and migration guide: https://svylab.com/docs/svy
+> - Questions about migrating: https://github.com/samplics-org/svy/issues
+>
+> samplics 0.6.x stays on PyPI and keeps working, but no bugs will be fixed and
+> no new Python versions will be supported.
 
 <br>
 
@@ -42,7 +50,7 @@ If you use _samplics_ in published research, please cite:
 
 ## License
 
-[MIT](https://github.com/survey-methods/samplics/blob/master/license.txt)
+[MIT](https://github.com/samplics-org/samplics/blob/master/license.txt)
 
 ## Contact
 

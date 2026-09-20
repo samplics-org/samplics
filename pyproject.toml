@@ -1,6 +1,6 @@
 [project]
 name = "samplics"
-version = "0.6.0"
+version = "0.6.1"
 description = "Select, weight and analyze complex sample data"
 
 authors = [{ name = "Mamadou S Diallo", email = "msdiallo@samplics.org" }]
@@ -17,7 +17,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Development Status :: 4 - Beta",
+    "Development Status :: 7 - Inactive",
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering",
 ]
@@ -29,9 +29,11 @@ dev = ["pytest", "pytest-cov", "codecov", "jupyterlab>=4.1", "rpds-py>=0.30.0"]
 
 
 [project.urls]
-repository = "https://github.com/survey-methods/samplics"
+repository = "https://github.com/samplics-org/samplics"
 documentation = "https://samplics-org.github.io/samplics/"
-homepage = "https://samplics-org.github.io/samplics//"
+homepage = "https://samplics-org.github.io/samplics/"
+"Successor (svy)" = "https://pypi.org/project/svy/"
+"Migration guide" = "https://svylab.com/docs/svy"
 
 
 [tool.black]
